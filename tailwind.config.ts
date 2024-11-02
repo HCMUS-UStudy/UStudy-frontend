@@ -9,8 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
+        background: "#F9FBFC",
+        hero: "#D5E9F6",
         foreground: "var(--foreground)",
+        button_primary: "#0284c7", // sky-600
+        highlight_text: "#075985", // sky-800
+        secondary_text: "#808080",
+        
+
       },
     },
   },

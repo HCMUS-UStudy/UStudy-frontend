@@ -1,15 +1,15 @@
-"use client"; 
+"use client";
 
-import React, { useState } from "react"; 
-import Head from "next/head"; 
-import { Button } from '@/app/ui/components/button';
-import { Input } from '@/app/ui/components/input';
-import { Label } from '@/app/ui/components/label';
-import Image from 'next/image';
-import { HiEye, HiEyeOff } from "react-icons/hi"; 
+import React, { useState } from "react";
+import Head from "next/head";
+import { Input } from "@/app/ui/components/input";
+import { Label } from "@/app/ui/components/label";
+import Image from "next/image";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import Button from "@/app/ui/components/button";
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -18,25 +18,29 @@ export default function Login() {
   return (
     <>
       <Head>
-        <link rel="preload" href="/bgLogin.jpg" as="image" /> {/* Preload image */}
+        <link rel="preload" href="/bgLogin.jpg" as="image" />{" "}
+        {/* Preload image */}
       </Head>
       <main
         className="h-screen flex items-center justify-center p-4 md:p-10"
         style={{
-          background: 'linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))',
-        }}
-      >
+          background:
+            "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
+        }}>
         <div className="grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 bg-white rounded-lg shadow-lg overflow-hidden">
-          
           {/* Login Form Section */}
           <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8">
             <div className="mb-8 text-center">
               <h1 className="text-4xl font-bold">Login</h1>
-              <p className="mt-2 text-sm text-gray-600">Empower Your Education and Achieve Your Goals</p>
+              <p className="mt-2 text-sm text-gray-600">
+                Empower Your Education and Achieve Your Goals
+              </p>
             </div>
 
             <form className="w-full max-w-xs">
-              <Label htmlFor="email" className="mb-1">Email*</Label>
+              <Label htmlFor="email" className="mb-1">
+                Email*
+              </Label>
               <Input
                 className="mb-4 p-2 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder:text-gray-400"
                 type="email"
@@ -44,7 +48,9 @@ export default function Login() {
                 placeholder="Enter your email"
                 required
               />
-              <Label htmlFor="password" className="mb-1">Password*</Label>
+              <Label htmlFor="password" className="mb-1">
+                Password*
+              </Label>
               <div className="relative mb-6">
                 <Input
                   className="p-2 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder:text-gray-400"
@@ -56,8 +62,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none"
-                >
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none">
                   {showPassword ? (
                     <HiEyeOff className="text-gray-600" />
                   ) : (
@@ -66,21 +71,25 @@ export default function Login() {
                 </button>
               </div>
               <Button
+                onClick={() => {}}
                 type="submit"
-                className="w-full bg-[#0284C7] text-white rounded-full py-2.5 font-semibold text-sm hover:bg-[#0369A1] transition-all duration-200 shadow-md transform hover:scale-105"
-              >
+                className="w-full text-white rounded-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
                 Login
               </Button>
 
               {/* Move Forgot Password link here */}
               <div className="flex justify-end w-full mt-4">
                 <p className="text-xs text-gray-600">
-                  <a href="/forgot-password" className="hover:underline">Forgot Password?</a>
+                  <a href="/forgot-password" className="hover:underline">
+                    Forgot Password?
+                  </a>
                 </p>
               </div>
             </form>
 
-            <p className="mt-6 text-xs text-gray-600">&copy; 2024 All rights reserved</p>
+            <p className="mt-6 text-xs text-gray-600">
+              &copy; 2024 All rights reserved
+            </p>
           </div>
 
           {/* Image Section */}
