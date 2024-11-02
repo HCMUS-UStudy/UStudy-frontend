@@ -3,6 +3,8 @@ import Link from "next/link";
 import Button from "./ui/components/button";
 import Image from "next/image";
 import { FaBook } from "react-icons/fa6";
+import { Input } from "./ui/components/input";
+import Footer from "./ui/components/footer";
 
 export default function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -86,7 +88,7 @@ export default function Home() {
             </Link>
           </div>
           <Button className=" w-[150px] text-lg" type="submit">
-            Đăng nhập
+            <Link href="/login">Đăng nhập</Link>
           </Button>
         </div>
         <div
@@ -159,7 +161,48 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-hero">giáo viên</div>
+      <div className="bg-hero mt-[200px] py-8 flex justify-evenly">
+        <Image
+          className=" flex-none"
+          src="/TeacherRegister.png"
+          width={500}
+          height={500}
+          alt="TeacherRegister"
+        />
+        <div>
+          <div className="font-bold text-[50px] text-center">
+            Trở thành<span className="text-highlight_text"> Giáo Viên</span>
+          </div>
+          <div className="w-[500px] mt-4 flex flex-col gap-5">
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Họ tên"
+            />
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Email"
+            />
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Giới tính"
+            />
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Ngày sinh"
+            />
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Số điện thoại"
+            />
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Địa chỉ"
+            />
+            <Button className=" mt-5">Đăng ký</Button>
+          </div>
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 }
