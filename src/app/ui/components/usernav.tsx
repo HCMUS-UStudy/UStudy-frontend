@@ -1,6 +1,6 @@
 'use client'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/app/ui/components/dropdown-menu";
-import { Button } from "@/app/ui/components/button";
+import Button from "@/app/ui/components/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/ui/components/avatar";
 import Link from "next/link";
 
@@ -8,7 +8,7 @@ export function UserNav() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-10 w-10">
                         <AvatarImage src="/avatars/02.png" alt="" />
                         <AvatarFallback>SR</AvatarFallback>
