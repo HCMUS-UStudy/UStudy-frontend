@@ -1,6 +1,6 @@
 import Header from "@/app/ui/components/header";
 import PageWrapper from "@/app/ui/components/pagewrapper";
-import { SideBar } from "@/app/ui/components/sidebar";
+import { SideBar } from "@/app/ui/components/sidebar/sidebar";
 
 export default function Admin({ children }: { children: React.ReactNode }) {
     return (
