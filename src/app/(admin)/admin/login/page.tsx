@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"; 
 import Head from "next/head"; 
-import { Button } from '@/app/ui/components/button';
+import Button  from '@/app/ui/components/button';
 import { Input } from '@/app/ui/components/input';
 import { Label } from '@/app/ui/components/label';
 import Image from 'next/image';
@@ -31,7 +31,7 @@ export default function Login() {
           {/* Login Form Section */}
           <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8">
             <div className="mb-8 text-center">
-              <h1 className="text-4xl font-bold">Login</h1>
+              <h1 className="text-4xl font-bold">Trang đăng nhập</h1>
               <p className="mt-2 text-sm text-gray-600">Empower Your Education and Achieve Your Goals</p>
             </div>
 
@@ -69,7 +69,7 @@ export default function Login() {
                 type="submit"
                 className="w-full bg-[#0284C7] text-white rounded-full py-2.5 font-semibold text-sm hover:bg-[#0369A1] transition-all duration-200 shadow-md transform hover:scale-105"
               >
-                Login
+                Đăng nhập
               </Button>
 
               {/* Move Forgot Password link here */}
