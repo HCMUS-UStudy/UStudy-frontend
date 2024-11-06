@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Button from "./ui/components/button";
 import Image from "next/image";
-import { FaBars, FaBook, FaX } from "react-icons/fa6";
+import { FaBars, FaBook, FaX, FaUser } from "react-icons/fa6";
 import { Input } from "./ui/components/input";
 import Footer from "./ui/components/footer";
 import { useState } from "react";
@@ -55,10 +55,12 @@ export default function Home() {
               key={i}
               className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col gap-1 md:gap-3 items-center bg-white border border-slate-300 rounded-xl">
               <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" />
-              <p className="text-lg md:text-2xl font-bold">{c.FeatureName}</p>
-              <p className="text-secondary_text text-xs md:text-base">
+              <div className="text-lg md:text-2xl font-bold">
+                {c.FeatureName}
+              </div>
+              <div className="text-secondary_text text-xs md:text-base">
                 {c.Description}
-              </p>
+              </div>
             </div>
           );
         })}
@@ -67,16 +69,56 @@ export default function Home() {
   };
   const SideBar = () => {
     return (
-      <div
-        className={clsx(
-          "fixed top-0 right-0 w-[80vw] bg-background h-screen overflow-y-auto tranform transition-transform duration-300",
-          { "translate-x-0": isOpen, "translate-x-full": !isOpen }
-        )}>
-        <button onClick={toggleSideBar} type="button">
-          <FaX />
-        </button>
-        sidebar
-      </div>
+      <>
+        <div
+          onClick={toggleSideBar}
+          className={clsx(
+            {
+              hidden: !isOpen,
+              visible: isOpen,
+            },
+            "bg-black opacity-50 fixed inset-0 z-40 transition-opacity"
+          )}></div>
+        <div
+          className={clsx(
+            "fixed top-0 right-0 z-50 w-[70vw] py-2.5 px-4 bg-background h-screen overflow-y-auto tranform transition-transform",
+            { "translate-x-0": isOpen, "translate-x-full": !isOpen }
+          )}>
+          <div>
+            <div className="flex flex-row justify-between">
+              <Button className="font-thin text-base h-[8vh]">
+                <FaUser className=" mr-3" /> Đăng nhập
+              </Button>
+              <button className=" mr-3" onClick={toggleSideBar} type="button">
+                <FaX className="h-5 w-5" />
+              </button>
+            </div>
+            <br />
+            <div className="grid grid-cols-1 divide-y text-xl">
+              <Link
+                href="#"
+                className="flex items-center h-[10vh] text-slate-900  hover:text-black transition duration-200 ease-in-out">
+                Trang chủ
+              </Link>
+              <Link
+                href="#"
+                className=" flex items-center h-[10vh] text-slate-900 hover:text-black transition duration-200 ease-in-out">
+                Giáo viên
+              </Link>
+              <Link
+                href="#"
+                className=" flex items-center h-[10vh] text-slate-900 hover:text-black transition duration-200 ease-in-out">
+                Giáo Vụ
+              </Link>
+              <Link
+                href="#"
+                className=" flex items-center h-[10vh] text-slate-900 hover:text-black transition duration-200 ease-in-out">
+                Lớp học
+              </Link>
+            </div>
+          </div>
+        </div>
+      </>
     );
   };
   return (
@@ -134,19 +176,19 @@ export default function Home() {
               alt="tutorSystem"
             />
             <div className="leading-tight md:leading-normal">
-              <p className=" tracking-tight md:tracking-normal">
+              <div className=" tracking-tight md:tracking-normal">
                 <span className="text-highlight_text">Kết nối</span> tri thức
-              </p>
-              <p className=" tracking-tight md:tracking-normal">
+              </div>
+              <div className=" tracking-tight md:tracking-normal">
                 <span className="text-highlight_text">Chinh phục</span> mọi mục
                 tiêu
-              </p>
-              <p className="text-secondary_text font-light text-sm md:text-base mt-2">
+              </div>
+              <div className="text-secondary_text font-light text-sm md:text-base mt-2">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam,
                 vero maiores minima magni vel reprehenderit impedit culpa, in
                 asperiores voluptatum ut, non quis provident earum deserunt
                 quaerat nemo laborum. Reprehenderit.
-              </p>
+              </div>
             </div>
             <Button
               className="w-full md:w-[200px] font-bold text-lg"
@@ -193,8 +235,8 @@ export default function Home() {
               alt="JohnAbbott"
             />
             <div className="text-black text-center mt-3">
-              <p className="font-bold text-2xl">John Abbott</p>
-              <p className="text-base mt-1">CANADA</p>
+              <div className="font-bold text-2xl">John Abbott</div>
+              <div className="text-base mt-1">CANADA</div>
             </div>
           </div>
         </div>
@@ -236,7 +278,7 @@ export default function Home() {
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Địa chỉ"
             />
-            <Button className=" mt-5">Đăng ký</Button>
+            <Button className=" mt-5">Register</Button>
           </div>
         </div>
       </div>
