@@ -1,5 +1,5 @@
 "use client";
-import { SIDENAV_ITEMS, SIDENAV_ITEMS_STAFF } from "@/app/menu_constants";
+import { SIDENAV_ITEMS_ADMIN, SIDENAV_ITEMS_STAFF } from "@/app/menu_constants";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
@@ -19,7 +19,6 @@ export const SideBar = () => {
   );
 
   useEffect(() => setMounted(true), []);
-
   return (
     <aside className={asideStyle}>
       <div className="sidebar-top flex items-center px-4 py-4">
@@ -37,7 +36,7 @@ export const SideBar = () => {
       <nav className="flex flex-col gap-2 px-4">
         {" "}
         {/* Adjusted gap for spacing */}
-        {SIDENAV_ITEMS.map((item, idx) => (
+        {SIDENAV_ITEMS_ADMIN.map((item, idx) => (
           <SideBarMenuGroup key={idx} menuGroup={item} />
         ))}
       </nav>

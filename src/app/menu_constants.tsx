@@ -9,13 +9,13 @@ import {
   BsArrowClockwise,
 } from "react-icons/bs";
 
-export const SIDENAV_ITEMS: SideNavItemGroup[] = [
+export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
   {
     title: "Thống Kê",
     menuList: [
       {
         title: "Bảng Thống Kê",
-        path: "/",
+        path: "/admin/dashboard",
         icon: <BsHouseDoor size={20} />,
       },
     ],
@@ -33,7 +33,7 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
         //     { title: 'New', path: '/products/new' },
         // ],
         title: "Quản lý tài khoản",
-        path: "/accounts",
+        path: "/admin/accounts",
         icon: <BsPerson size={20} />,
       },
       {
