@@ -3,7 +3,7 @@ import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCirc
 
 
 
-export const SIDENAV_ITEMS: SideNavItemGroup[] = [
+export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
 
     {
         title: "Thống Kê",
@@ -26,7 +26,7 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
                 //     { title: 'New', path: '/products/new' },
                 // ],
                 title: 'Quản lý tài khoản',
-                path: '/accounts',
+                path: '/admin/accounts',
                 icon: <BsPerson size={20} />,
             },
             {
