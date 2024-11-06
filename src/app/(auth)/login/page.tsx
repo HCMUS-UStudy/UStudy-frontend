@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
 import Image from "next/image";
-import { HiEye, HiEyeOff } from "react-icons/hi";
+import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
 import Button from "@/app/ui/components/button";
 
 export default function Login() {
@@ -21,8 +22,7 @@ export default function Login() {
   return (
     <>
       <Head>
-        <link rel="preload" href="/bgLogin.jpg" as="image" />{" "}
-        {/* Preload image */}
+        <link rel="preload" href="/bgLogin.jpg" as="image" />
       </Head>
       <main
         className="h-screen flex items-center justify-center p-4 md:p-10"
@@ -33,8 +33,14 @@ export default function Login() {
         <div className="
           grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 
           bg-white rounded-lg shadow-lg overflow-hidden">
+          
           {/* Login Form Section */}
-          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8">
+          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8 relative">
+            {/* Back to Home Icon */}
+            <Link href="/" className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
+              <HiHome size={24} />
+            </Link>
+
             <div className="mb-8 text-center">
               <h1 className="text-4xl font-bold">Login</h1>
               <p className="mt-2 text-sm text-gray-600">
@@ -46,10 +52,7 @@ export default function Login() {
               {/* Floating Label for Email */}
               <div className="relative mb-4">
                 <Input
-                  className="
-                    p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] 
-                    border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                    placeholder-transparent"
+                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
                   type="email"
                   id="email"
                   value={email}
@@ -73,15 +76,7 @@ export default function Login() {
               {/* Floating Label for Password */}
               <div className="relative mb-6 mt-6">
                 <Input
-                  className="
-                    p-2 pl-4 bg-transparent 
-                    rounded-full 
-                    text-[#1E1E1E] 
-                    border border-gray-400 
-                    focus:border-indigo-600 focus:bg-white \
-                    transition-all 
-                    duration-200 
-                    placeholder-transparent"
+                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
                   type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
@@ -115,16 +110,7 @@ export default function Login() {
               <Button
                 onClick={() => {}}
                 type="submit"
-                className="
-                  mt-6
-                  w-full \
-                  text-white 
-                  rounded-l-full rounded-r-full 
-                  font-semibold text-base 
-                  transition-all 
-                  duration-200 
-                  shadow-md transform 
-                  hover:scale-105">
+                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
                 Login
               </Button>
 
