@@ -11,7 +11,7 @@ export default function Header() {
     }
 
     const headerStyle = classNames(
-        "bg-[#D5E9F6] fixed w-[calc(100%-1rem)] ml-4 z-[99997] px-6 py-1 shadow-md shadow-slate-500/30 rounded-2xl transition-all duration-300 ease-in-out", 
+        "bg-[#D5EEFF] fixed w-[calc(100%-1rem)] ml-4 z-[99997] px-6 py-1 shadow-md shadow-slate-500/30 rounded-2xl transition-all duration-300 ease-in-out", 
         {
             ["sm:pl-[16rem]"]: !toggleCollapse,
             ["sm:pl-[5.6rem]"]: toggleCollapse,

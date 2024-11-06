@@ -1,14 +1,14 @@
 import { SideNavItemGroup } from "@/app/types/type";
-import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCircle, BsArrowClockwise } from "react-icons/bs";
+import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCircle} from "react-icons/bs";
 
 
 
-export const SIDENAV_ITEMS: SideNavItemGroup[] = [
+export const SidebarItems: SideNavItemGroup[] = [
 
     {
         title: "Thống Kê",
         menuList: [{
-            title: 'Bảng Thống Kê',
+            title: 'Dashboard',
             path: '/',
             icon: <BsHouseDoor size={20} />,
         }]
@@ -39,11 +39,11 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
                 path: '/class',
                 icon: <BsFillPeopleFill size={20} />,
             },
-            {
-                title: 'Khôi phục & Sao lưu',
-                path: '/backup',
-                icon: <BsArrowClockwise size={20} />,
-            }
+            // {
+            //     title: 'Khôi phục & Sao lưu',
+            //     path: '/backup',
+            //     icon: <BsArrowClockwise size={20} />,
+            // }
         ]
     },
     {

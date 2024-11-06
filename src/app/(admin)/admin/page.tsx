@@ -1,14 +1,14 @@
-import Header from "@/app/ui/components/header";
+// import Header from "@/app/ui/components/header";
 import PageWrapper from "@/app/ui/components/pagewrapper";
-import { SideBar } from "@/app/ui/components/sidebar/sidebar";
+import { Sidebar } from "@/app/ui/sidebar/Sidebar";
 
 export default function Admin({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <SideBar />
+            <Sidebar />
             <div className="flex flex-col h-full w-full">
-                <Header />
-                <PageWrapper children={children} />
+                {/* <Header /> */}
+                <PageWrapper> {children} </PageWrapper>
             </div>
         </>
     )
