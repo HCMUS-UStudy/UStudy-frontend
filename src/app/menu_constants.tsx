@@ -3,7 +3,7 @@ import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCirc
 
 
 
-export const SIDENAV_ITEMS: SideNavItemGroup[] = [
+export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
 
     {
         title: "Thống Kê",
