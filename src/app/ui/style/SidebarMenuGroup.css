@@ -1,0 +1,15 @@
+/* SidebarMenuGroup.css */
+.menu-group-title {
+  padding-top: 1rem; /* py-4 */
+  padding-bottom: 1rem; /* py-4 */
+  letter-spacing: 0.1rem; /* tracking-[.1rem] */
+  font-weight: 500; /* font-medium */
+  text-transform: uppercase; /* uppercase */
+  font-size: 0.75rem; /* text-xs */
+  color: #6b7280; /* text-gray-500 */
+  transition: all 0.3s; /* transition duration-300 */
+}
+
+.menu-group-title-centered {
+  text-align: center; /* text-center */
+}
