@@ -1,5 +1,5 @@
 'use client';
-import { SidebarItems } from '@/app/menu_constants';
+import { SIDENAV_ITEMS_ADMIN } from '@/app/menu_constants';
 import classNames from 'classnames';
 // import React, { useEffect, useState } from 'react';
 import { useSideBarToggle } from '@/app/hooks/use-sidebar-toggle';
@@ -25,8 +25,8 @@ export const Sidebar = () => {
                     UStudy
                 </h3>
             </div>
-            <nav className="sidebar-nav">
-                {SidebarItems.map((item, idx) => (
+            <nav className="flex flex-col gap-2 px-4"> {/* Adjusted gap for spacing */}
+                {SIDENAV_ITEMS_ADMIN.map((item, idx) => (
                     <SidebarMenuGroup key={idx} menuGroup={item} />
                 ))}
             </nav>

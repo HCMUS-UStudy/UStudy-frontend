@@ -3,13 +3,13 @@ import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCirc
 
 
 
-export const SidebarItems: SideNavItemGroup[] = [
+export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
 
     {
         title: "Thống Kê",
         menuList: [{
-            title: 'Dashboard',
-            path: '/',
+            title: 'Bảng Thống Kê',
+            path: '/admin/dashboard',
             icon: <BsHouseDoor size={20} />,
         }]
     },
@@ -26,7 +26,7 @@ export const SidebarItems: SideNavItemGroup[] = [
                 //     { title: 'New', path: '/products/new' },
                 // ],
                 title: 'Quản lý tài khoản',
-                path: '/accounts',
+                path: '/admin/accounts',
                 icon: <BsPerson size={20} />,
             },
             {

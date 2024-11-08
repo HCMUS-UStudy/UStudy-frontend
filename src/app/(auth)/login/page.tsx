@@ -1,15 +1,19 @@
-"use client"; 
+"use client";
 
-import React, { useState } from "react"; 
-import Head from "next/head"; 
-import { Button } from '@/app/ui/components/button';
-import { Input } from '@/app/ui/components/input';
-import { Label } from '@/app/ui/components/label';
-import Image from 'next/image';
-import { HiEye, HiEyeOff } from "react-icons/hi"; 
+import Link from "next/link";
+import React, { useState } from "react";
+import Head from "next/head";
+import { Input } from "@/app/ui/components/input";
+import { Label } from "@/app/ui/components/label";
+import Image from "next/image";
+import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
+import Button from "@/app/ui/components/button";
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isFocused, setIsFocused] = useState({ email: false, password: false });
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -18,46 +22,83 @@ export default function Login() {
   return (
     <>
       <Head>
-        <link rel="preload" href="/bgLogin.jpg" as="image" /> {/* Preload image */}
+        <link rel="preload" href="/bgLogin.jpg" as="image" />
       </Head>
       <main
         className="h-screen flex items-center justify-center p-4 md:p-10"
         style={{
-          background: 'linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))',
-        }}
-      >
-        <div className="grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 bg-white rounded-lg shadow-lg overflow-hidden">
+          background:
+            "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
+        }}>
+        <div className="
+          grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 
+          bg-white rounded-lg shadow-lg overflow-hidden">
           
           {/* Login Form Section */}
-          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8">
+          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8 relative">
+            {/* Back to Home Icon */}
+            <Link href="/" className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
+              <HiHome size={24} />
+            </Link>
+
             <div className="mb-8 text-center">
               <h1 className="text-4xl font-bold">Login</h1>
-              <p className="mt-2 text-sm text-gray-600">Empower Your Education and Achieve Your Goals</p>
+              <p className="mt-2 text-sm text-gray-600">
+                Empower Your Education and Achieve Your Goals
+              </p>
             </div>
 
             <form className="w-full max-w-xs">
-              <Label htmlFor="email" className="mb-1">Email*</Label>
-              <Input
-                className="mb-4 p-2 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder:text-gray-400"
-                type="email"
-                id="email"
-                placeholder="Enter your email"
-                required
-              />
-              <Label htmlFor="password" className="mb-1">Password*</Label>
-              <div className="relative mb-6">
+              {/* Floating Label for Email */}
+              <div className="relative mb-4">
                 <Input
-                  className="p-2 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder:text-gray-400"
-                  type={showPassword ? "text" : "password"} // Toggle input type
+                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setIsFocused((prev) => ({ ...prev, email: true }))}
+                  onBlur={() => setIsFocused((prev) => ({ ...prev, email: false }))}
+                  placeholder="Enter your email"
+                  required
+                />
+                <Label
+                  htmlFor="email"
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.email || email
+                      ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
+                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                  }`}>
+                  Enter your email
+                </Label>
+              </div>
+
+              {/* Floating Label for Password */}
+              <div className="relative mb-6 mt-6">
+                <Input
+                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  type={showPassword ? "text" : "password"}
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setIsFocused((prev) => ({ ...prev, password: true }))}
+                  onBlur={() => setIsFocused((prev) => ({ ...prev, password: false }))}
                   placeholder="Enter your password"
                   required
                 />
+                <Label
+                  htmlFor="password"
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.password || password
+                      ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
+                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                  }`}>
+                  Enter your password
+                </Label>
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none"
-                >
+                  className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none">
                   {showPassword ? (
                     <HiEyeOff className="text-gray-600" />
                   ) : (
@@ -65,22 +106,27 @@ export default function Login() {
                   )}
                 </button>
               </div>
+
               <Button
+                onClick={() => {}}
                 type="submit"
-                className="w-full bg-[#0284C7] text-white rounded-full py-2.5 font-semibold text-sm hover:bg-[#0369A1] transition-all duration-200 shadow-md transform hover:scale-105"
-              >
+                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
                 Login
               </Button>
 
-              {/* Move Forgot Password link here */}
+              {/* Forgot Password Link */}
               <div className="flex justify-end w-full mt-4">
                 <p className="text-xs text-gray-600">
-                  <a href="/forgot-password" className="hover:underline">Forgot Password?</a>
+                  <a href="/forgot-password" className="hover:underline">
+                    Forgot Password?
+                  </a>
                 </p>
               </div>
             </form>
 
-            <p className="mt-6 text-xs text-gray-600">&copy; 2024 All rights reserved</p>
+            <p className="mt-6 text-xs text-gray-600">
+              &copy; 2024 All rights reserved
+            </p>
           </div>
 
           {/* Image Section */}
