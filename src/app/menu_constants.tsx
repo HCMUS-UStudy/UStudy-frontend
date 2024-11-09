@@ -1,5 +1,5 @@
 import { SideNavItemGroup } from "@/app/types/type";
-import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCircle, BsArrowClockwise } from "react-icons/bs";
+import { BsBook, BsGear, BsHouseDoor, BsPerson, BsFillPeopleFill, BsQuestionCircle} from "react-icons/bs";
 
 
 
@@ -31,7 +31,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
             },
             {
                 title: 'Quản lý môn học',
-                path: '/courses',
+                path: '/admin/courses',
                 icon: <BsBook size={20} />,
             },
             {
@@ -39,11 +39,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
                 path: '/class',
                 icon: <BsFillPeopleFill size={20} />,
             },
-            {
-                title: 'Khôi phục & Sao lưu',
-                path: '/backup',
-                icon: <BsArrowClockwise size={20} />,
-            }
+            // {
+            //     title: 'Khôi phục & Sao lưu',
+            //     path: '/backup',
+            //     icon: <BsArrowClockwise size={20} />,
+            // }
         ]
     },
     {

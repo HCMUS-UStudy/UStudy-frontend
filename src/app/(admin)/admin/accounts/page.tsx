@@ -113,6 +113,36 @@ const AccountPage: React.FC = () => {
         </Card>
       </div>
 
+      <div className="flex items-center justify-between mt-8 mr-6">
+        <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
+        <form onSubmit={handleSearchSubmit} className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
+          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
+            <input
+              type="text"
+              placeholder="Tìm kiếm người dùng..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300"
+            >
+              <FaSearch className="h-5 w-5" />
+            </button>
+          </div>
+          <select
+            onChange={handleFilterChange}
+            className="ml-4 border-2 border-gray-300 rounded-full px-4 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
+          >
+            <option value="">Lọc</option>
+            <option value="student">Học viên</option>
+            <option value="teacher">Giáo viên</option>
+            <option value="staff">Giáo vụ</option>
+          </select>
+        </form>
+      </div>
+
       <div className="flex justify-end mt-6 mr-6">
         <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
           Tạo người dùng
@@ -123,7 +153,7 @@ const AccountPage: React.FC = () => {
       {showModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-xl shadow-lg w-96 max-w-lg">
-            <h3 className="text-3xl font-semibold mb-6 text-center text-gray-800 mb-6">Tạo người dùng mới</h3>
+            <h3 className="text-3xl font-semibold mb-6 text-center text-gray-800">Tạo người dùng mới</h3>
 
             <form onSubmit={handleSubmitModal} className="space-y-6">
 
@@ -246,8 +276,6 @@ const AccountPage: React.FC = () => {
           </div>
         </div>
       )}
-
-
 
       {/* Table Section */}
       <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
