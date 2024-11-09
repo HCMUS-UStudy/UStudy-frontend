@@ -1,0 +1,48 @@
+/* Sidebar.css */
+.sidebar {
+  overflow-y: auto;
+  position: fixed;
+  background-color: #d5eeff; /* bg-[#D5EEFF] */
+  top: 20px; /* Cách phía trên 20px */
+  left: 20px;
+  bottom: 20px; /* Cách phía dưới 20px */
+  box-shadow: 0 4px 30px rgba(75, 85, 99, 0.5); /* shadow-lg, shadow-slate-700/50 */
+  transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
+  z-index: 99999; /* z-[99999] */
+  border-right: 1px solid #d1d5db; /* border-r border-gray-300 */
+  border-radius: 1rem; /* rounded-2xl */
+}
+
+.sidebar.wide {
+  width: 15rem; /* w-[16rem] */
+}
+
+.sidebar.narrow {
+  width: 5.4rem; /* sm:w-[5.4rem] */
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  padding: 1rem; /* px-4 py-4 */
+}
+
+.sidebar-title {
+  padding-left: 0.5rem; /* pl-2 */
+  font-weight: 600; /* font-semibold */
+  font-size: 1.5rem; /* text-2xl */
+  min-width: max-content; /* min-w-max */
+  color: #4b5563; /* text-gray-700 */
+  transition: opacity 0.3s; /* transition-opacity duration-300 */
+}
+
+.sidebar-title.hidden {
+  display: none; /* hidden */
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* gap-2 */
+  padding: 0 1.2rem; /* px-4 */
+}
