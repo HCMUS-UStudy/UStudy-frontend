@@ -7,10 +7,10 @@ import { ReactNode } from "react";
 export default function PageWrapper({ children }: { children: ReactNode }) {
   const { toggleCollapse } = useSideBarToggle();
   const bodyStyle = classNames(
-    "bg-background flex flex-col mt-16 py-4 p-4 h-full overflow-y-auto",
+    "bg-background flex flex-col py-4 p-4 h-full overflow-y-auto",
     {
-      ["sm:pl-[17rem]"]: !toggleCollapse, // side bar đang mở page rộng ra
-      ["sm:pl-[7rem]"]: toggleCollapse, //side bar đóng page thu lại
+      ["sm:pl-[18rem]"]: !toggleCollapse, // side bar đang mở page rộng ra
+      ["sm:pl-[8rem]"]: toggleCollapse, //side bar đóng page thu lại
     }
   );
 
