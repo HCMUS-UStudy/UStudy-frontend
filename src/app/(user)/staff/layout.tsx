@@ -1,6 +1,6 @@
 import Header from "@/app/ui/components/header";
 import PageWrapper from "@/app/ui/components/pagewrapper";
-import { SideBar, SideBarStaff } from "@/app/ui/sidebar/sidebar";
+import { SideBarStaff } from "@/app/ui/sidebar/sidebar";
 import React from "react";
 
 export default function StaffLayout({

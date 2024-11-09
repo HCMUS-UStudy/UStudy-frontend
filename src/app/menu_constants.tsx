@@ -85,23 +85,18 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
     title: "Quản lý",
     menuList: [
       {
-        title: "Tài khoản giáo viên",
-        path: "/teacher",
-        icon: <BsPerson size={20} />,
-      },
-      {
-        title: "Tài khoản học viên",
-        path: "/student",
+        title: "Quản lý tài khoản",
+        path: "/staff/accounts",
         icon: <BsPerson size={20} />,
       },
       {
         title: "Quản lý môn học",
-        path: "/courses",
+        path: "/staff/courses",
         icon: <BsBook size={20} />,
       },
       {
         title: "Quản lý lớp học",
-        path: "/class",
+        path: "/staff/classes",
         icon: <BsFillPeopleFill size={20} />,
       },
     ],
