@@ -13,7 +13,7 @@ import {
   FaEdit,
   FaTrashAlt,
   FaSearch,
-} from "react-icons/fa"; // Importing icons
+} from "react-icons/fa";
 import { Label } from "@/app/ui/components/label";
 import { Input } from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
