@@ -31,7 +31,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
             },
             {
                 title: 'Quản lý môn học',
-                path: '/courses',
+                path: '/admin/courses',
                 icon: <BsBook size={20} />,
             },
             {
