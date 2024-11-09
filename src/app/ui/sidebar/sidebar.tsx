@@ -1,17 +1,34 @@
 "use client";
-import { SIDENAV_ITEMS_ADMIN, SIDENAV_ITEMS_STAFF } from "@/app/menu_constants";
 import classNames from "classnames";
-// import React, { useEffect, useState } from 'react';
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
-import SidebarMenuGroup from "./SidebarMenuGroup";
+import React, { useEffect } from "react";
+import SidebarMenu from "./SidebarMenu";
+import { SideNavItemGroup } from '@/app/types/type';
 import "../style/Sidebar.css"; // Import file CSS
 // import { BsList } from 'react-icons/bs';
 import { RiArrowLeftSLine } from "react-icons/ri";
 
-export const Sidebar = () => {
-  // const [mounted, setMounted] = useState(false);
-  // const { toggleCollapse } = useSideBarToggle();
-  const { toggleCollapse, invokeToggleCollapse } = useSideBarToggle();
+const Sidebar = ({ menuItems } : { menuItems: SideNavItemGroup[]}) => {
+  const { toggleCollapse, setToggleCollapse, invokeToggleCollapse } = useSideBarToggle();
+
+  // Auto-collapse sidebar on screens smaller than 1024px
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setToggleCollapse(true);
+      } else {
+        setToggleCollapse(false);
+      }
+    };
+
+    handleResize(); // Set initial state based on screen width
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [setToggleCollapse]);
+
   const sidebarToggle = () => {
     invokeToggleCollapse();
   };
@@ -25,13 +42,11 @@ export const Sidebar = () => {
     isLeft: !toggleCollapse,
     isRight: toggleCollapse,
   });
-  // useEffect(() => setMounted(true), []);
 
   return (
     <>
       <aside className={asideStyle}>
         <div className="sidebar-top justify-center">
-          {/* {<SidebarLogo />} */}
           <h3
             className={classNames("sidebar-title", { hidden: toggleCollapse })}>
             <div className="US">US</div>
@@ -40,9 +55,8 @@ export const Sidebar = () => {
         </div>
         <nav className="flex flex-col gap-2 px-4">
           {" "}
-          {/* Adjusted gap for spacing */}
-          {SIDENAV_ITEMS_ADMIN.map((item, idx) => (
-            <SidebarMenuGroup key={idx} menuGroup={item} />
+          {menuItems.map((item, idx) => (
+            <SidebarMenu key={idx} menuGroup={item} />
           ))}
         </nav>
       </aside>
@@ -53,47 +67,4 @@ export const Sidebar = () => {
   );
 };
 
-export const SideBarStaff = () => {
-  // const [mounted, setMounted] = useState(false);
-  // const { toggleCollapse } = useSideBarToggle();
-  const { toggleCollapse, invokeToggleCollapse } = useSideBarToggle();
-  const sidebarToggle = () => {
-    invokeToggleCollapse();
-  };
-
-  const asideStyle = classNames("sidebar", {
-    wide: !toggleCollapse,
-    narrow: toggleCollapse,
-  });
-
-  const sidebarToggleStyle = classNames("sidebar-toggle", {
-    isLeft: !toggleCollapse,
-    isRight: toggleCollapse,
-  });
-  // useEffect(() => setMounted(true), []);
-
-  return (
-    <>
-      <aside className={asideStyle}>
-        <div className="sidebar-top justify-center">
-          {/* {<SidebarLogo />} */}
-          <h3
-            className={classNames("sidebar-title", { hidden: toggleCollapse })}>
-            <div className="US">US</div>
-            <div>tudy</div>
-          </h3>
-        </div>
-        <nav className="flex flex-col gap-2 px-4">
-          {" "}
-          {/* Adjusted gap for spacing */}
-          {SIDENAV_ITEMS_STAFF.map((item, idx) => (
-            <SidebarMenuGroup key={idx} menuGroup={item} />
-          ))}
-        </nav>
-      </aside>
-      <button className={sidebarToggleStyle} onClick={sidebarToggle}>
-        <RiArrowLeftSLine size={14} />
-      </button>
-    </>
-  );
-};
+export default Sidebar;

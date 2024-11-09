@@ -2,7 +2,8 @@
 import { usePathname } from 'next/navigation';
 import Header from "@/app/ui/components/header";
 import PageWrapper from "@/app/ui/components/pagewrapper";
-import { Sidebar } from "@/app/ui/sidebar/sidebar";
+import Sidebar from "@/app/ui/sidebar/sidebar";
+import { SIDENAV_ITEMS_ADMIN } from "@/app/menu_constants";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -14,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className='bg-background'>
-            <Sidebar />
+            <Sidebar menuItems={SIDENAV_ITEMS_ADMIN}/>
             <div className="flex flex-col h-full w-full">
                 <Header />
                 <PageWrapper> {children} </PageWrapper>
