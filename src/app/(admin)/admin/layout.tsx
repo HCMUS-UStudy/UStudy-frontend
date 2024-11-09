@@ -13,12 +13,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     return (
-        <>
+        <div className='bg-background'>
             <Sidebar />
             <div className="flex flex-col h-full w-full">
                 <Header />
                 <PageWrapper> {children} </PageWrapper>
             </div>
-        </>
+        </div>
     );
 }

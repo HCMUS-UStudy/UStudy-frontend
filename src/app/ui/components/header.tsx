@@ -1,39 +1,59 @@
 'use client';
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
+import { useState } from "react";
 import classNames from "classnames";
-import { BsList } from "react-icons/bs";
-import { UserNav } from "./usernav";
+import { PiHandWavingThin } from "react-icons/pi";
+import "../style/Header.css";
+import { IoSearch } from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
+
+// import { UserNav } from "./usernav";
 
 export default function Header() {
-    const { toggleCollapse, invokeToggleCollapse } = useSideBarToggle();
-    const sidebarToggle = () => {
-        invokeToggleCollapse();
-    }
+    const { toggleCollapse } = useSideBarToggle();
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
 
     const headerStyle = classNames(
-        "bg-[#D5EEFF] fixed w-[calc(100%-1rem)] ml-4 z-[99997] px-6 py-1 shadow-md shadow-slate-500/30 rounded-2xl transition-all duration-300 ease-in-out", 
+        // "bg-[#D5EEFF] fixed w-[calc(100%-1rem)] ml-4 z-[99997] px-6 py-1 shadow-md shadow-slate-500/30 rounded-2xl transition-all duration-300 ease-in-out", 
         {
-            ["sm:pl-[16rem]"]: !toggleCollapse,
-            ["sm:pl-[5.6rem]"]: toggleCollapse,
+            ["header isWide"]: !toggleCollapse,
+            ["header isNarrow"]: toggleCollapse,
         }
     );
 
     return (
-        <header className={headerStyle}>
-            <div className="h-12 flex items-center justify-between">
-                <button
-                    onClick={sidebarToggle}
-                    className="order-2 sm:order-1 bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-800 rounded-lg w-8 h-8 flex items-center justify-center shadow-md shadow-gray-400/20 transition duration-300 ease-in-out"
-                >
-                    <BsList size={18}  />
-                </button>
-
-                <div className="flex items-center justify-between sm:order-2 order-1">
-                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center shadow-inner text-gray-700 mr-3">
-                        <UserNav />
-                    </div>
+        <div className={headerStyle}>
+            <div className="hello">
+                <div className="first-line">
+                    Hello Admin!! {<PiHandWavingThin className="icon" size={25} />}
+                </div>
+                <div className="second-line">
+                    Welcome back to Admin Page!
                 </div>
             </div>
-        </header>
+
+            <div className="search-bar">
+                <input type="text" placeholder="Search" />
+                <IoSearch className="search-icon" size={24} />
+            </div>
+
+            <div className="branch-selector" onClick={toggleDropdown}>
+                <select className="branch-dropdown">
+                    <option value="">Select a branch</option>
+                    <option value="branch1">Branch 1</option>
+                    <option value="branch2">Branch 2</option>
+                    <option value="branch3">Branch 3</option>
+                    {/* More branches */}
+                </select>
+            </div>
+
+            <div className="notification">
+                <IoNotificationsOutline size={24} />
+            </div>
+
+        </div>
     );
 }

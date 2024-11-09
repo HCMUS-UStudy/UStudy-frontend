@@ -6,7 +6,6 @@ import {
   BsPerson,
   BsFillPeopleFill,
   BsQuestionCircle,
-  BsArrowClockwise,
 } from "react-icons/bs";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
@@ -24,32 +23,19 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
     title: "Quản lý",
     menuList: [
       {
-        // title: 'Products',
-        // path: '/products',
-        // icon: <BsKanban size={20} />,
-        // submenu: true,
-        // subMenuItems: [
-        //     { title: 'All', path: '/products' },
-        //     { title: 'New', path: '/products/new' },
-        // ],
         title: "Quản lý tài khoản",
         path: "/admin/accounts",
         icon: <BsPerson size={20} />,
       },
       {
         title: "Quản lý môn học",
-        path: "/courses",
+        path: "/admin/courses",
         icon: <BsBook size={20} />,
       },
       {
         title: "Quản lý lớp học",
-        path: "/class",
+        path: "/admin/class",
         icon: <BsFillPeopleFill size={20} />,
-      },
-      {
-        title: "Khôi phục & Sao lưu",
-        path: "/backup",
-        icon: <BsArrowClockwise size={20} />,
       },
     ],
   },
