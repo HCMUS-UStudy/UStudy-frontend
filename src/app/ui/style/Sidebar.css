@@ -1,4 +1,13 @@
 /* Sidebar.css */
+:root {
+  --sidebar-width-wide: 224px;  /* Biến cho width của sidebar rộng */
+  --sidebar-width-narrow: 87px;  /* Biến cho width của sidebar hẹp */
+}
+
+.US {
+  color: #0369a1;
+}
+
 .sidebar {
   overflow-y: auto;
   position: fixed;
@@ -6,33 +15,32 @@
   top: 20px; /* Cách phía trên 20px */
   left: 20px;
   bottom: 20px; /* Cách phía dưới 20px */
-  box-shadow: 0 4px 30px rgba(75, 85, 99, 0.5); /* shadow-lg, shadow-slate-700/50 */
-  transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
-  z-index: 99999; /* z-[99999] */
+  box-shadow: 0 4px 10px rgba(75, 85, 99, 0.5); /* shadow-lg, shadow-slate-700/50 */
   border-right: 1px solid #d1d5db; /* border-r border-gray-300 */
   border-radius: 1rem; /* rounded-2xl */
+  transition: width 0.3s ease-in-out; /* transition-width duration-300 */
 }
 
 .sidebar.wide {
-  width: 15rem; /* w-[16rem] */
+  width: var(--sidebar-width-wide);
 }
 
 .sidebar.narrow {
-  width: 5.4rem; /* sm:w-[5.4rem] */
+  width: var(--sidebar-width-narrow);
 }
 
 .sidebar-top {
   display: flex;
   align-items: center;
-  padding: 1rem; /* px-4 py-4 */
+  padding: 40px; /* px-4 py-4 */
 }
 
 .sidebar-title {
+  display: flex;
   padding-left: 0.5rem; /* pl-2 */
-  font-weight: 600; /* font-semibold */
+  font-weight: bold; /* font-bold */
   font-size: 1.5rem; /* text-2xl */
   min-width: max-content; /* min-w-max */
-  color: #4b5563; /* text-gray-700 */
   transition: opacity 0.3s; /* transition-opacity duration-300 */
 }
 
@@ -45,4 +53,23 @@
   flex-direction: column;
   gap: 0.5rem; /* gap-2 */
   padding: 0 1.2rem; /* px-4 */
+}
+
+.sidebar-toggle {
+  position: fixed;
+  top: 50%;
+  left: calc(5px + var(--sidebar-width-wide)); /* Điều chỉnh khoảng cách của nút toggle so với cạnh phải của sidebar */
+  transition: all 0.3s; /* transition-all duration-300 */
+  transform: translateY(-50%);
+  background-color: #ebebeb;
+  color: black;
+  padding: 0.3rem;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3); /* Đổ bóng */
+}
+
+.isRight {
+  left: calc(5px + var(--sidebar-width-narrow));
+  rotate: 180deg; /* rotate-180 */
 }
