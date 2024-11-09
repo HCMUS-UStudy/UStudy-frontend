@@ -1,11 +1,20 @@
+:root {
+  --sidebar-width-wide: 224px;  /* Biến cho width của sidebar rộng */
+  --sidebar-width-narrow: 87px;  /* Biến cho width của sidebar hẹp */
+}
+
 .header {
   margin-top: 25px;
-  margin-left: 19rem;
+  margin-left: calc(66px + var(--sidebar-width-wide));;
   display: flex;
   /* justify-content: space-between; */
   align-items: center;
   background-color: #F9FBFC; /* Màu nền sáng cho header */
   gap: 20px;
+}
+
+.header.isNarrow {
+  margin-left: calc(66px + var(--sidebar-width-narrow));
 }
 
 .hello .first-line {
@@ -60,4 +69,39 @@
   border: #c1baba 1px solid;
   border-radius: 18px;
   padding: 12px;
+}
+
+
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .search-bar {
+    max-width: 50%;
+    width: 50%;
+  }
+
+  .hello .first-line {
+    font-size: 20px;
+  }
+
+  .hello .second-line {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hello {
+    align-items: center;
+  }
+
+  .header {
+    gap: 10px;
+  }
+
+  .search-bar {
+    padding: 8px 12px;
+  }
 }
