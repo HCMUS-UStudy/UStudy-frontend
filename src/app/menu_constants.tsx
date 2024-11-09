@@ -8,7 +8,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
     {
         title: "Thống Kê",
         menuList: [{
-            title: 'Bảng Thống Kê',
+            title: 'Bảng thống kê',
             path: '/admin/dashboard',
             icon: <BsHouseDoor size={20} />,
         }]
@@ -36,7 +36,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
             },
             {
                 title: 'Quản lý lớp học',
-                path: '/class',
+                path: '/admin/class',
                 icon: <BsFillPeopleFill size={20} />,
             },
             // {
