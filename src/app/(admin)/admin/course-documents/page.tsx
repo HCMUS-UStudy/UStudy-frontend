@@ -1,23 +1,38 @@
 "use client";
-
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 const CourseDocumentsPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const searchParams = useSearchParams();
-  const subject = searchParams.get('subject');  // Get the 'subject' query parameter from the URL
+  const subject = searchParams.get("subject"); // Get the 'subject' query parameter from the URL
 
   // Sample course data, replace with actual API call if needed
   const courses = [
-    { subject: 'Toán học', description: 'Khóa học này dành cho các bạn học sinh lớp 10', notes: 'Chưa hoàn thành bài tập cuối kỳ' },
-    { subject: 'Ngữ văn', description: 'Khóa học này dành cho các bạn học sinh lớp 11', notes: 'Cần cập nhật tài liệu' },
-    { subject: 'Tiếng Anh', description: 'Khóa học này dành cho các bạn học sinh lớp 12', notes: 'Cần thêm phần nghe' },
-    { subject: 'Vật lý', description: 'Khóa học này dành cho các bạn học sinh lớp 10', notes: 'Không còn sử dụng tài liệu này nữa' },
+    {
+      subject: "Toán học",
+      description: "Khóa học này dành cho các bạn học sinh lớp 10",
+      notes: "Chưa hoàn thành bài tập cuối kỳ",
+    },
+    {
+      subject: "Ngữ văn",
+      description: "Khóa học này dành cho các bạn học sinh lớp 11",
+      notes: "Cần cập nhật tài liệu",
+    },
+    {
+      subject: "Tiếng Anh",
+      description: "Khóa học này dành cho các bạn học sinh lớp 12",
+      notes: "Cần thêm phần nghe",
+    },
+    {
+      subject: "Vật lý",
+      description: "Khóa học này dành cho các bạn học sinh lớp 10",
+      notes: "Không còn sử dụng tài liệu này nữa",
+    },
   ];
 
   // Find the selected course based on the subject parameter
-  const selectedCourse = courses.find(course => course.subject === subject);
+  const selectedCourse = courses.find((course) => course.subject === subject);
 
   if (!selectedCourse) {
     return <div>Không tìm thấy tài liệu cho môn học này.</div>;
@@ -25,7 +40,9 @@ const CourseDocumentsPage: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold tracking-tight my-4">Tài liệu môn học: {selectedCourse.subject}</h2>
+      <h2 className="text-3xl font-bold tracking-tight my-4">
+        Tài liệu môn học: {selectedCourse.subject}
+      </h2>
       <p className="text-lg mb-6">{selectedCourse.description}</p>
 
       <h3 className="text-xl font-semibold mb-4">Ghi chú:</h3>

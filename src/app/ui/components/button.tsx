@@ -26,4 +26,5 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
+// export default dynamic(() => Promise.resolve(Button), { ssr: false });
 export default Button;

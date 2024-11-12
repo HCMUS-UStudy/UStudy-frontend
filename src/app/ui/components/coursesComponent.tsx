@@ -1,17 +1,11 @@
 "use client";
-
-import React, { useState } from "react";
-import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/ui/components/card";
-import Button from "@/app/ui/components/button";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaPaperclip } from "react-icons/fa6";
+import Button from "./button";
 
-const CoursePage: React.FC = () => {
+export default function CoursesComponent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const router = useRouter();
@@ -256,6 +250,4 @@ const CoursePage: React.FC = () => {
       </div>
     </>
   );
-};
-
-export default CoursePage;
+}
