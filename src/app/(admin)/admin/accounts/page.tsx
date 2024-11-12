@@ -81,9 +81,10 @@ const AccountPage: React.FC = () => {
   const startIndex = (currentPage - 1) * usersPerPage;
   const paginatedUsers = users.slice(startIndex, startIndex + usersPerPage);
 
-  const handlePreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-
+  const handlePreviousPage = () =>
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   return (
     <>
@@ -213,10 +214,11 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.email || email
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.email || email
                       ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  }`}>
                   Enter your email
                 </Label>
               </div>
@@ -242,10 +244,11 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="name"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.name || name
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.name || name
                       ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  }`}>
                   Enter your name
                 </Label>
               </div>
@@ -344,8 +347,12 @@ const AccountPage: React.FC = () => {
                 <td className="px-6 py-4 text-sm text-gray-700">{user.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{user.id}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{user.status}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{user.createdAt}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {user.status}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {user.createdAt}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
                     <FaEdit className="h-5 w-5" />
@@ -363,27 +370,28 @@ const AccountPage: React.FC = () => {
         {/* Previous Button */}
         <Button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === 1
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
+            currentPage === 1
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          disabled={currentPage === 1}
-        >
+          }`}
+          disabled={currentPage === 1}>
           Previous
         </Button>
 
         {/* Page Numbers with a Max of 3 Pages */}
         {Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
-          const page = Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
+          const page =
+            Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
           return (
             <button
               key={index}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${currentPage === page
+              className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
+                currentPage === page
                   ? "bg-blue-700 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-            >
+              }`}>
               {page}
             </button>
           );
@@ -392,17 +400,15 @@ const AccountPage: React.FC = () => {
         {/* Next Button */}
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === totalPages
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
+            currentPage === totalPages
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          disabled={currentPage === totalPages}
-        >
+          }`}
+          disabled={currentPage === totalPages}>
           Next
         </Button>
       </div>
-
-
     </>
   );
 };

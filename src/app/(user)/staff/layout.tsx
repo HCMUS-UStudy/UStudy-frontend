@@ -11,7 +11,7 @@ export default function StaffLayout({
 }) {
   return (
     <>
-      <Sidebar menuItems={SIDENAV_ITEMS_STAFF}/>
+      <Sidebar menuItems={SIDENAV_ITEMS_STAFF} />
       <div className="flex flex-col h-full w-full">
         <Header />
         <PageWrapper>{children}</PageWrapper>

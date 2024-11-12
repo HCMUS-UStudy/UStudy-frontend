@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaEdit, FaTrashAlt, FaPaperclip, FaTimes } from "react-icons/fa";
