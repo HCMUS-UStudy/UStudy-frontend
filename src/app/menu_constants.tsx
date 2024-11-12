@@ -10,10 +10,10 @@ import {
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
   {
-    title: "Thống Kê",
+    title: "Thống kê",
     menuList: [
       {
-        title: "Bảng Thống Kê",
+        title: "Bảng thống kê",
         path: "/admin/dashboard",
         icon: <BsHouseDoor size={20} />,
       },
@@ -58,11 +58,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
 
 export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
   {
-    title: "Thống Kê",
+    title: "Thống kê",
     menuList: [
       {
-        title: "Bảng Thống Kê",
-        path: "/staff",
+        title: "Bảng thống kê",
+        path: "/staff/dashboard",
         icon: <BsHouseDoor size={20} />,
       },
     ],

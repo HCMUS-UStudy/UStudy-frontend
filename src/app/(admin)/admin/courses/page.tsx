@@ -1,26 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/ui/components/card";
+import { useDropzone } from "react-dropzone";
+import { FaEdit, FaTrashAlt, FaPaperclip, FaTimes } from "react-icons/fa";
 import Button from "@/app/ui/components/button";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const CoursePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
-  const router = useRouter();
 
-  const onCreateCourse = () => {
-    //setShowModal(true);
-  };
-
-  const courses = [
+  //Modals
+  const [showModal, setShowModal] = useState(false);
+  const [courses, setCourses] = useState([
     {
       creator: "Daniel Grant",
       subject: "Toán học",
@@ -120,7 +112,36 @@ const CoursePage: React.FC = () => {
       status: "Active",
       notes: "Cần cập nhật tài liệu mới nhất",
     },
-  ];
+  ]);
+
+  const onCreateCourse = () => {
+    setShowModal(true);
+  };
+
+  const [formData, setFormData] = useState({
+    creator: "",
+    subject: "",
+    attachments: 0,
+    description: "",
+    notes: "",
+    createdAt: new Date().toLocaleDateString(),
+    status: "Active",
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveCourse = () => {
+    setCourses((prevCourses) => [...prevCourses, formData]);
+    setShowModal(false);
+  };
 
   const filteredCourses = courses.filter((course) => {
     return (
@@ -132,9 +153,49 @@ const CoursePage: React.FC = () => {
   });
 
   const handleAttachmentClick = (subject: string) => {
-    // Navigate to the course page using the subject
-    router.push(`/admin/course-documents?subject=${subject}`);
+    return `/admin/course-documents/${encodeURIComponent(subject)}`;
   };
+
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 4;
+
+  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+  const startIndex = (currentPage - 1) * coursesPerPage;
+  const paginatedCourses = filteredCourses.slice(
+    startIndex,
+    startIndex + coursesPerPage
+  );
+
+  const handlePreviousPage = () =>
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPages = Math.min(3, totalPages);
+
+    let start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+    for (let i = start; i < start + maxPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
+  //Files
+  const [files, setFiles] = useState<File[]>([]);
+
+  const onDrop = (acceptedFiles: File[]) => {
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <>
@@ -208,7 +269,7 @@ const CoursePage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCourses.map((course, index) => (
+            {paginatedCourses.map((course, index) => (
               <tr
                 key={index}
                 className="hover:bg-gray-50 transition-all duration-200">
@@ -218,12 +279,15 @@ const CoursePage: React.FC = () => {
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   {course.subject}
                 </td>
-                <td
-                  className="px-6 py-4 text-sm text-gray-700 mt-3 flex items-center hover:underline"
-                  onClick={() => handleAttachmentClick(course.subject)}>
-                  {course.attachments}
-                  <FaPaperclip className=" ml-2 text-green-500" />
+                <td className="px-6 py-4 text-sm text-gray-700 mt-3 flex items-center hover:underline">
+                  <Link
+                    href={handleAttachmentClick(course.subject)}
+                    className="flex">
+                    {course.attachments}
+                    <FaPaperclip className="ml-2 mt-1 text-green-500" />
+                  </Link>
                 </td>
+
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {course.description}
                 </td>
@@ -253,6 +317,145 @@ const CoursePage: React.FC = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/*Show modal*/}
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
+            <h2 className="text-3xl font-semibold mb-6 text-center">
+              Tạo khóa học mới
+            </h2>
+
+            <label className="block text-sm font-medium text-gray-700">
+              Người tạo
+            </label>
+            <input
+              type="text"
+              name="creator"
+              value={formData.creator}
+              onChange={handleInputChange}
+              className="w-full border rounded p-2 mb-4"
+              placeholder="Người tạo"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">
+              Môn học
+            </label>
+            <input
+              type="text"
+              name="subject"
+              value={formData.subject}
+              onChange={handleInputChange}
+              className="w-full border rounded p-2 mb-4"
+              placeholder="Môn học"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-4">
+              Số lượng tệp đính kèm
+            </label>
+            {/* File Drop Zone */}
+            <div
+              {...getRootProps({
+                className:
+                  "border-2 border-dashed border-gray-300 rounded-lg p-4 text-center mb-4 cursor-pointer",
+              })}>
+              <input {...getInputProps()} />
+              <p>Kéo và thả file vào đây, hoặc nhấp để chọn tệp</p>
+            </div>
+
+            {/* Display selected files with delete button */}
+            {files.length > 0 && (
+              <ul className="mb-4 space-y-2">
+                {files.map((file, index) => (
+                  <li
+                    key={index}
+                    className="flex justify-between items-center text-gray-700">
+                    {file.name}
+                    <button
+                      onClick={() => removeFile(index)}
+                      className="text-red-500 hover:text-red-700">
+                      <FaTimes />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <label className="block text-sm font-medium text-gray-700">
+              Mô tả
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="w-full border rounded p-2 mb-4"
+              placeholder="Mô tả khóa học"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">
+              Ghi chú
+            </label>
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleInputChange}
+              className="w-full border rounded p-2 mb-4"
+              placeholder="Ghi chú"
+            />
+
+            <div className="flex justify-end space-x-4">
+              <Button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-300 text-gray-700">
+                Hủy
+              </Button>
+              <Button
+                onClick={handleSaveCourse}
+                className="bg-blue-500 text-white">
+                Lưu
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pagination Section */}
+      <div className="flex justify-end mt-6 mr-6 space-x-2">
+        <button
+          onClick={handlePreviousPage}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+            currentPage === 1
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
+          disabled={currentPage === 1}>
+          Previous
+        </button>
+
+        {getPageNumbers().map((page) => (
+          <Button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${
+              currentPage === page
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}>
+            {page}
+          </Button>
+        ))}
+
+        <Button
+          onClick={handleNextPage}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+            currentPage === totalPages
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
+          disabled={currentPage === totalPages}>
+          Next
+        </Button>
       </div>
     </>
   );

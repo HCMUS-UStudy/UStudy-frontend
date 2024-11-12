@@ -10,7 +10,7 @@ import '../style/SidebarMenu.css'; // Import file CSS
 const getLinkClass = (isActive: boolean, toggleCollapse: boolean) =>
 	classNames("inactive-link", {
 		"active-link": isActive,
-		"justify-center": toggleCollapse,
+		"justify-center": toggleCollapse
 	});
 
 
@@ -30,7 +30,7 @@ const SidebarMenuItem = ({ item }: { item: SideNavItem }) => {
 	);
 };
 
-const SidebarMenuGroup = ({ menuGroup }: { menuGroup: SideNavItemGroup }) => {
+const SidebarMenu = ({ menuGroup }: { menuGroup: SideNavItemGroup }) => {
     const { toggleCollapse } = useSideBarToggle();
 
     const menuGroupTitleStyle = classNames(
@@ -48,4 +48,4 @@ const SidebarMenuGroup = ({ menuGroup }: { menuGroup: SideNavItemGroup }) => {
     );
 };
 
-export default SidebarMenuGroup;
+export default SidebarMenu;
