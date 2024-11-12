@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { FaEdit, FaTrashAlt, FaPaperclip, FaTimes } from 'react-icons/fa';
+import { FaEdit, FaTrashAlt, FaPaperclip, FaTimes, FaSearch } from 'react-icons/fa';
 import Button from '@/app/ui/components/button';
 import Link from 'next/link';
 
 const CoursePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
+
+  const [selectedCourses, setSelectedCourses] = useState<Set<string>>(new Set());
+  const [isSelectMode, setIsSelectMode] = useState(false);
 
   //Modals
   const [showModal, setShowModal] = useState(false);
@@ -24,11 +27,11 @@ const CoursePage: React.FC = () => {
     { creator: 'Daniel Grant', subject: 'Giáo dục công dân', attachments: 100, description: 'Khóa học này dành cho các bạn học sinh lớp 12', createdAt: '14 Feb 2024', status: 'Active', notes: 'Tài liệu còn thiếu phần thực tế' },
     { creator: 'Daniel Grant', subject: 'Tin học', attachments: 100, description: 'Khóa học này dành cho các bạn học sinh lớp 10', createdAt: '14 Feb 2024', status: 'Deleted', notes: 'Chưa hoàn thành các phần bài tập lập trình' },
     { creator: 'Daniel Grant', subject: 'Công nghệ', attachments: 100, description: 'Khóa học này dành cho các bạn học sinh lớp 11', createdAt: '14 Feb 2024', status: 'Active', notes: 'Cần cập nhật tài liệu mới nhất' },
-  
+
   ]);
-  
+
   const onCreateCourse = () => {
-    setShowModal(true); 
+    setShowModal(true);
   };
 
   const [formData, setFormData] = useState({
@@ -63,6 +66,15 @@ const CoursePage: React.FC = () => {
 
   const handleAttachmentClick = (subject: string) => {
     return `/admin/course-documents/${encodeURIComponent(subject)}`;
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log("Search query submitted:", searchQuery);
   };
 
   //pagination
@@ -101,17 +113,63 @@ const CoursePage: React.FC = () => {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
+  const toggleCourseSelection = (courseId: string) => {
+    setSelectedCourses((prevSelectedCourses) => {
+      const updatedCourses = new Set(prevSelectedCourses);
+      if (updatedCourses.has(courseId)) {
+        updatedCourses.delete(courseId); // Bỏ chọn
+      } else {
+        updatedCourses.add(courseId); // Chọn
+      }
+      return updatedCourses;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedCourses.size === filteredCourses.length) {
+      setSelectedCourses(new Set()); // Bỏ chọn tất cả
+    } else {
+      const allCourseIds = filteredCourses.map((course) => course.subject); // Sử dụng subject làm khóa ID
+      setSelectedCourses(new Set(allCourseIds)); // Chọn tất cả
+    }
+  };
+  const handleSelectButtonClick = () => {
+    setIsSelectMode((prev) => {
+      if (prev) {
+        setSelectedCourses(new Set());
+      }
+      return !prev;
+    });
+  };
+
   return (
     <>
       <h2 className="text-3xl font-bold tracking-tight my-4">Quản lý tài liệu môn học</h2>
       <h2 className="text-xl tracking-tight mb-6">Tìm tất cả tài liệu của nền tảng tại đây</h2>
 
-      <div className="flex items-center justify-between mt-6 mr-6">
-        <div className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
+      <div className="flex items-center justify-between mt-8 mr-6">
+        <h2 className="text-2xl font-bold">Tổng số môn học ({filteredCourses.length})</h2>
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
+          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
+            <input
+              type="text"
+              placeholder="Tìm kiếm môn học..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
+              <FaSearch className="h-5 w-5" />
+            </button>
+          </div>
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="ml-4 border-2 bg-sky-100 border-gray-300 rounded-full px-6 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
+            className="border-2 bg-sky-100 border-gray-300 rounded-full px-6 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
           >
             <option value="">Tất cả môn học</option>
             <option value="math">Toán học</option>
@@ -126,21 +184,47 @@ const CoursePage: React.FC = () => {
             <option value="informatics">Tin học</option>
             <option value="technology">Công nghệ</option>
           </select>
-          <h2 className="text-lg text-slate-400">{filteredCourses.length} khóa học đã được liệt kê</h2>
+        </form>
+      </div>
+
+      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
+        {/* Select Mode Button */}
+        <div className='flex'>
+          <Button onClick={handleSelectButtonClick} className="mr-4">
+            {isSelectMode ? 'Cancel' : 'Select Courses'}
+          </Button>
+
+          {/* Conditional buttons for Delete All and Move All */}
+          {isSelectMode && (
+            <div className="flex">
+              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-end">
-          <Button onClick={onCreateCourse} type="button" className="pl-6 pr-6">
+        <div className="flex items-center space-x-4">
+          <Button onClick={onCreateCourse} type="button" className="pl-6 pr-6 mr-6">
             Tạo môn học
           </Button>
         </div>
       </div>
+
 
       {/* Table Section */}
       <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
         <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
           <thead className="bg-gray-100">
             <tr>
+              {isSelectMode && (
+                <th className="py-3 px-4 text-left">
+                  <input
+                    type="checkbox"
+                    checked={selectedCourses.size === paginatedCourses.length}
+                    onChange={handleSelectAll}
+                    className="form-checkbox"
+                  />
+                </th>
+              )}
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">Người tạo</th>
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">Môn học</th>
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">Tệp đính kèm</th>
@@ -153,7 +237,17 @@ const CoursePage: React.FC = () => {
           </thead>
           <tbody>
             {paginatedCourses.map((course, index) => (
-              <tr key={index} className="hover:bg-gray-50 transition-all duration-200">
+              <tr key={course.subject} className="hover:bg-gray-50 transition-all duration-200">
+                {isSelectMode && (
+                  <td className="py-2 px-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedCourses.has(course.subject)}
+                      onChange={() => toggleCourseSelection(course.subject)}
+                      className="form-checkbox"
+                    />
+                  </td>
+                )}
                 <td className="px-6 py-4 text-sm text-gray-700">{course.creator}</td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">{course.subject}</td>
                 <td className="px-6 py-4 text-sm text-gray-700 mt-3 flex items-center hover:underline">
@@ -190,7 +284,7 @@ const CoursePage: React.FC = () => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
             <h2 className="text-3xl font-semibold mb-6 text-center">Tạo khóa học mới</h2>
-            
+
             <label className="block text-sm font-medium text-gray-700">Người tạo</label>
             <input
               type="text"
@@ -200,7 +294,7 @@ const CoursePage: React.FC = () => {
               className="w-full border rounded p-2 mb-4"
               placeholder="Người tạo"
             />
-            
+
             <label className="block text-sm font-medium text-gray-700">Môn học</label>
             <input
               type="text"
@@ -210,7 +304,7 @@ const CoursePage: React.FC = () => {
               className="w-full border rounded p-2 mb-4"
               placeholder="Môn học"
             />
-            
+
             <label className="block text-sm font-medium text-gray-700 mb-4">Số lượng tệp đính kèm</label>
             {/* File Drop Zone */}
             <div {...getRootProps({ className: 'border-2 border-dashed border-gray-300 rounded-lg p-4 text-center mb-4 cursor-pointer' })}>
@@ -231,7 +325,7 @@ const CoursePage: React.FC = () => {
                 ))}
               </ul>
             )}
-            
+
             <label className="block text-sm font-medium text-gray-700">Mô tả</label>
             <textarea
               name="description"
@@ -240,7 +334,7 @@ const CoursePage: React.FC = () => {
               className="w-full border rounded p-2 mb-4"
               placeholder="Mô tả khóa học"
             />
-            
+
             <label className="block text-sm font-medium text-gray-700">Ghi chú</label>
             <textarea
               name="notes"
@@ -249,7 +343,7 @@ const CoursePage: React.FC = () => {
               className="w-full border rounded p-2 mb-4"
               placeholder="Ghi chú"
             />
-            
+
             <div className="flex justify-end space-x-4">
               <Button onClick={() => setShowModal(false)} className="bg-gray-300 text-gray-700">
                 Hủy
@@ -266,36 +360,53 @@ const CoursePage: React.FC = () => {
       <div className="flex justify-end mt-6 mr-6 space-x-2">
         <button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
-            currentPage === 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600'
+            }`}
           disabled={currentPage === 1}
         >
           Previous
         </button>
 
-        {getPageNumbers().map((page) => (
+        {totalPages === 1 ? (
           <Button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${
-              currentPage === page ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            key={1}
+            onClick={() => setCurrentPage(1)}
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
+              ? 'bg-blue-700 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
           >
-            {page}
+            1
           </Button>
-        ))}
+        ) : (
+          getPageNumbers().map((page) => (
+            <Button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
+                ? 'bg-blue-700 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+            >
+              {page}
+            </Button>
+          ))
+        )}
 
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
-            currentPage === totalPages ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600'
+            }`}
           disabled={currentPage === totalPages}
         >
           Next
         </Button>
       </div>
+
     </>
   );
 };
