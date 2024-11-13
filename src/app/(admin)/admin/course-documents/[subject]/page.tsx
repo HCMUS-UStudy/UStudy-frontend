@@ -46,6 +46,7 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [selectedFolders, setSelectedFolders] = useState<Set<number>>(new Set());
   const [isSelectMode, setIsSelectMode] = useState(false);
+  const [allSelected, setAllSelected] = useState(false); // Track select all state
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const foldersPerPage = 5;
 
@@ -132,7 +133,12 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
   };
 
   const handleSelectAll = () => {
-    setSelectedFolders(new Set(paginatedFolders.map((folder) => folder.id))); // Select all folders on the current page
+    if (allSelected) {
+      setSelectedFolders(new Set());
+    } else {
+      setSelectedFolders(new Set(paginatedFolders.map((folder) => folder.id))); // Select all folders on the current page
+    }
+    setAllSelected(!allSelected);
   };
 
   // Safely access folders by subject using type assertion
@@ -150,6 +156,10 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
   const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   if (!subject) return <div>Loading...</div>; // Show loading state while waiting for the subject
+
+  const handleAttachmentClick = (subject: string, chapter: string) => {
+    return `/admin/course-documents/${encodeURIComponent(subject)}/${encodeURIComponent(chapter)}`;
+  };
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen">
@@ -170,7 +180,7 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
           {isSelectMode && (
             <div className="flex">
               <Button onClick={handleSelectAll} className="bg-sky-400 text-white mr-2">
-                Select All
+                {allSelected ? 'Unselect All' : 'Select All'}
               </Button>
               <Button className="bg-red-500 text-white mr-2">Delete All</Button>
               <Button className="bg-green-500 text-white">Move All</Button>
@@ -202,7 +212,7 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
       {/* Folders Display */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
         {paginatedFolders.map((folder) => (
-          <div key={folder.id} className="relative flex items-center p-3 rounded-xl shadow-lg bg-white">
+          <div key={folder.id} className="relative flex items-center p-3 rounded-xl shadow-lg bg-white group">
             <div className="text-blue-400 mr-4">
               <FaFolder className="text-6xl" />
             </div>
@@ -226,8 +236,18 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
               </div>
             )}
 
+            {/* Hover Overlay */}
+            {!isSelectMode && (
+              <div className="absolute inset-0 bg-gray-300 bg-opacity-90 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+                <Button
+                  className="text-white font-semibold py-2 px-4 rounded-md shadow-md transition"
+                  onClick={() => window.location.href = handleAttachmentClick(subject as string, folder.name)}
+                >
+                  View Folder
+                </Button>
+              </div>
+            )}
           </div>
-
         ))}
       </div>
 

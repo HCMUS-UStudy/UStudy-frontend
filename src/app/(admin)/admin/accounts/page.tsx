@@ -101,13 +101,16 @@ const AccountPage: React.FC = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedUsers.size === paginatedUsers.length) {
+    if (selectedUsers.size === users.length) {
+      // If all users are selected, deselect all
       setSelectedUsers(new Set());
     } else {
-      const allUserIds = paginatedUsers.map(user => user.id);
+      // Select all user IDs in the entire user list
+      const allUserIds = users.map((user) => user.id);
       setSelectedUsers(new Set(allUserIds));
     }
   };
+
 
   const handleSelectButtonClick = () => {
     setIsSelectMode((prev) => {
@@ -371,7 +374,7 @@ const AccountPage: React.FC = () => {
                 <th className="py-3 px-4 text-left">
                   <input
                     type="checkbox"
-                    checked={selectedUsers.size === paginatedUsers.length}
+                    checked={selectedUsers.size === users.length} // Compare to total users, not paginatedUsers
                     onChange={handleSelectAll}
                     className="form-checkbox"
                   />
@@ -400,7 +403,7 @@ const AccountPage: React.FC = () => {
           </thead>
           <tbody>
             {paginatedUsers.map((user, index) => (
-              <tr key={user.id} className="border-b">
+              <tr key={user.id} className={`border-b ${selectedUsers.has(user.id) ? 'bg-blue-100' : 'bg-white'}`}>
                 {isSelectMode && (
                   <td className="py-2 px-4">
                     <input
