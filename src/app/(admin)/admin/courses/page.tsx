@@ -133,6 +133,7 @@ const CoursePage: React.FC = () => {
       setSelectedCourses(new Set(allCourseIds)); // Chọn tất cả
     }
   };
+  
   const handleSelectButtonClick = () => {
     setIsSelectMode((prev) => {
       if (prev) {
@@ -237,7 +238,7 @@ const CoursePage: React.FC = () => {
           </thead>
           <tbody>
             {paginatedCourses.map((course, index) => (
-              <tr key={course.subject} className="hover:bg-gray-50 transition-all duration-200">
+              <tr key={course.subject} className={`transition-all duration-200 ${selectedCourses.has(course.subject) ? 'bg-blue-100' : 'bg-white'}`}>
                 {isSelectMode && (
                   <td className="py-2 px-4">
                     <input
