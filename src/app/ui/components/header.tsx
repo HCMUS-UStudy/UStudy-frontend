@@ -4,7 +4,7 @@ import { useState } from "react";
 import classNames from "classnames";
 import { PiHandWavingThin } from "react-icons/pi";
 import "../style/Header.css";
-// import { IoSearch } from "react-icons/io5";
+// import { IoSearch } from "react-git sicons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 
 // import { UserNav } from "./usernav";
