@@ -1,13 +1,25 @@
 "use client";
+
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { FaEdit, FaTrashAlt, FaPaperclip, FaTimes } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrashAlt,
+  FaPaperclip,
+  FaTimes,
+  FaSearch,
+} from "react-icons/fa";
 import Button from "@/app/ui/components/button";
 import Link from "next/link";
 
 const CoursePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
+
+  const [selectedCourses, setSelectedCourses] = useState<Set<string>>(
+    new Set()
+  );
+  const [isSelectMode, setIsSelectMode] = useState(false);
 
   //Modals
   const [showModal, setShowModal] = useState(false);
@@ -155,6 +167,15 @@ const CoursePage: React.FC = () => {
     return `/admin/course-documents/${encodeURIComponent(subject)}`;
   };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log("Search query submitted:", searchQuery);
+  };
+
   //pagination
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 4;
@@ -196,6 +217,36 @@ const CoursePage: React.FC = () => {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
+  const toggleCourseSelection = (courseId: string) => {
+    setSelectedCourses((prevSelectedCourses) => {
+      const updatedCourses = new Set(prevSelectedCourses);
+      if (updatedCourses.has(courseId)) {
+        updatedCourses.delete(courseId); // Bỏ chọn
+      } else {
+        updatedCourses.add(courseId); // Chọn
+      }
+      return updatedCourses;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedCourses.size === filteredCourses.length) {
+      setSelectedCourses(new Set()); // Bỏ chọn tất cả
+    } else {
+      const allCourseIds = filteredCourses.map((course) => course.subject); // Sử dụng subject làm khóa ID
+      setSelectedCourses(new Set(allCourseIds)); // Chọn tất cả
+    }
+  };
+
+  const handleSelectButtonClick = () => {
+    setIsSelectMode((prev) => {
+      if (prev) {
+        setSelectedCourses(new Set());
+      }
+      return !prev;
+    });
+  };
+
   return (
     <>
       <h2 className="text-3xl font-bold tracking-tight my-4">
@@ -205,12 +256,31 @@ const CoursePage: React.FC = () => {
         Tìm tất cả tài liệu của nền tảng tại đây
       </h2>
 
-      <div className="flex items-center justify-between mt-6 mr-6">
-        <div className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
+      <div className="flex items-center justify-between mt-8 mr-6">
+        <h2 className="text-2xl font-bold">
+          Tổng số môn học ({filteredCourses.length})
+        </h2>
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
+          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
+            <input
+              type="text"
+              placeholder="Tìm kiếm môn học..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
+              <FaSearch className="h-5 w-5" />
+            </button>
+          </div>
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="ml-4 border-2 bg-sky-100 border-gray-300 rounded-full px-6 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
+            className="border-2 bg-sky-100 border-gray-300 rounded-full px-6 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
             <option value="">Tất cả môn học</option>
             <option value="math">Toán học</option>
             <option value="literature">Ngữ văn</option>
@@ -224,13 +294,29 @@ const CoursePage: React.FC = () => {
             <option value="informatics">Tin học</option>
             <option value="technology">Công nghệ</option>
           </select>
-          <h2 className="text-lg text-slate-400">
-            {filteredCourses.length} khóa học đã được liệt kê
-          </h2>
+        </form>
+      </div>
+
+      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
+        {/* Select Mode Button */}
+        <div className="flex">
+          <Button onClick={handleSelectButtonClick} className="mr-4">
+            {isSelectMode ? "Cancel" : "Select Courses"}
+          </Button>
+
+          {/* Conditional buttons for Delete All and Move All */}
+          {isSelectMode && (
+            <div className="flex">
+              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-end">
-          <Button onClick={onCreateCourse} type="button" className="pl-6 pr-6">
+        <div className="flex items-center space-x-4">
+          <Button
+            onClick={onCreateCourse}
+            type="button"
+            className="pl-6 pr-6 mr-6">
             Tạo môn học
           </Button>
         </div>
@@ -241,6 +327,16 @@ const CoursePage: React.FC = () => {
         <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
           <thead className="bg-gray-100">
             <tr>
+              {isSelectMode && (
+                <th className="py-3 px-4 text-left">
+                  <input
+                    type="checkbox"
+                    checked={selectedCourses.size === paginatedCourses.length}
+                    onChange={handleSelectAll}
+                    className="form-checkbox"
+                  />
+                </th>
+              )}
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
                 Người tạo
               </th>
@@ -270,8 +366,22 @@ const CoursePage: React.FC = () => {
           <tbody>
             {paginatedCourses.map((course, index) => (
               <tr
-                key={index}
-                className="hover:bg-gray-50 transition-all duration-200">
+                key={course.subject}
+                className={`transition-all duration-200 ${
+                  selectedCourses.has(course.subject)
+                    ? "bg-blue-100"
+                    : "bg-white"
+                }`}>
+                {isSelectMode && (
+                  <td className="py-2 px-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedCourses.has(course.subject)}
+                      onChange={() => toggleCourseSelection(course.subject)}
+                      className="form-checkbox"
+                    />
+                  </td>
+                )}
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {course.creator}
                 </td>
@@ -432,18 +542,31 @@ const CoursePage: React.FC = () => {
           Previous
         </button>
 
-        {getPageNumbers().map((page) => (
+        {totalPages === 1 ? (
           <Button
-            key={page}
-            onClick={() => setCurrentPage(page)}
+            key={1}
+            onClick={() => setCurrentPage(1)}
             className={`px-4 py-2 rounded-md font-semibold transition-all ${
-              currentPage === page
+              currentPage === 1
                 ? "bg-blue-700 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}>
-            {page}
+            1
           </Button>
-        ))}
+        ) : (
+          getPageNumbers().map((page) => (
+            <Button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                currentPage === page
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}>
+              {page}
+            </Button>
+          ))
+        )}
 
         <Button
           onClick={handleNextPage}

@@ -31,6 +31,9 @@ const AccountPage: React.FC = () => {
     role: "",
   });
 
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [isSelectMode, setIsSelectMode] = useState(false);
+
   const onCreateUser = () => {
     setShowModal(true); // Show modal when "Tạo người dùng" is clicked
   };
@@ -85,6 +88,38 @@ const AccountPage: React.FC = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUsers((prev) => {
+      const newSelectedUsers = new Set(prev);
+      if (newSelectedUsers.has(userId)) {
+        newSelectedUsers.delete(userId);
+      } else {
+        newSelectedUsers.add(userId);
+      }
+      return newSelectedUsers;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedUsers.size === users.length) {
+      // If all users are selected, deselect all
+      setSelectedUsers(new Set());
+    } else {
+      // Select all user IDs in the entire user list
+      const allUserIds = users.map((user) => user.id);
+      setSelectedUsers(new Set(allUserIds));
+    }
+  };
+
+  const handleSelectButtonClick = () => {
+    setIsSelectMode((prev) => {
+      if (prev) {
+        setSelectedUsers(new Set());
+      }
+      return !prev;
+    });
+  };
 
   return (
     <>
@@ -178,10 +213,26 @@ const AccountPage: React.FC = () => {
         </form>
       </div>
 
-      <div className="flex justify-end mt-6 mr-6">
-        <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
-          Tạo người dùng
-        </Button>
+      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
+        {/* Select Mode Button */}
+        <div className="flex">
+          <Button onClick={handleSelectButtonClick} className="mr-4">
+            {isSelectMode ? "Cancel" : "Select Users"}
+          </Button>
+
+          {/* Conditional buttons for Delete All and Move All */}
+          {isSelectMode && (
+            <div className="flex">
+              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
+            Tạo người dùng
+          </Button>
+        </div>
       </div>
 
       {/* Modal */}
@@ -321,6 +372,17 @@ const AccountPage: React.FC = () => {
         <table className="min-w-full table-auto border-collapse">
           <thead className="bg-gray-100">
             <tr>
+              {isSelectMode && (
+                <th className="py-3 px-4 text-left">
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.size === users.length} // Compare to total users, not paginatedUsers
+                    onChange={handleSelectAll}
+                    className="form-checkbox"
+                  />
+                </th>
+              )}
+
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Họ tên
               </th>
@@ -343,7 +405,22 @@ const AccountPage: React.FC = () => {
           </thead>
           <tbody>
             {paginatedUsers.map((user, index) => (
-              <tr key={index} className="border-b">
+              <tr
+                key={user.id}
+                className={`border-b ${
+                  selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
+                }`}>
+                {isSelectMode && (
+                  <td className="py-2 px-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.has(user.id)}
+                      onChange={() => toggleUserSelection(user.id)}
+                      className="form-checkbox"
+                    />
+                  </td>
+                )}
+
                 <td className="px-6 py-4 text-sm text-gray-700">{user.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{user.id}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
@@ -367,7 +444,6 @@ const AccountPage: React.FC = () => {
         </table>
       </div>
       <div className="flex justify-end mt-6 mr-6 space-x-2">
-        {/* Previous Button */}
         <Button
           onClick={handlePreviousPage}
           className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
@@ -379,25 +455,36 @@ const AccountPage: React.FC = () => {
           Previous
         </Button>
 
-        {/* Page Numbers with a Max of 3 Pages */}
-        {Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
-          const page =
-            Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
-          return (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-                currentPage === page
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}>
-              {page}
-            </button>
-          );
-        })}
+        {totalPages === 1 ? (
+          <button
+            key={1}
+            onClick={() => setCurrentPage(1)}
+            className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
+              currentPage === 1
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}>
+            1
+          </button>
+        ) : (
+          Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
+            const page =
+              Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
+            return (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(page)}
+                className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
+                  currentPage === page
+                    ? "bg-blue-700 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}>
+                {page}
+              </button>
+            );
+          })
+        )}
 
-        {/* Next Button */}
         <Button
           onClick={handleNextPage}
           className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
