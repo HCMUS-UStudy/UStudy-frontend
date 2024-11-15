@@ -9,24 +9,30 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   type?: string;
   isError?: boolean;
+  errorMsg?: string[];
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, isError, ...props }, ref) => {
+  ({ className, type, isError, errorMsg, ...props }, ref) => {
     return (
-      <input
-        type={type}
-        className={cn(
-          {
-            "border-input": !isError,
-            "border-error": isError,
-          },
-          "flex h-10 w-full rounded-md border  bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
+      <div>
+        <input
+          type={type}
+          className={cn(
+            {
+              "border-input border": !isError,
+              "border-error border-2": isError,
+            },
+            "flex h-10 w-full rounded-md   bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {isError && errorMsg && (
+          <span className="text-[13px] text-error">{errorMsg[0]}</span>
         )}
-        ref={ref}
-        {...props}
-      />
+      </div>
     );
   }
 );

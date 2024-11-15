@@ -7,6 +7,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import { CircleX } from "lucide-react";
 import Modal from "./modal";
 import { createClass, CreateClassFormState } from "@/app/lib/action";
+import clsx from "clsx";
 
 export default function CoursesComponent(props: {
   searchParams?: Promise<{
@@ -17,14 +18,26 @@ export default function CoursesComponent(props: {
   const searchParams = props.searchParams;
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+
   const [selectedSubject, setSelectedSubject] = useState("");
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isSelectingSubject, setIsSelectingSubject] = useState<boolean>(false);
   const [subjectForCreateClass, setSubjectForCreateClass] =
     useState<string>("");
+
   const subjects: string[] = ["Toán", "Lý", "Hóa", "Sinh", "Văn", "Anh"];
-  const initialState: CreateClassFormState = { message: null, errors: {} };
+
+  const initialState: CreateClassFormState = {
+    errors: {},
+    message: null,
+  };
   const [state, action, isPending] = useActionState(createClass, initialState);
+
+  const [className, setClassName] = useState<string>("");
+  const [teacher, setTeacher] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [fee, setFee] = useState<string>("");
   const sampleClasses = [
     {
       ID: 1,
@@ -185,36 +198,59 @@ export default function CoursesComponent(props: {
             <Input
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Tên lớp"
-              name="className"></Input>
+              name="className"
+              isError={state.errors.name != null}
+              errorMsg={state.errors.name}
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
+            />
 
             <Input
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Giáo viên"
               name="teacher"
+              isError={state.errors.teacher != null}
+              errorMsg={state.errors.teacher}
+              value={teacher}
+              onChange={(e) => setTeacher(e.target.value)}
             />
-            <button
-              type="button"
-              onClick={() => {
-                setIsSelectingSubject(true);
-              }}
-              className="w-[25%] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 transition-colors">
-              {subjectForCreateClass === "" ? (
-                <span>Môn học</span>
-              ) : (
-                <span className="font-bold">{subjectForCreateClass}</span>
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSelectingSubject(true);
+                }}
+                className="w-[25%] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 transition-colors">
+                {subjectForCreateClass === "" ? (
+                  <span>Môn học</span>
+                ) : (
+                  <span className="font-bold">{subjectForCreateClass}</span>
+                )}
+                <FaChevronDown />
+                <input
+                  type="text"
+                  name="subject"
+                  value={subjectForCreateClass}
+                  readOnly
+                  className="hidden"
+                />
+              </button>
+              {state.errors.subject && (
+                <span className="text-[13px] text-error">
+                  {state.errors.subject}
+                </span>
               )}
-              <FaChevronDown />
-              <input
-                type="text"
-                name="subject"
-                value={subjectForCreateClass}
-                readOnly
-                className="hidden"
-              />
-            </button>
+            </div>
 
             <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <div
+                className={clsx(
+                  {
+                    "top-[14px]": state.errors.date,
+                    "top-3.5": !state.errors.date,
+                  },
+                  "absolute start-0 flex items-center ps-3.5 pointer-events-none"
+                )}>
                 <svg
                   className="w-4 h-4 text-gray-500 dark:text-gray-400"
                   aria-hidden="true"
@@ -227,21 +263,41 @@ export default function CoursesComponent(props: {
               <input
                 type="date"
                 id="default-datepicker"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                className={clsx(
+                  {
+                    "border-2 border-error": state.errors.date,
+                    "border border-gray-300": !state.errors.date,
+                  },
+                  "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                )}
                 placeholder="Select date"
+                name="startDate"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
               />
+              {state.errors.date && (
+                <span className="text-[13px] text-error">
+                  {state.errors.date[0]}
+                </span>
+              )}
             </div>
 
             <Input
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Mô tả"
               name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
             <Input
               type="number"
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Học phí"
               name="fee"
+              isError={state.errors.fee != null}
+              errorMsg={state.errors.fee}
+              value={fee}
+              onChange={(e) => setFee(e.target.value)}
             />
             <Button isPending={isPending} type="submit" className="mt-5">
               {isPending ? "Đang tạo..." : "Tạo lớp học"}
