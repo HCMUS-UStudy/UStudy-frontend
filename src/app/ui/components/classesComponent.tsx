@@ -1,8 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useActionState, useState } from "react";
 import Button from "./button";
-import { SearchField } from "./input";
+import { Input, SearchField } from "./input";
 import Pagination from "./pagination";
+import { FaChevronDown } from "react-icons/fa6";
+import { CircleX } from "lucide-react";
+import Modal from "./modal";
+import { createClass, CreateClassFormState } from "@/app/lib/action";
 
 export default function CoursesComponent(props: {
   searchParams?: Promise<{
@@ -14,9 +18,13 @@ export default function CoursesComponent(props: {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
   const [selectedSubject, setSelectedSubject] = useState("");
-  const onCreateCourse = () => {
-    //setShowModal(true);
-  };
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [isSelectingSubject, setIsSelectingSubject] = useState<boolean>(false);
+  const [subjectForCreateClass, setSubjectForCreateClass] =
+    useState<string>("");
+  const subjects: string[] = ["Toán", "Lý", "Hóa", "Sinh", "Văn", "Anh"];
+  const initialState: CreateClassFormState = { message: null, errors: {} };
+  const [state, action, isPending] = useActionState(createClass, initialState);
   const sampleClasses = [
     {
       ID: 1,
@@ -58,46 +66,6 @@ export default function CoursesComponent(props: {
       NgayBatDau: "2024-01-20",
       NgayKetThuc: "2024-06-25",
     },
-    // {
-    //   ID: 6,
-    //   MaLop: "HC1",
-    //   TenLop: "Hóa Chuyên 1",
-    //   SiSo: 26,
-    //   NgayBatDau: "2024-02-15",
-    //   NgayKetThuc: "2024-07-05",
-    // },
-    // {
-    //   ID: 7,
-    //   MaLop: "S1",
-    //   TenLop: "Sinh 1",
-    //   SiSo: 24,
-    //   NgayBatDau: "2024-01-25",
-    //   NgayKetThuc: "2024-05-25",
-    // },
-    // {
-    //   ID: 8,
-    //   MaLop: "SC1",
-    //   TenLop: "Sinh Chuyên 1",
-    //   SiSo: 22,
-    //   NgayBatDau: "2024-03-10",
-    //   NgayKetThuc: "2024-08-15",
-    // },
-    // {
-    //   ID: 9,
-    //   MaLop: "V1",
-    //   TenLop: "Văn 1",
-    //   SiSo: 27,
-    //   NgayBatDau: "2024-02-20",
-    //   NgayKetThuc: "2024-06-30",
-    // },
-    // {
-    //   ID: 10,
-    //   MaLop: "VC1",
-    //   TenLop: "Văn Chuyên 1",
-    //   SiSo: 23,
-    //   NgayBatDau: "2024-03-20",
-    //   NgayKetThuc: "2024-08-20",
-    // },
   ];
 
   return (
@@ -135,7 +103,12 @@ export default function CoursesComponent(props: {
           />
         </div>
 
-        <Button onClick={onCreateCourse} type="button" className="pl-6 pr-6">
+        <Button
+          onClick={() => {
+            setIsOpenModal(true);
+          }}
+          type="button"
+          className="pl-6 pr-6">
           Thêm lớp học
         </Button>
       </div>
@@ -192,6 +165,116 @@ export default function CoursesComponent(props: {
         </table>
         <Pagination className="flex justify-end mt-5" totalPages={3} />
       </div>
+      <Modal
+        modalName="ModalCreateClass"
+        isOpen={isOpenModal}
+        className="h-fit pb-6">
+        <div className="flex flex-col relative">
+          <CircleX
+            onClick={() => {
+              setIsOpenModal(false);
+            }}
+            className="absolute top-4 right-6 bg-clip-padding w-[8%] h-auto opacity-50 hover:opacity-100 transition duration-200 bg-white cursor-pointer"
+          />
+          <h1 className="mx-auto mt-5 font-bold text-2xl text-gray-700">
+            Tạo lớp học
+          </h1>
+          <form
+            action={action}
+            className=" mx-6 mt-10 flex flex-col gap-2 md:gap-5">
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Tên lớp"
+              name="className"></Input>
+
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Giáo viên"
+              name="teacher"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setIsSelectingSubject(true);
+              }}
+              className="w-[25%] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 transition-colors">
+              {subjectForCreateClass === "" ? (
+                <span>Môn học</span>
+              ) : (
+                <span className="font-bold">{subjectForCreateClass}</span>
+              )}
+              <FaChevronDown />
+              <input
+                type="text"
+                name="subject"
+                value={subjectForCreateClass}
+                readOnly
+                className="hidden"
+              />
+            </button>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20">
+                  <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                </svg>
+              </div>
+              <input
+                type="date"
+                id="default-datepicker"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                placeholder="Select date"
+              />
+            </div>
+
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Mô tả"
+              name="description"
+            />
+            <Input
+              type="number"
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Học phí"
+              name="fee"
+            />
+            <Button isPending={isPending} type="submit" className="mt-5">
+              {isPending ? "Đang tạo..." : "Tạo lớp học"}
+            </Button>
+          </form>
+        </div>
+      </Modal>
+      <Modal
+        onClose={() => {
+          setIsSelectingSubject(false);
+        }}
+        modalName="ModalSelectSubject"
+        isOpen={isSelectingSubject}
+        className="w-[25vw] py-8">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-800 text-center">
+            Chọn môn học
+          </h1>
+          <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
+            {subjects.map((s, i) => (
+              <div
+                onClick={() => {
+                  setSubjectForCreateClass(s);
+                  setIsSelectingSubject(false);
+                }}
+                key={i}
+                className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                {s}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

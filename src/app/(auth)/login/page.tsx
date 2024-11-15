@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useActionState, useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
 import Image from "next/image";
 import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
 import Button from "@/app/ui/components/button";
+import { logIn, LoginFormState } from "@/app/lib/action";
+import clsx from "clsx";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,10 +17,15 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isFocused, setIsFocused] = useState({ email: false, password: false });
 
+  const initialState: LoginFormState = {
+    errors: {},
+    message: null,
+  };
+  const [state, action, isPending] = useActionState(logIn, initialState);
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
-
   return (
     <>
       <Head>
@@ -30,14 +37,16 @@ export default function Login() {
           background:
             "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
         }}>
-        <div className="
+        <div
+          className="
           grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 
           bg-white rounded-lg shadow-lg overflow-hidden">
-          
           {/* Login Form Section */}
           <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8 relative">
             {/* Back to Home Icon */}
-            <Link href="/" className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
+            <Link
+              href="/"
+              className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
               <HiHome size={24} />
             </Link>
 
@@ -48,19 +57,29 @@ export default function Login() {
               </p>
             </div>
 
-            <form className="w-full max-w-xs">
+            <form action={action} className="w-full max-w-xs">
               {/* Floating Label for Email */}
-              <div className="relative mb-4">
+              <div className="relative">
                 <Input
-                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  className={clsx(
+                    {
+                      "border-rose-600": state?.errors?.email,
+                      "border-gray-400": !state?.errors?.email,
+                    },
+                    "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  )}
                   type="email"
                   id="email"
+                  name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, email: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, email: false }))}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, email: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, email: false }))
+                  }
                   placeholder="Enter your email"
-                  required
                 />
                 <Label
                   htmlFor="email"
@@ -72,19 +91,34 @@ export default function Login() {
                   Enter your email
                 </Label>
               </div>
+              {state?.errors?.email && (
+                <span className="text-[13px] ml-3 text-error">
+                  {state.errors.email}
+                </span>
+              )}
 
               {/* Floating Label for Password */}
-              <div className="relative mb-6 mt-6">
+              <div className="relative mt-6">
                 <Input
-                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  className={clsx(
+                    {
+                      "border-rose-600": state?.errors?.password,
+                      "border-gray-400": !state?.errors?.password,
+                    },
+                    "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  )}
                   type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
+                  name="password"
                   onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, password: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, password: false }))}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, password: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, password: false }))
+                  }
                   placeholder="Enter your password"
-                  required
                 />
                 <Label
                   htmlFor="password"
@@ -106,12 +140,22 @@ export default function Login() {
                   )}
                 </button>
               </div>
+              {state?.errors?.password && (
+                <span className="text-[13px] ml-3 text-error">
+                  {state.errors.password}
+                </span>
+              )}
 
               <Button
-                onClick={() => {}}
+                disabled={isPending}
                 type="submit"
-                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
-                Login
+                className={clsx(
+                  {
+                    "hover:scale-105": !isPending,
+                  },
+                  "mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform "
+                )}>
+                {isPending ? "Processing..." : "Log in"}
               </Button>
 
               {/* Forgot Password Link */}
