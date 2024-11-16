@@ -7,10 +7,9 @@ import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
 import Image from "next/image";
 import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
-import {Button} from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/button";
 import axios from "axios";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,28 +20,31 @@ export default function Login() {
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
-  }
+  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setErrorMessage("");
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/admin/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/admin/login",
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.status === 200) {
-        const token = response.data.access_token
-        const creator = response.data.user.name
-        console.log(token)
+        const token = response.data.access_token;
+        const creator = response.data.user.name;
+        console.log(token);
         localStorage.setItem("authToken", token);
         localStorage.setItem("creator", creator);
         Swal.fire({
-          icon: 'success',
-          title: 'Login Successful!',
-          text: 'Welcome back!',
+          icon: "success",
+          title: "Login Successful!",
+          text: "Welcome back!",
           timer: 2000,
           showConfirmButton: false,
         });
@@ -50,10 +52,11 @@ export default function Login() {
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        const message = err.response?.data || "An error occurred. Please try again.";
+        const message =
+          err.response?.data || "An error occurred. Please try again.";
         Swal.fire({
-          icon: 'error',
-          title: 'Login Failed',
+          icon: "error",
+          title: "Login Failed",
           text: message,
         });
         setErrorMessage(message);
@@ -61,12 +64,11 @@ export default function Login() {
         const unexpectedError = "An unexpected error occurred.";
         setErrorMessage("An unexpected error occurred.");
         Swal.fire({
-          icon: 'error',
-          title: 'Login Failed',
+          icon: "error",
+          title: "Login Failed",
           text: unexpectedError,
         });
       }
-      
     }
   };
 
@@ -121,10 +123,11 @@ export default function Login() {
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.email || email
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.email || email
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  }`}>
                   Enter your email
                 </Label>
               </div>
@@ -148,10 +151,11 @@ export default function Login() {
                 />
                 <Label
                   htmlFor="password"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.password || password
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.password || password
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  }`}>
                   Enter your password
                 </Label>
                 <button
@@ -167,7 +171,7 @@ export default function Login() {
               </div>
 
               <Button
-                onClick={() => { }}
+                onClick={() => {}}
                 type="submit"
                 className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
                 Login
