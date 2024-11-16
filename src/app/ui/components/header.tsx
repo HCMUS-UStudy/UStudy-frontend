@@ -1,28 +1,24 @@
-'use client';
+"use client";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
-import { useState } from "react";
+import React from "react";
 import classNames from "classnames";
 import { PiHandWavingThin } from "react-icons/pi";
-import "../style/Header.css";
-import { IoSearch } from "react-icons/io5";
+import "../styles/Header.css";
 import { IoNotificationsOutline } from "react-icons/io5";
+import BranchSelector from "./BranchSelector";
+import { usePathname } from "next/navigation"; // Import hook usePathname
 
-// import { UserNav } from "./usernav";
-
-export default function Header() {
+const Header: React.FC = () => {
     const { toggleCollapse } = useSideBarToggle();
+    const pathname = usePathname(); // Lấy đường dẫn hiện tại
+    const handleBranchChange = (id: string) => {
+        console.log("Selected Branch ID:", id);
+    };
 
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleDropdown = () => setIsOpen(!isOpen);
-
-    const headerStyle = classNames(
-        // "bg-[#D5EEFF] fixed w-[calc(100%-1rem)] ml-4 z-[99997] px-6 py-1 shadow-md shadow-slate-500/30 rounded-2xl transition-all duration-300 ease-in-out", 
-        {
-            ["header isWide"]: !toggleCollapse,
-            ["header isNarrow"]: toggleCollapse,
-        }
-    );
+    const headerStyle = classNames({
+        ["header isWide"]: !toggleCollapse,
+        ["header isNarrow"]: toggleCollapse,
+    });
 
     return (
         <div className={headerStyle}>
@@ -30,30 +26,21 @@ export default function Header() {
                 <div className="first-line">
                     Hello Admin!! {<PiHandWavingThin className="icon" size={25} />}
                 </div>
-                <div className="second-line">
-                    Welcome back to Admin Page!
+                <div className="second-line">Welcome back to Admin Page!</div>
+            </div>
+
+            <div className="right-items">
+                {/* Hiển thị BranchSelector nếu không phải ở trang /admin/branches */}
+                {pathname !== "/admin/branches" && (
+                    <BranchSelector onBranchChange={handleBranchChange} />
+                )}
+
+                <div className="notification">
+                    <IoNotificationsOutline size={20} />
                 </div>
             </div>
-
-            <div className="search-bar">
-                <input type="text" placeholder="Search" />
-                <IoSearch className="search-icon" size={24} />
-            </div>
-
-            <div className="branch-selector" onClick={toggleDropdown}>
-                <select className="branch-dropdown">
-                    <option value="">Select a branch</option>
-                    <option value="branch1">Branch 1</option>
-                    <option value="branch2">Branch 2</option>
-                    <option value="branch3">Branch 3</option>
-                    {/* More branches */}
-                </select>
-            </div>
-
-            <div className="notification">
-                <IoNotificationsOutline size={24} />
-            </div>
-
         </div>
     );
-}
+};
+
+export default React.memo(Header);
