@@ -1,24 +1,10 @@
-"use client";
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/ui/components/card";
-import {
-  FaUserGraduate,
-  FaChalkboardTeacher,
-  FaBuilding,
-  FaEdit,
-  FaTrashAlt,
-  FaSearch,
-} from "react-icons/fa";
-import { Label } from "@/app/ui/components/label";
-import { Input } from "@/app/ui/components/input";
-import Button from "@/app/ui/components/button";
+import { FaEdit, FaSearch, FaTrashAlt } from "react-icons/fa";
+import Button from "./button";
+import { Input } from "./input";
+import { Label } from "./label";
 
-const AccountPage: React.FC = () => {
+export default function AccountsComponent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [isFocused, setIsFocused] = useState({ email: false, name: false });
@@ -30,9 +16,6 @@ const AccountPage: React.FC = () => {
     birthDate: "",
     role: "",
   });
-
-  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
-  const [isSelectMode, setIsSelectMode] = useState(false);
 
   const onCreateUser = () => {
     setShowModal(true); // Show modal when "Tạo người dùng" is clicked
@@ -76,113 +59,8 @@ const AccountPage: React.FC = () => {
     status: "Hoạt động",
     createdAt: `01/01/2024`,
   }));
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 2;
-
-  const totalPages = Math.ceil(users.length / usersPerPage);
-  const startIndex = (currentPage - 1) * usersPerPage;
-  const paginatedUsers = users.slice(startIndex, startIndex + usersPerPage);
-
-  const handlePreviousPage = () =>
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-
-  const toggleUserSelection = (userId: string) => {
-    setSelectedUsers((prev) => {
-      const newSelectedUsers = new Set(prev);
-      if (newSelectedUsers.has(userId)) {
-        newSelectedUsers.delete(userId);
-      } else {
-        newSelectedUsers.add(userId);
-      }
-      return newSelectedUsers;
-    });
-  };
-
-  const handleSelectAll = () => {
-    if (selectedUsers.size === users.length) {
-      // If all users are selected, deselect all
-      setSelectedUsers(new Set());
-    } else {
-      // Select all user IDs in the entire user list
-      const allUserIds = users.map((user) => user.id);
-      setSelectedUsers(new Set(allUserIds));
-    }
-  };
-
-  const handleSelectButtonClick = () => {
-    setIsSelectMode((prev) => {
-      if (prev) {
-        setSelectedUsers(new Set());
-      }
-      return !prev;
-    });
-  };
-
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight my-4">
-        Quản lý tài khoản người dùng
-      </h2>
-      <h2 className="text-xl tracking-tight mb-6">
-        Tìm tất cả người dùng của nền tảng tại đây
-      </h2>
-
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mr-6">
-        <Card className="rounded-md shadow-md border border-gray-200 hover:shadow-lg transition-shadow p-3">
-          <CardHeader className="flex flex-row items-center justify-between p-2 bg-gray-50 rounded-t-md">
-            <CardTitle className="text-lg font-semibold text-gray-800">
-              Tổng số học viên
-            </CardTitle>
-            <FaUserGraduate className="h-5 w-5 text-black" />
-          </CardHeader>
-          <CardContent className="p-2">
-            <div className="text-2xl font-bold text-gray-900 flex items-center">
-              11.000
-              <span className="ml-2 text-xs text-blue-600 border border-blue-600 rounded-full px-1 py-0.5">
-                +5.00%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-md shadow-md border border-gray-200 hover:shadow-lg transition-shadow p-3">
-          <CardHeader className="flex flex-row items-center justify-between p-2 bg-gray-50 rounded-t-md">
-            <CardTitle className="text-lg font-semibold text-gray-800">
-              Tổng số giáo viên
-            </CardTitle>
-            <FaChalkboardTeacher className="h-5 w-5 text-black" />
-          </CardHeader>
-          <CardContent className="p-2">
-            <div className="text-2xl font-bold text-gray-900 flex items-center">
-              3000
-              <span className="ml-2 text-xs text-green-600 border border-green-600 rounded-full px-1 py-0.5">
-                +5.00%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-md shadow-md border border-gray-200 hover:shadow-lg transition-shadow p-3">
-          <CardHeader className="flex flex-row items-center justify-between p-2 bg-gray-50 rounded-t-md">
-            <CardTitle className="text-lg font-semibold text-gray-800">
-              Tổng số giáo vụ
-            </CardTitle>
-            <FaBuilding className="h-5 w-5 text-black" />
-          </CardHeader>
-          <CardContent className="p-2">
-            <div className="text-2xl font-bold text-gray-900 flex items-center">
-              50
-              <span className="ml-2 text-xs text-red-600 border border-red-600 rounded-full px-1 py-0.5">
-                +5.00%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <div className="flex items-center justify-between mt-8 mr-6">
         <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
         <form
@@ -204,8 +82,10 @@ const AccountPage: React.FC = () => {
           </div>
           <select
             onChange={handleFilterChange}
-            className="ml-4 border-2 border-gray-300 rounded-full px-4 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
-            <option value="">Lọc</option>
+            className="ml-4 border-2 border-gray-300 rounded-full px-2 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
+            <option className="" value="">
+              Lọc
+            </option>
             <option value="student">Học viên</option>
             <option value="teacher">Giáo viên</option>
             <option value="staff">Giáo vụ</option>
@@ -213,26 +93,10 @@ const AccountPage: React.FC = () => {
         </form>
       </div>
 
-      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
-        {/* Select Mode Button */}
-        <div className="flex">
-          <Button onClick={handleSelectButtonClick} className="mr-4">
-            {isSelectMode ? "Cancel" : "Select Users"}
-          </Button>
-
-          {/* Conditional buttons for Delete All and Move All */}
-          {isSelectMode && (
-            <div className="flex">
-              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
-            Tạo người dùng
-          </Button>
-        </div>
+      <div className="flex justify-end mt-6 mr-6">
+        <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
+          Tạo người dùng
+        </Button>
       </div>
 
       {/* Modal */}
@@ -372,17 +236,6 @@ const AccountPage: React.FC = () => {
         <table className="min-w-full table-auto border-collapse">
           <thead className="bg-gray-100">
             <tr>
-              {isSelectMode && (
-                <th className="py-3 px-4 text-left">
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.size === users.length} // Compare to total users, not paginatedUsers
-                    onChange={handleSelectAll}
-                    className="form-checkbox"
-                  />
-                </th>
-              )}
-
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Họ tên
               </th>
@@ -404,23 +257,8 @@ const AccountPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user, index) => (
-              <tr
-                key={user.id}
-                className={`border-b ${
-                  selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
-                }`}>
-                {isSelectMode && (
-                  <td className="py-2 px-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.has(user.id)}
-                      onChange={() => toggleUserSelection(user.id)}
-                      className="form-checkbox"
-                    />
-                  </td>
-                )}
-
+            {users.map((user, index) => (
+              <tr key={index} className="border-b">
                 <td className="px-6 py-4 text-sm text-gray-700">{user.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{user.id}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
@@ -435,7 +273,7 @@ const AccountPage: React.FC = () => {
                     <FaEdit className="h-5 w-5" />
                   </button>
                   <button className="text-red-600 hover:text-red-800">
-                    <FaTrashAlt className="h-5 w-5" />
+                    <FaTrashAlt className="h-4 w-4" />
                   </button>
                 </td>
               </tr>
@@ -443,61 +281,6 @@ const AccountPage: React.FC = () => {
           </tbody>
         </table>
       </div>
-      <div className="flex justify-end mt-6 mr-6 space-x-2">
-        <Button
-          onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
-          disabled={currentPage === 1}>
-          Previous
-        </Button>
-
-        {totalPages === 1 ? (
-          <button
-            key={1}
-            onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-              currentPage === 1
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}>
-            1
-          </button>
-        ) : (
-          Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
-            const page =
-              Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
-            return (
-              <button
-                key={index}
-                onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-                  currentPage === page
-                    ? "bg-blue-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}>
-                {page}
-              </button>
-            );
-          })
-        )}
-
-        <Button
-          onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
-          disabled={currentPage === totalPages}>
-          Next
-        </Button>
-      </div>
     </>
   );
-};
-
-export default AccountPage;
+}

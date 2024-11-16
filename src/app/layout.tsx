@@ -5,6 +5,9 @@ import { roboto } from "@/app/ui/fonts";
 export const metadata: Metadata = {
   title: "UStudy",
   description: "UStudy app",
+  icons: {
+    icon: "/UStudyIcon.png",
+  },
 };
 
 export default function RootLayout({

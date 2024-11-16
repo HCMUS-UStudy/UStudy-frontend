@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 interface ButtonProps {
@@ -6,6 +7,7 @@ interface ButtonProps {
   className?: string;
   disabled?: boolean;
   children: React.ReactNode;
+  isPending?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,13 +16,21 @@ const Button: React.FC<ButtonProps> = ({
   type,
   className,
   disabled = false,
+  isPending,
 }) => {
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`${className} flex items-center justify-center rounded-md px-3 py-2.5 bg-button_primary hover:bg-sky-900 transition duration-200 ease-in-out cursor-pointer text-white font-bold`}>
+      className={clsx(
+        {
+          "hover:bg-sky-900": !disabled,
+          "bg-sky-900 cursor-progress": isPending,
+          "bg-button_primary cursor-pointer": !isPending,
+        },
+        `${className} flex items-center justify-center rounded-md px-3 py-2.5 bg-button_primary transition duration-200 ease-in-out cursor-pointer text-white font-bold`
+      )}>
       {children}
     </button>
   );
