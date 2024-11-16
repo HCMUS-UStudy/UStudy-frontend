@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { Label } from "@/app/ui/components/label";
 import { Input } from "@/app/ui/components/input";
-import Button from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/button";
 
 const AccountPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -404,7 +404,7 @@ const AccountPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user, index) => (
+            {paginatedUsers.map((user) => (
               <tr
                 key={user.id}
                 className={`border-b ${

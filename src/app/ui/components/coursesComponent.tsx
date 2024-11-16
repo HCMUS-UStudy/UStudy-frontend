@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FaPaperclip } from "react-icons/fa6";
-import Button from "./button";
+import { Button } from "./button";
 
 export default function CoursesComponent() {
   const [searchQuery, setSearchQuery] = useState("");

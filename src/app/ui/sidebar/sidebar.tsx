@@ -3,13 +3,14 @@ import classNames from "classnames";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
 import React, { useEffect } from "react";
 import SidebarMenu from "./SidebarMenu";
-import { SideNavItemGroup } from '@/app/types/type';
+import { SideNavItemGroup } from "@/app/types/type";
 import "../style/Sidebar.css"; // Import file CSS
 // import { BsList } from 'react-icons/bs';
 import { RiArrowLeftSLine } from "react-icons/ri";
 
-const Sidebar = ({ menuItems } : { menuItems: SideNavItemGroup[]}) => {
-  const { toggleCollapse, setToggleCollapse, invokeToggleCollapse } = useSideBarToggle();
+const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
+  const { toggleCollapse, setToggleCollapse, invokeToggleCollapse } =
+    useSideBarToggle();
 
   // Auto-collapse sidebar on screens smaller than 1024px
   useEffect(() => {

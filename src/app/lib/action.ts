@@ -34,14 +34,6 @@ export async function logIn(previousState: LoginFormState, formData: FormData) {
     redirect('/staff'); // nếu là giáo vụ
 }
 
-const CreateClassFormSchema = z.object({
-    name: z.string().min(1, {message: '(*) Vui lòng nhập tên lớp'}),
-    teacher: z.string().min(1, {message:'(*) Vui lòng chọn giáo viên'}),
-    subject: z.string().min(1, {message:'(*) Vui lòng chọn môn học'}),
-    date: z.string().min(1, {message: '(*) Vui lòng chọn ngày bắt đầu'}).transform((str) => new Date(str)).refine((data) => data >= new Date(), {message: '(*) Ngày bắt đầu phải lớn hơn hôm nay'}),
-    fee: z.number({message: '(*) Vui lòng nhập học phí'}).positive({message: '(*) Học phí phải lớn hơn 100.000 VNĐ'}).gt(100000, {message: '(*) Học phí phải lớn hơn 100.000 VNĐ'})
-})
-
 export type CreateClassFormState = {
     errors?: {
         name?: string[] | null,
@@ -49,19 +41,31 @@ export type CreateClassFormState = {
         subject?: string[] | null,
         date?: string[] | null,
         description?: string[] | null,
-        fee?: string[] | null
+        fee?: string[] | null,
+        grade?: string[] | null
     }
     message?: string | null;
 }
 
+const CreateClassFormSchema = z.object({
+    name: z.string().min(1, {message: '(*) Vui lòng nhập tên lớp'}),
+    teacher: z.string().min(1, {message:'(*) Vui lòng chọn giáo viên'}),
+    subject: z.string().min(1, {message:'(*) Vui lòng chọn môn học'}).refine((data) => data !== 'Môn học', {message: '(*) Vui lòng chọn môn học'}),
+    date: z.string().min(1, {message: '(*) Vui lòng chọn ngày bắt đầu'}).transform((str) => new Date(str)).refine((data) => data >= new Date(), {message: '(*) Ngày bắt đầu phải lớn hơn hôm nay'}),
+    fee: z.number({message: '(*) Vui lòng nhập học phí'}).positive({message: '(*) Học phí phải lớn hơn 100.000 VNĐ'}).gt(100000, {message: '(*) Học phí phải lớn hơn 100.000 VNĐ'}),
+    grade: z.string().min(1, {message: '(*) Vui lòng chọn khối'}).refine((data) => data !== 'Khối', {message: '(*) Vui lòng chọn khối'})
+})
+
 export async function createClass(previousState: CreateClassFormState, formData: FormData) {
+    console.log(formData);
     const validationResult = CreateClassFormSchema.safeParse({
         name: formData.get('className'),
         teacher: formData.get('teacher'),
         subject: formData.get('subject'),
         description: formData.get('description'),
         fee: Number(formData.get('fee')) || "",
-        date: formData.get('startDate')
+        date: formData.get('startDate'),
+        grade: formData.get('grade')
     })
     if(!validationResult.success) {
         const errors = validationResult.error.flatten().fieldErrors;

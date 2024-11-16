@@ -7,7 +7,7 @@ import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
 import Image from "next/image";
 import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
-import Button from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
 

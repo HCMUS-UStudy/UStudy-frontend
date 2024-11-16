@@ -9,7 +9,7 @@ import {
   FaTimes,
   FaSearch,
 } from "react-icons/fa";
-import Button from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/button";
 import Link from "next/link";
 
 const CoursePage: React.FC = () => {
