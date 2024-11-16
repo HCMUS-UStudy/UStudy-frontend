@@ -11,6 +11,7 @@ import Button from "@/app/ui/components/button";
 import axios from "axios";
 import Swal from 'sweetalert2';
 
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -80,14 +81,16 @@ export default function Login() {
           background:
             "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
         }}>
-        <div className="
+        <div
+          className="
           grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 
           bg-white rounded-lg shadow-lg overflow-hidden">
-
           {/* Login Form Section */}
           <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8 relative">
             {/* Back to Home Icon */}
-            <Link href="/" className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
+            <Link
+              href="/"
+              className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
               <HiHome size={24} />
             </Link>
 
@@ -107,8 +110,12 @@ export default function Login() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, email: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, email: false }))}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, email: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, email: false }))
+                  }
                   placeholder="Enter your email"
                   required
                 />
@@ -130,8 +137,12 @@ export default function Login() {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, password: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, password: false }))}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, password: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, password: false }))
+                  }
                   placeholder="Enter your password"
                   required
                 />

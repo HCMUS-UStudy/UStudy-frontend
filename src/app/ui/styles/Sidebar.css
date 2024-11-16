@@ -1,6 +1,6 @@
 /* Sidebar.css */
 :root {
-  --sidebar-width-wide: 224px;  /* Biến cho width của sidebar rộng */
+  --sidebar-width-wide: 230px;  /* Biến cho width của sidebar rộng */
   --sidebar-width-narrow: 87px;  /* Biến cho width của sidebar hẹp */
 }
 
@@ -9,7 +9,7 @@
 }
 
 .sidebar {
-  overflow-y: auto;
+  overflow-y: none;
   position: fixed;
   background-color: #d5eeff; /* bg-[#D5EEFF] */
   top: 20px; /* Cách phía trên 20px */
@@ -37,7 +37,6 @@
 
 .sidebar-title {
   display: flex;
-  padding-left: 0.5rem; /* pl-2 */
   font-weight: bold; /* font-bold */
   font-size: 1.5rem; /* text-2xl */
   min-width: max-content; /* min-w-max */
@@ -52,13 +51,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem; /* gap-2 */
-  padding: 0 1.2rem; /* px-4 */
+  padding: 0 1.1rem; /* px-4 */
 }
 
 .sidebar-toggle {
   position: fixed;
   top: 50%;
-  left: calc(5px + var(--sidebar-width-wide)); /* Điều chỉnh khoảng cách của nút toggle so với cạnh phải của sidebar */
+  left: calc(8px + var(--sidebar-width-wide)); /* Điều chỉnh khoảng cách của nút toggle so với cạnh phải của sidebar */
   transition: all 0.3s; /* transition-all duration-300 */
   transform: translateY(-50%);
   background-color: #ebebeb;
@@ -70,6 +69,6 @@
 }
 
 .isRight {
-  left: calc(5px + var(--sidebar-width-narrow));
+  left: calc(8px + var(--sidebar-width-narrow));
   rotate: 180deg; /* rotate-180 */
 }

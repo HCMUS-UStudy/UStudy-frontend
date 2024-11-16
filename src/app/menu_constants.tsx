@@ -4,9 +4,12 @@ import {
   BsGear,
   BsHouseDoor,
   BsPerson,
-  BsFillPeopleFill,
+  // BsFillPeopleFill,
   BsQuestionCircle,
 } from "react-icons/bs";
+
+import { SiGoogleclassroom } from "react-icons/si";
+import { GrMapLocation } from "react-icons/gr";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
   {
@@ -23,6 +26,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
     title: "Quản lý",
     menuList: [
       {
+        title: "Quản lý chi nhánh",
+        path: "/admin/branches",
+        icon: <GrMapLocation size={20} />,
+      },
+      {
         title: "Quản lý tài khoản",
         path: "/admin/accounts",
         icon: <BsPerson size={20} />,
@@ -34,8 +42,8 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
       },
       {
         title: "Quản lý lớp học",
-        path: "/admin/class",
-        icon: <BsFillPeopleFill size={20} />,
+        path: "/admin/classes",
+        icon: <SiGoogleclassroom size={20} />,
       },
     ],
   },
@@ -83,7 +91,7 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
       {
         title: "Quản lý lớp học",
         path: "/staff/classes",
-        icon: <BsFillPeopleFill size={20} />,
+        icon: <SiGoogleclassroom size={20} />,
       },
     ],
   },
