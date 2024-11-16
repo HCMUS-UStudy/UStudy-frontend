@@ -11,10 +11,10 @@ interface Params {
 }
 
 const foldersBySubject: {
-  'Toán học': { id: number; name: string; description: string }[];
+  'Toán': { id: number; name: string; description: string }[];
   'Ngữ văn': { id: number; name: string; description: string }[];
 } = {
-  'Toán học': [
+  'Toán': [
     { id: 1, name: 'Chapter 1', description: 'Introduction to Algebra' },
     { id: 2, name: 'Chapter 2', description: 'Quadratic Equations' },
     { id: 3, name: 'Exercises', description: 'Practice problems and answers' },

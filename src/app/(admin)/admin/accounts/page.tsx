@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -13,10 +13,12 @@ import {
   FaEdit,
   FaTrashAlt,
   FaSearch,
+  FaSpinner
 } from "react-icons/fa";
 import { Label } from "@/app/ui/components/label";
 import { Input } from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
+import axios from "axios";
 
 const AccountPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,6 +35,52 @@ const AccountPage: React.FC = () => {
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [isSelectMode, setIsSelectMode] = useState(false);
+
+  const [users, setUsers] = useState<any[]>([]); // Sử dụng any[] nếu chưa xác định kiểu dữ liệu
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const usersPerPage = 12;
+
+  useEffect(() => {
+    console.log("useEffect triggered. Current Page:", currentPage);
+    const fetchUsers = async () => {
+      setLoading(true);
+      const authToken = localStorage.getItem("authToken");
+
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/user/clerk/get-list-user`,
+          {
+            params: {
+              page: currentPage - 1, // Kiểm tra giá trị truyền vào API
+              limit: usersPerPage,
+              role: "STUDENT",
+              filter: searchQuery,
+            },
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+        console.log("Fetched Users:", response.data); // Kiểm tra dữ liệu trả về
+        setUsers(response.data?.content || []);
+        setTotalPages(response.data?.totalPages || 0);
+      } catch (err) {
+        setError("Error fetching users.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [currentPage, searchQuery]);
+
+  const Loading = () => (
+    <div className="flex items-center justify-center h-full">
+      <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
+      <span className="ml-4 text-lg text-blue-500">Đang tải dữ liệu...</span>
+    </div>
+  );
 
   const onCreateUser = () => {
     setShowModal(true); // Show modal when "Tạo người dùng" is clicked
@@ -68,26 +116,19 @@ const AccountPage: React.FC = () => {
     setShowModal(false);
   };
 
-  // Sample users (10 users)
-  const users = Array.from({ length: 10 }, (_, index) => ({
-    name: `Nguyễn Văn ${String.fromCharCode(65 + index)}`,
-    id: `1234${index}`,
-    role: index % 2 === 0 ? "Học viên" : "Giáo viên",
-    status: "Hoạt động",
-    createdAt: `01/01/2024`,
-  }));
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 2;
-
-  const totalPages = Math.ceil(users.length / usersPerPage);
-  const startIndex = (currentPage - 1) * usersPerPage;
-  const paginatedUsers = users.slice(startIndex, startIndex + usersPerPage);
-
   const handlePreviousPage = () =>
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      console.log("Previous Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
   const handleNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => {
+      const newPage = Math.min(prev + 1, totalPages);
+      console.log("Next Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
 
   const toggleUserSelection = (userId: string) => {
     setSelectedUsers((prev) => {
@@ -119,6 +160,18 @@ const AccountPage: React.FC = () => {
       }
       return !prev;
     });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPages = Math.min(3, totalPages);
+
+    let start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+    for (let i = start; i < start + maxPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   };
 
   return (
@@ -265,11 +318,10 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${
-                    isFocused.email || email
-                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                  }`}>
+                  className={`absolute left-4 transition-all duration-200 ${isFocused.email || email
+                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                    }`}>
                   Enter your email
                 </Label>
               </div>
@@ -295,11 +347,10 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="name"
-                  className={`absolute left-4 transition-all duration-200 ${
-                    isFocused.name || name
-                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                  }`}>
+                  className={`absolute left-4 transition-all duration-200 ${isFocused.name || name
+                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                    }`}>
                   Enter your name
                 </Label>
               </div>
@@ -383,115 +434,114 @@ const AccountPage: React.FC = () => {
                 </th>
               )}
 
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
                 Họ tên
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Mã số
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Chức vụ
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Trạng thái
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Ngày tạo
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Hành động
               </th>
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user, index) => (
-              <tr
-                key={user.id}
-                className={`border-b ${
-                  selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
-                }`}>
-                {isSelectMode && (
-                  <td className="py-2 px-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.has(user.id)}
-                      onChange={() => toggleUserSelection(user.id)}
-                      className="form-checkbox"
-                    />
-                  </td>
-                )}
-
-                <td className="px-6 py-4 text-sm text-gray-700">{user.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{user.id}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {user.status}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {user.createdAt}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3">
-                  <button className="text-blue-600 hover:text-blue-800">
-                    <FaEdit className="h-5 w-5" />
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    <FaTrashAlt className="h-5 w-5" />
-                  </button>
+            {loading ? (
+              <tr>
+                <td colSpan={isSelectMode ? 7 : 6} className="text-center py-4">
+                  <Loading />
                 </td>
               </tr>
-            ))}
+            ) : (
+              users.map((user) => (
+                <tr
+                  key={user.id}
+                  className={`border-b ${selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
+                    }`}
+                >
+                  {isSelectMode && (
+                    <td className="py-2 px-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.has(user.id)}
+                        onChange={() => toggleUserSelection(user.id)}
+                        className="form-checkbox"
+                      />
+                    </td>
+                  )}
+
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.genId}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.role}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.isActive}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.createdAt}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
+                    <button className="text-blue-600 hover:text-blue-800">
+                      <FaEdit className="h-5 w-5" />
+                    </button>
+                    <button className="text-red-600 hover:text-red-800">
+                      <FaTrashAlt className="h-4 w-4" />
+                    </button>
+                  </td>
+
+                </tr>
+              ))
+            )}
           </tbody>
+
         </table>
       </div>
+      {/* Pagination Section */}
       <div className="flex justify-end mt-6 mr-6 space-x-2">
-        <Button
+        <button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
           disabled={currentPage === 1}>
           Previous
-        </Button>
+        </button>
 
         {totalPages === 1 ? (
-          <button
+          <Button
             key={1}
             onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-              currentPage === 1
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
+              ? "bg-blue-700 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}>
+            1
+          </Button>
+        ) : (
+          getPageNumbers().map((page) => (
+            <Button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
                 ? "bg-blue-700 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}>
-            1
-          </button>
-        ) : (
-          Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
-            const page =
-              Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
-            return (
-              <button
-                key={index}
-                onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-                  currentPage === page
-                    ? "bg-blue-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}>
-                {page}
-              </button>
-            );
-          })
+              {page}
+            </Button>
+          ))
         )}
 
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
           disabled={currentPage === totalPages}>
           Next
         </Button>
