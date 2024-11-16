@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   FaEdit,
@@ -11,6 +11,8 @@ import {
 } from "react-icons/fa";
 import { Button } from "@/app/ui/components/button";
 import Link from "next/link";
+import axios from "axios";
+import { FaSpinner } from "react-icons/fa6";
 
 const CoursePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,110 +22,19 @@ const CoursePage: React.FC = () => {
     new Set()
   );
   const [isSelectMode, setIsSelectMode] = useState(false);
+  const [isFocused, setIsFocused] = useState({ creator: false, subject: false, description: false });
 
   //Modals
   const [showModal, setShowModal] = useState(false);
-  const [courses, setCourses] = useState([
-    {
-      creator: "Daniel Grant",
-      subject: "Toán học",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 10",
-      createdAt: "17 Feb 2024",
-      status: "Active",
-      notes: "Chưa hoàn thành bài tập cuối kỳ",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Ngữ văn",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 11",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Cần cập nhật tài liệu",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Tiếng Anh",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 12",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Cần thêm phần nghe",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Vật lý",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 10",
-      createdAt: "14 Feb 2024",
-      status: "Deleted",
-      notes: "Không còn sử dụng tài liệu này nữa",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Hóa học",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 11",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Chờ cập nhật bài tập",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Sinh học",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 12",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Cần bổ sung video giảng dạy",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Lịch sử",
-      attachments: 200,
-      description: "Khóa học này dành cho các bạn học sinh lớp 10",
-      createdAt: "14 Feb 2024",
-      status: "Deleted",
-      notes: "Chưa hoàn thành phần lịch sử hiện đại",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Địa lý",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 11",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Cần thêm phần bài tập thực hành",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Giáo dục công dân",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 12",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Tài liệu còn thiếu phần thực tế",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Tin học",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 10",
-      createdAt: "14 Feb 2024",
-      status: "Deleted",
-      notes: "Chưa hoàn thành các phần bài tập lập trình",
-    },
-    {
-      creator: "Daniel Grant",
-      subject: "Công nghệ",
-      attachments: 100,
-      description: "Khóa học này dành cho các bạn học sinh lớp 11",
-      createdAt: "14 Feb 2024",
-      status: "Active",
-      notes: "Cần cập nhật tài liệu mới nhất",
-    },
-  ]);
+  const [courses, setCourses] = useState<any[]>([]);
+
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 4;
+
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const onCreateCourse = () => {
     setShowModal(true);
@@ -138,6 +49,43 @@ const CoursePage: React.FC = () => {
     createdAt: new Date().toLocaleDateString(),
     status: "Active",
   });
+
+  useEffect(() => {
+    console.log("useEffect triggered. Current Page:", currentPage);
+    const fetchCourses = async () => {
+      setLoading(true);
+      const authToken = localStorage.getItem("authToken");
+
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/course/admin/get-list-course`,
+          {
+            params: {
+              page: currentPage - 1, // Kiểm tra giá trị truyền vào API
+              limit: coursesPerPage
+            },
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+        console.log("Fetched Users:", response.data); // Kiểm tra dữ liệu trả về
+        setCourses(response.data?.content || []);
+        setTotalPages(response.data?.totalPages || 0);
+      } catch (err) {
+        setError("Error fetching users.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, [currentPage, searchQuery]);
+
+  const Loading = () => (
+    <div className="flex items-center justify-center h-full">
+      <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
+      <span className="ml-4 text-lg text-blue-500">Đang tải dữ liệu...</span>
+    </div>
+  );
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -156,9 +104,9 @@ const CoursePage: React.FC = () => {
 
   const filteredCourses = courses.filter((course) => {
     return (
-      (selectedSubject ? course.subject === selectedSubject : true) &&
+      (selectedSubject ? course.name === selectedSubject : true) &&
       (searchQuery
-        ? course.subject.toLowerCase().includes(searchQuery.toLowerCase())
+        ? course.name.toLowerCase().includes(searchQuery.toLowerCase())
         : true)
     );
   });
@@ -176,21 +124,19 @@ const CoursePage: React.FC = () => {
     console.log("Search query submitted:", searchQuery);
   };
 
-  //pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 4;
-
-  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
-  const startIndex = (currentPage - 1) * coursesPerPage;
-  const paginatedCourses = filteredCourses.slice(
-    startIndex,
-    startIndex + coursesPerPage
-  );
-
   const handlePreviousPage = () =>
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      console.log("Previous Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
   const handleNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => {
+      const newPage = Math.min(prev + 1, totalPages);
+      console.log("Next Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
 
   const getPageNumbers = () => {
     const pages = [];
@@ -233,7 +179,7 @@ const CoursePage: React.FC = () => {
     if (selectedCourses.size === filteredCourses.length) {
       setSelectedCourses(new Set()); // Bỏ chọn tất cả
     } else {
-      const allCourseIds = filteredCourses.map((course) => course.subject); // Sử dụng subject làm khóa ID
+      const allCourseIds = filteredCourses.map((course) => course.name); // Sử dụng subject làm khóa ID
       setSelectedCourses(new Set(allCourseIds)); // Chọn tất cả
     }
   };
@@ -331,7 +277,7 @@ const CoursePage: React.FC = () => {
                 <th className="py-3 px-4 text-left">
                   <input
                     type="checkbox"
-                    checked={selectedCourses.size === paginatedCourses.length}
+                    checked={selectedCourses.size === courses.length}
                     onChange={handleSelectAll}
                     className="form-checkbox"
                   />
@@ -364,57 +310,62 @@ const CoursePage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedCourses.map((course, index) => (
+            {loading ? (
+              <tr>
+                <td colSpan={isSelectMode ? 9 : 8} className="text-center py-4">
+                  <Loading />
+                </td>
+              </tr>
+            ) : (courses.map((course, index) => (
               <tr
-                key={course.subject}
-                className={`transition-all duration-200 ${
-                  selectedCourses.has(course.subject)
-                    ? "bg-blue-100"
-                    : "bg-white"
-                }`}>
+                key={course.name}
+                className={`transition-all duration-200 ${selectedCourses.has(course.name)
+                  ? "bg-blue-100"
+                  : "bg-white"
+                  }`}>
                 {isSelectMode && (
                   <td className="py-2 px-4">
                     <input
                       type="checkbox"
-                      checked={selectedCourses.has(course.subject)}
-                      onChange={() => toggleCourseSelection(course.subject)}
+                      checked={selectedCourses.has(course.name)}
+                      onChange={() => toggleCourseSelection(course.name)}
                       className="form-checkbox"
                     />
                   </td>
                 )}
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {course.creator}
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {course.createdBy?.name || "Trống"}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {course.subject}
+                  {course.name}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700 mt-3 flex items-center hover:underline">
+                <td className="px-6 py-4 text-sm text-gray-700 mt-3 text-center">
                   <Link
-                    href={handleAttachmentClick(course.subject)}
-                    className="flex">
-                    {course.attachments}
+                    href={handleAttachmentClick(course.name)}
+                    className="flex justify-center items-center mx-auto"
+                  >
+                    {course.attachments || 0}
                     <FaPaperclip className="ml-2 mt-1 text-green-500" />
                   </Link>
                 </td>
 
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {course.description}
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {course.description || "Trống"}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   {course.createdAt}
                 </td>
                 <td className="px-6 py-4 text-sm text-center text-gray-700">
                   <span
-                    className={`px-2 py-1 rounded-full text-white ${
-                      course.status === "Active" ? "bg-green-500" : "bg-red-500"
-                    }`}>
+                    className={`px-2 py-1 rounded-full text-white ${course.status === "Active" ? "bg-green-500" : "bg-red-500"
+                      }`}>
                     {course.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {course.notes}
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {course.content || "Trống"}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3 text-center">
+                <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
                     <FaEdit className="h-5 w-5" />
                   </button>
@@ -422,109 +373,90 @@ const CoursePage: React.FC = () => {
                     <FaTrashAlt className="h-4 w-4" />
                   </button>
                 </td>
+
               </tr>
-            ))}
+            )))}
           </tbody>
         </table>
       </div>
 
-      {/*Show modal*/}
+      {/* Show modal */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-            <h2 className="text-3xl font-semibold mb-6 text-center">
-              Tạo khóa học mới
+          <div className="bg-white p-8 rounded-xl shadow-lg w-[90%] max-w-lg">
+            <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+              Tạo môn học mới
             </h2>
 
-            <label className="block text-sm font-medium text-gray-700">
-              Người tạo
-            </label>
-            <input
-              type="text"
-              name="creator"
-              value={formData.creator}
-              onChange={handleInputChange}
-              className="w-full border rounded p-2 mb-4"
-              placeholder="Người tạo"
-            />
+            <form className="space-y-6">
+              {/* Người tạo */}
+              <div className="relative mb-6">
+                <input
+                  type="text"
+                  name="creator"
+                  value={localStorage.getItem('creator') || ''}
+                  readOnly
+                  className="w-full p-3 pl-4 bg-transparent text-gray-800 border border-gray-300 rounded-xl cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Người tạo"
+                />
+                <label
+                  htmlFor="creator"
+                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1">
+                  Người tạo
+                </label>
+              </div>
 
-            <label className="block text-sm font-medium text-gray-700">
-              Môn học
-            </label>
-            <input
-              type="text"
-              name="subject"
-              value={formData.subject}
-              onChange={handleInputChange}
-              className="w-full border rounded p-2 mb-4"
-              placeholder="Môn học"
-            />
+              <div className="relative mb-6">
+                <input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  onFocus={() => setIsFocused((prev) => ({ ...prev, subject: true }))}
+                  onBlur={() => setIsFocused((prev) => ({ ...prev, subject: false }))}
+                  className="w-full p-3 pl-4 bg-transparent text-gray-800 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                <label
+                  htmlFor="subject"
+                  className={`absolute left-4 transition-all duration-200 ${formData.subject || isFocused.subject ? "-top-3.5 text-xs text-indigo-600 bg-white px-1" : "top-1/2 transform -translate-y-1/2 text-gray-400"}`}
+                >
+                  Tên môn
+                </label>
+              </div>
 
-            <label className="block text-sm font-medium text-gray-700 mb-4">
-              Số lượng tệp đính kèm
-            </label>
-            {/* File Drop Zone */}
-            <div
-              {...getRootProps({
-                className:
-                  "border-2 border-dashed border-gray-300 rounded-lg p-4 text-center mb-4 cursor-pointer",
-              })}>
-              <input {...getInputProps()} />
-              <p>Kéo và thả file vào đây, hoặc nhấp để chọn tệp</p>
-            </div>
 
-            {/* Display selected files with delete button */}
-            {files.length > 0 && (
-              <ul className="mb-4 space-y-2">
-                {files.map((file, index) => (
-                  <li
-                    key={index}
-                    className="flex justify-between items-center text-gray-700">
-                    {file.name}
-                    <button
-                      onClick={() => removeFile(index)}
-                      className="text-red-500 hover:text-red-700">
-                      <FaTimes />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+              {/* Mô tả */}
+              <div className="relative mb-6">
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  onFocus={() => setIsFocused((prev) => ({ ...prev, description: true }))}
+                  onBlur={() => setIsFocused((prev) => ({ ...prev, description: false }))}
+                  className="w-full p-3 pl-4 bg-transparent text-gray-800 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                <label
+                  htmlFor="description"
+                  className={`absolute left-4 transition-all duration-200 ${formData.description || isFocused.description ? "-top-3.5 text-xs text-indigo-600 bg-white px-1" : "top-1/2 transform -translate-y-1/2 text-gray-400 pb-2"}`}
+                >
+                  Mô tả môn học
+                </label>
+              </div>
 
-            <label className="block text-sm font-medium text-gray-700">
-              Mô tả
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full border rounded p-2 mb-4"
-              placeholder="Mô tả khóa học"
-            />
-
-            <label className="block text-sm font-medium text-gray-700">
-              Ghi chú
-            </label>
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleInputChange}
-              className="w-full border rounded p-2 mb-4"
-              placeholder="Ghi chú"
-            />
-
-            <div className="flex justify-end space-x-4">
-              <Button
-                onClick={() => setShowModal(false)}
-                className="bg-gray-300 text-gray-700">
-                Hủy
-              </Button>
-              <Button
-                onClick={handleSaveCourse}
-                className="bg-blue-500 text-white">
-                Lưu
-              </Button>
-            </div>
+              {/* Buttons */}
+              <div className="flex justify-between mt-8">
+                <Button
+                  onClick={() => setShowModal(false)}
+                  className="px-6 py-3 bg-gray-300 text-black rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600 transition duration-200">
+                  Hủy
+                </Button>
+                <Button
+                  onClick={handleSaveCourse}
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200">
+                  Lưu
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -533,11 +465,10 @@ const CoursePage: React.FC = () => {
       <div className="flex justify-end mt-6 mr-6 space-x-2">
         <button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
           disabled={currentPage === 1}>
           Previous
         </button>
@@ -546,11 +477,10 @@ const CoursePage: React.FC = () => {
           <Button
             key={1}
             onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${
-              currentPage === 1
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}>
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
+              ? "bg-blue-700 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}>
             1
           </Button>
         ) : (
@@ -558,11 +488,10 @@ const CoursePage: React.FC = () => {
             <Button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all ${
-                currentPage === page
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}>
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}>
               {page}
             </Button>
           ))
@@ -570,11 +499,10 @@ const CoursePage: React.FC = () => {
 
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
           disabled={currentPage === totalPages}>
           Next
         </Button>

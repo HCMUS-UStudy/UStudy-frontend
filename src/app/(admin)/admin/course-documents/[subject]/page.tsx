@@ -11,22 +11,22 @@ interface Params {
 }
 
 const foldersBySubject: {
-  "Toán học": { id: number; name: string; description: string }[];
-  "Ngữ văn": { id: number; name: string; description: string }[];
+  'Toán': { id: number; name: string; description: string }[];
+  'Ngữ văn': { id: number; name: string; description: string }[];
 } = {
-  "Toán học": [
-    { id: 1, name: "Chapter 1", description: "Introduction to Algebra" },
-    { id: 2, name: "Chapter 2", description: "Quadratic Equations" },
-    { id: 3, name: "Exercises", description: "Practice problems and answers" },
-    { id: 4, name: "Chapter 3", description: "Linear Equations" },
-    { id: 5, name: "Chapter 4", description: "Polynomials" },
-    { id: 6, name: "Chapter 5", description: "Factorization" },
-    { id: 7, name: "Chapter 6", description: "Geometry" },
-    { id: 8, name: "Chapter 7", description: "Trigonometry" },
-    { id: 9, name: "Chapter 8", description: "Calculus" },
-    { id: 10, name: "Chapter 9", description: "Statistics" },
-    { id: 11, name: "Chapter 10", description: "Probability" },
-    { id: 12, name: "Chapter 11", description: "Differential Equations" },
+  'Toán': [
+    { id: 1, name: 'Chapter 1', description: 'Introduction to Algebra' },
+    { id: 2, name: 'Chapter 2', description: 'Quadratic Equations' },
+    { id: 3, name: 'Exercises', description: 'Practice problems and answers' },
+    { id: 4, name: 'Chapter 3', description: 'Linear Equations' },
+    { id: 5, name: 'Chapter 4', description: 'Polynomials' },
+    { id: 6, name: 'Chapter 5', description: 'Factorization' },
+    { id: 7, name: 'Chapter 6', description: 'Geometry' },
+    { id: 8, name: 'Chapter 7', description: 'Trigonometry' },
+    { id: 9, name: 'Chapter 8', description: 'Calculus' },
+    { id: 10, name: 'Chapter 9', description: 'Statistics' },
+    { id: 11, name: 'Chapter 10', description: 'Probability' },
+    { id: 12, name: 'Chapter 11', description: 'Differential Equations' },
   ],
   "Ngữ văn": [
     { id: 1, name: "Chapter 1", description: "Literature basics" },
