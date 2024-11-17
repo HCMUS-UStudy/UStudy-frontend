@@ -13,6 +13,7 @@ import { Button } from "@/app/ui/components/button";
 import Link from "next/link";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa6";
+import instance from "@/app/lib/axios";
 
 const CoursePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,8 +58,8 @@ const CoursePage: React.FC = () => {
       const authToken = localStorage.getItem("authToken");
 
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/course/admin/get-list-course`,
+        const response = await instance.get(
+          `/api/course/admin/get-list-course`,
           {
             params: {
               page: currentPage - 1, // Kiểm tra giá trị truyền vào API
@@ -357,11 +358,12 @@ const CoursePage: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 text-sm text-center text-gray-700">
                   <span
-                    className={`px-2 py-1 rounded-full text-white ${course.status === "Active" ? "bg-green-500" : "bg-red-500"
+                    className={`px-2 py-1 rounded-full text-white ${course.status ? "bg-green-500" : "bg-red-500"
                       }`}>
-                    {course.status}
+                    {course.status ? "Đang hoạt động" : "Ngưng hoạt động"}
                   </span>
                 </td>
+
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   {course.content || "Trống"}
                 </td>
