@@ -285,8 +285,7 @@ const BranchPage: React.FC = () => {
             />
             <button
               type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300"
-            >
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
               <FaSearch className="h-5 w-5" />
             </button>
           </div>
@@ -330,7 +329,9 @@ const BranchPage: React.FC = () => {
                 <td className="px-6 py-4 text-sm text-gray-700">
                   10
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.shifts}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.shifts}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
                     <FaEdit className="h-5 w-5" />
@@ -438,7 +439,10 @@ const BranchPage: React.FC = () => {
                 required
               />
               <div className="flex justify-between mt-8">
-                <Button type="button" onClick={handleCloseModal} className="bg-gray-300">
+                <Button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="bg-gray-300">
                   Hủy
                 </Button>
                 <Button type="submit" className="bg-indigo-600">
@@ -531,7 +535,9 @@ const BranchPage: React.FC = () => {
           <tbody>
             {sortShiftsByDayTime(shifts).map((shift: Shift) => (
               <tr key={shift.id} className="border-b bg-white">
-                <td className="px-6 py-4 text-sm text-gray-700">{shift.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {shift.name}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {editShift?.id === shift.id ? (
                     <input
@@ -561,14 +567,12 @@ const BranchPage: React.FC = () => {
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={saveShiftChanges}
-                        className="text-blue-600 hover:text-blue-800 font-semibold"
-                      >
+                        className="text-blue-600 hover:text-blue-800 font-semibold">
                         Lưu
                       </button>
                       <button
                         onClick={() => setEditShift(null)}
-                        className="text-red-600 hover:text-red-800 font-semibold"
-                      >
+                        className="text-red-600 hover:text-red-800 font-semibold">
                         Hủy
                       </button>
                     </div>

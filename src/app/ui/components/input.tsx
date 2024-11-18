@@ -9,7 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   type?: string;
   isError?: boolean;
-  errorMsg?: string[];
+  errorMsg?: string[] | null;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(

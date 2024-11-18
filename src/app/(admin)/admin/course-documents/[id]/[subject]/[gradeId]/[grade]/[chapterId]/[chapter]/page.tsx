@@ -10,38 +10,29 @@ import {
   FaEllipsisV,
 } from "react-icons/fa"; // Import new icons
 import ReactDOM from "react-dom";
+import { FaSpinner } from "react-icons/fa6";
+import axios from "axios";
 
 interface Params {
+  id: string;
   subject: string;
-  chapter: string;
+  grade: string;
+  gradeId: string;
+  chapterId: string;
+  chapter: string
 }
 
-const sampleDocuments = [
-  {
-    name: "Mathematics_Chapter1.pdf",
-    type: "pdf",
-    url: "/files/Mathematics_Chapter1.pdf",
-  },
-  {
-    name: "Science_Chapter1.docx",
-    type: "docx",
-    url: "/files/Science_Chapter1.docx",
-  },
-  {
-    name: "History_Chapter1.pdf",
-    type: "pdf",
-    url: "/files/History_Chapter1.pdf",
-  },
-  {
-    name: "Literature_Chapter1.docx",
-    type: "docx",
-    url: "/files/Literature_Chapter1.docx",
-  },
-];
+const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
 
-const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
+  const [courseId, setcourseId] = useState<string | null>(null);
   const [subject, setSubject] = useState<string | null>(null);
+  const [grade, setGrade] = useState<string | null>(null);
+  const [gradeId, setGradeId] = useState<string | null>(null);
+  const [chapterId, setChapterId] = useState<string | null>(null);
   const [chapter, setChapter] = useState<string | null>(null);
+
+  const [documents, setDocuments] = useState<any[]>([]);
+
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [allSelected, setAllSelected] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,12 +44,35 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const documentsPerPage = 2;
+
+  const Loading = () => (
+    <div className="flex items-center justify-center h-full">
+      <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
+      <span className="ml-4 text-lg text-blue-500">Đang tải dữ liệu...</span>
+    </div>
+  );
 
   useEffect(() => {
     params.then((resolvedParams) => {
+      if (resolvedParams?.id) {
+        setcourseId(decodeURIComponent(resolvedParams.id));
+      }
       if (resolvedParams?.subject) {
         setSubject(decodeURIComponent(resolvedParams.subject));
+      }
+      if (resolvedParams?.gradeId) {
+        setGradeId(decodeURIComponent(resolvedParams.gradeId));
+      }
+      if (resolvedParams?.grade) {
+        setGrade(decodeURIComponent(resolvedParams.grade));
+      }
+      if (resolvedParams?.chapterId) {
+        setChapterId(decodeURIComponent(resolvedParams.chapterId));
       }
       if (resolvedParams?.chapter) {
         setChapter(decodeURIComponent(resolvedParams.chapter));
@@ -66,27 +80,66 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     });
   }, [params]);
 
+  useEffect(() => {
+    const fetchGrades = async () => {
+      setLoading(true);
+      if (!courseId) return;
+
+      setLoading(true);
+      const authToken = localStorage.getItem("authToken");
+
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/material/all/get-materials",
+          {
+            params: {
+              page: currentPage - 1,
+              limit: documentsPerPage,
+              chapterId
+            },
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+        setDocuments(response.data?.content || []);
+        setTotalPages(response.data?.totalPages || 0);
+
+      } catch (error) {
+        console.error("Failed to fetch grades:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGrades();
+  }, [courseId, currentPage, searchQuery]);
+
   const renderBreadcrumb = () => {
-    if (!subject || !chapter) return null;
+    if (!subject || !courseId || !grade || !gradeId || !chapter || !chapterId) return null;
     return (
       <div className="mb-4 text-gray-700">
         <span className="text-sm">
-          <a
+        <a
             href="/admin/courses"
-            className="text-black hover:text-blue-600 hover:underline mr-2">
+            className=" text-black hover:text-blue-600 hover:underline mr-2">
             Quản lý môn học
           </a>
           {" > "}
           <a
-            href={`/admin/course-documents/${subject}`}
-            className="text-black hover:text-blue-600 hover:underline ml-2 mr-2">
-            {subject}
+            href={`/admin/course-documents/${courseId}/${subject}`}
+            className="text-black hover:text-blue-600 hover:underline mr-2 ml-2">
+            {decodeURIComponent(subject)}
           </a>
           {" > "}
           <a
-            href={`/admin/course-documents/${subject}/${chapter}`}
+            href={`/admin/course-documents/${courseId}/${subject}/${gradeId}/${grade}`}
+            className="text-black hover:text-blue-600 hover:underline mr-2 ml-2">
+            {decodeURIComponent(grade)}
+          </a>
+          {" > "}
+          <a
+            href={`/admin/course-documents/${courseId}/${subject}/${gradeId}/${grade}/${chapterId}/${chapter}`}
             className="text-blue-600 hover:underline ml-2">
-            {chapter}
+            {decodeURIComponent(chapter)}
           </a>
         </span>
       </div>
@@ -106,7 +159,7 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     if (allSelected) {
       setSelectedDocuments([]);
     } else {
-      setSelectedDocuments(sampleDocuments.map((doc) => doc.name));
+      setSelectedDocuments(documents.map((doc) => doc.name));
     }
     setAllSelected(!allSelected);
   };
@@ -121,23 +174,16 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     });
   };
 
-  const filteredDocuments = sampleDocuments.filter((doc) => {
-    const matchesSearch = doc.name
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearch = doc.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
-    const matchesFilter = selectedFilter ? doc.type === selectedFilter : true;
+    const matchesFilter = selectedFilter
+      ? getFileType(doc.title) === selectedFilter
+      : true;
     return matchesSearch && matchesFilter;
-  });
-
-  const totalDocuments = filteredDocuments.length;
-  const totalPages = Math.ceil(totalDocuments / documentsPerPage);
-  const startIndex = (currentPage - 1) * documentsPerPage;
-
-  const paginatedDocuments = filteredDocuments.slice(
-    startIndex,
-    startIndex + documentsPerPage
-  );
-
+  });  
+  
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () =>
@@ -195,13 +241,23 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     );
   };
 
-  if (!subject || !chapter) return <div>Loading...</div>;
+  const getFileType = (title: string) => {
+    const extension = title.split('.').pop()?.toLowerCase(); // Lấy phần mở rộng của tệp
+    if (extension === 'pdf') return 'pdf';
+    if (['doc', 'docx'].includes(extension || '')) return 'docx';
+    return 'other'; // Mặc định cho các loại tệp không xác định
+  };
+  
+
+  if (!courseId || !subject || !grade || !gradeId || !chapter || !chapterId) {
+    return <Loading />;
+  }
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen">
       {renderBreadcrumb()}
       <h1 className="text-4xl font-extrabold text-gray-800 mb-10 text-center">
-        Tài liệu môn {subject} - {chapter}
+        Tài liệu môn {subject} - {grade} - {chapter}
       </h1>
 
       {/* Search and Filter Section */}
@@ -251,19 +307,19 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
 
       {/* Files List */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {paginatedDocuments.map((doc, index) => (
+        {documents.map((doc, index) => (
           <div
-            key={doc.name}
+            key={doc.id || index}
             className={`border p-4 rounded-lg shadow-md ${
               selectedDocuments.includes(doc.name) ? "bg-blue-100" : "bg-white"
             } hover:shadow-lg transition`}>
             <div className="flex items-center space-x-4 mb-3">
-              {doc.type === "pdf" ? (
+              {getFileType(doc.title) === "pdf" ? (
                 <FaFilePdf className="text-red-500 text-3xl" />
               ) : (
                 <FaFileWord className="text-blue-500 text-3xl" />
               )}
-              <h3 className="font-semibold flex-1">{doc.name}</h3>
+              <h3 className="font-semibold flex-1">{doc.title}</h3>
 
               <button
                 className="text-gray-600"
@@ -282,12 +338,12 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
             </div>
             <div className="flex justify-end space-x-2">
               <Button
-                onClick={() => window.open(doc.url, "_blank")}
+                onClick={() => window.open(doc.filePath, "_blank")}
                 className="bg-blue-500 text-white hover:bg-blue-600 transition p-2">
                 <FaEye className="text-white text-sm" />
               </Button>
               <Button
-                onClick={() => window.open(doc.url, "_blank")}
+                onClick={() => window.open(doc.filePath, "_blank")}
                 className="bg-green-500 text-white hover:bg-green-600 transition p-2">
                 <FaDownload className="text-white text-sm" />
               </Button>
@@ -296,7 +352,6 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
         ))}
       </div>
 
-      {/* Pagination Controls */}
       {/* Pagination Controls */}
       <div className="flex justify-end mt-6 mr-6 space-x-2">
         <Button
@@ -342,4 +397,4 @@ const SubjectDocumentsPage = ({ params }: { params: Promise<Params> }) => {
   );
 };
 
-export default SubjectDocumentsPage;
+export default ChapterDocumentsPage;

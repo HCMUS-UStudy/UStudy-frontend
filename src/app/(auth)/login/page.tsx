@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useActionState, useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
@@ -10,6 +10,7 @@ import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
+import { redirect } from "next/navigation";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,10 +19,23 @@ export default function Login() {
   const [isFocused, setIsFocused] = useState({ email: false, password: false });
 
   const initialState: LoginFormState = {
-    errors: {},
+    errors: {
+      email: null,
+      password: null,
+    },
     message: null,
+    accessToken: null,
   };
   const [state, action, isPending] = useActionState(logIn, initialState);
+
+  useEffect(() => {
+    console.log(state.accessToken);
+    if (state.accessToken) {
+      localStorage.removeItem("accessToken");
+      localStorage.setItem("accessToken", state.accessToken);
+      redirect("/staff");
+    }
+  }, [state.accessToken]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
