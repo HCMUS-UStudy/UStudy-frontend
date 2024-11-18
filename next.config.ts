@@ -6,9 +6,14 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/admin',
-        destination: '/admin/dashboard',
+        destination: '/admin/login',
         permanent: true, // Use permanent: true for 308 status code, false for 307
       },
+      {
+        source: '/staff',
+        destination: '/staff/dashboard',
+        permanent: true, // Use permanent: true for 308 status code, false for 307
+      }
     ];
   },
 };

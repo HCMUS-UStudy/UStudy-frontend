@@ -7,6 +7,7 @@ import { SideNavItemGroup } from "@/app/types/type";
 import "../styles/Sidebar.css"; // Import file CSS
 // import { BsList } from 'react-icons/bs';
 import { RiArrowLeftSLine } from "react-icons/ri";
+import Image from "next/image";
 
 const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
   const { toggleCollapse, setToggleCollapse, invokeToggleCollapse } =
@@ -47,7 +48,8 @@ const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
   return (
     <>
       <aside className={asideStyle}>
-        <div className="sidebar-top justify-center">
+        <div className="sidebar-top justify-center space-x-2">
+          <Image src="/UStudyIcon.png" alt="Logo" className="sidebar-logo" width={45} height={45}/>
           <h3
             className={classNames("sidebar-title", { hidden: toggleCollapse })}>
             <div className="US">US</div>
