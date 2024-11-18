@@ -1,8 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
 import { Input } from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:8080/api", // Đặt base URL cho API
+  timeout: 10000, // Timeout 10 giây
+  headers: {
+    "Content-Type": "application/json",
+    // "Authorization": "Bearer " + localStorage.getItem("token"),
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc0FjdGl2ZSI6dHJ1ZSwic3ViIjoibWluaHF1YW5AZ21haWwuY29tIiwiaWF0IjoxNzMxOTIxMjg5LCJleHAiOjE3MzIwMDc2ODl9.mbOnZSKvUabcdvB5qADffB6NgieoXTsciE9FiF0oiG0"
+  },
+  params: {
+    "page": 0,
+    "limit": 10
+  }
+});
 
 const initialShifts = [
   { id: "shift-1", name: "Ca 1", days: "2-4-6", time: "08:00 - 10:00" },
@@ -20,6 +35,18 @@ const branches = Array.from({ length: 5 }, (_, index) => ({
 }));
 
 const BranchPage: React.FC = () => {
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await api.get("/branch/clerk/get-all");
+        console.log("Branches:", response.data);
+      } catch (error) {
+        console.error("Failed to fetch branches:", error);
+      }
+    };
+    fetchBranches();
+  }, []);
+
   const [shifts, setShifts] = useState(initialShifts);
   const [editShift, setEditShift] = useState<null | { id: string; days: string, time: string }>(
     null
@@ -46,6 +73,12 @@ const BranchPage: React.FC = () => {
     }
   };
 
+  const [showShiftModal, setShowShiftModal] = useState(false);
+  const [newShift, setNewShift] = useState({
+    name: "",
+    days: "",
+    time: "",
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -111,9 +144,6 @@ const BranchPage: React.FC = () => {
   return (
     <>
       <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">Quản lý chi nhánh</h2>
-      {/* <h2 className="text-xl tracking-tight mb-6">
-        Tìm tất cả chi nhánh tại đây
-      </h2> */}
 
       <div className="flex items-center justify-between mt-8">
         <form className="flex items-center w-full lg:w-[20rem]">
@@ -198,7 +228,7 @@ const BranchPage: React.FC = () => {
               : "bg-blue-500 hover:bg-blue-600"
           }`}
         >
-          Previous
+          Trước
         </Button>
         <Button
           onClick={handleNextPage}
@@ -209,7 +239,7 @@ const BranchPage: React.FC = () => {
               : "bg-blue-500 hover:bg-blue-600"
           }`}
         >
-          Next
+          Sau
         </Button>
       </div>
 
@@ -269,7 +299,65 @@ const BranchPage: React.FC = () => {
         </div>
       )}
 
-      <h3 className="text-2xl font-semibold mt-12 mb-6">Định nghĩa giờ học</h3>
+      {showShiftModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-lg w-96 max-w-lg">
+            <h3 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+              Thêm ca học mới
+            </h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShifts((prev) => [...prev, { id: `shift-${Date.now()}`, ...newShift }]);
+                setNewShift({ name: "", days: "", time: "" });
+                setShowShiftModal(false);
+              }}
+              className="space-y-6"
+            >
+              <Input
+                name="name"
+                placeholder="Tên ca học"
+                value={newShift.name}
+                onChange={(e) => setNewShift({ ...newShift, name: e.target.value })}
+                required
+              />
+              <Input
+                name="days"
+                placeholder="Ngày học (vd: 2-4-6)"
+                value={newShift.days}
+                onChange={(e) => setNewShift({ ...newShift, days: e.target.value })}
+                required
+              />
+              <Input
+                name="time"
+                placeholder="Giờ học (vd: 08:00 - 10:00)"
+                value={newShift.time}
+                onChange={(e) => setNewShift({ ...newShift, time: e.target.value })}
+                required
+              />
+              <div className="flex justify-between mt-8">
+                <Button
+                  type="button"
+                  onClick={() => setShowShiftModal(false)}
+                  className="bg-gray-300"
+                >
+                  Hủy
+                </Button>
+                <Button type="submit" className="bg-indigo-600">
+                  Thêm
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mt-20 mb-6">
+        <h3 className="text-2xl font-semibold">Định nghĩa giờ học</h3>
+        <Button onClick={() => setShowShiftModal(true)} className="px-6 py-2">
+          Thêm ca học
+        </Button>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-collapse">
           <thead className="bg-gray-100">
@@ -333,12 +421,17 @@ const BranchPage: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => handleEditShift(shift.id, shift.days, shift.time)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <FaEdit className="h-5 w-5 ml-5" />
-                    </button>
+                    <div className="space-x-3 ml-2">
+                      <button
+                        onClick={() => handleEditShift(shift.id, shift.days, shift.time)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <FaEdit className="h-5 w-5" />
+                      </button>
+                      <button className="text-red-600 hover:text-red-800">
+                        <FaTrashAlt className="h-5 w-5" />
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
