@@ -55,7 +55,11 @@ const AccountPage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const usersPerPage = 5;
+  const usersPerPage = 4;
+
+  // Giả sử bạn có một mảng chứa tất cả ID của khóa học từ các trang
+  const [allUserIds, setAllUserIds] = useState<Set<string>>(new Set());
+
 
   useEffect(() => {
     console.log("useEffect triggered. Current Page:", currentPage);
@@ -65,7 +69,7 @@ const AccountPage: React.FC = () => {
       const authToken = localStorage.getItem("authToken");
   
       try {
-        const response = await instance.get(`/api/user/clerk/get-list-user`, {
+        const response = await axios.get(`http://localhost:8080/api/user/clerk/get-list-user`, {
           params: {
             page: currentPage - 1, // Kiểm tra giá trị truyền vào API
             limit: usersPerPage,
@@ -89,7 +93,7 @@ const AccountPage: React.FC = () => {
       const authToken = localStorage.getItem("authToken");
   
       try {
-        const response = await instance.get(
+        const response = await axios.get(
           `http://localhost:8080/api/user/clerk/count-users-by-role`,
           {
             headers: { Authorization: `Bearer ${authToken}` },
@@ -109,6 +113,53 @@ const AccountPage: React.FC = () => {
     fetchUserCountsByRole(); // Gọi hàm lấy số lượng người dùng
   }, [currentPage, searchQuery]);
   
+  const fetchAllUsers = async () => {
+    const authToken = localStorage.getItem("authToken");
+    let allUsers: any[] = [];
+    let currentPage = 0;
+  
+    try {
+      // Lặp qua tất cả các trang để lấy dữ liệu
+      while (true) {
+        const response = await axios.get(
+          `http://localhost:8080/api/user/clerk/get-list-user`,
+          {
+            params: {
+              page: currentPage,
+              limit: usersPerPage,
+              role: "STUDENT",
+              filter: ""
+            },
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+  
+        const users = response.data?.content || [];
+        allUsers = [...allUsers, ...users];
+  
+        // Kiểm tra nếu đã tới trang cuối
+        if (currentPage + 1 >= response.data?.totalPages) {
+          break;
+        }
+  
+        currentPage++;
+      }
+  
+      // Cập nhật danh sách toàn bộ khóa học
+      const allIds = new Set(allUsers.map((user) => user.id));
+      setAllUserIds(allIds);
+  
+      console.log("Tất cả khóa học đã được fetch:", allUsers);
+    } catch (error) {
+      console.error("Error fetching all courses:", error);
+    }
+  };
+  
+  // Gọi hàm này khi component được mount
+  useEffect(() => {
+    fetchAllUsers();
+  }, []);  
+
   const Loading = () => (
     <div className="flex items-center justify-center h-full">
       <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
@@ -178,7 +229,7 @@ const AccountPage: React.FC = () => {
     };
 
     try {
-      const response = await instance.post("/api/user/admin/add", payload, {
+      const response = await axios.post("http://localhost:8080/api/user/admin/add", payload, {
         headers: {
           'Authorization': `Bearer ${token}`,  // Add the Authorization header here
         }
@@ -209,17 +260,17 @@ const AccountPage: React.FC = () => {
       setShowModal(false);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        const message = err.response?.data || "An error occurred. Please try again.";
+        const message = err.response?.data || "Lỗi hệ thống. Vui lòng thử lại.";
         Swal.fire({
           icon: 'error',
-          title: 'Login Failed',
+          title: 'Tạo tài khoản thất bại',
           text: message,
         });
       } else {
-        const unexpectedError = "An unexpected error occurred.";
+        const unexpectedError = "Lỗi hệ thống.";
         Swal.fire({
           icon: 'error',
-          title: 'Login Failed',
+          title: 'Tạo tài khoản thất bại',
           text: unexpectedError,
         });
       }
@@ -257,14 +308,15 @@ const AccountPage: React.FC = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedUsers.size === users.length) {
-      // If all users are selected, deselect all
-      setSelectedUsers(new Set());
-    } else {
-      // Select all user IDs in the entire user list
-      const allUserIds = users.map((user) => user.id);
-      setSelectedUsers(new Set(allUserIds));
-    }
+    setSelectedUsers((prevSelectedUsers) => {
+      if (prevSelectedUsers.size === allUserIds.size) {
+        // Nếu tất cả đã được chọn, thì bỏ chọn hết
+        return new Set(); // Trả về trạng thái rỗng
+      } else {
+        // Chọn tất cả các úuer
+        return new Set(allUserIds); // Trả về tất cả ID
+      }
+    });
   };
 
   const handleSelectButtonClick = () => {
@@ -289,6 +341,8 @@ const AccountPage: React.FC = () => {
   };
 
   const totalUsers = totalStudents + totalTeachers + totalClerks;
+  const isUserSelected = (userId: string) => selectedUsers.has(userId);
+  
 
   return (
     <>
@@ -661,14 +715,14 @@ const AccountPage: React.FC = () => {
               users.map((user) => (
                 <tr
                   key={user.id}
-                  className={`border-b ${selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
+                  className={`border-b ${isUserSelected(user.name) ? "bg-blue-100" : "bg-white"
                     }`}
                 >
                   {isSelectMode && (
                     <td className="py-2 px-4">
                       <input
                         type="checkbox"
-                        checked={selectedUsers.has(user.id)}
+                        checked={isUserSelected(user.id)}
                         onChange={() => toggleUserSelection(user.id)}
                         className="form-checkbox"
                       />
