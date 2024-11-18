@@ -11,7 +11,14 @@ interface Branch {
   address: string;
   contactNumber: string;
   classrooms: number;
-  shifts: [];
+  shifts: string;
+}
+
+interface BranchResponse {
+  id: string;
+  name: string;
+  address: string;
+  contactNumber: string;
 }
 
 interface Shift {
@@ -31,29 +38,13 @@ const api = axios.create({
   timeout: 10000, // Timeout 10 giây
   headers: {
     "Content-Type": "application/json",
-    // "Authorization": "Bearer " + localStorage.getItem("access_token"),
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc0FjdGl2ZSI6dHJ1ZSwic3ViIjoibWluaHF1YW5AZ21haWwuY29tIiwiaWF0IjoxNzMxOTIxMjg5LCJleHAiOjE3MzIwMDc2ODl9.mbOnZSKvUabcdvB5qADffB6NgieoXTsciE9FiF0oiG0"
+    "Authorization": "Bearer " + localStorage.getItem("authToken"),
   },
   params: {
     "page": 0,
     "limit": 10
   }
 });
-
-// const initialShifts = [
-//   { id: "shift-1", name: "Ca 1", day: "2-4-6", time: "08:00 - 10:00" },
-//   { id: "shift-2", name: "Ca 2", day: "2-4-6", time: "10:30 - 12:30" },
-//   { id: "shift-3", name: "Ca 3", day: "2-4-6", time: "14:00 - 16:00" },
-// ];
-
-// const branches = Array.from({ length: 5 }, (_, index) => ({
-//   id: `branch-${index}`,
-//   name: `Chi nhánh ${index + 1}`,
-//   address: `Địa chỉ ${index + 1}`,
-//   contactNumber: `012345678${index}`,
-//   classrooms: 20,
-//   shifts: `Ca 1, Ca 2, Ca 3`,
-// }));
 
 const BranchPage: React.FC = () => {
   const [branches, setBranches] = useState([]);
@@ -67,13 +58,18 @@ const BranchPage: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await api.get("/branch/clerk/get-all");
-        setBranches(response.data.content);
+        const modifiedData = response.data.content.map((item: BranchResponse) => ({
+          ...item, // Giữ nguyên các cột ban đầu
+          shifts: shifts.map((shift) => shift.name).join(", "), // Kết hợp các ca học thành một chuỗi
+          classrooms: 10, // Số phòng học cố định
+        }));
+        setBranches(modifiedData);
       } catch (error) {
         console.error("Failed to fetch branches:", error);
       }
     };
     fetchBranches();
-  }, []);
+  }, [shifts]);
 
   useEffect(() => {
     const fetchShifts = async () => {
