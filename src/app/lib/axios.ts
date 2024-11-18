@@ -1,8 +1,7 @@
-'use server';
 import axios, { AxiosError } from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://localhost:8080/api'
 })
 
 axiosInstance.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
@@ -10,10 +9,16 @@ axiosInstance.defaults.headers.post['Content-Type'] = 'Application/json';
 
 axiosInstance.interceptors.request.use(
     function(request) {
-        // const token = localStorage.getItem('accessToken');
-        // if(!token) {
-        //     return Promise.reject(new Error('Bạn không có quyền'));
-        // }
+        console.log(request.url);
+        if(request.url !== '/auth/user/login') {
+            const token = localStorage.getItem('accessToken');
+            if(!token) {
+                return Promise.reject({
+                    message: 'AT not found'
+                });
+            }
+            request.headers.Authorization = `Bearer ${token}`; 
+        }
         return request;
     },
     function(error) {

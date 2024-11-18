@@ -70,7 +70,7 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
     menuList: [
       {
         title: "Bảng thống kê",
-        path: "/staff/dashboard",
+        path: "/staff",
         icon: <BsHouseDoor size={20} />,
       },
     ],

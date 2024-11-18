@@ -42,19 +42,22 @@ const SelectingButton: React.FC<ButtonProps> = ({
   onClick,
   placeholder,
   nameForInput,
+  className,
+  disabled,
 }) => {
   return (
     <button
       type="button"
       onClick={onClick}
-      className=" w-[10vw] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 transition-colors">
-      {/* {subjectForCreateClass === "" ? (
-        <span>Môn học</span>
-      ) : (
-        <span className="font-bold">{subjectForCreateClass}</span>
-      )} */}
-      <span className="mr-14">{placeholder}</span>
-      <FaChevronDown />
+      className={clsx(
+        {
+          "bg-gray-400 cursor-not-allowed": disabled,
+          "bg-white hover:bg-gray-200": !disabled,
+        },
+        `${className} w-[10vw] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg  transition-colors`
+      )}>
+      <span className="">{placeholder}</span>
+      {!disabled && <FaChevronDown />}
       <input
         type="text"
         name={nameForInput}

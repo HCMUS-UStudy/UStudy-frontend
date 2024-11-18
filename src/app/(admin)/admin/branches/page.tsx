@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
 import { Input } from "@/app/ui/components/input";
-import Button from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/button";
 
 const initialShifts = [
   { id: "shift-1", name: "Ca 1", days: "2-4-6", time: "08:00 - 10:00" },
@@ -21,15 +21,20 @@ const branches = Array.from({ length: 5 }, (_, index) => ({
 
 const BranchPage: React.FC = () => {
   const [shifts, setShifts] = useState(initialShifts);
-  const [editShift, setEditShift] = useState<null | { id: string; days: string, time: string }>(
-    null
-  );
+  const [editShift, setEditShift] = useState<null | {
+    id: string;
+    days: string;
+    time: string;
+  }>(null);
 
   const handleEditShift = (shiftId: string, days: string, time: string) => {
     setEditShift({ id: shiftId, days, time });
   };
 
-  const handleShiftChange = (event: React.ChangeEvent<HTMLInputElement>, field: "days" | "time") => {
+  const handleShiftChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: "days" | "time"
+  ) => {
     setEditShift((prev) =>
       prev ? { ...prev, [field]: event.target.value } : null
     );
@@ -39,13 +44,14 @@ const BranchPage: React.FC = () => {
     if (editShift) {
       setShifts((prev) =>
         prev.map((shift) =>
-          shift.id === editShift.id ? { ...shift, days: editShift.days, time: editShift.time } : shift
+          shift.id === editShift.id
+            ? { ...shift, days: editShift.days, time: editShift.time }
+            : shift
         )
       );
       setEditShift(null);
     }
   };
-
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -62,7 +68,10 @@ const BranchPage: React.FC = () => {
 
   const totalPages = Math.ceil(branches.length / branchesPerPage);
   const startIndex = (currentPage - 1) * branchesPerPage;
-  const paginatedBranches = branches.slice(startIndex, startIndex + branchesPerPage);
+  const paginatedBranches = branches.slice(
+    startIndex,
+    startIndex + branchesPerPage
+  );
 
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -110,7 +119,9 @@ const BranchPage: React.FC = () => {
 
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">Quản lý chi nhánh</h2>
+      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">
+        Quản lý chi nhánh
+      </h2>
       {/* <h2 className="text-xl tracking-tight mb-6">
         Tìm tất cả chi nhánh tại đây
       </h2> */}
@@ -127,8 +138,7 @@ const BranchPage: React.FC = () => {
             />
             <button
               type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300"
-            >
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
               <FaSearch className="h-5 w-5" />
             </button>
           </div>
@@ -166,13 +176,21 @@ const BranchPage: React.FC = () => {
           <tbody>
             {paginatedBranches.map((branch) => (
               <tr key={branch.id} className="border-b bg-white">
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.address}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.phone}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.name}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.address}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.phone}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {branch.classrooms}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.shifts}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.shifts}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
                     <FaEdit className="h-5 w-5" />
@@ -196,8 +214,7 @@ const BranchPage: React.FC = () => {
             currentPage === 1
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
+          }`}>
           Previous
         </Button>
         <Button
@@ -207,8 +224,7 @@ const BranchPage: React.FC = () => {
             currentPage === totalPages
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
+          }`}>
           Next
         </Button>
       </div>
@@ -257,7 +273,10 @@ const BranchPage: React.FC = () => {
                 required
               />
               <div className="flex justify-between mt-8">
-                <Button type="button" onClick={handleCloseModal} className="bg-gray-300">
+                <Button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="bg-gray-300">
                   Hủy
                 </Button>
                 <Button type="submit" className="bg-indigo-600">
@@ -291,7 +310,9 @@ const BranchPage: React.FC = () => {
           <tbody>
             {shifts.map((shift) => (
               <tr key={shift.id} className="border-b bg-white">
-                <td className="px-6 py-4 text-sm text-gray-700">{shift.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {shift.name}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {editShift?.id === shift.id ? (
                     <input
@@ -321,22 +342,21 @@ const BranchPage: React.FC = () => {
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={saveShiftChanges}
-                        className="text-blue-600 hover:text-blue-800 font-semibold"
-                      >
+                        className="text-blue-600 hover:text-blue-800 font-semibold">
                         Lưu
                       </button>
                       <button
                         onClick={() => setEditShift(null)}
-                        className="text-red-600 hover:text-red-800 font-semibold"
-                      >
+                        className="text-red-600 hover:text-red-800 font-semibold">
                         Hủy
                       </button>
                     </div>
                   ) : (
                     <button
-                      onClick={() => handleEditShift(shift.id, shift.days, shift.time)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
+                      onClick={() =>
+                        handleEditShift(shift.id, shift.days, shift.time)
+                      }
+                      className="text-blue-600 hover:text-blue-800">
                       <FaEdit className="h-5 w-5 ml-5" />
                     </button>
                   )}
