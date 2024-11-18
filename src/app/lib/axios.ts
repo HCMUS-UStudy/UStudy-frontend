@@ -1,17 +1,45 @@
-import axios from 'axios';
+'use server';
+import axios, { AxiosError } from 'axios';
 
-const instance = axios.create({
-    baseURL: 'http://localhost:8080',
-    method: 'get',
-    timeout: 1000,    
-});
+const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8080'
+})
 
-axios.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
-axios.defaults.headers.post['Content-Type'] = 'application/json';
+axiosInstance.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
+axiosInstance.defaults.headers.post['Content-Type'] = 'Application/json';
 
-export default instance;
+axiosInstance.interceptors.request.use(
+    function(request) {
+        // const token = localStorage.getItem('accessToken');
+        // if(!token) {
+        //     return Promise.reject(new Error('Bạn không có quyền'));
+        // }
+        return request;
+    },
+    function(error) {
+        return Promise.reject(error);
+    }
+);
+
+axiosInstance.interceptors.response.use(
+    function(response) {
+        // Any status code that lie within the range of 2xx cause this function to trigger
+        return response;
+    }, 
+    function(error:AxiosError) {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        const customError = {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data
+        }
+        return Promise.reject(customError);
+    }
+)
 
 
+
+export default axiosInstance;
 
 
 

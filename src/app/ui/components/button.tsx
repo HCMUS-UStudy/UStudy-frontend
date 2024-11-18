@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import React from "react";
+import { FaChevronDown } from "react-icons/fa6";
 
-interface ButtonProps {
-  onClick?: () => void;
-  type?: "button" | "submit";
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
-  disabled?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   isPending?: boolean;
+  placeholder?: string;
+  nameForInput?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -17,6 +17,7 @@ const Button: React.FC<ButtonProps> = ({
   className,
   disabled = false,
   isPending,
+  ...props
 }) => {
   return (
     <button
@@ -30,10 +31,39 @@ const Button: React.FC<ButtonProps> = ({
           "bg-button_primary cursor-pointer": !isPending,
         },
         `${className} flex items-center justify-center rounded-md px-3 py-2.5 bg-button_primary transition duration-200 ease-in-out cursor-pointer text-white font-bold`
-      )}>
+      )}
+      {...props}>
       {children}
     </button>
   );
 };
 
-export default Button;
+const SelectingButton: React.FC<ButtonProps> = ({
+  onClick,
+  placeholder,
+  nameForInput,
+}) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className=" w-[10vw] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 transition-colors">
+      {/* {subjectForCreateClass === "" ? (
+        <span>Môn học</span>
+      ) : (
+        <span className="font-bold">{subjectForCreateClass}</span>
+      )} */}
+      <span className="mr-14">{placeholder}</span>
+      <FaChevronDown />
+      <input
+        type="text"
+        name={nameForInput}
+        value={placeholder}
+        readOnly
+        className="hidden"
+      />
+    </button>
+  );
+};
+
+export { Button, SelectingButton };

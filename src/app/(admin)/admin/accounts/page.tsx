@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -13,26 +13,108 @@ import {
   FaEdit,
   FaTrashAlt,
   FaSearch,
+  FaSpinner
 } from "react-icons/fa";
 import { Label } from "@/app/ui/components/label";
 import { Input } from "@/app/ui/components/input";
-import Button from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/button";
+import instance from "@/app/lib/axios";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const AccountPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isFocused, setIsFocused] = useState({ email: false, name: false });
+  const [isFocused, setIsFocused] = useState({ email: false, name: false, phone: false, address: false });
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [newUser, setNewUser] = useState({
     email: "",
     name: "",
     birthDate: "",
     role: "",
+    phone: "",
+    address: "",
+    gender: "Nam",
   });
+
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [isSelectMode, setIsSelectMode] = useState(false);
+
+  const [users, setUsers] = useState<any[]>([]); // Sử dụng any[] nếu chưa xác định kiểu dữ liệu
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [totalClerks, setTotalClerks] = useState(0);
+  const [totalTeachers, setTotalTeachers] = useState(0);
+
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const usersPerPage = 5;
+
+  useEffect(() => {
+    console.log("useEffect triggered. Current Page:", currentPage);
+  
+    const fetchUsers = async () => {
+      setLoading(true);
+      const authToken = localStorage.getItem("authToken");
+  
+      try {
+        const response = await instance.get(`/api/user/clerk/get-list-user`, {
+          params: {
+            page: currentPage - 1, // Kiểm tra giá trị truyền vào API
+            limit: usersPerPage,
+            role: "STUDENT",
+            filter: searchQuery,
+          },
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        console.log("Fetched Users:", response.data); // Kiểm tra dữ liệu trả về
+  
+        setUsers(response.data?.content || []);
+        setTotalPages(response.data?.totalPages || 0);
+      } catch (err) {
+        setError("Error fetching users.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const fetchUserCountsByRole = async () => {
+      const authToken = localStorage.getItem("authToken");
+  
+      try {
+        const response = await instance.get(
+          `http://localhost:8080/api/user/clerk/count-users-by-role`,
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+  
+        // Giả sử API trả về { students: X, clerks: Y, teachers: Z }
+        setTotalStudents(response.data?.STUDENT || 0);
+        setTotalClerks(response.data?.CLERK || 0);
+        setTotalTeachers(response.data?.TEACHER || 0);
+      } catch (err) {
+        console.error("Error fetching user counts by role:", err);
+      }
+    };
+  
+    fetchUsers();
+    fetchUserCountsByRole(); // Gọi hàm lấy số lượng người dùng
+  }, [currentPage, searchQuery]);
+  
+  const Loading = () => (
+    <div className="flex items-center justify-center h-full">
+      <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
+      <span className="ml-4 text-lg text-blue-500">Đang tải dữ liệu...</span>
+    </div>
+  );
 
   const onCreateUser = () => {
     setShowModal(true); // Show modal when "Tạo người dùng" is clicked
@@ -51,43 +133,116 @@ const AccountPage: React.FC = () => {
     console.log("Selected filter:", event.target.value);
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
+
+    setNewUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   };
 
-  const handleSubmitModal = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    // Call handleInputChange for general field handling (to update the state for general fields)
+    handleInputChange(e);
+
+    // Specific logic for fields like 'address', 'email', 'name', and 'phone'
+    if (name === 'address') {
+      setAddress(value);  // Custom logic for address
+    } else if (name === 'email') {
+      setEmail(value);  // Custom logic for email
+    } else if (name === 'name') {
+      setName(value);  // Custom logic for name
+    } else if (name === 'phone') {
+      setPhone(value);  // Custom logic for phone
+    }
+  };
+
+  const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("New user details:", newUser);
-    setShowModal(false); // Close modal after submission
+
+    // Retrieve the token from local storage or global state
+    const token = localStorage.getItem('authToken'); // Replace this with your actual token retrieval method
+
+    // Map gender and role to the required values
+    const payload = {
+      email: newUser.email,
+      name: newUser.name,
+      phone: newUser.phone,
+      address: newUser.address,
+      birthday: newUser.birthDate,
+      gender: newUser.gender === "female" ? "FEMALE" : "MALE",
+      role: newUser.role === "student" ? "STUDENT" : newUser.role === "teacher" ? "TEACHER" : "CLERK",
+    };
+
+    try {
+      const response = await instance.post("/api/user/admin/add", payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`,  // Add the Authorization header here
+        }
+      });
+
+      if (response.status === 200) {
+        setNewUser({
+          email: "",
+          name: "",
+          phone: "",
+          address: "",
+          birthDate: "",
+          gender: "male",
+          role: "student",
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Tạo tài khoản thành công',
+          text: 'Vui lòng kiểm tra thông tin tài khoản tại bảng bên dưới',
+          timer: 8000,
+          showConfirmButton: true,
+        });
+        window.location.href = "/admin/accounts";
+      }
+
+      // Close the modal after successful submission
+      setShowModal(false);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const message = err.response?.data || "An error occurred. Please try again.";
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: message,
+        });
+      } else {
+        const unexpectedError = "An unexpected error occurred.";
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: unexpectedError,
+        });
+      }
+    }
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
-  // Sample users (10 users)
-  const users = Array.from({ length: 10 }, (_, index) => ({
-    name: `Nguyễn Văn ${String.fromCharCode(65 + index)}`,
-    id: `1234${index}`,
-    role: index % 2 === 0 ? "Học viên" : "Giáo viên",
-    status: "Hoạt động",
-    createdAt: `01/01/2024`,
-  }));
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 2;
-
-  const totalPages = Math.ceil(users.length / usersPerPage);
-  const startIndex = (currentPage - 1) * usersPerPage;
-  const paginatedUsers = users.slice(startIndex, startIndex + usersPerPage);
-
   const handlePreviousPage = () =>
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      console.log("Previous Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
   const handleNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => {
+      const newPage = Math.min(prev + 1, totalPages);
+      console.log("Next Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
 
   const toggleUserSelection = (userId: string) => {
     setSelectedUsers((prev) => {
@@ -121,6 +276,20 @@ const AccountPage: React.FC = () => {
     });
   };
 
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPages = Math.min(3, totalPages);
+
+    let start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+    for (let i = start; i < start + maxPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
+  const totalUsers = totalStudents + totalTeachers + totalClerks;
+
   return (
     <>
       <h2 className="text-3xl font-bold tracking-tight my-4">
@@ -140,7 +309,7 @@ const AccountPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-2">
             <div className="text-2xl font-bold text-gray-900 flex items-center">
-              11.000
+              {totalStudents}
               <span className="ml-2 text-xs text-blue-600 border border-blue-600 rounded-full px-1 py-0.5">
                 +5.00%
               </span>
@@ -157,7 +326,7 @@ const AccountPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-2">
             <div className="text-2xl font-bold text-gray-900 flex items-center">
-              3000
+              {totalTeachers}
               <span className="ml-2 text-xs text-green-600 border border-green-600 rounded-full px-1 py-0.5">
                 +5.00%
               </span>
@@ -174,7 +343,7 @@ const AccountPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-2">
             <div className="text-2xl font-bold text-gray-900 flex items-center">
-              50
+              {totalClerks}
               <span className="ml-2 text-xs text-red-600 border border-red-600 rounded-full px-1 py-0.5">
                 +5.00%
               </span>
@@ -184,7 +353,7 @@ const AccountPage: React.FC = () => {
       </div>
 
       <div className="flex items-center justify-between mt-8 mr-6">
-        <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
+        <h2 className="text-2xl font-bold">Tổng số người dùng ({totalUsers})</h2>
         <form
           onSubmit={handleSearchSubmit}
           className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
@@ -217,13 +386,13 @@ const AccountPage: React.FC = () => {
         {/* Select Mode Button */}
         <div className="flex">
           <Button onClick={handleSelectButtonClick} className="mr-4">
-            {isSelectMode ? "Cancel" : "Select Users"}
+            {isSelectMode ? "Hủy bỏ" : "Chọn nhiều"}
           </Button>
 
           {/* Conditional buttons for Delete All and Move All */}
           {isSelectMode && (
             <div className="flex">
-              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
+              <Button className="bg-red-500 text-white mr-2">Xóa tất cả</Button>
             </div>
           )}
         </div>
@@ -248,29 +417,25 @@ const AccountPage: React.FC = () => {
               <div className="relative mb-6">
                 <Input
                   className="p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
-                  focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
-                  placeholder-transparent"
+            focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
+            placeholder-transparent"
                   type="email"
                   id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() =>
-                    setIsFocused((prev) => ({ ...prev, email: true }))
-                  }
-                  onBlur={() =>
-                    setIsFocused((prev) => ({ ...prev, email: false }))
-                  }
-                  placeholder="Enter your email"
+                  name="email"
+                  value={newUser.email}
+                  onChange={handleChange}
+                  onFocus={() => setIsFocused((prev) => ({ ...prev, email: true }))}
+                  onBlur={() => setIsFocused((prev) => ({ ...prev, email: false }))}
+                  placeholder="Nhập địa chỉ email"
                   required
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${
-                    isFocused.email || email
-                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                  }`}>
-                  Enter your email
+                  className={`absolute left-4 transition-all duration-200 ${isFocused.email || email
+                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                    }`}>
+                  Nhập địa chỉ email <span className="text-red-500">*</span>
                 </Label>
               </div>
 
@@ -278,48 +443,110 @@ const AccountPage: React.FC = () => {
               <div className="relative mb-6">
                 <Input
                   className="p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
-                  focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
-                  placeholder-transparent"
-                  type="name"
+            focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
+            placeholder-transparent"
+                  type="text"
                   id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={newUser.name}
+                  name="name"
+                  onChange={handleChange}
                   onFocus={() =>
                     setIsFocused((prev) => ({ ...prev, name: true }))
                   }
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, name: false }))
                   }
-                  placeholder="Enter your name"
+                  placeholder="Nhập tên người dùng"
                   required
                 />
                 <Label
                   htmlFor="name"
-                  className={`absolute left-4 transition-all duration-200 ${
-                    isFocused.name || name
-                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                  }`}>
-                  Enter your name
+                  className={`absolute left-4 transition-all duration-200 ${isFocused.name || name
+                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                    }`}>
+                  Nhập tên người dùng <span className="text-red-500">*</span>
                 </Label>
               </div>
 
-              {/* Floating Label for Birthdate */}
+              {/* Floating Label for Phone*/}
               <div className="relative mb-6">
-                <input
-                  type="date"
-                  id="birthDate"
-                  name="birthDate"
-                  value={newUser.birthDate}
+                <Input
+                  className="p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
+            focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
+            placeholder-transparent"
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={newUser.phone}
+                  onChange={handleChange}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, phone: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, phone: false }))
+                  }
+                  placeholder="Nhập số điện thoại"
+                  required
+                />
+                <Label
+                  htmlFor="phone"
+                  className={`absolute left-4 transition-all duration-200 ${isFocused.phone || phone
+                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                    }`}>
+                  Nhập số điện thoại <span className="text-red-500">*</span>
+                </Label>
+              </div>
+
+              {/* Floating Label for Address */}
+              <div className="relative mb-6">
+                <Input
+                  className="p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
+            focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
+            placeholder-transparent"
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={newUser.address}
+                  onChange={handleChange}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, address: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, address: false }))
+                  }
+                  placeholder="Nhập địa chỉ"
+                  required
+                />
+                <Label
+                  htmlFor="address"
+                  className={`absolute left-4 transition-all duration-200 ${isFocused.address || address
+                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                    }`}>
+                  Nhập địa chỉ <span className="text-red-500">*</span>
+                </Label>
+              </div>
+
+              {/* Floating Label for Gender */}
+              <div className="relative mb-6">
+                <select
+                  id="gender"
+                  name="gender"
+                  value={newUser.gender}
                   onChange={handleInputChange}
                   className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
-                  focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
-                  placeholder-transparent"
-                />
+    focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
+    placeholder-transparent">
+                  <option value="male">Nam</option>
+                  <option value="female">Nữ</option>
+                  <option value="other">Khác</option>
+                </select>
                 <label
-                  htmlFor="birthDate"
+                  htmlFor="gender"
                   className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1">
-                  Ngày sinh
+                  Giới tính
                 </label>
               </div>
 
@@ -346,19 +573,38 @@ const AccountPage: React.FC = () => {
                 </label>
               </div>
 
+              {/* Floating Label for Birthdate */}
+              <div className="relative mb-6">
+                <input
+                  type="date"
+                  id="birthDate"
+                  name="birthDate"
+                  value={newUser.birthDate}
+                  onChange={handleInputChange}
+                  className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
+            focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200"
+                  required
+                />
+                <label
+                  htmlFor="birthDate"
+                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1">
+                  Ngày sinh <span className="text-red-500">*</span>
+                </label>
+              </div>
+
               {/* Buttons */}
               <div className="flex justify-between mt-8">
                 <button
                   type="button"
                   onClick={handleCloseModal}
                   className="px-6 py-3 bg-gray-300 text-black rounded-full hover:bg-gray-400 focus:outline-none 
-                  focus:ring-2 focus:ring-gray-600 transition duration-200">
+            focus:ring-2 focus:ring-gray-600 transition duration-200">
                   Hủy
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none 
-                  focus:ring-2 focus:ring-indigo-500 transition duration-200">
+            focus:ring-2 focus:ring-indigo-500 transition duration-200">
                   Tạo
                 </button>
               </div>
@@ -366,6 +612,7 @@ const AccountPage: React.FC = () => {
           </div>
         </div>
       )}
+
 
       {/* Table Section */}
       <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
@@ -383,115 +630,119 @@ const AccountPage: React.FC = () => {
                 </th>
               )}
 
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
                 Họ tên
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Mã số
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Chức vụ
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Trạng thái
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Ngày tạo
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
                 Hành động
               </th>
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user, index) => (
-              <tr
-                key={user.id}
-                className={`border-b ${
-                  selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
-                }`}>
-                {isSelectMode && (
-                  <td className="py-2 px-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.has(user.id)}
-                      onChange={() => toggleUserSelection(user.id)}
-                      className="form-checkbox"
-                    />
-                  </td>
-                )}
-
-                <td className="px-6 py-4 text-sm text-gray-700">{user.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{user.id}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {user.status}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {user.createdAt}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3">
-                  <button className="text-blue-600 hover:text-blue-800">
-                    <FaEdit className="h-5 w-5" />
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    <FaTrashAlt className="h-5 w-5" />
-                  </button>
+            {loading ? (
+              <tr>
+                <td colSpan={isSelectMode ? 7 : 6} className="text-center py-4">
+                  <Loading />
                 </td>
               </tr>
-            ))}
+            ) : (
+              users.map((user) => (
+                <tr
+                  key={user.id}
+                  className={`border-b ${selectedUsers.has(user.id) ? "bg-blue-100" : "bg-white"
+                    }`}
+                >
+                  {isSelectMode && (
+                    <td className="py-2 px-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.has(user.id)}
+                        onChange={() => toggleUserSelection(user.id)}
+                        className="form-checkbox"
+                      />
+                    </td>
+                  )}
+
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.genId}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.role}</td>
+                  <td className="px-6 py-4 text-sm text-center">
+                    <span className={user.isActive ? "text-green-600 font-semibold" : "text-gray-500"}>
+                      {user.isActive ? "Đang hoạt động" : "Ngưng hoạt động"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.createdAt}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
+                    <button className="text-blue-600 hover:text-blue-800">
+                      <FaEdit className="h-5 w-5" />
+                    </button>
+                    <button className="text-red-600 hover:text-red-800">
+                      <FaTrashAlt className="h-4 w-4" />
+                    </button>
+                  </td>
+
+                </tr>
+              ))
+            )}
           </tbody>
+
         </table>
       </div>
+
+      {/* Pagination Section */}
       <div className="flex justify-end mt-6 mr-6 space-x-2">
-        <Button
+        <button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
           disabled={currentPage === 1}>
           Previous
-        </Button>
+        </button>
 
         {totalPages === 1 ? (
-          <button
+          <Button
             key={1}
             onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-              currentPage === 1
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
+              ? "bg-blue-700 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}>
+            1
+          </Button>
+        ) : (
+          getPageNumbers().map((page) => (
+            <Button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
                 ? "bg-blue-700 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}>
-            1
-          </button>
-        ) : (
-          Array.from({ length: Math.min(3, totalPages) }, (_, index) => {
-            const page =
-              Math.min(totalPages - 2, Math.max(1, currentPage - 1)) + index;
-            return (
-              <button
-                key={index}
-                onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-                  currentPage === page
-                    ? "bg-blue-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}>
-                {page}
-              </button>
-            );
-          })
+              {page}
+            </Button>
+          ))
         )}
 
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
           disabled={currentPage === totalPages}>
           Next
         </Button>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEdit, FaSearch, FaTrashAlt } from "react-icons/fa";
-import Button from "./button";
+import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
 

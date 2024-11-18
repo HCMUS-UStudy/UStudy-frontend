@@ -1,9 +1,8 @@
 "use client";
 import React, { useActionState, useState } from "react";
-import Button from "./button";
+import { Button, SelectingButton } from "./button";
 import { Input, SearchField } from "./input";
 import Pagination from "./pagination";
-import { FaChevronDown } from "react-icons/fa6";
 import { CircleX } from "lucide-react";
 import Modal from "./modal";
 import { createClass, CreateClassFormState } from "@/app/lib/action";
@@ -19,13 +18,31 @@ export default function CoursesComponent(props: {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
 
-  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isSelectingSubject, setIsSelectingSubject] = useState<boolean>(false);
   const [subjectForCreateClass, setSubjectForCreateClass] =
     useState<string>("");
+  const [isSelectingGrade, setIsSelectingGrade] = useState<boolean>(false);
+  const [gradeForCreateClass, setGradeForCreateClass] = useState<string>("");
+  const [classDuration, setClassDuration] = useState<string>();
 
   const subjects: string[] = ["Toán", "Lý", "Hóa", "Sinh", "Văn", "Anh"];
+  const grades: string[] = [
+    "Khối 1",
+    "Khối 2",
+    "Khối 3",
+    "Khối 4",
+    "Khối 5",
+    "Khối 6",
+    "Khối 7",
+    "Khối 8",
+    "Khối 9",
+    "Khối 10",
+    "Khối 11",
+    "Khối 12",
+  ];
+  const durations: string[] = ["3 tháng", "6 tháng", "1 năm"];
 
   const initialState: CreateClassFormState = {
     errors: {},
@@ -205,79 +222,92 @@ export default function CoursesComponent(props: {
               onChange={(e) => setClassName(e.target.value)}
             />
 
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Giáo viên"
-              name="teacher"
-              isError={state.errors.teacher != null}
-              errorMsg={state.errors.teacher}
-              value={teacher}
-              onChange={(e) => setTeacher(e.target.value)}
-            />
+            <div className="flex gap-8">
+              <div>
+                <SelectingButton
+                  onClick={() => {
+                    setIsSelectingSubject(true);
+                  }}
+                  placeholder={
+                    subjectForCreateClass === ""
+                      ? "Môn học"
+                      : subjectForCreateClass
+                  }
+                  nameForInput="subject"
+                />
+                {state.errors.subject && (
+                  <span className="text-[13px] text-error">
+                    {state.errors.subject}
+                  </span>
+                )}
+              </div>
+              <div>
+                <SelectingButton
+                  onClick={() => {
+                    setIsSelectingGrade(true);
+                  }}
+                  placeholder={
+                    gradeForCreateClass === "" ? "Khối" : gradeForCreateClass
+                  }
+                  nameForInput="grade"
+                />
+                {state.errors.grade && (
+                  <span className="text-[13px] text-error">
+                    {state.errors.grade}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-8">
+              <div className="w-[10vw]">
+                <h2 className="text-sm text-secondary_text mb-1 ml-1">
+                  Bắt đầu từ
+                </h2>
+                <input
+                  type="date"
+                  id="default-datepicker"
+                  className={clsx(
+                    {
+                      "border-2 border-error": state.errors.date,
+                      "border border-gray-300": !state.errors.date,
+                    },
+                    "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  )}
+                  placeholder="Ngày bắt đầu"
+                  name="startDate"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                {state.errors.date && (
+                  <span className="text-[13px] text-error">
+                    {state.errors.date[0]}
+                  </span>
+                )}
+              </div>
+              <div className="w-[10vw]">
+                <h2 className="text-sm text-secondary_text mb-1 ml-1">
+                  Thời gian học
+                </h2>
+                <Input />
+              </div>
+            </div>
+
             <div>
-              <button
-                type="button"
+              <SelectingButton
                 onClick={() => {
                   setIsSelectingSubject(true);
                 }}
-                className="w-[25%] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 transition-colors">
-                {subjectForCreateClass === "" ? (
-                  <span>Môn học</span>
-                ) : (
-                  <span className="font-bold">{subjectForCreateClass}</span>
-                )}
-                <FaChevronDown />
-                <input
-                  type="text"
-                  name="subject"
-                  value={subjectForCreateClass}
-                  readOnly
-                  className="hidden"
-                />
-              </button>
+                placeholder={
+                  subjectForCreateClass === ""
+                    ? "Môn học"
+                    : subjectForCreateClass
+                }
+                nameForInput="subject"
+              />
               {state.errors.subject && (
                 <span className="text-[13px] text-error">
                   {state.errors.subject}
-                </span>
-              )}
-            </div>
-
-            <div className="relative">
-              <div
-                className={clsx(
-                  {
-                    "top-[14px]": state.errors.date,
-                    "top-3.5": !state.errors.date,
-                  },
-                  "absolute start-0 flex items-center ps-3.5 pointer-events-none"
-                )}>
-                <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20">
-                  <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                </svg>
-              </div>
-              <input
-                type="date"
-                id="default-datepicker"
-                className={clsx(
-                  {
-                    "border-2 border-error": state.errors.date,
-                    "border border-gray-300": !state.errors.date,
-                  },
-                  "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                )}
-                placeholder="Select date"
-                name="startDate"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              {state.errors.date && (
-                <span className="text-[13px] text-error">
-                  {state.errors.date[0]}
                 </span>
               )}
             </div>
@@ -299,6 +329,15 @@ export default function CoursesComponent(props: {
               value={fee}
               onChange={(e) => setFee(e.target.value)}
             />
+            <Input
+              className="w-full h-11 text-base text-secondary_text"
+              placeholder="Giáo viên"
+              name="teacher"
+              isError={state.errors.teacher != null}
+              errorMsg={state.errors.teacher}
+              value={teacher}
+              onChange={(e) => setTeacher(e.target.value)}
+            />
             <Button isPending={isPending} type="submit" className="mt-5">
               {isPending ? "Đang tạo..." : "Tạo lớp học"}
             </Button>
@@ -317,15 +356,41 @@ export default function CoursesComponent(props: {
             Chọn môn học
           </h1>
           <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
-            {subjects.map((s, i) => (
+            {subjects.map((data, i) => (
               <div
                 onClick={() => {
-                  setSubjectForCreateClass(s);
+                  setSubjectForCreateClass(data);
                   setIsSelectingSubject(false);
                 }}
                 key={i}
                 className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
-                {s}
+                {data}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        onClose={() => {
+          setIsSelectingGrade(false);
+        }}
+        modalName="ModalSelectSubject"
+        isOpen={isSelectingGrade}
+        className="w-[25vw] py-8">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-800 text-center">
+            Chọn khối
+          </h1>
+          <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
+            {grades.map((data, i) => (
+              <div
+                onClick={() => {
+                  setGradeForCreateClass(data);
+                  setIsSelectingGrade(false);
+                }}
+                key={i}
+                className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                {data}
               </div>
             ))}
           </div>

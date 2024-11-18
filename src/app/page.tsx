@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import Button from "./ui/components/button";
+import { Button } from "./ui/components/button";
 import Image from "next/image";
 import { FaBars, FaBook, FaX, FaUser } from "react-icons/fa6";
 import { Input } from "./ui/components/input";
