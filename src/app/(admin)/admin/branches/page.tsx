@@ -1,40 +1,97 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
 import { Input } from "@/app/ui/components/input";
 import { Button } from "@/app/ui/components/button";
+import axios from "axios";
 
-const initialShifts = [
-  { id: "shift-1", name: "Ca 1", days: "2-4-6", time: "08:00 - 10:00" },
-  { id: "shift-2", name: "Ca 2", days: "2-4-6", time: "10:30 - 12:30" },
-  { id: "shift-3", name: "Ca 3", days: "2-4-6", time: "14:00 - 16:00" },
-];
+interface Branch {
+  id: string;
+  name: string;
+  address: string;
+  contactNumber: string;
+  classrooms: number;
+  shifts: string;
+}
 
-const branches = Array.from({ length: 5 }, (_, index) => ({
-  id: `branch-${index}`,
-  name: `Chi nhánh ${index + 1}`,
-  address: `Địa chỉ ${index + 1}`,
-  phone: `012345678${index}`,
-  classrooms: 20,
-  shifts: `Ca 1, Ca 2, Ca 3`,
-}));
+interface BranchResponse {
+  id: string;
+  name: string;
+  address: string;
+  contactNumber: string;
+}
+
+interface Shift {
+  id: string;
+  name: string;
+  day: string;
+  time: string;
+}
+
+interface ShiftResponse {
+  day: string;
+  time: string;
+}
+
+const api = axios.create({
+  baseURL: "http://localhost:8080/api", // Đặt base URL cho API
+  timeout: 10000, // Timeout 10 giây
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + localStorage.getItem("authToken"),
+  },
+  params: {
+    "page": 0,
+    "limit": 10
+  }
+});
 
 const BranchPage: React.FC = () => {
-  const [shifts, setShifts] = useState(initialShifts);
-  const [editShift, setEditShift] = useState<null | {
-    id: string;
-    days: string;
-    time: string;
-  }>(null);
+  const [branches, setBranches] = useState([]);
+  const [shifts, setShifts] = useState<Shift[]>([]);
+  const [editShift, setEditShift] = useState<Shift | null>({ id: "", name: "", day: "", time: "" });
 
-  const handleEditShift = (shiftId: string, days: string, time: string) => {
-    setEditShift({ id: shiftId, days, time });
+  const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await api.get("/branch/clerk/get-all");
+        const modifiedData = response.data.content.map((item: BranchResponse) => ({
+          ...item, // Giữ nguyên các cột ban đầu
+          shifts: shifts.map((shift) => shift.name).join(", "), // Kết hợp các ca học thành một chuỗi
+          classrooms: 10, // Số phòng học cố định
+        }));
+        setBranches(modifiedData);
+      } catch (error) {
+        console.error("Failed to fetch branches:", error);
+      }
+    };
+    fetchBranches();
+  }, [shifts]);
+
+  useEffect(() => {
+    const fetchShifts = async () => {
+      try {
+        const response = await api.get("/time/admin/get");
+        const modifiedData = response.data.map((item: ShiftResponse) => ({
+          name: formatShiftName(item.day, item.time), // Cột mới kết hợp `id` và `name`
+          ...item, // Giữ nguyên các cột ban đầu
+        }));
+        setShifts(modifiedData);
+      } catch (error) {
+        console.error("Failed to fetch time:", error);
+      }
+    };
+    fetchShifts();
+  }, []);
+
+  const handleEditShift = (shiftId: string, name: string, day: string, time: string) => {
+    setEditShift({ id: shiftId, name, day, time });
   };
 
-  const handleShiftChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: "days" | "time"
-  ) => {
+  const handleShiftChange = (event: React.ChangeEvent<HTMLInputElement>, field: "day" | "time") => {
     setEditShift((prev) =>
       prev ? { ...prev, [field]: event.target.value } : null
     );
@@ -44,12 +101,33 @@ const BranchPage: React.FC = () => {
     if (editShift) {
       setShifts((prev) =>
         prev.map((shift) =>
-          shift.id === editShift.id
-            ? { ...shift, days: editShift.days, time: editShift.time }
-            : shift
+          shift.id === editShift.id ? { ...shift, day: editShift.day, time: editShift.time } : shift
         )
       );
       setEditShift(null);
+    }
+  };
+
+  const [showShiftModal, setShowShiftModal] = useState(false);
+  const [newShift, setNewShift] = useState({
+    name: "",
+    day: "",
+    time: "",
+  });
+
+  const createShift = async (shift: { name: string; day: string; time: string }) => {
+    try {
+      const response = await api.post("/time/admin/add", shift);
+      setShifts((prev) => [...prev, response.data]); // Thêm shift mới vào danh sách
+      setShowShiftModal(false); // Đóng modal
+      setIsError(false);
+      setMessage("Thêm ca học thành công!");
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error) {
+      console.error("Failed to create shift:", error);
+      setIsError(true);
+      setMessage("Thêm ca học thất bại. Vui lòng thử lại!");
+      setTimeout(() => setMessage(null), 3000);
     }
   };
 
@@ -58,25 +136,75 @@ const BranchPage: React.FC = () => {
   const [newBranch, setNewBranch] = useState({
     name: "",
     address: "",
-    phone: "",
+    contactNumber: "",
     classrooms: "",
     shifts: "",
   });
 
+  const sortShiftsByDayTime = (shifts: Shift[]) => {
+    return [...shifts].sort((a, b) => {
+      // So sánh theo `day` trước
+      const dayComparison = a.day.localeCompare(b.day);
+      if (dayComparison !== 0) {
+        return dayComparison; // Nếu khác ngày, trả về kết quả sắp xếp theo `day`
+      }
+      // Nếu cùng ngày, so sánh tiếp theo `time`
+      return a.time.localeCompare(b.time);
+    });
+  };
+  
+  const formatShiftName = (day: string, time: string): string => {
+    let timePrefix = '';
+  
+    // Xác định prefix dựa trên thời gian
+    if (time === "17:00 - 19:00") {
+      timePrefix = 'C'; 
+    } else if (time === "19:00 - 21:00") {
+      timePrefix = 'T';
+    } else if (time === "8:00 - 11:00") {
+      timePrefix = 'S';
+    } else if (time === "14:00 - 17:00") {
+      timePrefix = 'C';
+    } else if (time === "17:00 - 20:00") {
+      timePrefix = 'T';
+    } else {
+      timePrefix = 'S';
+    }
+  
+    // Loại bỏ ký tự '-' trong ngày và ghép với prefix
+    const formattedDay = day.replace(/-/g, '').toUpperCase();
+    return `${timePrefix}-${formattedDay}`;
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
   const branchesPerPage = 5;
 
-  const totalPages = Math.ceil(branches.length / branchesPerPage);
-  const startIndex = (currentPage - 1) * branchesPerPage;
-  const paginatedBranches = branches.slice(
-    startIndex,
-    startIndex + branchesPerPage
-  );
+  const [totalPages, setTotalPages] = useState(0);
+  useEffect(() => {
+    setTotalPages(Math.ceil(branches.length / branchesPerPage));
+  }, [branches]);
+  const [paginatedBranches, setPaginatedBranches] = useState([]);
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * branchesPerPage;
+    setPaginatedBranches(branches.slice(startIndex, startIndex + branchesPerPage));
+  }, [branches, currentPage]);
 
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPages = Math.min(3, totalPages);
+
+    const start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+    for (let i = start; i < start + maxPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -99,7 +227,7 @@ const BranchPage: React.FC = () => {
     setNewBranch({
       name: "",
       address: "",
-      phone: "",
+      contactNumber: "",
       classrooms: "",
       shifts: "",
     });
@@ -110,7 +238,7 @@ const BranchPage: React.FC = () => {
     setNewBranch({
       name: "",
       address: "",
-      phone: "",
+      contactNumber: "",
       classrooms: "",
       shifts: "",
     });
@@ -119,12 +247,27 @@ const BranchPage: React.FC = () => {
 
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">
-        Quản lý chi nhánh
-      </h2>
-      {/* <h2 className="text-xl tracking-tight mb-6">
-        Tìm tất cả chi nhánh tại đây
-      </h2> */}
+      {message && (
+      <div
+        style={{
+          position: "fixed",
+          top: "10px",
+          right: "10px",
+          backgroundColor: isError ? "#f44336" : "#4caf50", // Màu thay đổi tùy trạng thái
+          color: "white",
+          padding: "10px 20px",
+          borderRadius: "5px",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+          zIndex: 1000,
+          fontSize: "16px",
+          fontWeight: "bold",
+        }}
+      >
+        {message}
+      </div>
+    )}
+
+      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">Quản lý chi nhánh</h2>
 
       <div className="flex items-center justify-between mt-8">
         <form className="flex items-center w-full lg:w-[20rem]">
@@ -174,19 +317,13 @@ const BranchPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedBranches.map((branch) => (
+            {paginatedBranches.map((branch: Branch) => (
               <tr key={branch.id} className="border-b bg-white">
+                <td className="px-6 py-4 text-sm text-gray-700">{branch.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{branch.address}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{branch.contactNumber}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">
-                  {branch.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {branch.address}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {branch.phone}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {branch.classrooms}
+                  10
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {branch.shifts}
@@ -214,9 +351,33 @@ const BranchPage: React.FC = () => {
             currentPage === 1
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          }`}>
-          Previous
+          }`}
+        >
+          Trước
         </Button>
+        {totalPages === 1 ? (
+          <Button
+            key={1}
+            onClick={() => setCurrentPage(1)}
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
+              ? "bg-blue-700 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}>
+            1
+          </Button>
+        ) : (
+          getPageNumbers().map((page) => (
+            <Button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}>
+              {page}
+            </Button>
+          ))
+        )}
         <Button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
@@ -224,8 +385,9 @@ const BranchPage: React.FC = () => {
             currentPage === totalPages
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          }`}>
-          Next
+          }`}
+        >
+          Sau
         </Button>
       </div>
 
@@ -252,9 +414,9 @@ const BranchPage: React.FC = () => {
                 required
               />
               <Input
-                name="phone"
+                name="contactNumber"
                 placeholder="Số điện thoại"
-                value={newBranch.phone}
+                value={newBranch.contactNumber}
                 onChange={handleModalInputChange}
                 required
               />
@@ -288,7 +450,66 @@ const BranchPage: React.FC = () => {
         </div>
       )}
 
-      <h3 className="text-2xl font-semibold mt-12 mb-6">Định nghĩa giờ học</h3>
+      {showShiftModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-lg w-96 max-w-lg">
+            <h3 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+              Thêm ca học mới
+            </h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                // setShifts((prev) => [...prev, { id: `shift-${Date.now()}`, ...newShift }]);
+                createShift(newShift);  
+                setNewShift({ name: "", day: "", time: "" });
+                setShowShiftModal(false);
+              }}
+              className="space-y-6"
+            >
+              <Input
+                name="name"
+                placeholder="Tên ca học"
+                value={newShift.name}
+                onChange={(e) => setNewShift({ ...newShift, name: e.target.value })}
+                required
+              />
+              <Input
+                name="day"
+                placeholder="Ngày học (vd: 2-4-6)"
+                value={newShift.day}
+                onChange={(e) => setNewShift({ ...newShift, day: e.target.value })}
+                required
+              />
+              <Input
+                name="time"
+                placeholder="Giờ học (vd: 08:00 - 10:00)"
+                value={newShift.time}
+                onChange={(e) => setNewShift({ ...newShift, time: e.target.value })}
+                required
+              />
+              <div className="flex justify-between mt-8">
+                <Button
+                  type="button"
+                  onClick={() => setShowShiftModal(false)}
+                  className="bg-gray-300"
+                >
+                  Hủy
+                </Button>
+                <Button type="submit" className="bg-indigo-600">
+                  Thêm
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mt-20 mb-6">
+        <h3 className="text-2xl font-semibold">Định nghĩa ca học</h3>
+        <Button onClick={() => setShowShiftModal(true)} className="px-6 py-2">
+          Thêm ca học
+        </Button>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-collapse">
           <thead className="bg-gray-100">
@@ -308,7 +529,7 @@ const BranchPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {shifts.map((shift) => (
+            {sortShiftsByDayTime(shifts).map((shift: Shift) => (
               <tr key={shift.id} className="border-b bg-white">
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {shift.name}
@@ -317,19 +538,19 @@ const BranchPage: React.FC = () => {
                   {editShift?.id === shift.id ? (
                     <input
                       type="text"
-                      value={editShift.days}
-                      onChange={(e) => handleShiftChange(e, "days")}
+                      value={editShift?.day || ""}
+                      onChange={(e) => handleShiftChange(e, "day")}
                       className="border border-gray-300 rounded p-1.5"
                     />
                   ) : (
-                    shift.days
+                    shift.day.toUpperCase()
                   )}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {editShift?.id === shift.id ? (
                     <input
                       type="text"
-                      value={editShift.time}
+                      value={editShift.time || ""}
                       onChange={(e) => handleShiftChange(e, "time")}
                       className="border border-gray-300 rounded p-1.5"
                     />
@@ -352,13 +573,17 @@ const BranchPage: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() =>
-                        handleEditShift(shift.id, shift.days, shift.time)
-                      }
-                      className="text-blue-600 hover:text-blue-800">
-                      <FaEdit className="h-5 w-5 ml-5" />
-                    </button>
+                    <div className="space-x-3 ml-2">
+                      <button
+                        onClick={() => handleEditShift(shift.id, shift.name, shift.day, shift.time)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <FaEdit className="h-5 w-5" />
+                      </button>
+                      <button className="text-red-600 hover:text-red-800">
+                        <FaTrashAlt className="h-5 w-5" />
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
