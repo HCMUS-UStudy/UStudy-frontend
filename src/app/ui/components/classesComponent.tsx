@@ -8,8 +8,10 @@ import Modal from "./modal";
 import { createClass, CreateClassFormState } from "@/app/lib/action";
 import clsx from "clsx";
 import axiosInstance from "@/app/lib/axios";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 
-const MockBranchID = "086e0244-3a3f-446c-842b-7c072a09ef9a";
+const MockBranchID = "e7a865f8-baf6-4fb1-afed-58a3454aa257";
 
 type GradeItem = {
   id: string;
@@ -23,54 +25,72 @@ type CourseItem = {
   name: string;
 };
 
+type TimeItem = {
+  id: string;
+  day: string;
+  time: string;
+};
+
+type RoomItem = {
+  id: string;
+  name: string;
+};
+
+type TeacherItem = {
+  email: string;
+  genId: string;
+  id: string;
+  name: string;
+};
+
+type ClassSchema = {
+  name: string;
+  courseId: string;
+  gradeId: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  fee: number;
+  teacherId: string;
+  branchId: string;
+  timeId: string;
+  roomId: string;
+};
+
 export default function CoursesComponent(props: {
   searchParams?: Promise<{
     query?: string;
     page?: string;
   }>;
 }) {
-  // để cho search
+  const router = useRouter();
+  // DÀNH CHO SEARCH
   // const searchParams = props.searchParams;
   // const query = searchParams?.query || "";
   // const currentPage = Number(searchParams?.page) || 1;
 
+  // DÀNH CHO MODAL
   const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const [isSelectingSubject, setIsSelectingSubject] = useState<boolean>(false);
   const [subjectForCreateClass, setSubjectForCreateClass] =
     useState<string>("");
-
   const [isSelectingGrade, setIsSelectingGrade] = useState<boolean>(false);
   const [gradeForCreateClass, setGradeForCreateClass] = useState<string>("");
-
   const [classDuration, setClassDuration] = useState<string>("");
   const [isSelectingDuration, setIsSelectingDuration] =
     useState<boolean>(false);
-
-  const [isSelectingSchedule, setIsSelectingSchedule] =
-    useState<boolean>(false);
-
-  // const [isSelectingRoom, setIsSelectingRoom] = useState<boolean>(false);
-
-  // const subjects: string[] = ["Toán", "Lý", "Hóa", "Sinh", "Văn", "Anh"];
-  // const grades: string[] = [
-  //   "Khối 1",
-  //   "Khối 2",
-  //   "Khối 3",
-  //   "Khối 4",
-  //   "Khối 5",
-  //   "Khối 6",
-  //   "Khối 7",
-  //   "Khối 8",
-  //   "Khối 9",
-  //   "Khối 10",
-  //   "Khối 11",
-  //   "Khối 12",
-  // ];
+  const [isSelectingTime, setIsSelectingTime] = useState<boolean>(false);
+  const [isSelectingRoom, setIsSelectingRoom] = useState<boolean>(false);
+  const [isSelectingTeacher, setIsSelectingTeacher] = useState<boolean>(false);
+  /////////////////////////////////////////////////////////////////////////////////
 
   const [grades, setGrades] = useState<GradeItem[]>([]);
   const [courses, setCourses] = useState<CourseItem[]>([]);
+  const [times, setTimes] = useState<TimeItem[]>([]);
+  const [rooms, setRooms] = useState<RoomItem[]>([]);
+  const [teachers, setTeachers] = useState<TeacherItem[]>([]);
 
   const durations: string[] = ["3 tháng", "6 tháng", "1 năm"];
 
@@ -89,14 +109,25 @@ export default function CoursesComponent(props: {
   };
   const [state, action, isPending] = useActionState(createClass, initialState);
 
-  const [className, setClassName] = useState<string>("");
   const [teacher, setTeacher] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const [time, setTime] = useState<string>("");
+  const [room, setRoom] = useState<string>("");
+
+  // DATA ĐỂ TẠO CLASS
+  const [className, setClassName] = useState<string>("");
+  const [courseId, setCourseId] = useState<string>("");
+  const [gradeId, setGradeId] = useState<string>("");
+  const [startDateObj, setStartDateObj] = useState<string>("");
+  const [endDateObj, setEndDateObj] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [fee, setFee] = useState<string>("");
-  // const [schedule, setSchedule] = useState<string>("");
-  // const [room, setRoom] = useState<string>("");
+  const [fee, setFee] = useState<number>(0);
+  const [teacherId, setTeacherId] = useState<string>("");
+  const [branchId, setBranchId] = useState<string>(MockBranchID);
+  const [timeId, setTimeId] = useState<string>("");
+  const [roomId, setRoomId] = useState<string>("");
+  /////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     if (startDate !== "" && classDuration !== "") {
@@ -114,20 +145,31 @@ export default function CoursesComponent(props: {
           break;
       }
       setEndDate(endDateObj.toISOString().split("T")[0]);
+
+      setStartDateObj(startDateObj.toISOString());
+      setEndDateObj(endDateObj.toISOString());
     }
   }, [startDate, classDuration]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/grade/clerk/get-all", {
-          params: {
-            page: 0,
-            limit: 10,
-          },
-        });
-        console.log(response.data.content);
-        setGrades(response.data.content);
+        const [fetchGrades, fetchTimes] = await Promise.all([
+          axiosInstance.get("/grade/clerk/get-all", {
+            params: {
+              page: 0,
+              limit: 10,
+            },
+          }),
+          axiosInstance.get("/time/all/get", {
+            params: {
+              branchId: MockBranchID,
+            },
+          }),
+        ]);
+        setGrades(fetchGrades.data.content);
+        setTimes(fetchTimes.data);
+        console.log(fetchTimes.data);
       } catch (error) {
         console.log("cannot fetch data: " + error);
       }
@@ -151,7 +193,78 @@ export default function CoursesComponent(props: {
         ({ id, name }: { id: string; name: string }) => ({ id, name })
       );
       setCourses(filterdData);
-      console.log(filterdData);
+      // console.log(filterdData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAvailableRoom = async (
+    branchId: string,
+    timeId: string,
+    startDate: string,
+    endDate: string
+  ) => {
+    try {
+      const response = await axiosInstance.get("/room/clerk/available", {
+        params: {
+          "branch-id": branchId,
+          "time-id": timeId,
+          "start-date": startDate.split("T")[0],
+          "end-date": endDate.split("T")[0],
+        },
+      });
+      setRooms(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAvailableTeacher = async (
+    branchId: string,
+    timeId: string,
+    startDate: string,
+    endDate: string
+  ) => {
+    try {
+      const response = await axiosInstance.get(
+        "/user/clerk/available-teachers",
+        {
+          params: {
+            "branch-id": branchId,
+            "time-id": timeId,
+            "start-date": startDate.split("T")[0],
+            "end-date": endDate.split("T")[0],
+          },
+        }
+      );
+      setTeachers(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const CreateNewClass = async (newClass: ClassSchema) => {
+    try {
+      console.log(newClass);
+      const response = await axiosInstance.post("/class/clerk/add", {
+        name: newClass.name,
+        courseId: newClass.courseId,
+        gradeId: newClass.gradeId,
+        startDate: newClass.startDate,
+        endDate: newClass.endDate,
+        description: newClass.description,
+        fee: newClass.fee,
+        teacherId: newClass.teacherId,
+        branchId: newClass.branchId,
+        timeId: newClass.timeId,
+        roomId: newClass.roomId,
+      });
+      console.log(response.data);
+      console.log(response.status);
+      if (response.status === 200) {
+        router.push(`/classes/${response.data.id}`);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -431,16 +544,38 @@ export default function CoursesComponent(props: {
             <div className="flex justify-between gap-8">
               <SelectingButton
                 onClick={() => {
-                  setIsSelectingSchedule(true);
+                  setIsSelectingTime(true);
                 }}
                 nameForInput=""
-                placeholder="Khung giờ học"
+                placeholder={time === "" ? "Khung giờ học" : time}
                 className="w-[15vw]"
               />
               <SelectingButton
+                onClick={() => {
+                  if (
+                    time !== "" &&
+                    endDateObj !== "" &&
+                    startDateObj !== "" &&
+                    branchId !== ""
+                  ) {
+                    getAvailableRoom(
+                      branchId,
+                      timeId,
+                      startDateObj,
+                      endDateObj
+                    );
+                    setIsSelectingRoom(true);
+                  }
+                }}
                 nameForInput=""
-                placeholder="Phòng học"
+                placeholder={room === "" ? "Phòng học" : room}
                 className="w-[15vw]"
+                disabled={
+                  time === "" ||
+                  endDateObj === "" ||
+                  startDateObj === "" ||
+                  branchId === ""
+                }
               />
             </div>
 
@@ -459,9 +594,9 @@ export default function CoursesComponent(props: {
               isError={state.errors?.fee != null}
               errorMsg={state.errors?.fee}
               value={fee}
-              onChange={(e) => setFee(e.target.value)}
+              onChange={(e) => setFee(parseFloat(e.target.value))}
             />
-            <Input
+            {/* <Input
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Giáo viên"
               name="teacher"
@@ -469,13 +604,60 @@ export default function CoursesComponent(props: {
               errorMsg={state.errors?.teacher}
               value={teacher}
               onChange={(e) => setTeacher(e.target.value)}
+            /> */}
+            <SelectingButton
+              onClick={() => {
+                if (
+                  time !== "" &&
+                  endDateObj !== "" &&
+                  startDateObj !== "" &&
+                  branchId !== ""
+                ) {
+                  getAvailableTeacher(
+                    branchId,
+                    timeId,
+                    startDateObj,
+                    endDateObj
+                  );
+                  setIsSelectingTeacher(true);
+                }
+              }}
+              nameForInput=""
+              placeholder={teacher === "" ? "Chọn giáo viên" : teacher}
+              className="w-full"
+              disabled={
+                time === "" ||
+                endDateObj === "" ||
+                startDateObj === "" ||
+                branchId === ""
+              }
             />
-            <Button isPending={isPending} type="submit" className="mt-5">
+            <Button
+              onClick={() => {
+                const newClass: ClassSchema = {
+                  name: className,
+                  courseId: courseId,
+                  gradeId: gradeId,
+                  startDate: startDateObj,
+                  endDate: endDateObj,
+                  description: description,
+                  fee: fee,
+                  teacherId: teacherId,
+                  branchId: branchId,
+                  timeId: timeId,
+                  roomId: roomId,
+                };
+                CreateNewClass(newClass);
+              }}
+              isPending={isPending}
+              type="submit"
+              className="mt-5">
               {isPending ? "Đang tạo..." : "Tạo lớp học"}
             </Button>
           </form>
         </div>
       </Modal>
+      {/* MODAL CHỌN MÔN */}
       <Modal
         onClose={() => {
           setIsSelectingSubject(false);
@@ -493,6 +675,7 @@ export default function CoursesComponent(props: {
                 onClick={() => {
                   setSubjectForCreateClass(data.name);
                   setIsSelectingSubject(false);
+                  setCourseId(data.id);
                 }}
                 key={i}
                 className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
@@ -502,6 +685,7 @@ export default function CoursesComponent(props: {
           </div>
         </div>
       </Modal>
+      {/* MODAL CHỌN KHỐI */}
       <Modal
         onClose={() => {
           setIsSelectingGrade(false);
@@ -521,6 +705,7 @@ export default function CoursesComponent(props: {
                   setIsSelectingGrade(false);
                   selectCoursesByGrade(data.id);
                   setSubjectForCreateClass("Môn học");
+                  setGradeId(data.id);
                 }}
                 key={i}
                 className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
@@ -530,6 +715,7 @@ export default function CoursesComponent(props: {
           </div>
         </div>
       </Modal>
+      {/* MODAL CHỌN THỜI GIAN HỌC */}
       <Modal
         onClose={() => {
           setIsSelectingDuration(false);
@@ -556,29 +742,88 @@ export default function CoursesComponent(props: {
           </div>
         </div>
       </Modal>
+      {/* MODAL CHỌN KHUNG GIỜ HỌC */}
       <Modal
         onClose={() => {
-          setIsSelectingSchedule(false);
+          setIsSelectingTime(false);
         }}
         modalName="ModalSelectSubject"
-        isOpen={isSelectingSchedule}
+        isOpen={isSelectingTime}
         className="w-[25vw] py-8">
-        <div>
+        <div className="">
           <h1 className="text-xl font-semibold text-gray-800 text-center">
             Khung giờ học
           </h1>
-          <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
-            {/* {durations.map((data, i) => (
+          <div className="grid grid-cols-2 gap-2 mx-8 mt-4">
+            {times.map((data, i) => (
               <div
                 onClick={() => {
-                  setClassDuration(data);
-                  setIsSelectingDuration(false);
+                  setTime(data.day + ", " + data.time);
+                  setIsSelectingTime(false);
+                  setTimeId(data.id);
                 }}
                 key={i}
                 className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
-                {data}
+                <div>{data.day}</div>
+                <div>{data.time}</div>
               </div>
-            ))} */}
+            ))}
+          </div>
+        </div>
+      </Modal>
+      {/* MODAL CHO PHÒNG HỌC */}
+      <Modal
+        onClose={() => {
+          setIsSelectingRoom(false);
+        }}
+        modalName="ModalSelectSubject"
+        isOpen={isSelectingRoom}
+        className="w-[25vw] py-8">
+        <div className="">
+          <h1 className="text-xl font-semibold text-gray-800 text-center">
+            Phòng học
+          </h1>
+          <div className="grid grid-cols-2 gap-2 mx-8 mt-4">
+            {rooms.map((data, i) => (
+              <div
+                onClick={() => {
+                  setRoom(data.name);
+                  setIsSelectingRoom(false);
+                  setRoomId(data.id);
+                }}
+                key={i}
+                className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                <div>{data.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
+      {/* MODAL CHO GIÁO VIÊN */}
+      <Modal
+        onClose={() => {
+          setIsSelectingTeacher(false);
+        }}
+        modalName="ModalSelectSubject"
+        isOpen={isSelectingTeacher}
+        className="w-[25vw] py-8">
+        <div className="">
+          <h1 className="text-xl font-semibold text-gray-800 text-center">
+            Giáo viên
+          </h1>
+          <div className="grid grid-cols-2 gap-2 mx-8 mt-4">
+            {teachers.map((data, i) => (
+              <div
+                onClick={() => {
+                  setTeacher(data.name);
+                  setIsSelectingTeacher(false);
+                  setTeacherId(data.id);
+                }}
+                key={i}
+                className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                <div>{data.name}</div>
+              </div>
+            ))}
           </div>
         </div>
       </Modal>

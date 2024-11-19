@@ -8,6 +8,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isPending?: boolean;
   placeholder?: string;
   nameForInput?: string;
+  dataToSend?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
