@@ -28,7 +28,7 @@ const CoursePage: React.FC = () => {
 
   //Modals
   const [showModal, setShowModal] = useState(false);
-  
+
   const [courses, setCourses] = useState<any[]>([]);
 
   //pagination
@@ -80,7 +80,7 @@ const CoursePage: React.FC = () => {
             if (updatedCourses.has(course.name)) {
               updatedCourses.add(course.name);
             }
-          });          
+          });
           return updatedCourses;
         });
       } catch (err) {
@@ -97,7 +97,7 @@ const CoursePage: React.FC = () => {
     const authToken = localStorage.getItem("authToken");
     let allCourses: any[] = [];
     let currentPage = 0;
-  
+
     try {
       // Lặp qua tất cả các trang để lấy dữ liệu
       while (true) {
@@ -111,32 +111,32 @@ const CoursePage: React.FC = () => {
             headers: { Authorization: `Bearer ${authToken}` },
           }
         );
-  
+
         const courses = response.data?.content || [];
         allCourses = [...allCourses, ...courses];
-  
+
         // Kiểm tra nếu đã tới trang cuối
         if (currentPage + 1 >= response.data?.totalPages) {
           break;
         }
-  
+
         currentPage++;
       }
-  
+
       // Cập nhật danh sách toàn bộ khóa học
       const allIds = new Set(allCourses.map((course) => course.id));
       setAllCourseIds(allIds);
-  
+
       console.log("Tất cả khóa học đã được fetch:", allCourses);
     } catch (error) {
       console.error("Error fetching all courses:", error);
     }
   };
-  
+
   // Gọi hàm này khi component được mount
   useEffect(() => {
     fetchAllCourses();
-  }, []);  
+  }, []);
 
   const [courseData, setCourseData] = useState<any[]>([]);
 
@@ -322,10 +322,10 @@ const CoursePage: React.FC = () => {
       return updatedCourses;
     });
   };
-  
+
   const isCourseSelected = (courseId: string) => selectedCourses.has(courseId);
-  
-  
+
+
   const handleSelectAll = () => {
     setSelectedCourses((prevSelectedCourses) => {
       if (prevSelectedCourses.size === allCourseIds.size) {
@@ -336,11 +336,11 @@ const CoursePage: React.FC = () => {
         return new Set(allCourseIds); // Trả về tất cả ID
       }
     });
-  
+
     console.log("Selected Courses after Select All:", selectedCourses);
   };
-  
-  
+
+
   const handleSelectButtonClick = () => {
     setIsSelectMode((prev) => {
       if (prev) {
@@ -404,13 +404,13 @@ const CoursePage: React.FC = () => {
         {/* Select Mode Button */}
         <div className="flex">
           <Button onClick={handleSelectButtonClick} className="mr-4">
-            {isSelectMode ? "Cancel" : "Select Courses"}
+            {isSelectMode ? "Hủy bỏ" : "Chọn nhiều"}
           </Button>
 
           {/* Conditional buttons for Delete All and Move All */}
           {isSelectMode && (
             <div className="flex">
-              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
+              <Button className="bg-red-500 text-white mr-2">Xóa tất cả</Button>
             </div>
           )}
         </div>
@@ -441,9 +441,6 @@ const CoursePage: React.FC = () => {
                 </th>
               )}
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Người tạo
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
                 Môn học
               </th>
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
@@ -451,6 +448,9 @@ const CoursePage: React.FC = () => {
               </th>
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
                 Mô tả
+              </th>
+              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
+                Người tạo
               </th>
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
                 Ngày tạo
@@ -491,9 +491,6 @@ const CoursePage: React.FC = () => {
                     </td>
                   )}
                   <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {course.createdBy?.name || "Trống"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
                     {course.name}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
@@ -507,8 +504,12 @@ const CoursePage: React.FC = () => {
                     {course.description || "Trống"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {course.createdAt}
+                    {course.createdBy?.name || "Trống"}
                   </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
+                    {new Date(course.createdAt).toLocaleDateString("vi-VN")}
+                  </td>
+
                   <td className="px-6 py-4 text-sm text-center text-gray-700 whitespace-nowrap">
                     <span
                       className={`px-2 py-1 rounded-full text-white ${course.status ? "bg-green-500" : "bg-red-500"
@@ -625,7 +626,7 @@ const CoursePage: React.FC = () => {
             : "bg-blue-500 hover:bg-blue-600"
             }`}
           disabled={currentPage === 1}>
-          Previous
+          Trước
         </button>
 
         {totalPages === 1 ? (
@@ -659,7 +660,7 @@ const CoursePage: React.FC = () => {
             : "bg-blue-500 hover:bg-blue-600"
             }`}
           disabled={currentPage === totalPages}>
-          Next
+          Sau
         </Button>
       </div>
     </>

@@ -13,7 +13,8 @@ import {
   FaEdit,
   FaTrashAlt,
   FaSearch,
-  FaSpinner
+  FaSpinner,
+  FaTimes
 } from "react-icons/fa";
 import { Label } from "@/app/ui/components/label";
 import { Input } from "@/app/ui/components/input";
@@ -21,6 +22,8 @@ import { Button } from "@/app/ui/components/button";
 import instance from "@/app/lib/axios";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { FiLock } from "react-icons/fi";
+import { FaCheck } from "react-icons/fa6";
 
 const AccountPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,7 +50,15 @@ const AccountPage: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]); // Sử dụng any[] nếu chưa xác định kiểu dữ liệu
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  
+
+  const [students, setStudents] = useState<any[]>([]);
+  const [currentPageStu, setCurrentPageStu] = useState(1);
+  const [totalPagesStu, setTotalPagesStu] = useState(0);
+
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [currentPageTea, setCurrentPageTea] = useState(1);
+  const [totalPagesTea, setTotalPagesTea] = useState(0);
+
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalClerks, setTotalClerks] = useState(0);
   const [totalTeachers, setTotalTeachers] = useState(0);
@@ -57,17 +68,75 @@ const AccountPage: React.FC = () => {
   const [error, setError] = useState("");
   const usersPerPage = 4;
 
+  const stuPerPage = 4;
+  const teaPerPage = 4;
+
   // Giả sử bạn có một mảng chứa tất cả ID của khóa học từ các trang
   const [allUserIds, setAllUserIds] = useState<Set<string>>(new Set());
 
+  const [showModalRe, setShowModalRe] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("students"); // "students" or "teachers"
+
+  const handleApprove = async (userId: string) => {
+    setLoading(true); // Bắt đầu trạng thái loading
+    const authToken = localStorage.getItem("authToken");
+
+    try {
+      console.log("Phê duyệt người dùng với ID:", userId);
+
+      // Gửi yêu cầu API với query param là registerId
+      const response = await axios.post(
+        `http://localhost:8080/api/register/admin/confirm?registerId=${userId}`,
+        {}, // Dữ liệu rỗng vì chỉ cần query param
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      console.log("Người dùng đã được phê duyệt thành công", response.data);
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Phê duyệt thành công",
+          text: "Người dùng đã được phê duyệt thành công!",
+          timer: 8000,
+          showConfirmButton: false,
+        });
+
+        window.location.reload();
+      }
+
+      // Gọi lại danh sách sau khi xác nhận
+      await Promise.all([fetchStudents(), fetchTeachers()]);
+    } catch (error: any) {
+      console.error("Error approving user:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Phê duyệt thất bại",
+        text: error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
+      });
+
+      setError("Failed to approve user. Please try again."); // Hiển thị lỗi
+    } finally {
+      setLoading(false); // Kết thúc trạng thái loading
+    }
+  };
+
+  const handleReject = (userId: any) => {
+    console.log('Rejected user:', userId);
+
+  };
 
   useEffect(() => {
     console.log("useEffect triggered. Current Page:", currentPage);
-  
+
     const fetchUsers = async () => {
       setLoading(true);
       const authToken = localStorage.getItem("authToken");
-  
+
       try {
         const response = await axios.get(`http://localhost:8080/api/user/clerk/get-list-user`, {
           params: {
@@ -79,7 +148,7 @@ const AccountPage: React.FC = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         console.log("Fetched Users:", response.data); // Kiểm tra dữ liệu trả về
-  
+
         setUsers(response.data?.content || []);
         setTotalPages(response.data?.totalPages || 0);
       } catch (err) {
@@ -88,10 +157,10 @@ const AccountPage: React.FC = () => {
         setLoading(false);
       }
     };
-  
+
     const fetchUserCountsByRole = async () => {
       const authToken = localStorage.getItem("authToken");
-  
+
       try {
         const response = await axios.get(
           `http://localhost:8080/api/user/clerk/count-users-by-role`,
@@ -99,7 +168,7 @@ const AccountPage: React.FC = () => {
             headers: { Authorization: `Bearer ${authToken}` },
           }
         );
-  
+
         // Giả sử API trả về { students: X, clerks: Y, teachers: Z }
         setTotalStudents(response.data?.STUDENT || 0);
         setTotalClerks(response.data?.CLERK || 0);
@@ -108,16 +177,16 @@ const AccountPage: React.FC = () => {
         console.error("Error fetching user counts by role:", err);
       }
     };
-  
+
     fetchUsers();
     fetchUserCountsByRole(); // Gọi hàm lấy số lượng người dùng
   }, [currentPage, searchQuery]);
-  
+
   const fetchAllUsers = async () => {
     const authToken = localStorage.getItem("authToken");
     let allUsers: any[] = [];
     let currentPage = 0;
-  
+
     try {
       // Lặp qua tất cả các trang để lấy dữ liệu
       while (true) {
@@ -133,32 +202,102 @@ const AccountPage: React.FC = () => {
             headers: { Authorization: `Bearer ${authToken}` },
           }
         );
-  
+
         const users = response.data?.content || [];
         allUsers = [...allUsers, ...users];
-  
+
         // Kiểm tra nếu đã tới trang cuối
         if (currentPage + 1 >= response.data?.totalPages) {
           break;
         }
-  
+
         currentPage++;
       }
-  
+
       // Cập nhật danh sách toàn bộ khóa học
       const allIds = new Set(allUsers.map((user) => user.id));
       setAllUserIds(allIds);
-  
-      console.log("Tất cả khóa học đã được fetch:", allUsers);
+
+      console.log("Tất cả người dùng đã được fetch:", allUsers);
     } catch (error) {
-      console.error("Error fetching all courses:", error);
+      console.error("Error fetching all user:", error);
     }
   };
-  
+
+  const fetchStudents = async () => {
+    setLoading(true);
+    const authToken = localStorage.getItem("authToken");
+
+    try {
+      const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
+        params: {
+          page: currentPageStu - 1, // Kiểm tra giá trị truyền vào API
+          limit: stuPerPage,
+          role: "STUDENT"
+        },
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      console.log("Fetched Students:", response.data); // Kiểm tra dữ liệu trả về
+
+      setStudents(response.data?.content || []);
+      setTotalPagesStu(response.data?.totalPages || 0);
+    } catch (err) {
+      setError("Error fetching users.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTeachers = async () => {
+    setLoading(true);
+    const authToken = localStorage.getItem("authToken");
+
+    try {
+      const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
+        params: {
+          page: currentPageTea - 1, // Kiểm tra giá trị truyền vào API
+          limit: teaPerPage,
+          role: "TEACHER"
+        },
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      console.log("Fetched Teachers:", response.data); // Kiểm tra dữ liệu trả về
+
+      setTeachers(response.data?.content || []);
+      setTotalPagesTea(response.data?.totalPages || 0);
+    } catch (err) {
+      setError("Error fetching users.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents(); // Gọi lại khi currentPageStu thay đổi
+  }, [currentPageStu]);
+
+  useEffect(() => {
+    fetchTeachers(); // Gọi lại khi currentPageTea thay đổi
+  }, [currentPageTea]);
+
+  const handleApproveRegistration = async () => {
+    setLoading(true); // Hiển thị trạng thái loading
+    try {
+      // Gọi cả hai hàm fetch
+      await Promise.all([fetchStudents(), fetchTeachers()]);
+      console.log("Successfully fetched students and teachers");
+    } catch (error) {
+      console.error("Error approving registration:", error);
+      setError("Error fetching students and teachers."); // Hiển thị lỗi nếu xảy ra
+    } finally {
+      setLoading(false); // Tắt trạng thái loading
+    }
+  };
+
   // Gọi hàm này khi component được mount
   useEffect(() => {
     fetchAllUsers();
-  }, []);  
+  }, []);
 
   const Loading = () => (
     <div className="flex items-center justify-center h-full">
@@ -295,6 +434,34 @@ const AccountPage: React.FC = () => {
       return newPage;
     });
 
+  const handlePreviousPageStu = () =>
+    setCurrentPageStu((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      console.log("Previous Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
+  const handleNextPageStu = () =>
+    setCurrentPageStu((prev) => {
+      const newPage = Math.min(prev + 1, totalPagesStu);
+      console.log("Next Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
+  const handlePreviousPageTea = () =>
+    setCurrentPageTea((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      console.log("Previous Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
+  const handleNextPageTea = () =>
+    setCurrentPageTea((prev) => {
+      const newPage = Math.min(prev + 1, totalPagesTea);
+      console.log("Next Page:", newPage); // Kiểm tra giá trị
+      return newPage;
+    });
+
   const toggleUserSelection = (userId: string) => {
     setSelectedUsers((prev) => {
       const newSelectedUsers = new Set(prev);
@@ -340,9 +507,33 @@ const AccountPage: React.FC = () => {
     return pages;
   };
 
+  const getPageNumbersStu = () => {
+    const pages = [];
+    const maxPages = Math.min(3, totalPagesStu);
+
+    let start = Math.max(1, Math.min(currentPageStu - 1, totalPagesStu - 2));
+    for (let i = start; i < start + maxPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
+  const getPageNumbersTea = () => {
+    const pages = [];
+    const maxPages = Math.min(3, totalPagesTea);
+
+    let start = Math.max(1, Math.min(currentPageTea - 1, totalPagesTea - 2));
+    for (let i = start; i < start + maxPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
   const totalUsers = totalStudents + totalTeachers + totalClerks;
   const isUserSelected = (userId: string) => selectedUsers.has(userId);
-  
+
 
   return (
     <>
@@ -430,6 +621,7 @@ const AccountPage: React.FC = () => {
             className="ml-4 border-2 border-gray-300 rounded-full px-4 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
             <option value="">Lọc</option>
             <option value="student">Học viên</option>
+            <option value="parents">Phụ huynh</option>
             <option value="teacher">Giáo viên</option>
             <option value="staff">Giáo vụ</option>
           </select>
@@ -451,7 +643,14 @@ const AccountPage: React.FC = () => {
           )}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 pr-6">
+          <Button onClick={() => {
+            setShowModalRe(true); // Hiển thị modal
+            handleApproveRegistration(); // Gọi hàm khi mở modal
+          }}
+            type="button" className="pl-6 pr-6">
+            Duyệt đăng ký
+          </Button>
           <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
             Tạo người dùng
           </Button>
@@ -737,13 +936,16 @@ const AccountPage: React.FC = () => {
                       {user.isActive ? "Đang hoạt động" : "Ngưng hoạt động"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.createdAt}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{new Date(user.createdAt).toLocaleDateString("vi-VN")}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3 whitespace-nowrap">
                     <button className="text-blue-600 hover:text-blue-800">
                       <FaEdit className="h-5 w-5" />
                     </button>
                     <button className="text-red-600 hover:text-red-800">
                       <FaTrashAlt className="h-4 w-4" />
+                    </button>
+                    <button className="text-yellow-600 hover:text-yellow-800">
+                      <FiLock className="h-5 w-5" />
                     </button>
                   </td>
 
@@ -764,7 +966,7 @@ const AccountPage: React.FC = () => {
             : "bg-blue-500 hover:bg-blue-600"
             }`}
           disabled={currentPage === 1}>
-          Previous
+          Trước
         </button>
 
         {totalPages === 1 ? (
@@ -798,9 +1000,243 @@ const AccountPage: React.FC = () => {
             : "bg-blue-500 hover:bg-blue-600"
             }`}
           disabled={currentPage === totalPages}>
-          Next
+          Sau
         </Button>
       </div>
+
+      {/* Modal Register */}
+      {showModalRe && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={() => setShowModalRe(false)} // Close modal when clicking outside
+        >
+          <div
+            className="bg-white p-12 rounded-xl w-4/5 max-w-5xl overflow-y-auto shadow-2xl transform transition-all ease-in-out duration-300 scale-95 hover:scale-100"
+            onClick={(e) => e.stopPropagation()} // Prevent modal from closing when clicking inside
+          >
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-semibold text-gray-800">Thông tin người dùng cần xác nhận</h2>
+              <button
+                onClick={() => setShowModalRe(false)}
+                className="text-gray-600 hover:text-gray-800 text-2xl"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            {/* Tab Buttons */}
+            <div className="flex space-x-4 border-b mb-6">
+              <button
+                className={`py-2 px-4 text-lg font-semibold ${activeTab === "students" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-700"}`}
+                onClick={() => setActiveTab("students")}
+              >
+                Học viên
+              </button>
+              <button
+                className={`py-2 px-4 text-lg font-semibold ${activeTab === "teachers" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-700"}`}
+                onClick={() => setActiveTab("teachers")}
+              >
+                Giáo viên
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === "students" && (
+              <>
+                <table className="w-full table-auto mb-8">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="py-3 px-6 text-left text-gray-700">Tên</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Email</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Địa chỉ</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Ngày sinh</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Số điện thoại</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Giới tính</th>
+
+                      <th className="py-3 px-6 text-center text-gray-700">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.map((student) => (
+                      <tr key={student.id} className="hover:bg-gray-50">
+                        <td className="py-4 px-6 border-b text-gray-600">{student.name}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{student.email}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{student.address}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{new Date(student.birthday).toLocaleDateString("vi-VN")}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{student.phone}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{student.gender}</td>
+                        <td className="py-4 px-6 border-b text-center">
+                          <button
+                            onClick={() => handleApprove(student.id)}
+                            className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
+                          >
+                            <FaCheck />
+                          </button>
+                          <button
+                            onClick={() => handleReject(student.id)}
+                            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4"
+                          >
+                            <FaTimes />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pagination Section */}
+                <div className="flex justify-end mt-6 mr-6 space-x-2">
+                  <button
+                    onClick={handlePreviousPageStu}
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageStu === 1
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    disabled={currentPageStu === 1}
+                  >
+                    Trước
+                  </button>
+
+                  {totalPagesStu === 1 ? (
+                    <button
+                      key={1}
+                      onClick={() => setCurrentPageStu(1)}
+                      className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageStu === 1
+                        ? "bg-blue-700 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                      1
+                    </button>
+                  ) : (
+                    getPageNumbersStu().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPageStu(page)}
+                        className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageStu === page
+                          ? "bg-blue-700 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    ))
+                  )}
+
+                  <button
+                    onClick={handleNextPageStu}
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageStu === totalPagesStu
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    disabled={currentPageStu === totalPagesStu}
+                  >
+                    Sau
+                  </button>
+                </div>
+              </>
+            )}
+
+            {activeTab === "teachers" && (
+              <>
+                <table className="w-full table-auto mb-8">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="py-3 px-6 text-left text-gray-700">Tên</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Email</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Địa chỉ</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Ngày sinh</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Số điện thoại</th>
+                      <th className="py-3 px-6 text-left text-gray-700">Giới tính</th>
+                      <th className="py-3 px-6 text-center text-gray-700">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {teachers.map((teacher) => (
+                      <tr key={teacher.id} className="hover:bg-gray-50">
+                        <td className="py-4 px-6 border-b text-gray-600">{teacher.name}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{teacher.email}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{teacher.address}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{new Date(teacher.birthday).toLocaleDateString("vi-VN")}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{teacher.phone}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">{teacher.gender}</td>
+                        <td className="py-4 px-6 border-b text-center">
+                          <button
+                            onClick={() => handleApprove(teacher.id)}
+                            className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
+                          >
+                            <FaCheck />
+                          </button>
+                          <button
+                            onClick={() => handleReject(teacher.id)}
+                            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4"
+                          >
+                            <FaTimes />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pagination Section */}
+                <div className="flex justify-end mt-6 mr-6 space-x-2">
+                  <button
+                    onClick={handlePreviousPageTea}
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageTea === 1
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    disabled={currentPageTea === 1}
+                  >
+                    Trước
+                  </button>
+
+                  {totalPagesTea === 1 ? (
+                    <button
+                      key={1}
+                      onClick={() => setCurrentPageTea(1)}
+                      className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageTea === 1
+                        ? "bg-blue-700 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                      1
+                    </button>
+                  ) : (
+                    getPageNumbersTea().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPageTea(page)}
+                        className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageTea === page
+                          ? "bg-blue-700 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    ))
+                  )}
+
+                  <button
+                    onClick={handleNextPageTea}
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageTea === totalPagesTea
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    disabled={currentPageTea === totalPagesTea}
+                  >
+                    Sau
+                  </button>
+                </div>
+              </>
+            )}
+
+
+          </div>
+        </div>
+      )}
+
     </>
   );
 };
