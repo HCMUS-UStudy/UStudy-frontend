@@ -38,16 +38,20 @@ export default function Login() {
       if (response.status === 200) {
         const token = response.data.access_token;
         const creator = response.data.user.name;
-        console.log(token);
+        const user = response.data.user;
+
         localStorage.setItem("authToken", token);
         localStorage.setItem("creator", creator);
+        localStorage.setItem("userData", JSON.stringify(user));
+
         Swal.fire({
           icon: "success",
-          title: "Login Successful!",
-          text: "Welcome back!",
+          title: "Đăng nhập thành công",
+          text: "Chào mừng quay trở lại!",
           timer: 2000,
           showConfirmButton: false,
         });
+        
         window.location.href = "/admin/dashboard";
       }
     } catch (err: unknown) {
@@ -56,7 +60,7 @@ export default function Login() {
           err.response?.data || "An error occurred. Please try again.";
         Swal.fire({
           icon: "error",
-          title: "Login Failed",
+          title: "Đăng nhập thất bại",
           text: message,
         });
         setErrorMessage(message);
@@ -65,7 +69,7 @@ export default function Login() {
         setErrorMessage("An unexpected error occurred.");
         Swal.fire({
           icon: "error",
-          title: "Login Failed",
+          title: "Đăng nhập thất bại",
           text: unexpectedError,
         });
       }

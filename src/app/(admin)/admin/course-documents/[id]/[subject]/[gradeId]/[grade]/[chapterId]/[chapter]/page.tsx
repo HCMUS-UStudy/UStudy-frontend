@@ -8,6 +8,7 @@ import {
   FaEye,
   FaDownload,
   FaEllipsisV,
+  FaSearch,
 } from "react-icons/fa"; // Import new icons
 import ReactDOM from "react-dom";
 import { FaSpinner } from "react-icons/fa6";
@@ -118,7 +119,7 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     return (
       <div className="mb-4 text-gray-700">
         <span className="text-sm">
-        <a
+          <a
             href="/admin/courses"
             className=" text-black hover:text-blue-600 hover:underline mr-2">
             Quản lý môn học
@@ -182,8 +183,8 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
       ? getFileType(doc.title) === selectedFilter
       : true;
     return matchesSearch && matchesFilter;
-  });  
-  
+  });
+
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () =>
@@ -247,7 +248,7 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     if (['doc', 'docx'].includes(extension || '')) return 'docx';
     return 'other'; // Mặc định cho các loại tệp không xác định
   };
-  
+
 
   if (!courseId || !subject || !grade || !gradeId || !chapter || !chapterId) {
     return <Loading />;
@@ -265,7 +266,7 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
         {/* Select Mode Button */}
         <div className="flex space-x-4">
           <Button onClick={handleSelectButtonClick} className="mr-4">
-            {isSelectMode ? "Cancel" : "Select Files"}
+            {isSelectMode ? "Hủy bỏ" : "Chọn nhiều"}
           </Button>
 
           {/* Conditional buttons for Delete All and Move All */}
@@ -274,33 +275,40 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
               <Button
                 onClick={handleSelectAll}
                 className="bg-sky-400 text-white hover:bg-sky-500 transition">
-                {allSelected ? "Unselect All" : "Select All"}
+                {allSelected ? "Hủy chọn" : "Chọn tất cả"}
               </Button>
               <Button className="bg-red-500 text-white hover:bg-red-600 transition">
-                Delete All
+                Xóa tất cả
               </Button>
               <Button className="bg-green-500 text-white hover:bg-green-600 transition">
-                Move All
+                Di chuyển
               </Button>
             </div>
           )}
         </div>
 
         <div className="flex items-center space-x-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search files"
-            className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
+            <input
+              type="text"
+              placeholder="Tìm kiếm tài liệu..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
+              <FaSearch className="h-5 w-5" />
+            </button>
+          </div>
           <select
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
-            <option value="">All Files</option>
-            <option value="pdf">PDF Files</option>
-            <option value="docx">DOCX Files</option>
+            <option value="">Tất cả tài liệu</option>
+            <option value="pdf">Tài liệu PDF</option>
+            <option value="docx">Tài liệu DOCX</option>
           </select>
         </div>
       </div>
@@ -310,9 +318,8 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
         {documents.map((doc, index) => (
           <div
             key={doc.id || index}
-            className={`border p-4 rounded-lg shadow-md ${
-              selectedDocuments.includes(doc.name) ? "bg-blue-100" : "bg-white"
-            } hover:shadow-lg transition`}>
+            className={`border p-4 rounded-lg shadow-md ${selectedDocuments.includes(doc.name) ? "bg-blue-100" : "bg-white"
+              } hover:shadow-lg transition`}>
             <div className="flex items-center space-x-4 mb-3">
               {getFileType(doc.title) === "pdf" ? (
                 <FaFilePdf className="text-red-500 text-3xl" />
@@ -356,13 +363,12 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
       <div className="flex justify-end mt-6 mr-6 space-x-2">
         <Button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === 1
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          }`}
+            }`}
           disabled={currentPage === 1}>
-          Previous
+          Trước
         </Button>
 
         {/* Render page buttons */}
@@ -372,11 +378,10 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${
-                currentPage === page
+              className={`px-4 py-2 rounded-md font-semibold transition-all duration-200 ${currentPage === page
                   ? "bg-blue-700 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}>
+                }`}>
               {page}
             </button>
           );
@@ -384,13 +389,12 @@ const ChapterDocumentsPage = ({ params }: { params: Promise<Params> }) => {
 
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === totalPages
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600"
-          }`}
+            }`}
           disabled={currentPage === totalPages}>
-          Next
+          Sau
         </Button>
       </div>
     </div>

@@ -1,20 +1,50 @@
 "use client";
+import React, { useState } from "react";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
-import React from "react";
 import classNames from "classnames";
 import { PiHandWavingThin } from "react-icons/pi";
-import "../styles/Header.css";
 import { IoNotificationsOutline } from "react-icons/io5";
+import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 import BranchSelector from "./BranchSelector";
-import { usePathname } from "next/navigation"; // Import hook usePathname
+import "../styles/Header.css";
+import Swal from "sweetalert2";
 
 const Header: React.FC = () => {
     const { toggleCollapse } = useSideBarToggle();
-    const pathname = usePathname(); // Lấy đường dẫn hiện tại
+    const pathname = usePathname();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
     const handleBranchChange = (id: string) => {
         console.log("Selected Branch ID:", id);
     };
 
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
+
+    const handleProfileClick = () => {
+        window.location.href = "/admin/profile"; // Chuyển hướng tới trang profile
+    };
+
+    const handleLogout = () => {
+        // Xóa token và các thông tin khác trong localStorage
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("creator");
+
+        // Hiển thị thông báo thành công
+        Swal.fire({
+            icon: "success",
+            title: "Logout Successful",
+            text: "You have been logged out successfully.",
+            timer: 8000,
+            showConfirmButton: false,
+        });
+
+        // Chuyển hướng người dùng về trang đăng nhập
+        window.location.href = "/admin/login";
+    };
+    
     const headerStyle = classNames({
         ["header isWide"]: !toggleCollapse,
         ["header isNarrow"]: toggleCollapse,
@@ -30,13 +60,36 @@ const Header: React.FC = () => {
             </div>
 
             <div className="right-items">
-                {/* Hiển thị BranchSelector nếu không phải ở trang /admin/branches */}
                 {pathname !== "/admin/branches" && (
                     <BranchSelector onBranchChange={handleBranchChange} />
                 )}
 
                 <div className="notification">
                     <IoNotificationsOutline size={20} />
+                </div>
+
+                <div className="user-setting">
+                    <FaUserCircle
+                        size={35}
+                        className="user-icon"
+                        onClick={toggleDropdown}
+                    />
+                    {dropdownOpen && (
+                        <div className="dropdown-menu">
+                            <div
+                                className="dropdown-item"
+                                onClick={handleProfileClick}
+                            >
+                                <FaUserCircle className="dropdown-icon" /> Profile
+                            </div>
+                            <div
+                                className="dropdown-item"
+                                onClick={handleLogout}
+                            >
+                                <FaSignOutAlt className="dropdown-icon" /> Logout
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
