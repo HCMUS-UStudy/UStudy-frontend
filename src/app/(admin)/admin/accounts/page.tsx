@@ -86,7 +86,7 @@ const AccountPage: React.FC = () => {
       console.log("Phê duyệt người dùng với ID:", userId);
 
       // Gửi yêu cầu API với query param là registerId
-      const response = await axios.post(
+      const response = await axios.put(
         `http://localhost:8080/api/register/admin/confirm?registerId=${userId}`,
         {}, // Dữ liệu rỗng vì chỉ cần query param
         {
@@ -125,9 +125,51 @@ const AccountPage: React.FC = () => {
     }
   };
 
-  const handleReject = (userId: any) => {
-    console.log('Rejected user:', userId);
+  const handleReject = async (userId: string) => {
+    setLoading(true); // Bắt đầu trạng thái loading
+    const authToken = localStorage.getItem("authToken");
 
+    try {
+      console.log("Từ chối người dùng với ID:", userId);
+
+      // Gửi yêu cầu API với query param là registerId
+      const response = await axios.put(
+        `http://localhost:8080/api/register/admin/reject?registerId=${userId}`,
+        {}, // Dữ liệu rỗng vì chỉ cần query param
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      console.log("Người dùng đã bị từ chối thành công", response.data);
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Từ chối thành công",
+          text: "Người dùng không được phê duyệt!",
+          timer: 8000,
+          showConfirmButton: false,
+        });
+
+        window.location.reload();
+      }
+
+      // Gọi lại danh sách sau khi xác nhận
+      await Promise.all([fetchStudents(), fetchTeachers()]);
+    } catch (error: any) {
+      console.error("Error approving user:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Từ chối thất bại",
+        text: error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
+      });
+
+      setError("Failed to approve user. Please try again."); // Hiển thị lỗi
+    } finally {
+      setLoading(false); // Kết thúc trạng thái loading
+    }
   };
 
   useEffect(() => {
@@ -1011,7 +1053,7 @@ const AccountPage: React.FC = () => {
           onClick={() => setShowModalRe(false)} // Close modal when clicking outside
         >
           <div
-            className="bg-white p-12 rounded-xl w-4/5 max-w-5xl overflow-y-auto shadow-2xl transform transition-all ease-in-out duration-300 scale-95 hover:scale-100"
+            className="bg-white p-12 rounded-xl w-4/5 max-w-6xl overflow-y-auto shadow-2xl transform transition-all ease-in-out duration-300 scale-95 hover:scale-100"
             onClick={(e) => e.stopPropagation()} // Prevent modal from closing when clicking inside
           >
             <div className="flex justify-between items-center mb-8">
@@ -1066,6 +1108,7 @@ const AccountPage: React.FC = () => {
                         <td className="py-4 px-6 border-b text-gray-600">{student.phone}</td>
                         <td className="py-4 px-6 border-b text-gray-600">{student.gender}</td>
                         <td className="py-4 px-6 border-b text-center">
+                          <div className="flex">
                           <button
                             onClick={() => handleApprove(student.id)}
                             className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
@@ -1078,6 +1121,7 @@ const AccountPage: React.FC = () => {
                           >
                             <FaTimes />
                           </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1161,6 +1205,7 @@ const AccountPage: React.FC = () => {
                         <td className="py-4 px-6 border-b text-gray-600">{teacher.phone}</td>
                         <td className="py-4 px-6 border-b text-gray-600">{teacher.gender}</td>
                         <td className="py-4 px-6 border-b text-center">
+                        <div className="flex">
                           <button
                             onClick={() => handleApprove(teacher.id)}
                             className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
@@ -1173,6 +1218,7 @@ const AccountPage: React.FC = () => {
                           >
                             <FaTimes />
                           </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
