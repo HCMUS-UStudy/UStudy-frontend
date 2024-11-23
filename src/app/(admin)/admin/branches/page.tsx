@@ -224,6 +224,19 @@ const BranchPage: React.FC = () => {
   const handleSubmitModal = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("New branch details:", newBranch);
+    // Call API to create new branch
+    // try {
+    //   api.post("/branch/admin/add", newBranch);
+    //   setIsError(false);
+    //   setMessage("Thêm chi nhánh thành công!");
+    //   setTimeout(() => setMessage(null), 3000);
+    // } catch (error) {
+    //   console.error("Failed to create branch:", error);
+    //   setIsError(true);
+    //   setMessage("Thêm chi nhánh thất bại. Vui lòng thử lại!");
+    //   setTimeout(() => setMessage(null), 3000);
+    // }
+
     setNewBranch({
       name: "",
       address: "",

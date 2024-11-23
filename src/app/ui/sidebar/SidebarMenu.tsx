@@ -39,8 +39,8 @@ const SidebarMenu = ({ menuGroup }: { menuGroup: SideNavItemGroup }) => {
     );
 
     return (
-        <>
-            <h3 className={menuGroupTitleStyle}>{!toggleCollapse ? menuGroup.title : '...'}</h3>
+        <>	
+			{menuGroup.title ? <h3 className={menuGroupTitleStyle}>{!toggleCollapse ? menuGroup.title : '...'}</h3> : null}
             {menuGroup.menuList?.map((item, index) => (
                 <SidebarMenuItem key={index} item={item} />
             ))}

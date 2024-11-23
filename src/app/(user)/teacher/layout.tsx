@@ -1,23 +1,14 @@
 "use client";
-import { usePathname } from 'next/navigation';
 import Header from "@/app/ui/components/header";
 import PageWrapper from "@/app/ui/components/pagewrapper";
 import Sidebar from "@/app/ui/sidebar/sidebar";
-import { SIDENAV_ITEMS_ADMIN } from "@/app/menu_constants";
+import { SIDENAV_ITEMS_TEACHER } from "@/app/menu_constants";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-
-    // Exclude the layout for the 'admin/login' path
-    if (pathname === "/admin/login") {
-        return (
-            {children}
-        );
-    }
 
     return (
         <div className='bg-background'>
-            <Sidebar menuItems={SIDENAV_ITEMS_ADMIN}/>
+            <Sidebar menuItems={SIDENAV_ITEMS_TEACHER}/>
             <div className="flex flex-col h-full w-full">
                 <Header />
                 <PageWrapper> {children} </PageWrapper>

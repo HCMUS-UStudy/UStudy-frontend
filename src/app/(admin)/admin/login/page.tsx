@@ -16,7 +16,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isFocused, setIsFocused] = useState({ email: false, password: false });
-  const [errorMessage, setErrorMessage] = useState("");
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -24,7 +23,6 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage("");
 
     try {
       const response = await axios.post(
@@ -51,7 +49,6 @@ export default function Login() {
           timer: 2000,
           showConfirmButton: false,
         });
-        
         window.location.href = "/admin/dashboard";
       }
     } catch (err: unknown) {
@@ -63,10 +60,8 @@ export default function Login() {
           title: "Đăng nhập thất bại",
           text: message,
         });
-        setErrorMessage(message);
       } else {
         const unexpectedError = "An unexpected error occurred.";
-        setErrorMessage("An unexpected error occurred.");
         Swal.fire({
           icon: "error",
           title: "Đăng nhập thất bại",
