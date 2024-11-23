@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
@@ -12,6 +12,21 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 export default function Login() {
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      Swal.fire({
+        icon: "success",
+        title: "Bạn đã đăng nhập thành công",
+        timer: 9000,
+        showConfirmButton: false,
+      });
+      
+      window.location.href = "/admin/dashboard";
+    }
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
