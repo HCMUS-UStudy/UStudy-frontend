@@ -1,11 +1,17 @@
 import { SideNavItemGroup } from "@/app/types/type";
 import {
+  BsBell,
   BsBook,
+  BsCalendar,
+  BsCardChecklist,
+  BsCreditCard,
   BsGear,
   BsHouseDoor,
   BsPerson,
+  BsPersonWorkspace,
   // BsFillPeopleFill,
   BsQuestionCircle,
+  BsWallet2,
 } from "react-icons/bs";
 
 import { SiGoogleclassroom } from "react-icons/si";
@@ -92,6 +98,69 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
         title: "Quản lý lớp học",
         path: "/staff/classes",
         icon: <SiGoogleclassroom size={20} />,
+      },
+    ],
+  },
+];
+
+export const SIDENAV_ITEMS_STUDENT: SideNavItemGroup[] = [
+  {
+    title: "Trang chính",
+    menuList: [
+      {
+        title: "Trang chủ",
+        path: "/student/home",
+        icon: <BsHouseDoor size={20} />,
+      },
+    ],
+  },
+  {
+    title: "Học phí",
+    menuList: [
+      {
+        title: "Đóng học phí",
+        path: "/student/tuition/pay",
+        icon: <BsCreditCard size={20} />,
+      },
+      {
+        title: "Tra cứu học phí",
+        path: "/student/tuition/check",
+        icon: <BsWallet2 size={20} />,
+      },
+    ],
+  },
+  {
+    title: "Lịch học và lớp học",
+    menuList: [
+      {
+        title: "Xem lịch học",
+        path: "/student/schedule",
+        icon: <BsCalendar size={20} />,
+      },
+      {
+        title: "Xem danh sách các lớp học",
+        path: "/student/classes",
+        icon: <SiGoogleclassroom size={20} />,
+      },
+    ],
+  },
+  {
+    title: "Học tập",
+    menuList: [
+      {
+        title: "Bài tập & Kiểm tra",
+        path: "/student/study/test",
+        icon: <BsCardChecklist size={20} />,
+      },
+      {
+        title: "Xem nội dung môn học",
+        path: "/student/study/content",
+        icon: <BsBook size={20} />,
+      },
+      {
+        title: "Xem kết quả học tập",
+        path: "/student/study/results",
+        icon: <BsPersonWorkspace size={20} />,
       },
     ],
   },
