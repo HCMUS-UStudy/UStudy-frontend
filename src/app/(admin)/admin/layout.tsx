@@ -11,7 +11,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // Exclude the layout for the 'admin/login' path
     if (pathname === "/admin/login") {
         return (
-            {children}
+            <>
+                { children }
+            </>
         );
     }
 
