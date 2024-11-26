@@ -1,11 +1,16 @@
 import { SideNavItemGroup } from "@/app/types/type";
 import {
   BsBook,
+  BsCalendar,
+  BsCardChecklist,
+  BsCreditCard,
   BsGear,
   BsHouseDoor,
   BsPerson,
+  BsPersonWorkspace,
   // BsFillPeopleFill,
   BsQuestionCircle,
+  BsWallet2,
 } from "react-icons/bs";
 
 import { SiGoogleclassroom } from "react-icons/si";
@@ -96,7 +101,6 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
     ],
   },
 ];
-
 
 export const SIDENAV_ITEMS_TEACHER: SideNavItemGroup[] = [
   {
