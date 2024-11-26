@@ -3,7 +3,7 @@
 import { Button } from "@/app/ui/components/button";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import { FaFolder, FaEllipsisV } from "react-icons/fa";
+import { FaFolder, FaEllipsisV, FaSearch } from "react-icons/fa";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa6";
@@ -224,7 +224,7 @@ const GradeDocumentsPage = ({ params }: { params: Promise<Params> }) => {
   const handleNextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
-  if (!subject) return <Loading/>; // Show loading state while waiting for the subject
+  if (!subject) return <Loading />; // Show loading state while waiting for the subject
 
   const handleAttachmentClick = (id: string, subject: string, gradeId: string, grade: string, chapterId: string, chapter: string) => {
     return `/admin/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(grade)}/${encodeURIComponent(chapterId)}/${encodeURIComponent(chapter)}`;
@@ -254,11 +254,11 @@ const GradeDocumentsPage = ({ params }: { params: Promise<Params> }) => {
       </h1>
 
       {/* Search and Filter Section */}
-      <div className="flex justify-between items-center space-x-4 mb-6">
+      <div className="flex justify-between items-center space-x-4 mb-6 mr-6">
         {/* Select Mode Button */}
         <div className="flex">
           <Button onClick={handleSelectButtonClick} className="mr-4">
-            {isSelectMode ? "Cancel" : "Select Folders"}
+            {isSelectMode ? "Hủy bỏ" : "Chọn nhiều"}
           </Button>
 
           {/* Conditional buttons for Delete All and Move All */}
@@ -267,31 +267,47 @@ const GradeDocumentsPage = ({ params }: { params: Promise<Params> }) => {
               <Button
                 onClick={handleSelectAll}
                 className="bg-sky-400 text-white mr-2">
-                {allSelected ? "Unselect All" : "Select All"}
+                {allSelected ? "Hủy chọn" : "Chọn tất cả"}
               </Button>
-              <Button className="bg-red-500 text-white mr-2">Delete All</Button>
-              <Button className="bg-green-500 text-white">Move All</Button>
+              <Button className="bg-red-500 text-white mr-2">Xóa tất cả</Button>
+              <Button className="bg-green-500 text-white">Di chuyển</Button>
             </div>
           )}
         </div>
 
         <div className="flex items-center space-x-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search folders"
-            className="px-4 py-2 border border-gray-300 rounded-md"
-          />
+          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
+            <input
+              type="text"
+              placeholder="Tìm kiếm theo chương..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
+              <FaSearch className="h-5 w-5" />
+            </button>
+          </div>
           <select
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-md">
-            <option value="">All Chapters</option>
-            <option value="Chapter">Chapter</option>
-            <option value="Exercises">Exercises</option>
+            <option value="">Tất cả chương</option>
+            <option value="Chapter">Chương 1</option>
+            <option value="Exercises">Chương 2</option>
           </select>
         </div>
+      </div>
+
+      <div className="flex justify-end space-x-4 mb-4">
+        <Button
+          //onClick={onCreateCourse}
+          type="button"
+          className="pl-6 pr-6 mr-6">
+          Tạo chương
+        </Button>
       </div>
 
       {/* Folders Display */}
@@ -353,7 +369,7 @@ const GradeDocumentsPage = ({ params }: { params: Promise<Params> }) => {
                     chapter.name
                   ))
                   }>
-                  View Folder
+                  Xem thư mục
                 </Button>
               </div>
             )}
@@ -371,7 +387,7 @@ const GradeDocumentsPage = ({ params }: { params: Promise<Params> }) => {
             : "bg-blue-500 hover:bg-blue-600"
             }`}
           disabled={currentPage === 1}>
-          Previous
+          Trước
         </button>
 
         {totalPages === 1 ? (
@@ -405,7 +421,7 @@ const GradeDocumentsPage = ({ params }: { params: Promise<Params> }) => {
             : "bg-blue-500 hover:bg-blue-600"
             }`}
           disabled={currentPage === totalPages}>
-          Next
+          Sau
         </Button>
       </div>
     </div>

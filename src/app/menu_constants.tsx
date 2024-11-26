@@ -9,7 +9,7 @@ import {
 } from "react-icons/bs";
 
 import { SiGoogleclassroom } from "react-icons/si";
-import { GrMapLocation } from "react-icons/gr";
+import { GrMapLocation, GrSchedules } from "react-icons/gr";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
   {
@@ -91,6 +91,29 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
       {
         title: "Quản lý lớp học",
         path: "/staff/classes",
+        icon: <SiGoogleclassroom size={20} />,
+      },
+    ],
+  },
+];
+
+
+export const SIDENAV_ITEMS_TEACHER: SideNavItemGroup[] = [
+  {
+    menuList: [
+      {
+        title: "Bảng thống kê",
+        path: "/teacher/dashboard",
+        icon: <BsHouseDoor size={20} />,
+      },
+      {
+        title: "Lịch dạy",
+        path: "/teacher/schedule",
+        icon: <GrSchedules size={20} />,
+      },
+      {
+        title: "Lớp học",
+        path: "/teacher/classes",
         icon: <SiGoogleclassroom size={20} />,
       },
     ],

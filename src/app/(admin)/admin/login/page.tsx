@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/input";
 import { Label } from "@/app/ui/components/label";
@@ -12,25 +12,39 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isFocused, setIsFocused] = useState({ email: false, password: false });
-  const [errorMessage, setErrorMessage] = useState("");
 
+  
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      Swal.fire({
+        icon: "success",
+        title: "Bạn đã đăng nhập thành công",
+        timer: 9000,
+        showConfirmButton: false,
+      });
+      
+      window.location.href = "/admin/dashboard";
+    }
+  }, []);
+  
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");  
+  const [isFocused, setIsFocused] = useState({ username: false, password: false });
+  
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage("");
 
     try {
       const response = await axios.post(
         "http://localhost:8080/api/auth/admin/login",
         {
-          email,
+          genId: username,
           password,
         }
       );
@@ -38,13 +52,16 @@ export default function Login() {
       if (response.status === 200) {
         const token = response.data.access_token;
         const creator = response.data.user.name;
-        console.log(token);
+        const user = response.data.user;
+
         localStorage.setItem("authToken", token);
         localStorage.setItem("creator", creator);
+        localStorage.setItem("userData", JSON.stringify(user));
+
         Swal.fire({
           icon: "success",
-          title: "Login Successful!",
-          text: "Welcome back!",
+          title: "Đăng nhập thành công",
+          text: "Chào mừng quay trở lại!",
           timer: 2000,
           showConfirmButton: false,
         });
@@ -56,16 +73,14 @@ export default function Login() {
           err.response?.data || "An error occurred. Please try again.";
         Swal.fire({
           icon: "error",
-          title: "Login Failed",
+          title: "Đăng nhập thất bại",
           text: message,
         });
-        setErrorMessage(message);
       } else {
         const unexpectedError = "An unexpected error occurred.";
-        setErrorMessage("An unexpected error occurred.");
         Swal.fire({
           icon: "error",
-          title: "Login Failed",
+          title: "Đăng nhập thất bại",
           text: unexpectedError,
         });
       }
@@ -104,42 +119,46 @@ export default function Login() {
             </div>
 
             <form className="w-full max-w-xs" onSubmit={handleLogin}>
-              {/* Floating Label for Email */}
+              {/* Floating Label for Username */}
               <div className="relative mb-4">
                 <Input
-                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  className={`p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
+                          focus:border-indigo-600 focus:bg-white transition-all duration-200 
+                          ${isFocused.username ? "placeholder-transparent" : "placeholder-gray-400"}`}
+                  type="text"
+                  id="username"
+                  value={username}
+                  onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
                   onFocus={() =>
-                    setIsFocused((prev) => ({ ...prev, email: true }))
+                    setIsFocused((prev) => ({ ...prev, username: true }))
                   }
                   onBlur={() =>
-                    setIsFocused((prev) => ({ ...prev, email: false }))
+                    setIsFocused((prev) => ({ ...prev, username: false }))
                   }
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   required
                 />
                 <Label
-                  htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${
-                    isFocused.email || email
+                  htmlFor="username"
+                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
+                    isFocused.username || username
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                      : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Enter your email
+                  Enter your username
                 </Label>
               </div>
 
               {/* Floating Label for Password */}
               <div className="relative mb-6 mt-6">
                 <Input
-                  className="p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400 focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                  className={`p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
+                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
+                    ${isFocused.password ? "placeholder-transparent" : "placeholder-gray-400"}`}
                   type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
                   onFocus={() =>
                     setIsFocused((prev) => ({ ...prev, password: true }))
                   }
@@ -151,10 +170,10 @@ export default function Login() {
                 />
                 <Label
                   htmlFor="password"
-                  className={`absolute left-4 transition-all duration-200 ${
+                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
                     isFocused.password || password
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                      : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
                   Enter your password
                 </Label>

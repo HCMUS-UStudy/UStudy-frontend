@@ -7,7 +7,7 @@ export type SideNavItem = {
 };
 
 export type SideNavItemGroup = {
-  title: string;
+  title?: string;
   menuList: SideNavItem[]
 }
 
