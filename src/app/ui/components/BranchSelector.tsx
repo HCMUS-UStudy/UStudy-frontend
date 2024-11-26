@@ -1,36 +1,62 @@
-import { useState, useEffect, useRef } from 'react';
+"use client";
+
+import { useEffect, useRef, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store/store';
+import { setBranch, setBranches } from '../../store/branchSlice';
+import axios from 'axios';
 import '../styles/BranchSelector.css';
 
 interface Branch {
   id: string;
   name: string;
+  adress: string;
+  contact_number: string;
 }
 
-interface BranchSelectorProps {
-  onBranchChange: (branchId: string) => void;
-}
-
-const BranchSelector: React.FC<BranchSelectorProps> = ({ onBranchChange }) => {
-  const initialBranches: Branch[] = [
-    { id: '1', name: 'Chi nhánh 1' },
-    { id: '2', name: 'Chi nhánh 2' },
-    { id: '3', name: 'Chi nhánh 3' },
-  ];
-  const [branches] = useState<Branch[]>(initialBranches);
-  const [selectedBranch, setSelectedBranch] = useState<string>('');
+const BranchSelector: React.FC = () => {
+  const dispatch = useDispatch();
+  const { branches, selectedBranchId } = useSelector((state: RootState) => state.branch);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (branches.length > 0) {
-      setSelectedBranch(branches[0].id);
-      onBranchChange(branches[0].id);
-    }
-  }, [branches, onBranchChange]);
+    const fetchBranches = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/branch/clerk/get-all", {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("authToken"),
+          },
+          params: {
+            page: 0,
+            limit: 10,
+          },
+        });
+
+        // Chỉ lấy `id` và `name`
+        const branchData = response.data.content.map((branch: Branch) => ({
+          id: branch.id,
+          name: branch.name,
+        }));
+
+        // Lưu vào Redux
+        dispatch(setBranches(branchData));
+
+        // Chọn chi nhánh đầu tiên nếu có dữ liệu
+        if (branchData.length > 0) {
+          dispatch(setBranch(branchData[0].id));
+        }
+      } catch (error) {
+        console.error("Failed to fetch branches:", error);
+      }
+    };
+
+    fetchBranches();
+  }, [dispatch]);
 
   const handleBranchChange = (branchId: string) => {
-    setSelectedBranch(branchId);
-    onBranchChange(branchId);
+    dispatch(setBranch(branchId));
     setIsOpen(false);
   };
 
@@ -49,24 +75,28 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({ onBranchChange }) => {
 
   return (
     <div className='branch-select' ref={dropdownRef}>
-      <div className='dropdown' onClick={() => setIsOpen(!isOpen)}>
-        <div className='dropdown-selected'>
-          {branches.find(branch => branch.id === selectedBranch)?.name || 'Chọn chi nhánh'}
-        </div>
-        {isOpen && (
-          <div className='dropdown-options'>
-            {branches.map(branch => (
-              <div
-                key={branch.id}
-                className='dropdown-option'
-                onClick={() => handleBranchChange(branch.id)}
-              >
-                {branch.name}
-              </div>
-            ))}
+      {branches.length > 0 ? (
+        <div className='dropdown' onClick={() => setIsOpen(!isOpen)}>
+          <div className='dropdown-selected'>
+            {branches.find(branch => branch.id === selectedBranchId)?.name || 'Chọn chi nhánh'}
           </div>
-        )}
-      </div>
+          {isOpen && (
+            <div className='dropdown-options'>
+              {branches.map(branch => (
+                <div
+                  key={branch.id}
+                  className='dropdown-option'
+                  onClick={() => handleBranchChange(branch.id)}
+                >
+                  {branch.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>Không có chi nhánh nào</p>
+      )}
     </div>
   );
 };

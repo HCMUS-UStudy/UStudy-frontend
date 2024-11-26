@@ -15,10 +15,6 @@ const Header: React.FC = () => {
     const pathname = usePathname();
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const handleBranchChange = (id: string) => {
-        console.log("Selected Branch ID:", id);
-    };
-
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
@@ -61,7 +57,7 @@ const Header: React.FC = () => {
 
             <div className="right-items">
                 {pathname !== "/admin/branches" && (
-                    <BranchSelector onBranchChange={handleBranchChange} />
+                    <BranchSelector />
                 )}
 
                 <div className="notification">
