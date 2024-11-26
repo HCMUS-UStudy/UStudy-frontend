@@ -1,20 +1,6 @@
 import { ClassData } from "../types/type";
 import axiosInstance from "./axios";
 
-export const getAllBranch = async () => {
-    try {
-        const response = await axiosInstance.get('/branch/clerk/get-all', {
-            params: {
-                page: 0,
-                limit: 10
-            }
-        });
-        return response.data.content;
-    } catch(error) {
-        console.log(error);
-    }
-}
-
 export const getAllGrades = async () => {
     try {
         const response = await axiosInstance.get('/grade/clerk/get-all', {
@@ -29,7 +15,7 @@ export const getAllGrades = async () => {
     }
 }
 
-export const getCoursesByGrade = async (gradeId: string) => {
+export const getCoursesByGradeId = async (gradeId: string) => {
     try {
         const response = await axiosInstance.get('/course/clerk/get-course-by-grade-id', {
             params: {
@@ -54,6 +40,20 @@ export const getAllClasses = async (query: string, currentPage: number): Promise
             }
         });
         return response.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const getAllBranches = async (page: number, limit: number) => {
+    try {
+        const response = await axiosInstance.get('/branch/clerk/get-all', {
+            params: {
+                page: page,
+                limit: limit
+            },
+        });
+        return response;
     } catch(error) {
         throw error;
     }

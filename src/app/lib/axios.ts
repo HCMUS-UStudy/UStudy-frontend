@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { cookies } from 'next/headers';
+import { getAccessToken } from './storage';
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080/api',
@@ -8,21 +8,17 @@ const axiosInstance = axios.create({
     }
 })
 
-axiosInstance.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
-axiosInstance.defaults.headers.post['Content-Type'] = 'Application/json';
-
 axiosInstance.interceptors.request.use(
     async function(request) {
         console.log(request.url);
         if(request.url !== '/auth/user/login') {
-            const token = (await cookies()).get('accessToken')?.value;
+            const token = getAccessToken();
             if(!token) {
                 return Promise.reject({
                     message: 'AT not found'
                 });
             }
             request.headers.Authorization = `Bearer ${token}`; 
-            // console.log(request.headers.Authorization); 
         }
         return request;
     },

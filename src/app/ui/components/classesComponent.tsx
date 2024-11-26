@@ -216,49 +216,6 @@ export default function CoursesComponent(props: {
       )
     );
   };
-
-  const sampleClasses = [
-    {
-      ID: 1,
-      MaLop: "T1",
-      TenLop: "Toán 1",
-      SiSo: 30,
-      NgayBatDau: "2024-01-10",
-      NgayKetThuc: "2024-05-20",
-    },
-    {
-      ID: 2,
-      MaLop: "TC1",
-      TenLop: "Toán Chuyên 1",
-      SiSo: 25,
-      NgayBatDau: "2024-02-01",
-      NgayKetThuc: "2024-06-15",
-    },
-    {
-      ID: 3,
-      MaLop: "L1",
-      TenLop: "Lý 1",
-      SiSo: 28,
-      NgayBatDau: "2024-01-15",
-      NgayKetThuc: "2024-05-30",
-    },
-    {
-      ID: 4,
-      MaLop: "LC1",
-      TenLop: "Lý Chuyên 1",
-      SiSo: 20,
-      NgayBatDau: "2024-03-01",
-      NgayKetThuc: "2024-07-10",
-    },
-    {
-      ID: 5,
-      MaLop: "H1",
-      TenLop: "Hóa 1",
-      SiSo: 32,
-      NgayBatDau: "2024-01-20",
-      NgayKetThuc: "2024-06-25",
-    },
-  ];
   return (
     <>
       <h2 className="text-3xl font-bold tracking-tight my-4">
@@ -305,58 +262,7 @@ export default function CoursesComponent(props: {
       </div>
 
       {/* Table Section */}
-      <div className="overflow-x-auto mt-6 mr-6">
-        {/* <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                ID
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center ">
-                Mã lớp
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center w-[150px]">
-                Tên lớp
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Sỉ số
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Ngày bắt đầu
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Ngày kết thúc
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sampleClasses.map((c, i) => (
-              <tr
-                key={i}
-                className="hover:bg-gray-50 transition-all duration-200">
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.ID}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.MaLop}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 ">{c.TenLop}</td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.SiSo}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.NgayBatDau}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.NgayKetThuc}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
-        {/* <ClassesTable query="" currentPage={0} /> */}
-        <Pagination className="flex justify-end mt-5" totalPages={3} />
-      </div>
+      <div className="overflow-x-auto mt-6 mr-6"></div>
       <Modal
         modalName="ModalCreateClass"
         isOpen={isOpenModal}

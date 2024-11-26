@@ -1,19 +1,32 @@
 "use client";
+import { getAllClasses } from "@/app/lib/api";
 import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export default function Pagination({
-  className,
-  totalPages,
-}: {
-  className?: string;
-  totalPages: number;
-}) {
+export default function Pagination({ className }: { className?: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   let currentPage = Number(searchParams.get("page")) || 0;
+  const query = searchParams.get("query") || "";
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async (query: string, currentPage: number) => {
+      try {
+        setIsLoading(true);
+        const response = await getAllClasses(query, currentPage);
+        setTotalPages(response.totalPages);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData(query, currentPage);
+  }, [currentPage, query]);
 
   const ArrowButton = ({
     direction,
@@ -105,7 +118,14 @@ export default function Pagination({
           }}
         />
         <li className="cursor-default flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300">
-          {currentPage + 1} / {totalPages === 0 ? currentPage + 1 : totalPages}
+          {isLoading ? (
+            <span>...</span>
+          ) : (
+            <span>
+              {currentPage + 1} /{" "}
+              {totalPages === 0 ? currentPage + 1 : totalPages}
+            </span>
+          )}
         </li>
         <ArrowButton
           direction="right"

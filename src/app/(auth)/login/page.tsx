@@ -10,9 +10,10 @@ import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,22 +21,25 @@ export default function Login() {
 
   const initialState: LoginFormState = {
     errors: {
-      email: null,
+      genID: null,
       password: null,
     },
     message: null,
     accessToken: null,
+    refreshToken: null,
   };
   const [state, action, isPending] = useActionState(logIn, initialState);
 
   useEffect(() => {
     console.log(state.accessToken);
-    if (state.accessToken) {
+    if (state.accessToken && state.refreshToken) {
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       localStorage.setItem("accessToken", state.accessToken);
-      redirect("/staff");
+      localStorage.setItem("refreshToken", state.refreshToken);
+      router.push("/staff");
     }
-  }, [state.accessToken]);
+  }, [state.accessToken, state.refreshToken, router]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -77,14 +81,14 @@ export default function Login() {
                 <Input
                   className={clsx(
                     {
-                      "border-rose-600": state?.errors?.email,
-                      "border-gray-400": !state?.errors?.email,
+                      "border-rose-600": state?.errors?.genID,
+                      "border-gray-400": !state?.errors?.genID,
                     },
                     "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
                   )}
-                  type="email"
-                  id="email"
-                  name="email"
+                  type="text"
+                  id="genID"
+                  name="genID"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onFocus={() =>
@@ -105,9 +109,9 @@ export default function Login() {
                   Enter your email
                 </Label>
               </div>
-              {state?.errors?.email && (
+              {state?.errors?.genID && (
                 <span className="text-[13px] ml-3 text-error">
-                  {state.errors.email}
+                  {state.errors.genID}
                 </span>
               )}
 

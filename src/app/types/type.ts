@@ -124,13 +124,14 @@ export type Duration = {
 
 export type ClassItem = {
   name: string;
-  startDate: string;
-  endDate: string;
+  course: {
+    name: string;
+  };
+  fee: number;
   room: {
     name: string;
   }
-  branch: {
-    address: string;
+  grade: {
     name: string;
   }
 }
@@ -139,3 +140,5 @@ export type ClassData = {
   content: ClassItem[],
   totalPages: number;
 }
+
+export type DurationUnit = 'Tuần' | 'Tháng' | 'Năm'

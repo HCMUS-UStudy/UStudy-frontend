@@ -3,31 +3,33 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {z} from 'zod';
 import axiosInstance from './axios';
-import { cookies } from 'next/headers';
 
 let errorData: string | null = null;
 let accessToken: string | null = null;
+let refreshToken: string | null = null;
 let role: string | null = null;
 
 const LogInFormSchema = z.object({
-    email: z.string({message: '(*) Email is required'}).trim().email({message: '(*) Invalid email address'}),
-    password: z.string().min(1, {message: '(*) Password is required'})
+    genID: z.string().min(1, {message: '(*) Vui lòng nhập ID'}),
+    password: z.string().min(1, {message: '(*) Vui lòng nhập mật khẩu'})
 });
 
 export type LoginFormState = {
     errors?: {
-        email?: string[] | null;
+        genID?: string[] | null;
         password?: string[] | null;
     }
     message?: string | null;
     accessToken?: string | null;
+    refreshToken?: string | null;
 }
 
 export async function logIn(previousState: LoginFormState, formData: FormData): Promise<LoginFormState> {
     const validationResult = LogInFormSchema.safeParse({
-        email: formData.get('email'),
+        genID: formData.get('genID'),
         password: formData.get('password')
     });
+    // console.log(formData);
     if(!validationResult.success) {
         const errors = validationResult.error.flatten().fieldErrors;
         console.log(errors);
@@ -38,13 +40,13 @@ export async function logIn(previousState: LoginFormState, formData: FormData): 
         }
     }
     await axiosInstance.post('/auth/user/login', {
-        email: formData.get('email'),
+        genId: formData.get('genID'),
         password: formData.get('password')
     })
     .then((response) => {
         accessToken = response.data.access_token;
+        refreshToken = response.data.refresh_token;
         role = response.data.user.role;
-        // console.log(response.data.user.role);
     })
     .catch((error) => {
         console.log(error);
@@ -55,13 +57,13 @@ export async function logIn(previousState: LoginFormState, formData: FormData): 
             ...previousState,
             message: 'Login failed',
             errors: {
-                email: [errorData],
+                genID: [errorData],
                 password: [errorData],
             }
         }
     }
     if(accessToken) {
-        (await cookies()).set('accessToken', accessToken);
+        // (await cookies()).set('accessToken', accessToken);
         switch(role) {
             case 'STUDENT':
                 redirect('/');
@@ -70,6 +72,7 @@ export async function logIn(previousState: LoginFormState, formData: FormData): 
                     ...previousState,
                     message: 'Login successfully',
                     accessToken: accessToken,
+                    refreshToken: refreshToken,
                     errors: {}
                 }
             case 'TEACHER':
