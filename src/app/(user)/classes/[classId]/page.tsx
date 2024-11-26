@@ -23,7 +23,7 @@ export default function Class({
       }
     };
     fetchData();
-  }, []);
+  }, [classId]);
 
   return (
     <>

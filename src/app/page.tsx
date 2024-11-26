@@ -168,13 +168,13 @@ export default function Home() {
           id="hero-content"
           className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-8">
           <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
-            <Image
-              className="object-cover border rounded-[24px] aspect-auto md:hidden flex"
+            {/* <Image
+              className="object-cover border rounded-[24px] aspect-auto flex"
               src="/tutorSystem.jpg"
               width={500}
               height={500}
               alt="tutorSystem"
-            />
+            /> */}
             <div className="leading-tight md:leading-normal">
               <div className=" tracking-tight md:tracking-normal">
                 <span className="text-highlight_text">Kết nối</span> tri thức
@@ -197,11 +197,13 @@ export default function Home() {
             </Button>
           </div>
           <Image
-            className="object-cover border rounded-[24px] aspect-auto md:flex hidden"
+            className="object-cover border rounded-[24px] aspect-auto flex"
             src="/tutorSystem.jpg"
             width={500}
             height={500}
             alt="tutorSystem"
+            // layout="responsive"
+            loading="lazy"
           />
         </div>
       </div>
@@ -233,6 +235,7 @@ export default function Home() {
               width={108}
               height={108}
               alt="JohnAbbott"
+              loading="lazy"
             />
             <div className="text-black text-center mt-3">
               <div className="font-bold text-2xl">John Abbott</div>
@@ -248,6 +251,7 @@ export default function Home() {
           width={500}
           height={500}
           alt="TeacherRegister"
+          loading="lazy"
         />
         <div>
           <div className="font-bold text-[30px] md:text-[50px] tracking-tighter md:tracking-normal text-center">

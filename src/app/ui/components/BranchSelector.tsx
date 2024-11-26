@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import '../styles/BranchSelector.css';
+import { useState, useEffect, useRef } from "react";
+import "../styles/BranchSelector.css";
 
 interface Branch {
   id: string;
@@ -12,12 +12,12 @@ interface BranchSelectorProps {
 
 const BranchSelector: React.FC<BranchSelectorProps> = ({ onBranchChange }) => {
   const initialBranches: Branch[] = [
-    { id: '1', name: 'Chi nhánh 1' },
-    { id: '2', name: 'Chi nhánh 2' },
-    { id: '3', name: 'Chi nhánh 3' },
+    { id: "1", name: "Chi nhánh 1" },
+    { id: "2", name: "Chi nhánh 2" },
+    { id: "3", name: "Chi nhánh 3" },
   ];
   const [branches] = useState<Branch[]>(initialBranches);
-  const [selectedBranch, setSelectedBranch] = useState<string>('');
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -35,32 +35,35 @@ const BranchSelector: React.FC<BranchSelectorProps> = ({ onBranchChange }) => {
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
       setIsOpen(false);
     }
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <div className='branch-select' ref={dropdownRef}>
-      <div className='dropdown' onClick={() => setIsOpen(!isOpen)}>
-        <div className='dropdown-selected'>
-          {branches.find(branch => branch.id === selectedBranch)?.name || 'Chọn chi nhánh'}
+    <div className="branch-select" ref={dropdownRef}>
+      <div className="dropdown" onClick={() => setIsOpen(!isOpen)}>
+        <div className="dropdown-selected">
+          {branches.find((branch) => branch.id === selectedBranch)?.name ||
+            "Chọn chi nhánh"}
         </div>
         {isOpen && (
-          <div className='dropdown-options'>
-            {branches.map(branch => (
+          <div className="dropdown-options">
+            {branches.map((branch) => (
               <div
                 key={branch.id}
-                className='dropdown-option'
-                onClick={() => handleBranchChange(branch.id)}
-              >
+                className="dropdown-option"
+                onClick={() => handleBranchChange(branch.id)}>
                 {branch.name}
               </div>
             ))}

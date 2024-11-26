@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {z} from 'zod';
 import axiosInstance from './axios';
+import { cookies } from 'next/headers';
 
 let errorData: string | null = null;
 let accessToken: string | null = null;
@@ -60,7 +61,7 @@ export async function logIn(previousState: LoginFormState, formData: FormData): 
         }
     }
     if(accessToken) {
-        // (await cookies()).set('accessToken', accessToken);
+        (await cookies()).set('accessToken', accessToken);
         switch(role) {
             case 'STUDENT':
                 redirect('/');

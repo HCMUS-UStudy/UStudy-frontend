@@ -1,23 +1,28 @@
 import axios, { AxiosError } from 'axios';
+import { cookies } from 'next/headers';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/api'
+    baseURL: 'http://localhost:8080/api',
+    headers: {
+        "Content-Type": "application/json"
+    }
 })
 
 axiosInstance.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
 axiosInstance.defaults.headers.post['Content-Type'] = 'Application/json';
 
 axiosInstance.interceptors.request.use(
-    function(request) {
+    async function(request) {
         console.log(request.url);
         if(request.url !== '/auth/user/login') {
-            const token = localStorage.getItem('accessToken');
+            const token = (await cookies()).get('accessToken')?.value;
             if(!token) {
                 return Promise.reject({
                     message: 'AT not found'
                 });
             }
             request.headers.Authorization = `Bearer ${token}`; 
+            // console.log(request.headers.Authorization); 
         }
         return request;
     },
@@ -42,9 +47,4 @@ axiosInstance.interceptors.response.use(
     }
 )
 
-
-
 export default axiosInstance;
-
-
-

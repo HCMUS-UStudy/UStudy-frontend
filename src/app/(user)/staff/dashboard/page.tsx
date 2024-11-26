@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/ui/components/card";
-import Table from "@/app/ui/components/table";
+import { Table } from "@/app/ui/components/table";
 import React from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { FaChalkboard, FaPenNib } from "react-icons/fa6";
@@ -80,7 +80,7 @@ export default function StaffDashboard() {
         </Card>
       </div>
       <div className="flex flex-col md:flex-row mt-3 gap-4 ">
-        <Table
+        {/* <Table
           tableName={classTableContent.tableName}
           colNames={classTableContent.colNames}
           content={classTableContent.content}
@@ -89,7 +89,7 @@ export default function StaffDashboard() {
           tableName={classTableContent.tableName}
           colNames={classTableContent.colNames}
           content={classTableContent.content}
-        />
+        /> */}
       </div>
     </div>
   );

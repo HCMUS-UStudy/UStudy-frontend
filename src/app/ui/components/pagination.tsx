@@ -1,3 +1,4 @@
+"use client";
 import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
@@ -12,7 +13,7 @@ export default function Pagination({
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  let currentPage = Number(searchParams.get("page")) || 1;
+  let currentPage = Number(searchParams.get("page")) || 0;
 
   const ArrowButton = ({
     direction,
@@ -27,7 +28,9 @@ export default function Pagination({
       return (
         <li>
           <div
-            onClick={handleClick}
+            onClick={() => {
+              handleClick();
+            }}
             className={clsx(
               {
                 "bg-gray-300 cursor-default": isDisabled,
@@ -91,9 +94,9 @@ export default function Pagination({
       <ul className="flex items-center -space-x-px h-10 text-base">
         <ArrowButton
           direction="left"
-          isDisabled={currentPage <= 1}
+          isDisabled={currentPage <= 0}
           handleClick={() => {
-            if (currentPage > 1) {
+            if (currentPage > 0) {
               currentPage--;
               const params = new URLSearchParams();
               params.set("page", currentPage.toString());
@@ -102,13 +105,13 @@ export default function Pagination({
           }}
         />
         <li className="cursor-default flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300">
-          {currentPage} / {totalPages}
+          {currentPage + 1} / {totalPages === 0 ? currentPage + 1 : totalPages}
         </li>
         <ArrowButton
           direction="right"
-          isDisabled={currentPage >= totalPages}
+          isDisabled={currentPage >= totalPages - 1}
           handleClick={() => {
-            if (currentPage < totalPages) {
+            if (currentPage < totalPages - 1) {
               currentPage++;
               const params = new URLSearchParams();
               params.set("page", currentPage.toString());
