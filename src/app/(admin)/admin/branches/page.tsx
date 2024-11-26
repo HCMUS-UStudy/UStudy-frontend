@@ -10,8 +10,8 @@ interface Branch {
   name: string;
   address: string;
   contactNumber: string;
-  classrooms: number;
-  shifts: string;
+  rooms: number;
+  // shifts: string;
 }
 
 interface BranchResponse {
@@ -21,17 +21,17 @@ interface BranchResponse {
   contactNumber: string;
 }
 
-interface Shift {
-  id: string;
-  name: string;
-  day: string;
-  time: string;
-}
+// interface Shift {
+//   id: string;
+//   name: string;
+//   day: string;
+//   time: string;
+// }
 
-interface ShiftResponse {
-  day: string;
-  time: string;
-}
+// interface ShiftResponse {
+//   day: string;
+//   time: string;
+// }
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api", // Đặt base URL cho API
@@ -47,9 +47,9 @@ const api = axios.create({
 });
 
 const BranchPage: React.FC = () => {
-  const [branches, setBranches] = useState([]);
-  const [shifts, setShifts] = useState<Shift[]>([]);
-  const [editShift, setEditShift] = useState<Shift | null>({ id: "", name: "", day: "", time: "" });
+  const [branches, setBranches] = useState<Branch[]>([]);
+  // const [shifts, setShifts] = useState<Shift[]>([]);
+  // const [editShift, setEditShift] = useState<Shift | null>({ id: "", name: "", day: "", time: "" });
 
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
@@ -58,78 +58,79 @@ const BranchPage: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await api.get("/branch/clerk/get-all");
-        const modifiedData = response.data.content.map((item: BranchResponse) => ({
+        const modifiedData = response.data.content
+        .map((item: BranchResponse) => ({
           ...item, // Giữ nguyên các cột ban đầu
-          shifts: shifts.map((shift) => shift.name).join(", "), // Kết hợp các ca học thành một chuỗi
-          classrooms: 10, // Số phòng học cố định
-        }));
+          rooms: 10, // Số phòng học cố định
+        }))
+        .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
         setBranches(modifiedData);
       } catch (error) {
         console.error("Failed to fetch branches:", error);
       }
     };
     fetchBranches();
-  }, [shifts]);
-
-  useEffect(() => {
-    const fetchShifts = async () => {
-      try {
-        const response = await api.get("/time/admin/get");
-        const modifiedData = response.data.map((item: ShiftResponse) => ({
-          name: formatShiftName(item.day, item.time), // Cột mới kết hợp `id` và `name`
-          ...item, // Giữ nguyên các cột ban đầu
-        }));
-        setShifts(modifiedData);
-      } catch (error) {
-        console.error("Failed to fetch time:", error);
-      }
-    };
-    fetchShifts();
   }, []);
 
-  const handleEditShift = (shiftId: string, name: string, day: string, time: string) => {
-    setEditShift({ id: shiftId, name, day, time });
-  };
+  // useEffect(() => {
+  //   const fetchShifts = async () => {
+  //     try {
+  //       const response = await api.get("/time/admin/get");
+  //       const modifiedData = response.data.map((item: ShiftResponse) => ({
+  //         name: formatShiftName(item.day, item.time), // Cột mới kết hợp `id` và `name`
+  //         ...item, // Giữ nguyên các cột ban đầu
+  //       }));
+  //       setShifts(modifiedData);
+  //     } catch (error) {
+  //       console.error("Failed to fetch time:", error);
+  //     }
+  //   };
+  //   fetchShifts();
+  // }, []);
 
-  const handleShiftChange = (event: React.ChangeEvent<HTMLInputElement>, field: "day" | "time") => {
-    setEditShift((prev) =>
-      prev ? { ...prev, [field]: event.target.value } : null
-    );
-  };
+  // const handleEditShift = (shiftId: string, name: string, day: string, time: string) => {
+  //   setEditShift({ id: shiftId, name, day, time });
+  // };
 
-  const saveShiftChanges = () => {
-    if (editShift) {
-      setShifts((prev) =>
-        prev.map((shift) =>
-          shift.id === editShift.id ? { ...shift, day: editShift.day, time: editShift.time } : shift
-        )
-      );
-      setEditShift(null);
-    }
-  };
+  // const handleShiftChange = (event: React.ChangeEvent<HTMLInputElement>, field: "day" | "time") => {
+  //   setEditShift((prev) =>
+  //     prev ? { ...prev, [field]: event.target.value } : null
+  //   );
+  // };
 
-  const [showShiftModal, setShowShiftModal] = useState(false);
-  const [newShift, setNewShift] = useState({
-    name: "",
-    day: "",
-    time: "",
-  });
+  // const saveShiftChanges = () => {
+  //   if (editShift) {
+  //     setShifts((prev) =>
+  //       prev.map((shift) =>
+  //         shift.id === editShift.id ? { ...shift, day: editShift.day, time: editShift.time } : shift
+  //       )
+  //     );
+  //     setEditShift(null);
+  //   }
+  // };
 
-  const createShift = async (shift: { name: string; day: string; time: string }) => {
-    try {
-      const response = await api.post("/time/admin/add", shift);
-      setShifts((prev) => [...prev, response.data]); // Thêm shift mới vào danh sách
-      setShowShiftModal(false); // Đóng modal
-      setIsError(false);
-      setMessage("Thêm ca học thành công!");
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
-      console.error("Failed to create shift:", error);
-      setIsError(true);
-      setMessage("Thêm ca học thất bại. Vui lòng thử lại!");
-      setTimeout(() => setMessage(null), 3000);
-    }
-  };
+  // const [showShiftModal, setShowShiftModal] = useState(false);
+  // const [newShift, setNewShift] = useState({
+  //   name: "",
+  //   day: "",
+  //   time: "",
+  // });
+
+  // const createShift = async (shift: { name: string; day: string; time: string }) => {
+  //   try {
+  //     const response = await api.post("/time/admin/add", shift);
+  //     setShifts((prev) => [...prev, response.data]); // Thêm shift mới vào danh sách
+  //     setShowShiftModal(false); // Đóng modal
+  //     setIsError(false);
+  //     setMessage("Thêm ca học thành công!");
+  //     setTimeout(() => setMessage(null), 3000);
+  //   } catch (error) {
+  //     console.error("Failed to create shift:", error);
+  //     setIsError(true);
+  //     setMessage("Thêm ca học thất bại. Vui lòng thử lại!");
+  //     setTimeout(() => setMessage(null), 3000);
+  //   }
+  // };
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -137,44 +138,44 @@ const BranchPage: React.FC = () => {
     name: "",
     address: "",
     contactNumber: "",
-    classrooms: "",
-    shifts: "",
+    rooms: "",
+    // shifts: "",
   });
 
-  const sortShiftsByDayTime = (shifts: Shift[]) => {
-    return [...shifts].sort((a, b) => {
-      // So sánh theo `day` trước
-      const dayComparison = a.day.localeCompare(b.day);
-      if (dayComparison !== 0) {
-        return dayComparison; // Nếu khác ngày, trả về kết quả sắp xếp theo `day`
-      }
-      // Nếu cùng ngày, so sánh tiếp theo `time`
-      return a.time.localeCompare(b.time);
-    });
-  };
+  // const sortShiftsByDayTime = (shifts: Shift[]) => {
+  //   return [...shifts].sort((a, b) => {
+  //     // So sánh theo `day` trước
+  //     const dayComparison = a.day.localeCompare(b.day);
+  //     if (dayComparison !== 0) {
+  //       return dayComparison; // Nếu khác ngày, trả về kết quả sắp xếp theo `day`
+  //     }
+  //     // Nếu cùng ngày, so sánh tiếp theo `time`
+  //     return a.time.localeCompare(b.time);
+  //   });
+  // };
   
-  const formatShiftName = (day: string, time: string): string => {
-    let timePrefix = '';
+  // const formatShiftName = (day: string, time: string): string => {
+  //   let timePrefix = '';
   
-    // Xác định prefix dựa trên thời gian
-    if (time === "17:00 - 19:00") {
-      timePrefix = 'C'; 
-    } else if (time === "19:00 - 21:00") {
-      timePrefix = 'T';
-    } else if (time === "8:00 - 11:00") {
-      timePrefix = 'S';
-    } else if (time === "14:00 - 17:00") {
-      timePrefix = 'C';
-    } else if (time === "17:00 - 20:00") {
-      timePrefix = 'T';
-    } else {
-      timePrefix = 'S';
-    }
+  //   // Xác định prefix dựa trên thời gian
+  //   if (time === "17:00 - 19:00") {
+  //     timePrefix = 'C'; 
+  //   } else if (time === "19:00 - 21:00") {
+  //     timePrefix = 'T';
+  //   } else if (time === "8:00 - 11:00") {
+  //     timePrefix = 'S';
+  //   } else if (time === "14:00 - 17:00") {
+  //     timePrefix = 'C';
+  //   } else if (time === "17:00 - 20:00") {
+  //     timePrefix = 'T';
+  //   } else {
+  //     timePrefix = 'S';
+  //   }
   
-    // Loại bỏ ký tự '-' trong ngày và ghép với prefix
-    const formattedDay = day.replace(/-/g, '').toUpperCase();
-    return `${timePrefix}-${formattedDay}`;
-  };
+  //   // Loại bỏ ký tự '-' trong ngày và ghép với prefix
+  //   const formattedDay = day.replace(/-/g, '').toUpperCase();
+  //   return `${timePrefix}-${formattedDay}`;
+  // };
 
   const [currentPage, setCurrentPage] = useState(1);
   const branchesPerPage = 5;
@@ -183,7 +184,7 @@ const BranchPage: React.FC = () => {
   useEffect(() => {
     setTotalPages(Math.ceil(branches.length / branchesPerPage));
   }, [branches]);
-  const [paginatedBranches, setPaginatedBranches] = useState([]);
+  const [paginatedBranches, setPaginatedBranches] = useState<Branch[]>([]);
   useEffect(() => {
     const startIndex = (currentPage - 1) * branchesPerPage;
     setPaginatedBranches(branches.slice(startIndex, startIndex + branchesPerPage));
@@ -221,15 +222,32 @@ const BranchPage: React.FC = () => {
     setNewBranch((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitModal = (e: React.FormEvent) => {
+  const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("New branch details:", newBranch);
+    // Call API to create new branch
+    try {
+      const response = await api.post("/branch/admin/add", newBranch);
+      setBranches((prevBranches) => [
+        ...prevBranches,
+        { ...response.data, rooms: parseInt(newBranch.rooms, 10) },
+      ]);
+
+      setIsError(false);
+      setMessage("Thêm chi nhánh thành công!");
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error) {
+      console.error("Failed to create branch:", error);
+      setIsError(true);
+      setMessage("Thêm chi nhánh thất bại. Vui lòng thử lại!");
+      setTimeout(() => setMessage(null), 3000);
+    }
+
     setNewBranch({
       name: "",
       address: "",
       contactNumber: "",
-      classrooms: "",
-      shifts: "",
+      rooms: "",
+      // shifts: "",
     });
     setShowModal(false);
   };
@@ -239,8 +257,8 @@ const BranchPage: React.FC = () => {
       name: "",
       address: "",
       contactNumber: "",
-      classrooms: "",
-      shifts: "",
+      rooms: "",
+      // shifts: "",
     });
     setShowModal(false);
   };
@@ -308,9 +326,9 @@ const BranchPage: React.FC = () => {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Số phòng học
               </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
+              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Các ca học
-              </th>
+              </th> */}
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Hành động
               </th>
@@ -325,9 +343,9 @@ const BranchPage: React.FC = () => {
                 <td className="px-6 py-4 text-sm text-gray-700">
                   10
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
+                {/* <td className="px-6 py-4 text-sm text-gray-700">
                   {branch.shifts}
-                </td>
+                </td> */}
                 <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
                     <FaEdit className="h-5 w-5" />
@@ -421,19 +439,19 @@ const BranchPage: React.FC = () => {
                 required
               />
               <Input
-                name="classrooms"
+                name="rooms"
                 placeholder="Số phòng học"
-                value={newBranch.classrooms}
+                value={newBranch.rooms}
                 onChange={handleModalInputChange}
                 required
               />
-              <Input
+              {/* <Input
                 name="shifts"
                 placeholder="Các ca học (vd: Ca 1, Ca 2)"
                 value={newBranch.shifts}
                 onChange={handleModalInputChange}
                 required
-              />
+              /> */}
               <div className="flex justify-between mt-8">
                 <Button
                   type="button"
@@ -450,7 +468,7 @@ const BranchPage: React.FC = () => {
         </div>
       )}
 
-      {showShiftModal && (
+      {/* {showShiftModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-xl shadow-lg w-96 max-w-lg">
             <h3 className="text-3xl font-semibold mb-6 text-center text-gray-800">
@@ -502,9 +520,9 @@ const BranchPage: React.FC = () => {
             </form>
           </div>
         </div>
-      )}
+      )} */}
 
-      <div className="flex items-center justify-between mt-20 mb-6">
+      {/* <div className="flex items-center justify-between mt-20 mb-6">
         <h3 className="text-2xl font-semibold">Định nghĩa ca học</h3>
         <Button onClick={() => setShowShiftModal(true)} className="px-6 py-2">
           Thêm ca học
@@ -590,7 +608,7 @@ const BranchPage: React.FC = () => {
             ))}
           </tbody>
         </table>
-      </div>
+      </div> */}
     </>
   );
 };
