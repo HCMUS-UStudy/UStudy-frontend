@@ -1,5 +1,6 @@
-import { ClassData } from "../types/type";
+import { ClassData, ClassSchema, TimeItem } from "../types/type";
 import axiosInstance from "./axios";
+import { getTokens } from "./storage";
 
 export const getAllGrades = async () => {
     try {
@@ -54,6 +55,53 @@ export const getAllBranches = async (page: number, limit: number) => {
             },
         });
         return response;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const getAvailableRooms = async (branchId: string, times: TimeItem[], startDate: string, endDate: string) => {
+    try {
+        const body = {
+            branchId: branchId,
+            times: times,
+            startDate: startDate,
+            endDate: endDate
+        }
+        const response = await axiosInstance.post('/room/clerk/available', body)
+        return await response.data
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const userLogin = async (genId: string, password: string) => {
+    try {
+        const response = await axiosInstance.post('/auth/user/login', {
+            genId: genId,
+            password: password
+        });
+        return response.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const createNewClass = async (data: ClassSchema) => {
+    try {
+        const response = await axiosInstance.post('/class/clerk/add', data);
+        return response.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const handleRefreshToken = async (refreshToken: string | null) => {
+    try {
+        const response = await axiosInstance.post('/auth/refresh-token', {
+            refreshToken: refreshToken
+        });
+        return response.data;
     } catch(error) {
         throw error;
     }

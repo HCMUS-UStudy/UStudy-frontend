@@ -35,7 +35,7 @@ export type CourseItem = {
 };
 
 export type TimeItem = {
-  dayInWeek: number;
+  day: number;
   startTime: string;
   endTime: string;
 };
@@ -60,9 +60,8 @@ export type ClassSchema = {
   endDate: string;
   description: string;
   fee: number;
-  teacherId: string;
   branchId: string;
-  timeId: string;
+  classTimes: TimeItem[];
   roomId: string;
 };
 
@@ -118,7 +117,7 @@ export type Branch = {
 }
 
 export type Duration = {
-  quantity: number | null;
+  quantity: number;
   unit: string | null; 
 }
 
@@ -142,3 +141,11 @@ export type ClassData = {
 }
 
 export type DurationUnit = 'Tuần' | 'Tháng' | 'Năm'
+
+export type ScheduleType = 'Giờ cố định' | 'Giờ linh hoạt'
+
+export type CustomError = {
+  message?: string;
+  status?: number;
+  data?: string | unknown;
+}
