@@ -1,4 +1,5 @@
 import { ClassData } from "../types/type";
+import { Branch } from "../types/type";
 import axiosInstance from "./axios";
 
 export const getAllGrades = async () => {
@@ -53,6 +54,15 @@ export const getAllBranches = async (page: number, limit: number) => {
                 limit: limit
             },
         });
+        return response;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const addBranch = async (branch: Branch) => {
+    try {
+        const response = await axiosInstance.post('/branch/admin/add', branch);
         return response;
     } catch(error) {
         throw error;
