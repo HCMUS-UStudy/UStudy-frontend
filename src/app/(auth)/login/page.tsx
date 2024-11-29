@@ -11,14 +11,19 @@ import { Button } from "@/app/ui/components/button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import { userLogin } from "@/app/lib/api";
+import { CustomError } from "@/app/types/type";
+import { LoginSpinner } from "@/app/ui/components/spinner";
 
 export default function Login() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isFocused, setIsFocused] = useState({ email: false, password: false });
-
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [genId, setGenId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [isFocused, setIsFocused] = useState({ genId: false, password: false });
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [showError, setShowError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const initialState: LoginFormState = {
     errors: {
       genID: null,
@@ -31,15 +36,39 @@ export default function Login() {
   const [state, action, isPending] = useActionState(logIn, initialState);
 
   useEffect(() => {
-    console.log(state.accessToken);
-    if (state.accessToken && state.refreshToken) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.setItem("accessToken", state.accessToken);
-      localStorage.setItem("refreshToken", state.refreshToken);
-      router.push("/staff");
+    const handleLogin = async () => {
+      try {
+        setIsLoading(true);
+        const response = await userLogin(genId, password);
+        localStorage.setItem("accessToken", response.access_token);
+        localStorage.setItem("refreshToken", response.refresh_token);
+        const role = response.user.role;
+        switch (role) {
+          case "CLERK":
+            router.push("/staff");
+            break;
+        }
+      } catch (error: unknown) {
+        const CustomError = error as CustomError;
+        if (CustomError.status === 400) {
+          setLoginError(
+            typeof CustomError.data === "string" ? CustomError.data : ""
+          );
+          setShowError(true);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (state.message === "Successful") {
+      console.log("here");
+      handleLogin();
+    } else if (state.message === "Invalid form") {
+      setShowError(true);
+      console.log("here");
+      return;
     }
-  }, [state.accessToken, state.refreshToken, router]);
+  }, [state]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -81,16 +110,19 @@ export default function Login() {
                 <Input
                   className={clsx(
                     {
-                      "border-rose-600": state?.errors?.genID,
-                      "border-gray-400": !state?.errors?.genID,
+                      "border-rose-600": showError,
+                      "border-gray-400": !showError,
                     },
                     "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
                   )}
                   type="text"
                   id="genID"
                   name="genID"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={genId}
+                  onChange={(e) => {
+                    setShowError(false);
+                    setGenId(e.target.value);
+                  }}
                   onFocus={() =>
                     setIsFocused((prev) => ({ ...prev, email: true }))
                   }
@@ -102,16 +134,21 @@ export default function Login() {
                 <Label
                   htmlFor="email"
                   className={`absolute left-4 transition-all duration-200 ${
-                    isFocused.email || email
+                    isFocused.genId || genId
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
                   }`}>
-                  Enter your email
+                  Nhập GenId
                 </Label>
               </div>
-              {state?.errors?.genID && (
+              {state?.errors?.genID && showError && (
                 <span className="text-[13px] ml-3 text-error">
                   {state.errors.genID}
+                </span>
+              )}
+              {loginError && showError && (
+                <span className="text-[13px] ml-3 text-error">
+                  {loginError}
                 </span>
               )}
 
@@ -120,8 +157,8 @@ export default function Login() {
                 <Input
                   className={clsx(
                     {
-                      "border-rose-600": state?.errors?.password,
-                      "border-gray-400": !state?.errors?.password,
+                      "border-rose-600": showError,
+                      "border-gray-400": !showError,
                     },
                     "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
                   )}
@@ -129,7 +166,10 @@ export default function Login() {
                   id="password"
                   value={password}
                   name="password"
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setShowError(false);
+                    setPassword(e.target.value);
+                  }}
                   onFocus={() =>
                     setIsFocused((prev) => ({ ...prev, password: true }))
                   }
@@ -145,7 +185,7 @@ export default function Login() {
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
                   }`}>
-                  Enter your password
+                  Mật khẩu
                 </Label>
                 <button
                   type="button"
@@ -158,14 +198,19 @@ export default function Login() {
                   )}
                 </button>
               </div>
-              {state?.errors?.password && (
+              {state?.errors?.password && showError && (
                 <span className="text-[13px] ml-3 text-error">
                   {state.errors.password}
                 </span>
               )}
+              {loginError && showError && (
+                <span className="text-[13px] ml-3 text-error">
+                  {loginError}
+                </span>
+              )}
 
               <Button
-                disabled={isPending}
+                disabled={isPending || isLoading}
                 type="submit"
                 className={clsx(
                   {
@@ -173,7 +218,8 @@ export default function Login() {
                   },
                   "mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform "
                 )}>
-                {isPending ? "Processing..." : "Log in"}
+                {isPending || isLoading ? <LoginSpinner /> : "Đăng nhập"}
+                {/* <LoginSpinner /> */}
               </Button>
 
               {/* Forgot Password Link */}

@@ -2,21 +2,35 @@
 import React, { useEffect, useState } from "react";
 import { Button, SelectingButton } from "./button";
 import Modal from "./modal";
-import { CircleX } from "lucide-react";
+import { CircleX, Plus } from "lucide-react";
 import { Input } from "./input";
-import clsx from "clsx";
 import {
+  ClassSchema,
   CourseItem,
-  Duration,
   DurationUnit,
   GradeItem,
+  RoomItem,
+  Schedule,
+  ScheduleItem,
+  ScheduleType,
+  TimeItem,
 } from "@/app/types/type";
-import Spinner from "./spinner";
-import { getAllGrades, getCoursesByGradeId } from "@/app/lib/api";
+import { Spinner } from "./spinner";
+import {
+  createNewClass,
+  getAllGrades,
+  getAvailableRooms,
+  getCoursesByGradeId,
+} from "@/app/lib/api";
+import clsx from "clsx";
+import { FaTrashCan } from "react-icons/fa6";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store/store";
 
 export default function CreateClass() {
   // CÁC STATE PHỤ
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
 
   //   STATE CHO MODAL
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -24,21 +38,34 @@ export default function CreateClass() {
   const [isSelectingSubject, setIsSelectingSubject] = useState<boolean>(false);
   const [isSelectingDuration, setIsSelectingDuration] =
     useState<boolean>(false);
-  const [isSelectingUnit, setIsSelectingUnit] = useState<boolean>(false);
+  const [isSelectingSchedule, setIsSelectingSchedule] =
+    useState<boolean>(false);
+  // const [isFlexibleTime, setIsFlexibleTime] = useState<boolean | null>(false);
+  const [isSelectingRoom, setIsSelectingRoom] = useState<boolean>(false);
 
   // STATE ĐỂ GỌI API TẠO CLASS
   const [name, setName] = useState<string>("");
   const [grade, setGrade] = useState<GradeItem | null>(null);
   const [course, setCourse] = useState<CourseItem | null>(null);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [fixedSchedule, setFixedSchedule] = useState<TimeItem[]>([]);
+  const [flexSchedule, setFlexSchedule] = useState<TimeItem[]>([]);
+  const [startTime, setStartTime] = useState<string>("00:00");
+  const [endTime, setEndTime] = useState<string>("00:00");
+  const [room, setRoom] = useState<RoomItem | null>(null);
+  const [description, setDescription] = useState<string>("");
+  const [fee, setFee] = useState<number | string>("");
 
   // STATE ĐỂ HIỂN THỊ
   const [grades, setGrades] = useState<GradeItem[]>([]);
   const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [duration, setDuration] = useState<Duration>({
-    quantity: 0,
-    unit: null,
-  });
+  const [durationQuantity, setDurationQuantity] = useState<number | string>("");
   const [durationUnit, setDurationUnit] = useState<DurationUnit>("Tháng");
+  const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [baseSchedule, setBaseSchedule] = useState<ScheduleItem[]>(Schedule);
+  const [scheduleType, setScheduleType] = useState<ScheduleType>("Giờ cố định");
+  const [rooms, setRooms] = useState<RoomItem[]>([]);
 
   // USE EFFECT
   useEffect(() => {
@@ -56,12 +83,107 @@ export default function CreateClass() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (
+      typeof durationQuantity === "number" &&
+      durationQuantity !== 0 &&
+      startDate !== ""
+    ) {
+      const endDateObj = new Date(startDate);
+      switch (durationUnit) {
+        case "Tuần":
+          endDateObj.setDate(endDateObj.getDate() + durationQuantity * 7);
+          break;
+        case "Tháng":
+          endDateObj.setMonth(endDateObj.getMonth() + durationQuantity);
+          break;
+        case "Năm":
+          endDateObj.setFullYear(endDateObj.getFullYear() + durationQuantity);
+          break;
+        default:
+          break;
+      }
+      setEndDate(endDateObj.toISOString().split("T")[0]);
+    }
+  }, [durationUnit, durationQuantity, startDate]);
+
+  // useEffect(() => {
+  //   if (!selectedBranchId) {
+  //     console.log("Chưa chọn branch");
+  //   } else {
+  //     console.log(selectedBranchId);
+  //   }
+  // }, [selectedBranchId]);
+
   // CÁC FUNCTION KHÁC
   const displayCourses = async (gradeId: string) => {
     try {
       setIsLoading(true);
       const courses = await getCoursesByGradeId(gradeId);
       setCourses(courses);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleDaysInSchedule = (day: number) => {
+    setBaseSchedule((schedule) =>
+      schedule.map((item: ScheduleItem) =>
+        item.dataToSend === day ? { ...item, isChosen: !item.isChosen } : item
+      )
+    );
+  };
+
+  const displayAvailableRooms = async (
+    branchId: string,
+    times: TimeItem[],
+    startDate: string,
+    endDate: string
+  ) => {
+    try {
+      setIsLoading(true);
+      const response = await getAvailableRooms(
+        branchId,
+        times,
+        startDate,
+        endDate
+      );
+      // console.log(response);
+      setRooms(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreateClass = async () => {
+    try {
+      setIsLoading(true);
+      let newClass: ClassSchema = {
+        name: name,
+        courseId: typeof course?.id === "undefined" ? "" : course?.id,
+        gradeId: typeof grade?.id === "undefined" ? "" : grade?.id,
+        startDate: startDate,
+        endDate: endDate,
+        description: description,
+        fee: typeof fee === "string" ? 0 : fee,
+        branchId: selectedBranchId ? selectedBranchId : "",
+        classTimes: [],
+        roomId: typeof room?.id === "undefined" ? "" : room?.id,
+      };
+      switch (scheduleType) {
+        case "Giờ cố định":
+          newClass.classTimes = fixedSchedule;
+          break;
+        case "Giờ linh hoạt":
+          newClass.classTimes = flexSchedule;
+          break;
+      }
+      const response = await createNewClass(newClass);
+      console.log(response);
     } catch (error) {
       console.log(error);
     } finally {
@@ -149,9 +271,9 @@ export default function CreateClass() {
                     setIsSelectingDuration(true);
                   }}
                   placeholder={
-                    duration.unit === null
+                    durationQuantity === 0 || durationQuantity === ""
                       ? "Thời gian học"
-                      : `${duration.quantity} ${duration.unit}`
+                      : `${durationQuantity} ${durationUnit}`
                   }
                   nameForInput="duration"
                   className="w-full"
@@ -165,7 +287,7 @@ export default function CreateClass() {
             </div>
 
             <div className="flex justify-between gap-8">
-              {/* <div className="w-[15vw]">
+              <div className="w-[15vw]">
                 <h2 className="text-sm text-secondary_text mb-1 ml-1">
                   Ngày bắt đầu
                 </h2>
@@ -173,24 +295,24 @@ export default function CreateClass() {
                   type="date"
                   id="default-datepicker"
                   className={clsx(
-                    {
-                      "border-2 border-error": state.errors?.date,
-                      "border border-gray-300": !state.errors?.date,
-                    },
+                    // {
+                    //   "border-2 border-error": state.errors?.date,
+                    //   "border border-gray-300": !state.errors?.date,
+                    // },
                     "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5"
                   )}
                   placeholder="Ngày bắt đầu"
                   name="startDate"
-                  value={startDateObj}
-                  onChange={(e) => setStartDateObj(e.target.value)}
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                 />
-                {state.errors?.date && (
+                {/* {state.errors?.date && (
                   <span className="text-[13px] text-error">
                     {state.errors.date[0]}
                   </span>
-                )}
-              </div> */}
-              {/* <div className="w-[15vw]">
+                )} */}
+              </div>
+              <div className="w-[15vw]">
                 <h2 className="text-sm text-secondary_text mb-1 ml-1">
                   Ngày kết thúc
                 </h2>
@@ -202,88 +324,95 @@ export default function CreateClass() {
                   )}
                   placeholder="Ngày kết thúc"
                   name="startDate"
-                  value={endDateObj.split("T")[0]}
+                  value={endDate}
                   disabled
                 />
-              </div> */}
+              </div>
             </div>
 
             <div className="flex justify-between gap-8">
-              {/* <SelectingButton
+              <SelectingButton
                 onClick={() => {
-                  setIsSelectingTime(true);
+                  setIsSelectingSchedule(true);
+                  // setScheduleType("Giờ cố định");
                 }}
                 nameForInput=""
-                placeholder={"Khung giờ học"}
+                placeholder={
+                  scheduleType === null ? "Khung giờ học" : scheduleType
+                }
                 className="w-[15vw]"
-              /> */}
-              {/* <SelectingButton
+              />
+              <SelectingButton
                 onClick={() => {
                   if (
-                    time !== "" &&
-                    endDateObj !== "" &&
-                    startDateObj !== "" &&
-                    branchId !== ""
+                    (flexSchedule.length === 0 && fixedSchedule.length === 0) ||
+                    endDate === "" ||
+                    startDate === "" ||
+                    !selectedBranchId
                   ) {
-                    // getAvailableRoom(
-                    //   branchId,
-                    //   timeId,
-                    //   startDateObj,
-                    //   endDateObj
-                    // );
-                    setIsSelectingRoom(true);
+                    return;
                   }
+                  switch (scheduleType) {
+                    case "Giờ cố định":
+                      displayAvailableRooms(
+                        selectedBranchId,
+                        fixedSchedule,
+                        startDate,
+                        endDate
+                      );
+                      break;
+                    case "Giờ linh hoạt":
+                      displayAvailableRooms(
+                        selectedBranchId,
+                        flexSchedule,
+                        startDate,
+                        endDate
+                      );
+                      break;
+                  }
+                  setIsSelectingRoom(true);
                 }}
                 nameForInput=""
-                placeholder={room === "" ? "Phòng học" : room}
+                placeholder={room === null ? "Phòng học" : room.name}
                 className="w-[15vw]"
                 disabled={
-                  time === "" ||
-                  endDateObj === "" ||
-                  startDateObj === "" ||
-                  branchId === ""
+                  (flexSchedule.length === 0 && fixedSchedule.length === 0) ||
+                  endDate === "" ||
+                  startDate === "" ||
+                  !selectedBranchId
                 }
-              /> */}
+              />
             </div>
 
-            {/* <Input
+            <Input
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Mô tả"
               name="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-            /> */}
-            {/* <Input
+            />
+            <Input
               type="number"
               className="w-full h-11 text-base text-secondary_text"
-              placeholder="Học phí"
+              placeholder="Học phí: Đơn vị VNĐ"
               name="fee"
-              isError={state.errors?.fee != null}
-              errorMsg={state.errors?.fee}
+              // isError={state.errors?.fee != null}
+              // errorMsg={state.errors?.fee}
               value={fee}
-              onChange={(e) => setFee(parseFloat(e.target.value))}
-            /> */}
-            {/* <Button
-              onClick={() => {
-                // const newClass: ClassSchema = {
-                //   name: className,
-                //   courseId: courseId,
-                //   gradeId: gradeId,
-                //   startDate: startDateObj,
-                //   endDate: endDateObj,
-                //   description: description,
-                //   fee: fee,
-                //   branchId: branchId,
-                //   timeId: timeId,
-                //   roomId: roomId,
-                // };
-                // CreateNewClass(newClass);
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                setFee(isNaN(value) ? "" : value);
               }}
-              isPending={isPending}
-              type="submit"
+            />
+            <Button
+              onClick={() => {
+                handleCreateClass();
+              }}
+              // isPending={isPending}
+              type="button"
               className="mt-5">
-              {isPending ? "Đang tạo..." : "Tạo lớp học"}
-            </Button> */}
+              Tạo lớp học
+            </Button>
           </form>
         </div>
       </Modal>
@@ -362,26 +491,10 @@ export default function CreateClass() {
             <input
               type="number"
               placeholder="VD: 1"
-              value={duration?.quantity === null ? 0 : duration?.quantity}
+              value={durationQuantity}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
-                if (isNaN(value)) {
-                  setDuration({
-                    quantity: 0,
-                    unit: null,
-                  });
-                }
-                if (duration === null) {
-                  setDuration({
-                    quantity: parseInt(e.target.value),
-                    unit: null,
-                  });
-                } else {
-                  setDuration({
-                    ...duration,
-                    quantity: parseInt(e.target.value),
-                  });
-                }
+                setDurationQuantity(isNaN(value) ? "" : value);
               }}
               className=" border-2 border-sky-500 focus:border-sky-600 rounded-lg px-2 py-1.5"
             />
@@ -401,6 +514,246 @@ export default function CreateClass() {
             className="mx-auto mt-3 w-[30%]">
             Hoàn tất
           </Button>
+        </div>
+      </Modal>
+      {/* MODAL CHỌN KHUNG GIỜ HỌC */}
+      <Modal
+        onClose={() => {
+          setIsSelectingSchedule(false);
+        }}
+        modalName="ModalSelectSubject"
+        isOpen={isSelectingSchedule}
+        className="w-[35vw] h-min-[60%] h-[60%] py-8">
+        <div className="flex flex-col items-center justify-between h-full">
+          <div className="grid grid-cols-2 gap-8">
+            <div
+              onClick={() => {
+                setScheduleType("Giờ cố định");
+                // setIsFlexibleTime(false);
+                // setIsSelectingStartEndTime(false);
+              }}
+              className={
+                "border-sky-500 rounded px-2 text-xl text-center cursor-pointer"
+              }>
+              Giờ cố định
+              <div
+                className={clsx(
+                  {
+                    "opacity-100 scale-y-100": scheduleType === "Giờ cố định",
+                    "opcacity-0 scale-y-0": scheduleType === "Giờ linh hoạt",
+                  },
+                  "h-[1vh] rounded-xl bg-sky-500 mt-1 transition-all duration-100"
+                )}></div>
+            </div>
+            <div
+              onClick={() => {
+                setScheduleType("Giờ linh hoạt");
+                // setIsSelectingStartEndTime(false);
+              }}
+              className={
+                "border-sky-500 rounded px-2 text-xl text-center cursor-pointer"
+              }>
+              Giờ linh hoạt
+              <div
+                className={clsx(
+                  {
+                    "opacity-100 scale-y-100": scheduleType === "Giờ linh hoạt",
+                    "opcacity-0 scale-y-0": scheduleType === "Giờ cố định",
+                  },
+                  "h-[1vh] rounded-xl bg-sky-500 mt-1 transition"
+                )}></div>
+            </div>
+          </div>
+          {/* CHỌN GIỜ LINH HOẠT */}
+          {scheduleType === "Giờ linh hoạt" ? (
+            <div>
+              <div className="flex items-end gap-3 mt-5">
+                <select
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(parseInt(e.target.value))}
+                  className="border-2 border-sky-500 p-2 text-sm rounded-xl h-[5vh]">
+                  <option value={0}>Chọn thứ</option>
+                  <option value={1}>Thứ 2</option>
+                  <option value={2}>Thứ 3</option>
+                  <option value={3}>Thứ 4</option>
+                  <option value={4}>Thứ 5</option>
+                  <option value={5}>Thứ 6</option>
+                  <option value={6}>Thứ 7</option>
+                  <option value={7}>Chủ Nhật</option>
+                </select>
+                <div className="flex justify-center gap-4">
+                  <div className="flex flex-col justify-between">
+                    <h1 className="ml-2 text-sm">Bắt đầu:</h1>
+                    <input
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      type="time"
+                      className="cursor-pointer h-[5vh] text-sm border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-between">
+                    <h1 className="ml-2 text-sm">Kết thúc:</h1>
+                    <input
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      type="time"
+                      className="cursor-pointer h-[5vh] text-sm border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    if (selectedDay === 0) {
+                      return;
+                    }
+                    const newTimes: TimeItem[] = [...flexSchedule];
+                    const existingItem = newTimes.find(
+                      (item) => item.day === selectedDay
+                    );
+                    if (existingItem) {
+                      existingItem.startTime = startTime;
+                      existingItem.endTime = endTime;
+                    } else {
+                      newTimes.push({
+                        day: selectedDay,
+                        startTime: startTime,
+                        endTime: endTime,
+                      });
+                    }
+                    setFlexSchedule(newTimes);
+                  }}
+                  className="rounded-xl h-[5vh] mx-auto mt-3 px-5">
+                  <Plus size={20} />
+                </Button>
+              </div>
+
+              <div className="flex flex-col gap-3 w-full bg-background border-2 border-gray-300 h-[20vh] mt-5 rounded-lg py-3 px-2 text-sm overflow-y-auto">
+                {flexSchedule.map((data, i) => (
+                  <div key={i}>
+                    <div className="flex justify-evenly font-bold">
+                      <div>
+                        {data.day !== 7
+                          ? "Thứ " + (Number(data.day) + 1)
+                          : "Chủ Nhật"}
+                      </div>
+                      <div>
+                        {data.startTime} - {data.endTime}
+                      </div>
+                      <FaTrashCan
+                        onClick={() => {
+                          const newTimes: TimeItem[] = [...flexSchedule];
+                          const updatedTimes = newTimes.filter(
+                            (item) => item.day !== data.day
+                          );
+                          setFlexSchedule(updatedTimes);
+                        }}
+                        size={15}
+                        color="red"
+                        className="cursor-pointer hover:scale-125 transition-all"
+                      />
+                    </div>
+                    <div className="w-[80%] mx-auto h-[0.2vh] bg-gray-300"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* CHỌN GIỜ CỐ ĐỊNH */}
+              <div className="mt-5 mx-3">
+                <h1 className="text-center">Chọn các ngày sẽ học</h1>
+                <div className="flex flex-wrap justify-center gap-2 text-sm mt-3 font-bold">
+                  {baseSchedule.map((data, i) => (
+                    <div
+                      onClick={() => {
+                        toggleDaysInSchedule(data.dataToSend);
+                      }}
+                      key={i}
+                      className={clsx(
+                        {
+                          "bg-sky-100 hover:bg-sky-300 transition-colors":
+                            !data.isChosen,
+                          "bg-sky-300": data.isChosen,
+                        },
+                        "border-2 border-sky-500  rounded-xl px-4 py-1.5 cursor-pointer"
+                      )}>
+                      {data.display}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-center gap-4 mt-3 text-sm">
+                <div>
+                  <h1 className="ml-2 mb-1">Bắt đầu:</h1>
+                  <input
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    type="time"
+                    className="cursor-pointer border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                  />
+                </div>
+                <div>
+                  <h1 className="ml-2 mb-1">Kết thúc:</h1>
+                  <input
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    type="time"
+                    className="cursor-pointer border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          <Button
+            onClick={() => {
+              const newTimes: TimeItem[] = [];
+              baseSchedule.map((data) => {
+                if (data.isChosen === true) {
+                  newTimes.push({
+                    day: data.dataToSend,
+                    startTime: startTime,
+                    endTime: endTime,
+                  });
+                }
+              });
+              setFixedSchedule(newTimes);
+              // setIsSelectingTime(false);
+              setIsSelectingSchedule(false);
+            }}
+            className="w-1/3 mt-5">
+            Hoàn tất
+          </Button>
+        </div>
+      </Modal>
+      {/* MODAL CHỌN PHÒNG HỌC */}
+      <Modal
+        onClose={() => {
+          setIsSelectingRoom(false);
+        }}
+        modalName="ModalSelectSubject"
+        isOpen={isSelectingRoom}
+        className="w-[25vw] py-8">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-800 text-center">
+            Chọn phòng học
+          </h1>
+          {isLoading === false ? (
+            <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
+              {rooms.map((data, i) => (
+                <div
+                  onClick={() => {
+                    setRoom(data);
+                    setIsSelectingRoom(false);
+                  }}
+                  key={i}
+                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                  {data.name}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Spinner />
+          )}
         </div>
       </Modal>
     </div>

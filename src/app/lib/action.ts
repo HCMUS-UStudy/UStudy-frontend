@@ -1,13 +1,6 @@
-'use server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {z} from 'zod';
-import axiosInstance from './axios';
-
-let errorData: string | null = null;
-let accessToken: string | null = null;
-let refreshToken: string | null = null;
-let role: string | null = null;
 
 const LogInFormSchema = z.object({
     genID: z.string().min(1, {message: '(*) Vui lòng nhập ID'}),
@@ -39,49 +32,10 @@ export async function logIn(previousState: LoginFormState, formData: FormData): 
             errors: errors,
         }
     }
-    await axiosInstance.post('/auth/user/login', {
-        genId: formData.get('genID'),
-        password: formData.get('password')
-    })
-    .then((response) => {
-        accessToken = response.data.access_token;
-        refreshToken = response.data.refresh_token;
-        role = response.data.user.role;
-    })
-    .catch((error) => {
-        console.log(error);
-        errorData = error.status === 400 ? error.data : null;
-    });
-    if(errorData) {
-        return {
-            ...previousState,
-            message: 'Login failed',
-            errors: {
-                genID: [errorData],
-                password: [errorData],
-            }
-        }
-    }
-    if(accessToken) {
-        // (await cookies()).set('accessToken', accessToken);
-        switch(role) {
-            case 'STUDENT':
-                redirect('/');
-            case 'CLERK':     
-                return {
-                    ...previousState,
-                    message: 'Login successfully',
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                    errors: {}
-                }
-            case 'TEACHER':
-                redirect('/teacher');
-        }
-    }
     return {
         ...previousState,
-        message: 'Login failed',
+        message: 'Successful',
+        errors: {}
     }
 }
 

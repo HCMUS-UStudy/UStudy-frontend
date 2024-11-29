@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Branch {
   id: string;
@@ -16,7 +16,7 @@ const initialState: BranchState = {
 };
 
 const branchSlice = createSlice({
-  name: 'branch',
+  name: "branch",
   initialState,
   reducers: {
     setBranch: (state, action: PayloadAction<string>) => {
