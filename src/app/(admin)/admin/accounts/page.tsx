@@ -9,7 +9,7 @@ import UserTable from "@/app/ui/components/accountTable";
 import AccountRegisterModal from "@/app/ui/components/accountRegister";
 
 const AccountPage: React.FC = () => {
-  const searchQuery = ""; 
+  const searchQuery = "";
   const usersPerPage = 4;
 
   // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,16 +26,17 @@ const AccountPage: React.FC = () => {
 
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight my-4">
-        Quản lý tài khoản người dùng
-      </h2>
-      <h2 className="text-xl tracking-tight mb-6">
-        Tìm tất cả người dùng của nền tảng tại đây
-      </h2>
+      <div className="h-screen">
+        <h2 className="text-3xl font-bold tracking-tight my-4">
+          Quản lý tài khoản người dùng
+        </h2>
+        <h2 className="text-xl tracking-tight mb-6">
+          Tìm tất cả người dùng của nền tảng tại đây
+        </h2>
 
-      <div className="flex items-center justify-between mt-8 mr-6">
-        <h2 className="text-2xl font-bold">Tổng số người dùng ({100})</h2>
-        {/* <form
+        <div className="flex items-center justify-between mt-8 mr-6">
+          <h2 className="text-2xl font-bold">Tổng số người dùng ({100})</h2>
+          {/* <form
           onSubmit={handleSearchSubmit}
           className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
@@ -62,20 +63,21 @@ const AccountPage: React.FC = () => {
             <option value="staff">Giáo vụ</option>
           </select>
         </form> */}
-      </div>
-
-      <div className="flex justify-end items-center space-x-4 mt-6">
-
-        <div className="flex items-center space-x-4 pr-6">
-          
-          <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
-          <ModalAccount buttonLabel="Tạo người dùng" />
         </div>
-      </div>
 
-      {/* Table Section */}
-      <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
-        <UserTable searchQuery={searchQuery} usersPerPage={usersPerPage} />
+        <div className="flex justify-end items-center space-x-4 mt-6">
+
+          <div className="flex items-center space-x-4 pr-6">
+
+            <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
+            <ModalAccount buttonLabel="Tạo người dùng" />
+          </div>
+        </div>
+
+        {/* Table Section */}
+        <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
+          <UserTable searchQuery={searchQuery} usersPerPage={usersPerPage} />
+        </div>
       </div>
 
     </>

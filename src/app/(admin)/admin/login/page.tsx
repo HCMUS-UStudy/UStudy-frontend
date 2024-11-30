@@ -15,7 +15,7 @@ export default function Login() {
 
   
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
+    const authToken = localStorage.getItem("accessToken");
     if (authToken) {
       Swal.fire({
         icon: "success",
@@ -54,7 +54,7 @@ export default function Login() {
         const creator = response.data.user.name;
         const user = response.data.user;
 
-        localStorage.setItem("authToken", token);
+        localStorage.setItem("accessToken", token);
         localStorage.setItem("creator", creator);
         localStorage.setItem("userData", JSON.stringify(user));
 

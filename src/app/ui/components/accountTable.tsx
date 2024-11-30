@@ -31,7 +31,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const authToken = localStorage.getItem('authToken');
+    const authToken = localStorage.getItem('accessToken');
 
     try {
       const response = await axios.get(`http://localhost:8080/api/user/clerk/get-list-user`, {
@@ -58,7 +58,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
   }, [currentPage, searchQueryState]); // Use searchQueryState in the dependency array
 
   return (
-    <div className="overflow-x-auto max-h-[400px]">
+    <div>
       <div className="mb-4 flex justify-between">
         {/* <input
           type="text"

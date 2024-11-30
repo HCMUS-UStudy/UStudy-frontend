@@ -1,51 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import {
-  FaEdit,
-  FaTrashAlt,
-  FaPaperclip,
-  FaTimes,
-  FaSearch,
-} from "react-icons/fa";
+import React, { useState } from "react";
+
 import { Button } from "@/app/ui/components/button";
-import Link from "next/link";
 import axios from "axios";
-import { FaSpinner } from "react-icons/fa6";
-import instance from "@/app/lib/axios";
 import Swal from "sweetalert2";
+import CourseTable from "@/app/ui/components/courseTable";
+import ModalCourse from "@/app/ui/components/modalCourse-Ad";
 
 const CoursePage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedName, setSelectedName] = useState("");
 
-  const [selectedCourses, setSelectedCourses] = useState<Set<string>>(
-    new Set()
-  );
-  const [isSelectMode, setIsSelectMode] = useState(false);
+  const searchQuery = ""; 
+  const coursesPerPage = 4;
+
+  //const [selectedName, setSelectedName] = useState("");
+
   const [isFocused, setIsFocused] = useState({ creator: false, name: false, description: false });
 
   //Modals
   const [showModal, setShowModal] = useState(false);
 
-  const [courses, setCourses] = useState<any[]>([]);
+  const [setCourses] = useState<any[]>([]);
 
-  //pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 4;
-
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalCourses, setTotalCourses] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  // Giả sử bạn có một mảng chứa tất cả ID của khóa học từ các trang
-  const [allCourseIds, setAllCourseIds] = useState<Set<string>>(new Set());
-
-  const onCreateCourse = () => {
-    setShowModal(true);
-  };
+  const [totalCourses] = useState(0);
+  const [setLoading] = useState(false);
+  const [setError] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -53,129 +32,50 @@ const CoursePage: React.FC = () => {
     content: "",
   });
 
-  useEffect(() => {
-    console.log("useEffect triggered. Current Page:", currentPage);
-    const fetchCourses = async () => {
-      setLoading(true);
-      const authToken = localStorage.getItem("authToken");
+  // const fetchAllCourses = async () => {
+  //   const authToken = localStorage.getItem("authToken");
+  //   let allCourses: any[] = [];
+  //   let currentPage = 0;
 
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/course/admin/get-list-course`,
-          {
-            params: {
-              page: currentPage - 1, // Kiểm tra giá trị truyền vào API
-              limit: coursesPerPage
-            },
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
-        setCourses(response.data?.content || []);
-        setTotalPages(response.data?.totalPages || 0);
-        setTotalCourses(response.data?.totalElements);
+  //   try {
+  //     // Lặp qua tất cả các trang để lấy dữ liệu
+  //     while (true) {
+  //       const response = await axios.get(
+  //         `http://localhost:8080/api/course/admin/get-list-course`,
+  //         {
+  //           params: {
+  //             page: currentPage,
+  //             limit: coursesPerPage,
+  //           },
+  //           headers: { Authorization: `Bearer ${authToken}` },
+  //         }
+  //       );
 
-        setSelectedCourses((prevSelectedCourses) => {
-          const updatedCourses = new Set(prevSelectedCourses);
-          response.data?.content.forEach((course: any) => {
-            if (updatedCourses.has(course.name)) {
-              updatedCourses.add(course.name);
-            }
-          });
-          return updatedCourses;
-        });
-      } catch (err) {
-        setError("Error fetching users.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const courses = response.data?.content || [];
+  //       allCourses = [...allCourses, ...courses];
 
-    fetchCourses();
-  }, [currentPage, searchQuery]);
+  //       // Kiểm tra nếu đã tới trang cuối
+  //       if (currentPage + 1 >= response.data?.totalPages) {
+  //         break;
+  //       }
 
-  const fetchAllCourses = async () => {
-    const authToken = localStorage.getItem("authToken");
-    let allCourses: any[] = [];
-    let currentPage = 0;
+  //       currentPage++;
+  //     }
 
-    try {
-      // Lặp qua tất cả các trang để lấy dữ liệu
-      while (true) {
-        const response = await axios.get(
-          `http://localhost:8080/api/course/admin/get-list-course`,
-          {
-            params: {
-              page: currentPage,
-              limit: coursesPerPage,
-            },
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
+  //     // Cập nhật danh sách toàn bộ khóa học
+  //     const allIds = new Set(allCourses.map((course) => course.id));
+  //     setAllCourseIds(allIds);
 
-        const courses = response.data?.content || [];
-        allCourses = [...allCourses, ...courses];
+  //     console.log("Tất cả khóa học đã được fetch:", allCourses);
+  //   } catch (error) {
+  //     console.error("Error fetching all courses:", error);
+  //   }
+  // };
 
-        // Kiểm tra nếu đã tới trang cuối
-        if (currentPage + 1 >= response.data?.totalPages) {
-          break;
-        }
-
-        currentPage++;
-      }
-
-      // Cập nhật danh sách toàn bộ khóa học
-      const allIds = new Set(allCourses.map((course) => course.id));
-      setAllCourseIds(allIds);
-
-      console.log("Tất cả khóa học đã được fetch:", allCourses);
-    } catch (error) {
-      console.error("Error fetching all courses:", error);
-    }
-  };
-
-  // Gọi hàm này khi component được mount
-  useEffect(() => {
-    fetchAllCourses();
-  }, []);
-
-  const [courseData, setCourseData] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      const authToken = localStorage.getItem("authToken");
-
-      const courseRequests = courses.map(async (course) => {
-        const { data } = await axios.get(
-          'http://localhost:8080/api/grade/admin/get-grades-by-course',
-          {
-            params: {
-              page: 0,
-              limit: 1,
-              courseId: course.id, // Giả sử mỗi khóa học có trường 'id'
-            },
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
-
-        return {
-          ...course,
-          totalElements: data.totalElements || 0, // Lưu trữ tổng số phần tử hoặc 0 nếu không có dữ liệu
-        };
-      });
-
-      const updatedCourses = await Promise.all(courseRequests);
-      setCourseData(updatedCourses); // Cập nhật dữ liệu khóa học với totalElements
-    };
-
-    fetchCourseData();
-  }, [courses]); // Chạy lại khi danh sách khóa học thay đổi  
-
-  const Loading = () => (
-    <div className="flex items-center justify-center h-full">
-      <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
-      <span className="ml-4 text-lg text-blue-500">Đang tải dữ liệu...</span>
-    </div>
-  );
+  // // Gọi hàm này khi component được mount
+  // useEffect(() => {
+  //   fetchAllCourses();
+  // }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -248,107 +148,9 @@ const CoursePage: React.FC = () => {
     }
   };
 
-
-  const filteredCourses = courses.filter((course) => {
-    return (
-      (selectedName ? course.name === selectedName : true) &&
-      (searchQuery
-        ? course.name.toLowerCase().includes(searchQuery.toLowerCase())
-        : true)
-    );
-  });
-
-  const handleAttachmentClick = (id: string, subject: string) => {
-    return `/admin/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}`;
-  };
-
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleSearchSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log("Search query submitted:", searchQuery);
-  };
-
-  const handlePreviousPage = () =>
-    setCurrentPage((prev) => {
-      const newPage = Math.max(prev - 1, 1);
-      console.log("Previous Page:", newPage); // Kiểm tra giá trị
-      return newPage;
-    });
-
-  const handleNextPage = () =>
-    setCurrentPage((prev) => {
-      const newPage = Math.min(prev + 1, totalPages);
-      console.log("Next Page:", newPage); // Kiểm tra giá trị
-      return newPage;
-    });
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxPages = Math.min(3, totalPages);
-
-    let start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
-    for (let i = start; i < start + maxPages; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  };
-
-  //Files
-  const [files, setFiles] = useState<File[]>([]);
-
-  const onDrop = (acceptedFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-  };
-
-  const removeFile = (index: number) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
-
-  const toggleCourseSelection = (courseId: string) => {
-    setSelectedCourses((prevSelectedCourses) => {
-      const updatedCourses = new Set(prevSelectedCourses);
-      if (updatedCourses.has(courseId)) {
-        updatedCourses.delete(courseId); // Bỏ chọn
-      } else {
-        updatedCourses.add(courseId); // Chọn
-      }
-      return updatedCourses;
-    });
-  };
-
-  const isCourseSelected = (courseId: string) => selectedCourses.has(courseId);
-
-
-  const handleSelectAll = () => {
-    setSelectedCourses((prevSelectedCourses) => {
-      if (prevSelectedCourses.size === allCourseIds.size) {
-        // Nếu tất cả đã được chọn, thì bỏ chọn hết
-        return new Set(); // Trả về trạng thái rỗng
-      } else {
-        // Chọn tất cả các khóa học
-        return new Set(allCourseIds); // Trả về tất cả ID
-      }
-    });
-
-    console.log("Selected Courses after Select All:", selectedCourses);
-  };
-
-
-  const handleSelectButtonClick = () => {
-    setIsSelectMode((prev) => {
-      if (prev) {
-        setSelectedCourses(new Set());
-      }
-      return !prev;
-    });
-  };
+  // const handleAttachmentClick = (id: string, subject: string) => {
+  //   return `/admin/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}`;
+  // };
 
   return (
     <>
@@ -363,7 +165,7 @@ const CoursePage: React.FC = () => {
         <h2 className="text-2xl font-bold">
           Tổng số môn học ({totalCourses})
         </h2>
-        <form
+        {/* <form
           onSubmit={handleSearchSubmit}
           className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
@@ -397,143 +199,18 @@ const CoursePage: React.FC = () => {
             <option value="informatics">Tin học</option>
             <option value="technology">Công nghệ</option>
           </select>
-        </form>
+        </form> */}
       </div>
 
-      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
-        {/* Select Mode Button */}
-        <div className="flex">
-          <Button onClick={handleSelectButtonClick} className="mr-4">
-            {isSelectMode ? "Hủy bỏ" : "Chọn nhiều"}
-          </Button>
-
-          {/* Conditional buttons for Delete All and Move All */}
-          {isSelectMode && (
-            <div className="flex">
-              <Button className="bg-red-500 text-white mr-2">Xóa tất cả</Button>
-            </div>
-          )}
-        </div>
-
+      <div className="flex justify-end items-center space-x-4 mb-2 mt-6">
         <div className="flex items-center space-x-4">
-          <Button
-            onClick={onCreateCourse}
-            type="button"
-            className="pl-6 pr-6 mr-6">
-            Tạo môn học
-          </Button>
+          <ModalCourse buttonLabel="Tạo môn học" />
         </div>
       </div>
 
       {/* Table Section */}
-      <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
-        <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              {isSelectMode && (
-                <th className="py-3 px-4 text-left">
-                  <input
-                    type="checkbox"
-                    checked={selectedCourses.size === courses.length}
-                    onChange={handleSelectAll}
-                    className="form-checkbox"
-                  />
-                </th>
-              )}
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Môn học
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Tệp đính kèm
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Mô tả
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Người tạo
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Ngày tạo
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Trạng thái
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Ghi chú
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                Hành động
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={isSelectMode ? 9 : 8} className="text-center py-4">
-                  <Loading />
-                </td>
-              </tr>
-            ) : (
-              courses.map((course, index) => (
-                <tr
-                  key={course.id}
-                  className={`transition-all duration-200 ${isCourseSelected(course.name) ? "bg-blue-100" : "bg-white"
-                    }`}
-                >
-                  {isSelectMode && (
-                    <td className="py-2 px-4">
-                      <input
-                        type="checkbox"
-                        checked={isCourseSelected(course.id)}
-                        onChange={() => toggleCourseSelection(course.id)}
-                        className="form-checkbox"
-                      />
-                    </td>
-                  )}
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {course.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    <Link href={handleAttachmentClick(course.id, course.name)} className="flex justify-center items-center mx-auto">
-                      {courseData.find((item) => item.id === course.id)?.totalElements || 0}
-                      <FaPaperclip className="ml-2 mt-1 text-green-500" />
-                    </Link>
-                  </td>
-
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {course.description || "Trống"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {course.createdBy?.name || "Trống"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {new Date(course.createdAt).toLocaleDateString("vi-VN")}
-                  </td>
-
-                  <td className="px-6 py-4 text-sm text-center text-gray-700 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 rounded-full text-white ${course.status ? "bg-green-500" : "bg-red-500"
-                        }`}
-                    >
-                      {course.status ? "Hoạt động" : "Tạm ngưng"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                    {course.content || "Trống"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3 whitespace-nowrap">
-                    <button className="text-blue-600 hover:text-blue-800">
-                      <FaEdit className="h-5 w-5" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-800">
-                      <FaTrashAlt className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="overflow-x-auto mt-6 max-h-[400px]">
+        <CourseTable searchQuery={searchQuery} coursesPerPage={coursesPerPage} />
       </div>
 
       {/* Show modal */}
@@ -617,52 +294,6 @@ const CoursePage: React.FC = () => {
         </div>
       )}
 
-      {/* Pagination Section */}
-      <div className="flex justify-end mt-6 mr-6 space-x-2">
-        <button
-          onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          disabled={currentPage === 1}>
-          Trước
-        </button>
-
-        {totalPages === 1 ? (
-          <Button
-            key={1}
-            onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
-              ? "bg-blue-700 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}>
-            1
-          </Button>
-        ) : (
-          getPageNumbers().map((page) => (
-            <Button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}>
-              {page}
-            </Button>
-          ))
-        )}
-
-        <Button
-          onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          disabled={currentPage === totalPages}>
-          Sau
-        </Button>
-      </div>
     </>
   );
 };
