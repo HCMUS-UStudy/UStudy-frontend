@@ -1,7 +1,6 @@
 import { ClassData, ClassSchema, TimeItem } from "../types/type";
 import { Branch } from "../types/type";
 import axiosInstance from "./axios";
-import { getTokens } from "./storage";
 
 export const getAllGrades = async () => {
     try {
@@ -112,6 +111,18 @@ export const handleRefreshToken = async (refreshToken: string | null) => {
             refreshToken: refreshToken
         });
         return response.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const adminLogin = async (genId: string, password: string) => {
+    try {
+        const response = await axiosInstance.post('/auth/admin/login', {
+            genId: genId,
+            password: password
+        });
+        return response;
     } catch(error) {
         throw error;
     }
