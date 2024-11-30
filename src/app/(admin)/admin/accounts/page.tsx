@@ -1,9 +1,4 @@
 import React from "react";
-import {
-  FaSearch,
-} from "react-icons/fa";
-
-import { Button } from "@/app/ui/components/button";
 import ModalAccount from "@/app/ui/components/modalAccount-Ad";
 import UserTable from "@/app/ui/components/accountTable";
 import AccountRegisterModal from "@/app/ui/components/accountRegister";

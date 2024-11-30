@@ -65,11 +65,12 @@ const ModalCourse: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
         setShowModal(false);
         window.location.href = "/admin/courses";
       }
-    } catch (err: any) {
+    } catch (err) {
+      console.error("Error fetching courses:", err);
       Swal.fire({
         icon: "error",
         title: "Tạo môn học thất bại",
-        text: err.response?.data || "Lỗi hệ thống. Vui lòng thử lại.",
+        //text: err.response?.data || "Lỗi hệ thống. Vui lòng thử lại.",
       });
     }
   };

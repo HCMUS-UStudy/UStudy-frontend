@@ -7,7 +7,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { FaCalendarAlt, FaClock, FaChevronRight } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
 
 // Đăng ký các thành phần cần thiết của Chart.js
@@ -103,7 +102,7 @@ export default function Home() {
                     },
                 },
                 useHTML: true,
-                external: function (tooltipModel: any) {
+                external: function () {
                     // Add z-index to the tooltip
                     const tooltipEl = document.querySelector('.chartjs-tooltip');
                     if (tooltipEl instanceof HTMLElement) {
@@ -115,7 +114,7 @@ export default function Home() {
             customCanvasBackgroundColor: {
                 id: 'addPointsAboveBars',
                 beforeDraw(chart: any) {
-                    const { ctx, chartArea, scales } = chart;
+                    const { ctx, scales } = chart;
                     const xScale = scales.x;
                     const yScale = scales.y;
 
@@ -171,7 +170,6 @@ export default function Home() {
         id: 'verticalLabelRight',
         beforeDraw(chart: any) {
             const { ctx, chartArea } = chart;
-            const chartWidth = chartArea.right - chartArea.left;
             const chartHeight = chartArea.bottom - chartArea.top;
 
             ctx.save();
@@ -245,7 +243,7 @@ export default function Home() {
     ChartJS.register({
         id: 'addPointsAboveBars',
         afterDraw(chart) {
-            const { ctx, chartArea, scales } = chart;
+            const { ctx, scales } = chart;
             const xScale = scales.x;
             const yScale = scales.y;
 
@@ -408,7 +406,6 @@ export default function Home() {
                     </div>
 
                     {/* Lịch học */}
-
                     <div className="space-y-4">
                         {scheduleData.map((schedule, index) => (
                             <div
@@ -471,7 +468,7 @@ export default function Home() {
                     />
                 </div>
                 <div className="mt-8">
-                    <h3 className="text-lg font-bold text-gray-700 mb-3">Bài tập gần đây</h3>
+                    <h3 className="text-2xl font-extrabold mb-4 text-gray-800 text-center md:text-left">Bài tập gần đây</h3>
                     <ul className="space-y-3">
                         <li className="flex items-center">
                             <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
