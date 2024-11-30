@@ -11,6 +11,7 @@ import { Button } from "@/app/ui/components/button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { adminLogin } from "@/app/lib/api";
+import { setTokens } from "@/app/lib/storage";
 
 export default function Login() {
 
@@ -46,10 +47,12 @@ export default function Login() {
 
       if (response.status === 200) {
         const token = response.data.access_token;
+        const refresh_token = response.data.refresh_token;
         const creator = response.data.user.name;
         const user = response.data.user;
 
-        localStorage.setItem("accessToken", token);
+        setTokens(token, refresh_token);
+
         localStorage.setItem("creator", creator);
         localStorage.setItem("userData", JSON.stringify(user));
 
@@ -95,21 +98,23 @@ export default function Login() {
         }}>
         <div
           className="
-          grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 
-          bg-white rounded-lg shadow-lg overflow-hidden">
+          grid w-full max-w-5xl grid-cols-1 md:grid-cols-2 
+          bg-white rounded-[30px] shadow-lg overflow-hidden">
           {/* Login Form Section */}
-          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8 relative">
+          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-14 relative">
             {/* Back to Home Icon */}
             <Link
               href="/"
-              className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
+              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600">
               <HiHome size={24} />
             </Link>
 
-            <div className="mb-8 text-center">
-              <h1 className="text-4xl font-bold">Login</h1>
+            <div className="mt-4 mb-10 text-center">
+              <div className="text-3xl font-bold flex justify-center">
+                <div className="text-sky-700">US</div>tudy
+              </div>
               <p className="mt-2 text-sm text-gray-600">
-                Empower Your Education and Achieve Your Goals
+                Chào mừng đến với hệ thống quản lý học tập
               </p>
             </div>
 
@@ -188,22 +193,22 @@ export default function Login() {
                 onClick={() => {}}
                 type="submit"
                 className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
-                Login
+                Đăng nhập
               </Button>
 
               {/* Forgot Password Link */}
-              <div className="flex justify-end w-full mt-4">
-                <p className="text-xs text-gray-600">
+              <div className="flex justify-end w-full mt-6 mb-2">
+                <p className="text-[13px] text-gray-600">
                   <a href="/forgot-password" className="hover:underline">
-                    Forgot Password?
+                    Quên mật khẩu?
                   </a>
                 </p>
               </div>
             </form>
 
-            <p className="mt-6 text-xs text-gray-600">
+            {/* <p className="mt-6 text-xs text-gray-600">
               &copy; 2024 All rights reserved
-            </p>
+            </p> */}
           </div>
 
           {/* Image Section */}
