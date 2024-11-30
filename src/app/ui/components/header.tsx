@@ -25,7 +25,7 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     // Xóa token và các thông tin khác trong localStorage
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("creator");
 
     // Hiển thị thông báo thành công

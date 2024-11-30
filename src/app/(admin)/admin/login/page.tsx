@@ -10,6 +10,7 @@ import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/button";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { adminLogin } from "@/app/lib/api";
 
 export default function Login() {
 
@@ -41,13 +42,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/admin/login",
-        {
-          genId: username,
-          password,
-        }
-      );
+      const response = await adminLogin(username, password);
 
       if (response.status === 200) {
         const token = response.data.access_token;
@@ -135,7 +130,7 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, username: false }))
                   }
-                  placeholder="Enter your username"
+                  placeholder="Nhập mã người dùng"
                   required
                 />
                 <Label
@@ -145,7 +140,7 @@ export default function Login() {
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Enter your username
+                  Nhập mã người dùng
                 </Label>
               </div>
 
@@ -165,7 +160,7 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, password: false }))
                   }
-                  placeholder="Enter your password"
+                  placeholder="Nhập mật khẩu"
                   required
                 />
                 <Label
@@ -175,7 +170,7 @@ export default function Login() {
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Enter your password
+                  Nhập mật khẩu
                 </Label>
                 <button
                   type="button"

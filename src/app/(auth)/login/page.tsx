@@ -47,6 +47,14 @@ export default function Login() {
           case "CLERK":
             router.push("/staff");
             break;
+          case "TEACHER":
+            router.push("/teacher/classes");
+            break;
+          case "STUDENT":
+            router.push("/student/classes");
+            break;
+          default:
+            break;
         }
       } catch (error: unknown) {
         const CustomError = error as CustomError;
@@ -113,7 +121,9 @@ export default function Login() {
                       "border-rose-600": showError,
                       "border-gray-400": !showError,
                     },
-                    "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                    `p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
+                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
+                    ${isFocused.genId ? "placeholder-transparent" : "placeholder-gray-400"}`
                   )}
                   type="text"
                   id="genID"
@@ -129,16 +139,16 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, email: false }))
                   }
-                  placeholder="Enter your email"
+                  placeholder="Nhập mã người dùng"
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${
+                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
                     isFocused.genId || genId
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                      : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Nhập GenId
+                  Nhập mã người dùng
                 </Label>
               </div>
               {state?.errors?.genID && showError && (
@@ -160,7 +170,9 @@ export default function Login() {
                       "border-rose-600": showError,
                       "border-gray-400": !showError,
                     },
-                    "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                    `p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
+                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
+                    ${isFocused.password ? "placeholder-transparent" : "placeholder-gray-400"}`
                   )}
                   type={showPassword ? "text" : "password"}
                   id="password"
@@ -176,16 +188,16 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, password: false }))
                   }
-                  placeholder="Enter your password"
+                  placeholder="Nhập mật khẩu"
                 />
                 <Label
                   htmlFor="password"
-                  className={`absolute left-4 transition-all duration-200 ${
+                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
                     isFocused.password || password
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                      : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Mật khẩu
+                  Nhập mật khẩu
                 </Label>
                 <button
                   type="button"

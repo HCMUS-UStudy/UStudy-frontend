@@ -1,6 +1,6 @@
 import { ClassData, ClassSchema, TimeItem } from "../types/type";
+import { Branch } from "../types/type";
 import axiosInstance from "./axios";
-import { getTokens } from "./storage";
 
 export const getAllGrades = async () => {
     try {
@@ -60,6 +60,15 @@ export const getAllBranches = async (page: number, limit: number) => {
     }
 }
 
+export const addBranch = async (branch: Branch) => {
+    try {
+        const response = await axiosInstance.post('/branch/admin/add', branch);
+        return response;
+    } catch(error) {
+        throw error;
+    }
+}
+
 export const getAvailableRooms = async (branchId: string, times: TimeItem[], startDate: string, endDate: string) => {
     try {
         const body = {
@@ -102,6 +111,18 @@ export const handleRefreshToken = async (refreshToken: string | null) => {
             refreshToken: refreshToken
         });
         return response.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const adminLogin = async (genId: string, password: string) => {
+    try {
+        const response = await axiosInstance.post('/auth/admin/login', {
+            genId: genId,
+            password: password
+        });
+        return response;
     } catch(error) {
         throw error;
     }

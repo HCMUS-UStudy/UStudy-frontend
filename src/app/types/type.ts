@@ -110,10 +110,10 @@ export const Schedule: ScheduleItem[] = [
 ]
 
 export type Branch = {
-  id: string;
   name: string;
   address: string;
   contactNumber: string;
+  rooms: string;
 }
 
 export type Duration = {
