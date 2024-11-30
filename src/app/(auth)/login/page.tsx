@@ -139,7 +139,7 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, email: false }))
                   }
-                  placeholder="Nhập GenId"
+                  placeholder="Nhập mã người dùng"
                 />
                 <Label
                   htmlFor="email"
@@ -148,7 +148,7 @@ export default function Login() {
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Nhập GenId
+                  Nhập mã người dùng
                 </Label>
               </div>
               {state?.errors?.genID && showError && (
