@@ -38,7 +38,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const fetchStudents = async () => {
     setLoading(true);
-    const authToken = localStorage.getItem("authToken");
+    const authToken = localStorage.getItem("accessToken");
 
     try {
       const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
@@ -66,7 +66,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const fetchTeachers = async () => {
     setLoading(true);
-    const authToken = localStorage.getItem("authToken");
+    const authToken = localStorage.getItem("accessToken");
 
     try {
       const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
@@ -99,7 +99,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const handleApprove = async (userId: string) => {
     setLoading(true);
-    const authToken = localStorage.getItem("authToken");
+    const authToken = localStorage.getItem("accessToken");
 
     try {
       const response = await axios.put(
@@ -135,7 +135,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const handleReject = async (userId: string) => {
     setLoading(true);
-    const authToken = localStorage.getItem("authToken");
+    const authToken = localStorage.getItem("accessToken");
 
     try {
       const response = await axios.put(

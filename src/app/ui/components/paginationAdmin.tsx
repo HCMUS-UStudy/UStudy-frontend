@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './button';
 
 // Define the expected prop types for PaginationAdmin component
 interface PaginationAdminProps {
@@ -30,8 +31,8 @@ const PaginationAdmin: React.FC<PaginationAdminProps> = ({
   };
 
   return (
-    <div className="flex justify-end mt-6 mr-6 space-x-2">
-      <button
+    <div className="flex justify-end mt-6 space-x-2">
+      <Button
         onClick={handlePreviousPage}
         className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
           ? "bg-gray-400 cursor-not-allowed"
@@ -39,10 +40,10 @@ const PaginationAdmin: React.FC<PaginationAdminProps> = ({
           }`}
         disabled={currentPage === 1}>
         Trước
-      </button>
+      </Button>
 
       {totalPages === 1 ? (
-        <button
+        <Button
           key={1}
           onClick={() => setCurrentPage(1)}
           className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
@@ -50,10 +51,10 @@ const PaginationAdmin: React.FC<PaginationAdminProps> = ({
             : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}>
           1
-        </button>
+        </Button>
       ) : (
         getPageNumbers().map((page) => (
-          <button
+          <Button
             key={page}
             onClick={() => setCurrentPage(page)}
             className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
@@ -61,11 +62,11 @@ const PaginationAdmin: React.FC<PaginationAdminProps> = ({
               : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}>
             {page}
-          </button>
+          </Button>
         ))
       )}
 
-      <button
+      <Button
         onClick={handleNextPage}
         className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
           ? "bg-gray-400 cursor-not-allowed"
@@ -73,7 +74,7 @@ const PaginationAdmin: React.FC<PaginationAdminProps> = ({
           }`}
         disabled={currentPage === totalPages}>
         Sau
-      </button>
+      </Button>
     </div>
   );
 };

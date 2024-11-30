@@ -47,7 +47,7 @@ const ModalAccount: React.FC<ModalAccountWrapperProps> = ({ buttonLabel }) => {
 
   const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("accessToken");
 
     const payload = {
       email: newUser.email,
