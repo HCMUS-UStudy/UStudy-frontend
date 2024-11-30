@@ -1,10 +1,5 @@
-"use client";
+import React from "react";
 
-import React, { useState } from "react";
-
-import { Button } from "@/app/ui/components/button";
-import axios from "axios";
-import Swal from "sweetalert2";
 import CourseTable from "@/app/ui/components/courseTable";
 import ModalCourse from "@/app/ui/components/modalCourse-Ad";
 
@@ -15,22 +10,7 @@ const CoursePage: React.FC = () => {
 
   //const [selectedName, setSelectedName] = useState("");
 
-  const [isFocused, setIsFocused] = useState({ creator: false, name: false, description: false });
-
-  //Modals
-  const [showModal, setShowModal] = useState(false);
-
-  const [setCourses] = useState<any[]>([]);
-
-  const [totalCourses] = useState(0);
-  const [setLoading] = useState(false);
-  const [setError] = useState("");
-
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    content: "",
-  });
+  //const [setCourses] = useState<[]>([]);
 
   // const fetchAllCourses = async () => {
   //   const authToken = localStorage.getItem("authToken");
@@ -77,77 +57,6 @@ const CoursePage: React.FC = () => {
   //   fetchAllCourses();
   // }, []);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSaveCourse = async () => {
-    const authToken = localStorage.getItem("authToken");
-
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        "http://localhost:8080/api/course/admin/add",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Course created successfully:", response.data);
-
-      if (response.status === 200) {
-
-        await Swal.fire({
-          icon: "success",
-          title: "Tạo môn học thành công!",
-          text: "Vui lòng kiểm tra dữ liệu bên dưới!",
-          timer: 9000,
-          showConfirmButton: true,
-        });
-        // Cập nhật danh sách courses sau khi thêm thành công
-        setCourses((prevCourses) => [...prevCourses, response.data]);
-
-        // Đóng modal và reset form
-        setShowModal(false);
-        setFormData({
-          name: "",
-          description: "",
-          content: "",
-        });
-        //window.location.href = "/admin/courses";
-      }
-
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const message = err.response?.data || "Không thể tạo môn học. Vui lòng thử lại.";
-        await Swal.fire({
-          icon: 'error',
-          title: 'Tạo môn học thất bại',
-          text: message,
-        });
-      } else {
-        const unexpectedError = "Lỗi hệ thống.";
-        Swal.fire({
-          icon: 'error',
-          title: 'Tạo môn học thất bại',
-          text: unexpectedError,
-        });
-      }
-      setError("Không thể tạo môn học. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // const handleAttachmentClick = (id: string, subject: string) => {
   //   return `/admin/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}`;
   // };
@@ -163,7 +72,7 @@ const CoursePage: React.FC = () => {
 
       <div className="flex items-center justify-between mt-8 mr-6">
         <h2 className="text-2xl font-bold">
-          Tổng số môn học ({totalCourses})
+          Tổng số môn học ({11})
         </h2>
         {/* <form
           onSubmit={handleSearchSubmit}
@@ -212,87 +121,6 @@ const CoursePage: React.FC = () => {
       <div className="overflow-x-auto mt-6 max-h-[400px]">
         <CourseTable searchQuery={searchQuery} coursesPerPage={coursesPerPage} />
       </div>
-
-      {/* Show modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-xl shadow-lg w-[90%] max-w-lg">
-            <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
-              Tạo môn học mới
-            </h2>
-
-            <form className="space-y-6">
-              {/* Người tạo */}
-              <div className="relative mb-6">
-                <input
-                  type="text"
-                  name="creator"
-                  value={localStorage.getItem('creator') || ''}
-                  readOnly
-                  className="w-full p-3 pl-4 bg-transparent text-gray-800 border border-gray-300 rounded-xl cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Người tạo"
-                />
-                <label
-                  htmlFor="creator"
-                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1">
-                  Người tạo
-                </label>
-              </div>
-
-              <div className="relative mb-6">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, name: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, name: false }))}
-                  className="w-full p-3 pl-4 bg-transparent text-gray-800 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="name"
-                  className={`absolute left-4 transition-all duration-200 ${formData.name || isFocused.name ? "-top-3.5 text-xs text-indigo-600 bg-white px-1" : "top-1/2 transform -translate-y-1/2 text-gray-400"}`}
-                >
-                  Tên môn
-                </label>
-              </div>
-
-
-              {/* Mô tả */}
-              <div className="relative mb-6">
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, description: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, description: false }))}
-                  className="w-full p-3 pl-4 bg-transparent text-gray-800 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="description"
-                  className={`absolute left-4 transition-all duration-200 ${formData.description || isFocused.description ? "-top-3.5 text-xs text-indigo-600 bg-white px-1" : "top-1/2 transform -translate-y-1/2 text-gray-400 pb-2"}`}
-                >
-                  Mô tả môn học
-                </label>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-between mt-8">
-                <Button
-                  onClick={() => setShowModal(false)}
-                  className="px-6 py-3 bg-gray-300 text-black rounded-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600 transition duration-200">
-                  Hủy
-                </Button>
-                <Button
-                  onClick={handleSaveCourse}
-                  className="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200">
-                  Lưu
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
     </>
   );

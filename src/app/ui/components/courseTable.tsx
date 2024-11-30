@@ -17,6 +17,11 @@ interface Course {
     content?: string;
 }
 
+interface CourseData {
+    id: string;
+    totalElements: number
+}
+
 interface CourseTableProps {
     searchQuery: string;
     coursesPerPage: number;
@@ -47,18 +52,19 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery, coursesPerPage }
 
             setCourses(response.data?.content || []);
             setTotalPages(response.data?.totalPages || 1);
-        } catch (err) {
-            setError("Error fetching courses.");
-        } finally {
-            setLoading(false);
-        }
+            } catch (err) {
+                console.error("Error fetching courses:", err);
+                setError("Error fetching courses.");
+            } finally {
+                setLoading(false);
+            }
     };
 
     useEffect(() => {
         fetchCourses();
     }, [currentPage, searchQuery]);
 
-    const [courseData, setCourseData] = useState<any[]>([]);
+    const [courseData, setCourseData] = useState<CourseData[]>([]);
 
     useEffect(() => {
         const fetchCourseData = async () => {
