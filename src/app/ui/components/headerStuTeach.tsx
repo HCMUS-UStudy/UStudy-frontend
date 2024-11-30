@@ -5,17 +5,14 @@ import classNames from "classnames";
 import { PiHandWavingThin } from "react-icons/pi";
 import { IoMailOutline, IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import { usePathname } from "next/navigation";
-import BranchSelector from "./BranchSelector";
 import "../styles/Header.css";
 import Swal from "sweetalert2";
 
-const HeaderStudent: React.FC = () => {
+const HeaderStuTeach: React.FC = () => {
     const { toggleCollapse } = useSideBarToggle();
-    const pathname = usePathname();
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [hasNewNotification, setHasNewNotification] = useState(false);
-    const [hasNewMessage, setHasNewMessage] = useState(false);
+    const [hasNewNotification] = useState(false);
+    const [hasNewMessage] = useState(false);
 
 
     const toggleDropdown = () => {
@@ -28,8 +25,10 @@ const HeaderStudent: React.FC = () => {
 
     const handleLogout = () => {
         // Xóa token và các thông tin khác trong localStorage
-        localStorage.removeItem("authToken");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("creator");
+        localStorage.removeItem("userData");
 
         // Hiển thị thông báo thành công
         Swal.fire({
@@ -41,7 +40,7 @@ const HeaderStudent: React.FC = () => {
         });
 
         // Chuyển hướng người dùng về trang đăng nhập
-        window.location.href = "/admin/login";
+        window.location.href = "/login";
     };
 
     const headerStyle = classNames({
@@ -53,7 +52,7 @@ const HeaderStudent: React.FC = () => {
         <div className={headerStyle}>
             <div className="hello">
                 <div className="first-line">
-                    Xin chào, Học sinh!! {<PiHandWavingThin className="icon" size={25} />}
+                    Hi!! {<PiHandWavingThin className="icon" size={25} />}
                 </div>
                 <div className="second-line">Chào mừng bạn quay trở lại!</div>
             </div>
@@ -99,4 +98,4 @@ const HeaderStudent: React.FC = () => {
     );
 };
 
-export default React.memo(HeaderStudent);
+export default React.memo(HeaderStuTeach);
