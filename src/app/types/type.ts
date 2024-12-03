@@ -122,6 +122,7 @@ export type Duration = {
 }
 
 export type ClassItem = {
+  id: string;
   name: string;
   course: {
     name: string;

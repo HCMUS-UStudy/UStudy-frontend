@@ -45,7 +45,7 @@ export default function Login() {
         const role = response.user.role;
         switch (role) {
           case "CLERK":
-            router.push("/staff");
+            router.push("/clerk/dashboard");
             break;
         }
       } catch (error: unknown) {

@@ -14,12 +14,11 @@ import {
   FaTrashAlt,
   FaSearch,
   FaSpinner,
-  FaTimes
+  FaTimes,
 } from "react-icons/fa";
 import { Label } from "@/app/ui/components/label";
 import { Input } from "@/app/ui/components/input";
 import { Button } from "@/app/ui/components/button";
-import instance from "@/app/lib/axios";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { FiLock } from "react-icons/fi";
@@ -28,7 +27,12 @@ import { FaCheck } from "react-icons/fa6";
 const AccountPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isFocused, setIsFocused] = useState({ email: false, name: false, phone: false, address: false });
+  const [isFocused, setIsFocused] = useState({
+    email: false,
+    name: false,
+    phone: false,
+    address: false,
+  });
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -42,7 +46,6 @@ const AccountPage: React.FC = () => {
     address: "",
     gender: "Nam",
   });
-
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [isSelectMode, setIsSelectMode] = useState(false);
@@ -62,7 +65,6 @@ const AccountPage: React.FC = () => {
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalClerks, setTotalClerks] = useState(0);
   const [totalTeachers, setTotalTeachers] = useState(0);
-
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -116,7 +118,8 @@ const AccountPage: React.FC = () => {
       Swal.fire({
         icon: "error",
         title: "Phê duyệt thất bại",
-        text: error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
+        text:
+          error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
       });
 
       setError("Failed to approve user. Please try again."); // Hiển thị lỗi
@@ -163,7 +166,8 @@ const AccountPage: React.FC = () => {
       Swal.fire({
         icon: "error",
         title: "Từ chối thất bại",
-        text: error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
+        text:
+          error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
       });
 
       setError("Failed to approve user. Please try again."); // Hiển thị lỗi
@@ -180,15 +184,18 @@ const AccountPage: React.FC = () => {
       const authToken = localStorage.getItem("authToken");
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/user/clerk/get-list-user`, {
-          params: {
-            page: currentPage - 1, // Kiểm tra giá trị truyền vào API
-            limit: usersPerPage,
-            role: "STUDENT",
-            filter: searchQuery,
-          },
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
+        const response = await axios.get(
+          `http://localhost:8080/api/user/clerk/get-list-user`,
+          {
+            params: {
+              page: currentPage - 1, // Kiểm tra giá trị truyền vào API
+              limit: usersPerPage,
+              role: "STUDENT",
+              filter: searchQuery,
+            },
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
         console.log("Fetched Users:", response.data); // Kiểm tra dữ liệu trả về
 
         setUsers(response.data?.content || []);
@@ -239,7 +246,7 @@ const AccountPage: React.FC = () => {
               page: currentPage,
               limit: usersPerPage,
               role: "STUDENT",
-              filter: ""
+              filter: "",
             },
             headers: { Authorization: `Bearer ${authToken}` },
           }
@@ -271,14 +278,17 @@ const AccountPage: React.FC = () => {
     const authToken = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
-        params: {
-          page: currentPageStu - 1, // Kiểm tra giá trị truyền vào API
-          limit: stuPerPage,
-          role: "STUDENT"
-        },
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await axios.get(
+        `http://localhost:8080/api/register/clerk/waiting-register`,
+        {
+          params: {
+            page: currentPageStu - 1, // Kiểm tra giá trị truyền vào API
+            limit: stuPerPage,
+            role: "STUDENT",
+          },
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
       console.log("Fetched Students:", response.data); // Kiểm tra dữ liệu trả về
 
       setStudents(response.data?.content || []);
@@ -295,14 +305,17 @@ const AccountPage: React.FC = () => {
     const authToken = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
-        params: {
-          page: currentPageTea - 1, // Kiểm tra giá trị truyền vào API
-          limit: teaPerPage,
-          role: "TEACHER"
-        },
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await axios.get(
+        `http://localhost:8080/api/register/clerk/waiting-register`,
+        {
+          params: {
+            page: currentPageTea - 1, // Kiểm tra giá trị truyền vào API
+            limit: teaPerPage,
+            role: "TEACHER",
+          },
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
       console.log("Fetched Teachers:", response.data); // Kiểm tra dữ liệu trả về
 
       setTeachers(response.data?.content || []);
@@ -365,7 +378,9 @@ const AccountPage: React.FC = () => {
     console.log("Selected filter:", event.target.value);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     setNewUser((prevUser) => ({
@@ -374,21 +389,23 @@ const AccountPage: React.FC = () => {
     }));
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     // Call handleInputChange for general field handling (to update the state for general fields)
     handleInputChange(e);
 
     // Specific logic for fields like 'address', 'email', 'name', and 'phone'
-    if (name === 'address') {
-      setAddress(value);  // Custom logic for address
-    } else if (name === 'email') {
-      setEmail(value);  // Custom logic for email
-    } else if (name === 'name') {
-      setName(value);  // Custom logic for name
-    } else if (name === 'phone') {
-      setPhone(value);  // Custom logic for phone
+    if (name === "address") {
+      setAddress(value); // Custom logic for address
+    } else if (name === "email") {
+      setEmail(value); // Custom logic for email
+    } else if (name === "name") {
+      setName(value); // Custom logic for name
+    } else if (name === "phone") {
+      setPhone(value); // Custom logic for phone
     }
   };
 
@@ -396,7 +413,7 @@ const AccountPage: React.FC = () => {
     e.preventDefault();
 
     // Retrieve the token from local storage or global state
-    const token = localStorage.getItem('authToken'); // Replace this with your actual token retrieval method
+    const token = localStorage.getItem("authToken"); // Replace this with your actual token retrieval method
 
     // Map gender and role to the required values
     const payload = {
@@ -406,15 +423,24 @@ const AccountPage: React.FC = () => {
       address: newUser.address,
       birthday: newUser.birthDate,
       gender: newUser.gender === "female" ? "FEMALE" : "MALE",
-      role: newUser.role === "student" ? "STUDENT" : newUser.role === "teacher" ? "TEACHER" : "CLERK",
+      role:
+        newUser.role === "student"
+          ? "STUDENT"
+          : newUser.role === "teacher"
+          ? "TEACHER"
+          : "CLERK",
     };
 
     try {
-      const response = await axios.post("http://localhost:8080/api/user/admin/add", payload, {
-        headers: {
-          'Authorization': `Bearer ${token}`,  // Add the Authorization header here
+      const response = await axios.post(
+        "http://localhost:8080/api/user/admin/add",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the Authorization header here
+          },
         }
-      });
+      );
 
       if (response.status === 200) {
         setNewUser({
@@ -428,9 +454,9 @@ const AccountPage: React.FC = () => {
         });
 
         Swal.fire({
-          icon: 'success',
-          title: 'Tạo tài khoản thành công',
-          text: 'Vui lòng kiểm tra thông tin tài khoản tại bảng bên dưới',
+          icon: "success",
+          title: "Tạo tài khoản thành công",
+          text: "Vui lòng kiểm tra thông tin tài khoản tại bảng bên dưới",
           timer: 8000,
           showConfirmButton: true,
         });
@@ -443,15 +469,15 @@ const AccountPage: React.FC = () => {
       if (axios.isAxiosError(err)) {
         const message = err.response?.data || "Lỗi hệ thống. Vui lòng thử lại.";
         Swal.fire({
-          icon: 'error',
-          title: 'Tạo tài khoản thất bại',
+          icon: "error",
+          title: "Tạo tài khoản thất bại",
           text: message,
         });
       } else {
         const unexpectedError = "Lỗi hệ thống.";
         Swal.fire({
-          icon: 'error',
-          title: 'Tạo tài khoản thất bại',
+          icon: "error",
+          title: "Tạo tài khoản thất bại",
           text: unexpectedError,
         });
       }
@@ -576,7 +602,6 @@ const AccountPage: React.FC = () => {
   const totalUsers = totalStudents + totalTeachers + totalClerks;
   const isUserSelected = (userId: string) => selectedUsers.has(userId);
 
-
   return (
     <>
       <h2 className="text-3xl font-bold tracking-tight my-4">
@@ -640,7 +665,9 @@ const AccountPage: React.FC = () => {
       </div>
 
       <div className="flex items-center justify-between mt-8 mr-6">
-        <h2 className="text-2xl font-bold">Tổng số người dùng ({totalUsers})</h2>
+        <h2 className="text-2xl font-bold">
+          Tổng số người dùng ({totalUsers})
+        </h2>
         <form
           onSubmit={handleSearchSubmit}
           className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
@@ -686,11 +713,13 @@ const AccountPage: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4 pr-6">
-          <Button onClick={() => {
-            setShowModalRe(true); // Hiển thị modal
-            handleApproveRegistration(); // Gọi hàm khi mở modal
-          }}
-            type="button" className="pl-6 pr-6">
+          <Button
+            onClick={() => {
+              setShowModalRe(true); // Hiển thị modal
+              handleApproveRegistration(); // Gọi hàm khi mở modal
+            }}
+            type="button"
+            className="pl-6 pr-6">
             Duyệt đăng ký
           </Button>
           <Button onClick={onCreateUser} type="button" className="pl-6 pr-6">
@@ -719,17 +748,22 @@ const AccountPage: React.FC = () => {
                   name="email"
                   value={newUser.email}
                   onChange={handleChange}
-                  onFocus={() => setIsFocused((prev) => ({ ...prev, email: true }))}
-                  onBlur={() => setIsFocused((prev) => ({ ...prev, email: false }))}
+                  onFocus={() =>
+                    setIsFocused((prev) => ({ ...prev, email: true }))
+                  }
+                  onBlur={() =>
+                    setIsFocused((prev) => ({ ...prev, email: false }))
+                  }
                   placeholder="Nhập địa chỉ email"
                   required
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.email || email
-                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.email || email
+                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                  }`}>
                   Nhập địa chỉ email <span className="text-red-500">*</span>
                 </Label>
               </div>
@@ -756,10 +790,11 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="name"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.name || name
-                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.name || name
+                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                  }`}>
                   Nhập tên người dùng <span className="text-red-500">*</span>
                 </Label>
               </div>
@@ -786,10 +821,11 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="phone"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.phone || phone
-                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.phone || phone
+                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                  }`}>
                   Nhập số điện thoại <span className="text-red-500">*</span>
                 </Label>
               </div>
@@ -816,10 +852,11 @@ const AccountPage: React.FC = () => {
                 />
                 <Label
                   htmlFor="address"
-                  className={`absolute left-4 transition-all duration-200 ${isFocused.address || address
-                    ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
-                    : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                    }`}>
+                  className={`absolute left-4 transition-all duration-200 ${
+                    isFocused.address || address
+                      ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
+                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                  }`}>
                   Nhập địa chỉ <span className="text-red-500">*</span>
                 </Label>
               </div>
@@ -908,7 +945,6 @@ const AccountPage: React.FC = () => {
         </div>
       )}
 
-
       {/* Table Section */}
       <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
         <table className="min-w-full table-auto border-collapse">
@@ -956,9 +992,9 @@ const AccountPage: React.FC = () => {
               users.map((user) => (
                 <tr
                   key={user.id}
-                  className={`border-b ${isUserSelected(user.name) ? "bg-blue-100" : "bg-white"
-                    }`}
-                >
+                  className={`border-b ${
+                    isUserSelected(user.name) ? "bg-blue-100" : "bg-white"
+                  }`}>
                   {isSelectMode && (
                     <td className="py-2 px-4">
                       <input
@@ -970,15 +1006,28 @@ const AccountPage: React.FC = () => {
                     </td>
                   )}
 
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.genId}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.role}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                    {user.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                    {user.genId}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                    {user.role}
+                  </td>
                   <td className="px-6 py-4 text-sm text-center">
-                    <span className={user.isActive ? "text-green-600 font-semibold" : "text-gray-500"}>
+                    <span
+                      className={
+                        user.isActive
+                          ? "text-green-600 font-semibold"
+                          : "text-gray-500"
+                      }>
                       {user.isActive ? "Đang hoạt động" : "Ngưng hoạt động"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 text-center">{new Date(user.createdAt).toLocaleDateString("vi-VN")}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                    {new Date(user.createdAt).toLocaleDateString("vi-VN")}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3 whitespace-nowrap">
                     <button className="text-blue-600 hover:text-blue-800">
                       <FaEdit className="h-5 w-5" />
@@ -990,12 +1039,10 @@ const AccountPage: React.FC = () => {
                       <FiLock className="h-5 w-5" />
                     </button>
                   </td>
-
                 </tr>
               ))
             )}
           </tbody>
-
         </table>
       </div>
 
@@ -1003,10 +1050,11 @@ const AccountPage: React.FC = () => {
       <div className="flex justify-end mt-6 mr-6 space-x-2">
         <button
           onClick={handlePreviousPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
-            }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+            currentPage === 1
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
           disabled={currentPage === 1}>
           Trước
         </button>
@@ -1015,10 +1063,11 @@ const AccountPage: React.FC = () => {
           <Button
             key={1}
             onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
-              ? "bg-blue-700 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}>
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${
+              currentPage === 1
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}>
             1
           </Button>
         ) : (
@@ -1026,10 +1075,11 @@ const AccountPage: React.FC = () => {
             <Button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}>
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                currentPage === page
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}>
               {page}
             </Button>
           ))
@@ -1037,10 +1087,11 @@ const AccountPage: React.FC = () => {
 
         <Button
           onClick={handleNextPage}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === totalPages
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
-            }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+            currentPage === totalPages
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
           disabled={currentPage === totalPages}>
           Sau
         </Button>
@@ -1057,11 +1108,12 @@ const AccountPage: React.FC = () => {
             onClick={(e) => e.stopPropagation()} // Prevent modal from closing when clicking inside
           >
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-semibold text-gray-800">Thông tin người dùng cần xác nhận</h2>
+              <h2 className="text-3xl font-semibold text-gray-800">
+                Thông tin người dùng cần xác nhận
+              </h2>
               <button
                 onClick={() => setShowModalRe(false)}
-                className="text-gray-600 hover:text-gray-800 text-2xl"
-              >
+                className="text-gray-600 hover:text-gray-800 text-2xl">
                 <FaTimes />
               </button>
             </div>
@@ -1069,15 +1121,21 @@ const AccountPage: React.FC = () => {
             {/* Tab Buttons */}
             <div className="flex space-x-4 border-b mb-6">
               <button
-                className={`py-2 px-4 text-lg font-semibold ${activeTab === "students" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-700"}`}
-                onClick={() => setActiveTab("students")}
-              >
+                className={`py-2 px-4 text-lg font-semibold ${
+                  activeTab === "students"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-700"
+                }`}
+                onClick={() => setActiveTab("students")}>
                 Học viên
               </button>
               <button
-                className={`py-2 px-4 text-lg font-semibold ${activeTab === "teachers" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-700"}`}
-                onClick={() => setActiveTab("teachers")}
-              >
+                className={`py-2 px-4 text-lg font-semibold ${
+                  activeTab === "teachers"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-700"
+                }`}
+                onClick={() => setActiveTab("teachers")}>
                 Giáo viên
               </button>
             </div>
@@ -1089,38 +1147,62 @@ const AccountPage: React.FC = () => {
                   <thead>
                     <tr className="bg-gray-200">
                       <th className="py-3 px-6 text-left text-gray-700">Tên</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Email</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Địa chỉ</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Ngày sinh</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Số điện thoại</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Giới tính</th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Email
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Địa chỉ
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Ngày sinh
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Số điện thoại
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Giới tính
+                      </th>
 
-                      <th className="py-3 px-6 text-center text-gray-700">Hành động</th>
+                      <th className="py-3 px-6 text-center text-gray-700">
+                        Hành động
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {students.map((student) => (
                       <tr key={student.id} className="hover:bg-gray-50">
-                        <td className="py-4 px-6 border-b text-gray-600">{student.name}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.email}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.address}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{new Date(student.birthday).toLocaleDateString("vi-VN")}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.phone}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.gender}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {student.name}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {student.email}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {student.address}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {new Date(student.birthday).toLocaleDateString(
+                            "vi-VN"
+                          )}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {student.phone}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {student.gender}
+                        </td>
                         <td className="py-4 px-6 border-b text-center">
                           <div className="flex">
-                          <button
-                            onClick={() => handleApprove(student.id)}
-                            className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
-                          >
-                            <FaCheck />
-                          </button>
-                          <button
-                            onClick={() => handleReject(student.id)}
-                            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4"
-                          >
-                            <FaTimes />
-                          </button>
+                            <button
+                              onClick={() => handleApprove(student.id)}
+                              className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200">
+                              <FaCheck />
+                            </button>
+                            <button
+                              onClick={() => handleReject(student.id)}
+                              className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4">
+                              <FaTimes />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -1132,12 +1214,12 @@ const AccountPage: React.FC = () => {
                 <div className="flex justify-end mt-6 mr-6 space-x-2">
                   <button
                     onClick={handlePreviousPageStu}
-                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageStu === 1
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    disabled={currentPageStu === 1}
-                  >
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+                      currentPageStu === 1
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    }`}
+                    disabled={currentPageStu === 1}>
                     Trước
                   </button>
 
@@ -1145,11 +1227,11 @@ const AccountPage: React.FC = () => {
                     <button
                       key={1}
                       onClick={() => setCurrentPageStu(1)}
-                      className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageStu === 1
-                        ? "bg-blue-700 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
-                    >
+                      className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                        currentPageStu === 1
+                          ? "bg-blue-700 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}>
                       1
                     </button>
                   ) : (
@@ -1157,11 +1239,11 @@ const AccountPage: React.FC = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPageStu(page)}
-                        className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageStu === page
-                          ? "bg-blue-700 text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          }`}
-                      >
+                        className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                          currentPageStu === page
+                            ? "bg-blue-700 text-white"
+                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}>
                         {page}
                       </button>
                     ))
@@ -1169,12 +1251,12 @@ const AccountPage: React.FC = () => {
 
                   <button
                     onClick={handleNextPageStu}
-                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageStu === totalPagesStu
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    disabled={currentPageStu === totalPagesStu}
-                  >
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+                      currentPageStu === totalPagesStu
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    }`}
+                    disabled={currentPageStu === totalPagesStu}>
                     Sau
                   </button>
                 </div>
@@ -1187,37 +1269,61 @@ const AccountPage: React.FC = () => {
                   <thead>
                     <tr className="bg-gray-200">
                       <th className="py-3 px-6 text-left text-gray-700">Tên</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Email</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Địa chỉ</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Ngày sinh</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Số điện thoại</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Giới tính</th>
-                      <th className="py-3 px-6 text-center text-gray-700">Hành động</th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Email
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Địa chỉ
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Ngày sinh
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Số điện thoại
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Giới tính
+                      </th>
+                      <th className="py-3 px-6 text-center text-gray-700">
+                        Hành động
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {teachers.map((teacher) => (
                       <tr key={teacher.id} className="hover:bg-gray-50">
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.name}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.email}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.address}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{new Date(teacher.birthday).toLocaleDateString("vi-VN")}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.phone}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.gender}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.name}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.email}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.address}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {new Date(teacher.birthday).toLocaleDateString(
+                            "vi-VN"
+                          )}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.phone}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.gender}
+                        </td>
                         <td className="py-4 px-6 border-b text-center">
-                        <div className="flex">
-                          <button
-                            onClick={() => handleApprove(teacher.id)}
-                            className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
-                          >
-                            <FaCheck />
-                          </button>
-                          <button
-                            onClick={() => handleReject(teacher.id)}
-                            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4"
-                          >
-                            <FaTimes />
-                          </button>
+                          <div className="flex">
+                            <button
+                              onClick={() => handleApprove(teacher.id)}
+                              className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200">
+                              <FaCheck />
+                            </button>
+                            <button
+                              onClick={() => handleReject(teacher.id)}
+                              className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4">
+                              <FaTimes />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -1229,12 +1335,12 @@ const AccountPage: React.FC = () => {
                 <div className="flex justify-end mt-6 mr-6 space-x-2">
                   <button
                     onClick={handlePreviousPageTea}
-                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageTea === 1
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    disabled={currentPageTea === 1}
-                  >
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+                      currentPageTea === 1
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    }`}
+                    disabled={currentPageTea === 1}>
                     Trước
                   </button>
 
@@ -1242,11 +1348,11 @@ const AccountPage: React.FC = () => {
                     <button
                       key={1}
                       onClick={() => setCurrentPageTea(1)}
-                      className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageTea === 1
-                        ? "bg-blue-700 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
-                    >
+                      className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                        currentPageTea === 1
+                          ? "bg-blue-700 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}>
                       1
                     </button>
                   ) : (
@@ -1254,11 +1360,11 @@ const AccountPage: React.FC = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPageTea(page)}
-                        className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPageTea === page
-                          ? "bg-blue-700 text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          }`}
-                      >
+                        className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                          currentPageTea === page
+                            ? "bg-blue-700 text-white"
+                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}>
                         {page}
                       </button>
                     ))
@@ -1266,23 +1372,20 @@ const AccountPage: React.FC = () => {
 
                   <button
                     onClick={handleNextPageTea}
-                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPageTea === totalPagesTea
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    disabled={currentPageTea === totalPagesTea}
-                  >
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
+                      currentPageTea === totalPagesTea
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    }`}
+                    disabled={currentPageTea === totalPagesTea}>
                     Sau
                   </button>
                 </div>
               </>
             )}
-
-
           </div>
         </div>
       )}
-
     </>
   );
 };

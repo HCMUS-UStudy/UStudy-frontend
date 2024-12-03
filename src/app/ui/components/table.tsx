@@ -3,6 +3,7 @@ import { getAllClasses } from "@/app/lib/api";
 import { ClassItem } from "@/app/types/type";
 import React, { useEffect, useState } from "react";
 import { TableSkeleton } from "./skeleton";
+import { useRouter } from "next/navigation";
 
 export interface ColumnContent {
   colName: string;
@@ -60,6 +61,7 @@ export function ClassesTable({
 }) {
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
   // let displays: ClassItem[] = [];
   useEffect(() => {
     const fetchData = async () => {
@@ -68,6 +70,7 @@ export function ClassesTable({
       try {
         const response = await getAllClasses(query, currentPage);
         filteredData = response.content.map((item) => ({
+          id: item.id,
           name: item.name,
           course: {
             name: item.course.name,
@@ -118,6 +121,7 @@ export function ClassesTable({
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
                 Học phí
               </th>
+              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center"></th>
             </tr>
           </thead>
           <tbody>
@@ -143,6 +147,14 @@ export function ClassesTable({
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   {c.fee} VNĐ
+                </td>
+                <td className="text-sm text-gray-700 text-center">
+                  <button
+                    onClick={() => router.push(`/clerk/classes/${c.id}`)}
+                    type="button"
+                    className="text-sm font-bold tracking-widest hover:shadow-lg bg-teal-500 hover:bg-background text-white hover:text-teal-500 border-2 border-teal-500 hover:shadow-teal-500/50 transition-all duration-200 px-5 py-1.5  rounded-md ">
+                    Xem lớp
+                  </button>
                 </td>
               </tr>
             ))}

@@ -5,13 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/ui/components/card";
-import { Table } from "@/app/ui/components/table";
 import React from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { FaChalkboard, FaPenNib } from "react-icons/fa6";
 import { TableProps } from "@/app/ui/components/table";
 
-export default function StaffDashboard() {
+export default function ClerkDashboard() {
   const classTableContent: TableProps = {
     tableName: "Các lớp học nổi bật",
     colNames: ["ID", "Tên lớp học", "Số học viên"],

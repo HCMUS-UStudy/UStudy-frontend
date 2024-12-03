@@ -1,6 +1,5 @@
 import { ClassData, ClassSchema, TimeItem } from "../types/type";
 import axiosInstance from "./axios";
-import { getTokens } from "./storage";
 
 export const getAllGrades = async () => {
     try {
@@ -90,7 +89,8 @@ export const userLogin = async (genId: string, password: string) => {
 export const createNewClass = async (data: ClassSchema) => {
     try {
         const response = await axiosInstance.post('/class/clerk/add', data);
-        return response.data;
+        // console.log(response);
+        return response;
     } catch(error) {
         throw error;
     }

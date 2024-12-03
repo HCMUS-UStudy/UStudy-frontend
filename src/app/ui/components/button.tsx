@@ -9,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   placeholder?: string;
   nameForInput?: string;
   dataToSend?: string;
+  isError?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -45,6 +46,7 @@ const SelectingButton: React.FC<ButtonProps> = ({
   nameForInput,
   className,
   disabled,
+  isError,
 }) => {
   return (
     <button
@@ -55,7 +57,11 @@ const SelectingButton: React.FC<ButtonProps> = ({
           "bg-gray-400 cursor-not-allowed": disabled,
           "bg-white hover:bg-gray-200": !disabled,
         },
-        `${className} w-[10vw] flex justify-between items-center text-sm border-gray-400 border-2 px-2.5 py-1.5 rounded-lg  transition-colors`
+        {
+          "border-error": isError,
+          "border-gray-400": !isError,
+        },
+        `${className} w-[10vw] flex justify-between items-center text-sm  border-2 px-2.5 py-1.5 rounded-lg  transition-colors`
       )}>
       <span className="">{placeholder}</span>
       {!disabled && <FaChevronDown />}

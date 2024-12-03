@@ -69,13 +69,13 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItemGroup[] = [
   },
 ];
 
-export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
+export const SIDENAV_ITEMS_CLERK: SideNavItemGroup[] = [
   {
     title: "Thống kê",
     menuList: [
       {
         title: "Bảng thống kê",
-        path: "/staff/dashboard",
+        path: "/clerk/dashboard",
         icon: <BsHouseDoor size={20} />,
       },
     ],
@@ -85,17 +85,17 @@ export const SIDENAV_ITEMS_STAFF: SideNavItemGroup[] = [
     menuList: [
       {
         title: "Quản lý tài khoản",
-        path: "/staff/accounts",
+        path: "/clerk/accounts",
         icon: <BsPerson size={20} />,
       },
       {
         title: "Quản lý môn học",
-        path: "/staff/courses",
+        path: "/clerk/courses",
         icon: <BsBook size={20} />,
       },
       {
         title: "Quản lý lớp học",
-        path: "/staff/classes",
+        path: "/clerk/classes",
         icon: <SiGoogleclassroom size={20} />,
       },
     ],
