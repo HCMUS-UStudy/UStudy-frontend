@@ -15,6 +15,8 @@ import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
 import { LoginSpinner } from "@/app/ui/components/spinner";
 import { setTokens } from "@/app/lib/storage";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
 
 export default function Login() {
   const router = useRouter();
@@ -47,6 +49,12 @@ export default function Login() {
         switch (role) {
           case "CLERK":
             router.push("/clerk/dashboard");
+            toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
+              position: "bottom-right",
+              autoClose: 5000,
+              closeOnClick: false,
+              pauseOnHover: false,
+            });
             break;
           case "TEACHER":
             router.push("/teacher/classes");
@@ -65,6 +73,12 @@ export default function Login() {
           );
           setShowError(true);
         }
+        toast.error("Đăng nhập thất bại", {
+          position: "bottom-right",
+          autoClose: 3000,
+          pauseOnHover: false,
+          closeOnClick: true,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -82,6 +96,7 @@ export default function Login() {
   };
   return (
     <>
+      <ToastContainer />
       <Head>
         <link rel="preload" href="/bgLogin.jpg" as="image" />
       </Head>
@@ -124,7 +139,11 @@ export default function Login() {
                     },
                     `p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
                     focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                    ${isFocused.genId ? "placeholder-transparent" : "placeholder-gray-400"}`
+                    ${
+                      isFocused.genId
+                        ? "placeholder-transparent"
+                        : "placeholder-gray-400"
+                    }`
                   )}
                   type="text"
                   id="genID"
@@ -173,7 +192,11 @@ export default function Login() {
                     },
                     `p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
                     focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                    ${isFocused.password ? "placeholder-transparent" : "placeholder-gray-400"}`
+                    ${
+                      isFocused.password
+                        ? "placeholder-transparent"
+                        : "placeholder-gray-400"
+                    }`
                   )}
                   type={showPassword ? "text" : "password"}
                   id="password"
