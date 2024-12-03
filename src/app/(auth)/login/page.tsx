@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
 import { LoginSpinner } from "@/app/ui/components/spinner";
+import { setTokens } from "@/app/lib/storage";
 
 export default function Login() {
   const router = useRouter();
@@ -40,12 +41,20 @@ export default function Login() {
       try {
         setIsLoading(true);
         const response = await userLogin(genId, password);
-        localStorage.setItem("accessToken", response.access_token);
-        localStorage.setItem("refreshToken", response.refresh_token);
+        setTokens(response.access_token, response.refresh_token);
+
         const role = response.user.role;
         switch (role) {
           case "CLERK":
             router.push("/clerk/dashboard");
+            break;
+          case "TEACHER":
+            router.push("/teacher/classes");
+            break;
+          case "STUDENT":
+            router.push("/student/home");
+            break;
+          default:
             break;
         }
       } catch (error: unknown) {
@@ -61,11 +70,9 @@ export default function Login() {
       }
     };
     if (state.message === "Successful") {
-      console.log("here");
       handleLogin();
     } else if (state.message === "Invalid form") {
       setShowError(true);
-      console.log("here");
       return;
     }
   }, [state]);
@@ -86,21 +93,23 @@ export default function Login() {
         }}>
         <div
           className="
-          grid w-full h-[60vh] max-w-7xl grid-cols-1 md:grid-cols-2 
-          bg-white rounded-lg shadow-lg overflow-hidden">
+          grid w-full max-w-5xl grid-cols-1 md:grid-cols-2 
+          bg-white rounded-[30px] shadow-lg overflow-hidden">
           {/* Login Form Section */}
-          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-8 relative">
+          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-14 relative">
             {/* Back to Home Icon */}
             <Link
               href="/"
-              className="absolute top-4 left-4 text-gray-600 hover:text-indigo-600">
+              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600">
               <HiHome size={24} />
             </Link>
 
-            <div className="mb-8 text-center">
-              <h1 className="text-4xl font-bold">Login</h1>
+            <div className="mt-4 mb-10 text-center">
+              <div className="text-3xl font-bold flex justify-center">
+                <div className="text-sky-700">US</div>tudy
+              </div>
               <p className="mt-2 text-sm text-gray-600">
-                Empower Your Education and Achieve Your Goals
+                Chào mừng đến với hệ thống quản lý học tập
               </p>
             </div>
 
@@ -113,7 +122,9 @@ export default function Login() {
                       "border-rose-600": showError,
                       "border-gray-400": !showError,
                     },
-                    "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                    `p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
+                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
+                    ${isFocused.genId ? "placeholder-transparent" : "placeholder-gray-400"}`
                   )}
                   type="text"
                   id="genID"
@@ -129,16 +140,16 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, email: false }))
                   }
-                  placeholder="Enter your email"
+                  placeholder="Nhập mã người dùng"
                 />
                 <Label
                   htmlFor="email"
-                  className={`absolute left-4 transition-all duration-200 ${
+                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
                     isFocused.genId || genId
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                      : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Nhập GenId
+                  Nhập mã người dùng
                 </Label>
               </div>
               {state?.errors?.genID && showError && (
@@ -160,7 +171,9 @@ export default function Login() {
                       "border-rose-600": showError,
                       "border-gray-400": !showError,
                     },
-                    "p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border focus:border-indigo-600 focus:bg-white transition-all duration-200 placeholder-transparent"
+                    `p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
+                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
+                    ${isFocused.password ? "placeholder-transparent" : "placeholder-gray-400"}`
                   )}
                   type={showPassword ? "text" : "password"}
                   id="password"
@@ -176,16 +189,16 @@ export default function Login() {
                   onBlur={() =>
                     setIsFocused((prev) => ({ ...prev, password: false }))
                   }
-                  placeholder="Enter your password"
+                  placeholder="Nhập mật khẩu"
                 />
                 <Label
                   htmlFor="password"
-                  className={`absolute left-4 transition-all duration-200 ${
+                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
                     isFocused.password || password
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-gray-400"
+                      : "top-1/2 transform -translate-y-1/2 text-transparent"
                   }`}>
-                  Mật khẩu
+                  Nhập mật khẩu
                 </Label>
                 <button
                   type="button"
@@ -223,18 +236,18 @@ export default function Login() {
               </Button>
 
               {/* Forgot Password Link */}
-              <div className="flex justify-end w-full mt-4">
-                <p className="text-xs text-gray-600">
+              <div className="flex justify-end w-full mt-6 mb-2">
+                <p className="text-[13px] text-gray-600">
                   <a href="/forgot-password" className="hover:underline">
-                    Forgot Password?
+                    Quên mật khẩu?
                   </a>
                 </p>
               </div>
             </form>
 
-            <p className="mt-6 text-xs text-gray-600">
+            {/* <p className="mt-6 text-xs text-gray-600">
               &copy; 2024 All rights reserved
-            </p>
+            </p> */}
           </div>
 
           {/* Image Section */}

@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
 import { Input } from "@/app/ui/components/input";
 import { Button } from "@/app/ui/components/button";
-import axios from "axios";
+// import axios from "axios";
+import { getAllBranches } from "@/app/lib/api";
+import { addBranch } from "@/app/lib/api";
 
 interface Branch {
   id: string;
@@ -33,18 +35,18 @@ interface BranchResponse {
 //   time: string;
 // }
 
-const api = axios.create({
-  baseURL: "http://localhost:8080/api", // Đặt base URL cho API
-  timeout: 10000, // Timeout 10 giây
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + localStorage.getItem("authToken"),
-  },
-  params: {
-    "page": 0,
-    "limit": 10
-  }
-});
+// const api = axios.create({
+//   baseURL: "http://localhost:8080/api", // Đặt base URL cho API
+//   timeout: 10000, // Timeout 10 giây
+//   headers: {
+//     "Content-Type": "application/json",
+//     "Authorization": "Bearer " + localStorage.getItem("authToken"),
+//   },
+//   params: {
+//     "page": 0,
+//     "limit": 10
+//   }
+// });
 
 const BranchPage: React.FC = () => {
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -57,7 +59,8 @@ const BranchPage: React.FC = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await api.get("/branch/clerk/get-all");
+        // const response = await api.get("/branch/clerk/get-all");
+        const response = await getAllBranches(0, 20);
         const modifiedData = response.data.content
         .map((item: BranchResponse) => ({
           ...item, // Giữ nguyên các cột ban đầu
@@ -226,7 +229,8 @@ const BranchPage: React.FC = () => {
     e.preventDefault();
     // Call API to create new branch
     try {
-      const response = await api.post("/branch/admin/add", newBranch);
+      // const response = await api.post("/branch/admin/add", newBranch);
+      const response = await addBranch(newBranch);
       setBranches((prevBranches) => [
         ...prevBranches,
         { ...response.data, rooms: parseInt(newBranch.rooms, 10) },

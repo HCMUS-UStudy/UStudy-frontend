@@ -25,8 +25,10 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     // Xóa token và các thông tin khác trong localStorage
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("creator");
+    localStorage.removeItem("userData");
 
     // Hiển thị thông báo thành công
     Swal.fire({
@@ -50,9 +52,9 @@ const Header: React.FC = () => {
     <div className={headerStyle}>
       <div className="hello">
         <div className="first-line">
-          Hello Admin!! {<PiHandWavingThin className="icon" size={25} />}
+          Hello!! {<PiHandWavingThin className="icon" size={25} />}
         </div>
-        <div className="second-line">Welcome back to Admin Page!</div>
+        <div className="second-line">Chào mừng đến với trang Admin!</div>
       </div>
 
       <div className="right-items">

@@ -4,7 +4,7 @@
 }
 
 .header {
-  margin-top: 25px;
+  padding-top: 25px;
   margin-left: calc(66px + var(--sidebar-width-wide));;
   display: flex;
   justify-content: space-between;

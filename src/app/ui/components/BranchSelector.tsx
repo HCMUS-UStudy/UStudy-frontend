@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/store";
 import { setBranch, setBranches } from "../../store/branchSlice";
-import axios from "axios";
 import "../styles/BranchSelector.css";
+import { getAllBranches } from "@/app/lib/api";
 
 interface Branch {
   id: string;
@@ -25,25 +25,11 @@ const BranchSelector: React.FC = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/branch/clerk/get-all",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + localStorage.getItem("accessToken"),
-            },
-            params: {
-              page: 0,
-              limit: 10,
-            },
-          }
-        );
-
-        // Chỉ lấy `id` và `name`
+        const response = await getAllBranches(0, 20);
         const branchData = response.data.content.map((branch: Branch) => ({
           id: branch.id,
           name: branch.name,
-        }));
+        })).sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
 
         // Lưu vào Redux
         dispatch(setBranches(branchData));

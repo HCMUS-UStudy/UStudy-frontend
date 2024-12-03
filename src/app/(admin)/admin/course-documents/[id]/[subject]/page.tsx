@@ -2,11 +2,11 @@
 
 import { Button } from "@/app/ui/components/button";
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
 import { FaFolder, FaEllipsisV, FaSearch } from "react-icons/fa";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa6";
+import { Input } from "@/app/ui/components/input";
 
 interface Params {
   id: string;
@@ -76,16 +76,6 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     fetchGrades();
   }, [courseId, currentPage, searchQuery]);
 
-
-  // Safely access folders by subject using type assertion
-  const filteredGrades = grades.filter((grade) => {
-    return (
-      (selectedGrades ? grade.name === selectedGrades : true) &&
-      (searchQuery
-        ? grade.name.toLowerCase().includes(searchQuery.toLowerCase())
-        : true)
-    );
-  });
 
   const toggleDropdown = (id: number, event: React.MouseEvent) => {
     const rect = (event.target as HTMLElement).getBoundingClientRect();
@@ -221,7 +211,7 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
     const pages = [];
     const maxPages = Math.min(3, totalPages);
 
-    let start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+    const start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
     for (let i = start; i < start + maxPages; i++) {
       pages.push(i);
     }
@@ -260,18 +250,18 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
 
         <div className="flex items-center space-x-4">
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
-            <input
+            <Input
               type="text"
               placeholder="Tìm kiếm khối lớp..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
             />
-            <button
+            <Button
               type="submit"
               className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
               <FaSearch className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
           <select
             value={selectedFilter}
@@ -316,18 +306,18 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
             </div>
 
             {/* Dropdown Button */}
-            <button
+            <Button
               onClick={(e) => toggleDropdown(grade.id, e)}
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
               <FaEllipsisV />
-            </button>
+            </Button>
 
             {renderDropdown(grade.id)}
 
             {/* Select Checkbox (only shown in select mode) */}
             {isSelectMode && (
               <div className="absolute top-2 right-2">
-                <input
+                <Input
                   type="checkbox"
                   checked={selectedGrades.has(grade.id)}
                   onChange={() => handleSelectGrade(grade.id)}
@@ -360,7 +350,7 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
 
       {/* Pagination Controls */}
       <div className="flex justify-end mt-6 mr-6 space-x-2">
-        <button
+        <Button
           onClick={handlePreviousPage}
           className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${currentPage === 1
             ? "bg-gray-400 cursor-not-allowed"
@@ -368,7 +358,7 @@ const CourseDocumentsPage = ({ params }: { params: Promise<Params> }) => {
             }`}
           disabled={currentPage === 1}>
           Trước
-        </button>
+        </Button>
 
         {totalPages === 1 ? (
           <Button

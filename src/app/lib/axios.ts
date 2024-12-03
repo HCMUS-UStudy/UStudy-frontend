@@ -3,6 +3,11 @@ import { getTokens, handleLogout, setTokens } from './storage';
 import { CustomError } from '../types/type';
 import { handleRefreshToken } from './api';
 
+const requestUrl = [
+    '/auth/user/login',
+    '/auth/admin/login'
+]
+
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080/api',
     headers: {
@@ -29,8 +34,7 @@ const handleExpiredAccessToken = async (refreshToken: string | null) => {
 
 axiosInstance.interceptors.request.use(
     async function(request) {
-        console.log(request.url);
-        if(request.url !== '/auth/user/login') {
+        if(!requestUrl.includes(request.url ?? '')) {
             const { accessToken, refreshToken } = getTokens();
             let _accessToken = accessToken;
             if(_accessToken) {
@@ -46,7 +50,7 @@ axiosInstance.interceptors.request.use(
                     }
                 }
             }
-            request.headers.Authorization = `Bearer ${_accessToken}`; 
+            request.headers.Authorization = `Bearer ${_accessToken}`;
         }
         return request;
     },
@@ -62,10 +66,11 @@ axiosInstance.interceptors.response.use(
     }, 
     function(error:AxiosError) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
+        console.log(error.response);
         if(error.response?.status === 403) {
             handleLogout();
             console.log('403 hoặc 401');
-            window.location.href = '/login';
+            // window.location.href = '/login';
         }
         const customError: CustomError = {
             message: error.message,

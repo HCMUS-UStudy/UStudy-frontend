@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
         <div className='bg-background'>
             <Sidebar menuItems={SIDENAV_ITEMS_ADMIN}/>
-            <div className="flex flex-col h-full w-full">
+            <div>
                 <Header />
                 <PageWrapper> {children} </PageWrapper>
             </div>
