@@ -30,17 +30,17 @@ const BreadCrumb: React.FC<BreadCrumbProps> = ({
         </a>
         {" > "}
         <a
-          href={`/admin/course-documents/${courseId}/${subject}`}
+          href={`/admin/courses/course-documents/${courseId}/${subject}`}
           className={`text-${grade ? "black" : "blue-600"} hover:underline ml-2 mr-2`}
         >
           {decodeURIComponent(subject)}
         </a>
         {grade && gradeId && (
           <>
-            {" >  "}
+            {" > "}
             <a
-              href={`/admin/course-documents/${courseId}/${subject}/${gradeId}/${grade}`}
-              className={`text-${chapter ? "black" : "blue-600"} hover:underline ml-2`}
+              href={`/admin/courses/course-documents/${courseId}/${subject}/${gradeId}/${grade}`}
+              className={`text-${chapter ? "black" : "blue-600"} hover:underline ml-2 mr-2`}
             >
               {decodeURIComponent(grade)}
             </a>
@@ -50,7 +50,7 @@ const BreadCrumb: React.FC<BreadCrumbProps> = ({
           <>
             {" > "}
             <a
-              href={`/admin/course-documents/${courseId}/${subject}/${gradeId}/${grade}/${chapterId}/${chapter}`}
+              href={`/admin/courses/course-documents/${courseId}/${subject}/${gradeId}/${grade}/${chapterId}/${chapter}`}
               className="text-blue-600 hover:underline ml-2"
             >
               {decodeURIComponent(chapter)}

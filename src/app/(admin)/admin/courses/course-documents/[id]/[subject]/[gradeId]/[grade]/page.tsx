@@ -1,10 +1,10 @@
 import { Button } from "@/app/ui/components/button";
 import React from "react";
-import { FaSearch } from "react-icons/fa";
 
 import ChapterGrid from "@/app/ui/components/ChapterGrid";
 import Loading from "@/app/ui/components/loading";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
+import { SearchField } from "@/app/ui/components/input";
 
 interface Params {
   id: string;
@@ -13,7 +13,19 @@ interface Params {
   gradeId: string;
 }
 
-const GradeDocumentsPage = async ({ params }: { params: Params }) => {
+const GradeDocumentsPage = async ({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) => {
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.query || "";
+
   // Decode the params here
   const { id, subject, gradeId, grade } = await params;
 
@@ -36,20 +48,7 @@ const GradeDocumentsPage = async ({ params }: { params: Params }) => {
       {/* Search and Filter Section */}
       <div className="flex justify-end items-center space-x-4 mb-6">
         <div className="flex items-center space-x-4">
-          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo chương..."
-              // value={searchQuery}
-              // onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
-              <FaSearch className="h-5 w-5" />
-            </button>
-          </div>
+          <SearchField className="w-[200px]" placeholder="Tìm theo tên chương học..." />
           <select
             // value={selectedFilter}
             // onChange={(e) => setSelectedFilter(e.target.value)}
@@ -71,11 +70,11 @@ const GradeDocumentsPage = async ({ params }: { params: Params }) => {
       </div>
 
       <ChapterGrid
+        searchQuery={query}
         courseId={decodedCourseId}
         subject={decodedSubject}
         gradeId={decodedGradeId}
         grade={decodedGrade}
-        chaptersPerPage={5}
       />
     </div>
   );

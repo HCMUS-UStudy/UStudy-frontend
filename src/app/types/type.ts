@@ -11,27 +11,43 @@ export type SideNavItemGroup = {
   menuList: SideNavItem[]
 }
 
-export type GradeItem = {
+export type AccountItem = {
   id: string;
   name: string;
+  email: string;
+  genId: string;
+  role: string;
+  isActive: boolean;
   createdAt: string;
-  updatedAt: string;
+};
+
+export type GradeItem = {
+  id: string;
+  name: string
+};
+
+export type ChapterItem = {
+  id: string;
+  name: string;
+  description: string
+};
+
+export type MaterialItem = {
+  id: string;
+  fileName: string;
+  filePath: string
 };
 
 export type CourseItem = {
   id: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
   description: string;
-  status: boolean;
   createdBy: {
-    gen_id: string;
-    email: string;
     name: string;
-    role: string;
   };
-  totalGrades: number;
+  createdAt: string;
+  status: boolean;
+  totalGrades: string
 };
 
 export type TimeItem = {
@@ -75,37 +91,37 @@ export const Schedule: ScheduleItem[] = [
   {
     display: 'Thứ hai',
     dataToSend: 1,
-    isChosen: false 
+    isChosen: false
   },
   {
     display: 'Thứ ba',
     dataToSend: 2,
-    isChosen: false 
+    isChosen: false
   },
   {
     display: 'Thứ tư',
     dataToSend: 3,
-    isChosen: false 
+    isChosen: false
   },
   {
     display: 'Thứ năm',
     dataToSend: 4,
-    isChosen: false 
+    isChosen: false
   },
   {
     display: 'Thứ sáu',
     dataToSend: 5,
-    isChosen: false 
+    isChosen: false
   },
   {
     display: 'Thứ bảy',
     dataToSend: 6,
-    isChosen: false 
+    isChosen: false
   },
   {
     display: 'Chủ nhật',
     dataToSend: 7,
-    isChosen: false 
+    isChosen: false
   },
 ]
 
@@ -118,7 +134,7 @@ export type Branch = {
 
 export type Duration = {
   quantity: number;
-  unit: string | null; 
+  unit: string | null;
 }
 
 export type ClassItem = {
@@ -149,4 +165,29 @@ export type CustomError = {
   message?: string;
   status?: number;
   data?: string | unknown;
+}
+
+export type CourseData = {
+  content: CourseItem[],
+  totalPages: number;
+}
+
+export type AccountData = {
+  content: AccountItem[],
+  totalPages: number;
+}
+
+export type GradeData = {
+  content: GradeItem[],
+  totalPages: number;
+}
+
+export type ChapterData = {
+  content: ChapterItem[],
+  totalPages: number;
+}
+
+export type MaterialData = {
+  content: MaterialItem[],
+  totalPages: number;
 }

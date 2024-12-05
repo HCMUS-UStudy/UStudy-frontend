@@ -1,34 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
 import Loading from "./loading";
 import PaginationAdmin from "./paginationAdmin"; // Import PaginationAdmin
 import { useRouter } from "next/navigation";
-
-interface Course {
-    id: string;
-    name: string;
-    description: string;
-    createdBy?: { name: string };
-    createdAt: string;
-    status: boolean;
-    content?: string;
-}
-
-interface CourseData {
-    id: string;
-    totalElements: number
-}
+import { getAllCourses } from "@/app/lib/api";
+import { CourseItem } from "@/app/types/type";
 
 interface CourseTableProps {
     searchQuery: string;
-    coursesPerPage: number;
 }
 
-const CourseTable: React.FC<CourseTableProps> = ({ searchQuery, coursesPerPage }) => {
-    const [courses, setCourses] = useState<Course[]>([]);
+const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
+    const [courses, setCourses] = useState<CourseItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,64 +22,69 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery, coursesPerPage }
     const Router = useRouter();
 
     const fetchCourses = async () => {
+        let filteredData: CourseItem[] = [];
         setLoading(true);
-        const authToken = localStorage.getItem("accessToken");
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/course/admin/get-list-course`, {
-                params: {
-                    page: currentPage - 1, // Adjust for 0-based indexing
-                    limit: coursesPerPage,
-                    filter: searchQuery,
-                },
-                headers: { Authorization: `Bearer ${authToken}` },
-            });
+            const response = await getAllCourses(searchQuery, currentPage - 1);
 
-            setCourses(response.data?.content || []);
-            setTotalPages(response.data?.totalPages || 1);
-            } catch (err) {
-                console.error("Error fetching courses:", err);
-                setError("Error fetching courses.");
-            } finally {
-                setLoading(false);
-            }
+            filteredData = response.content.map((item) => ({
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                createdBy: {
+                    name: item.createdBy.name,
+                },
+
+                createdAt: item.createdAt,
+                status: item.status,
+                totalGrades: item.totalGrades,
+            }));
+
+            // setCourses(response.content || []);
+            setTotalPages(response.totalPages || 1);
+        } catch (err) {
+            console.error("Error fetching courses:", err);
+            setError("Error fetching courses.");
+        } finally {
+            setCourses(filteredData);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         fetchCourses();
     }, [currentPage, searchQuery]);
 
-    const [courseData, setCourseData] = useState<CourseData[]>([]);
+    // useEffect(() => {
+    //     const fetchCourseData = async () => {
+    //         const authToken = localStorage.getItem("accessToken");
 
-    useEffect(() => {
-        const fetchCourseData = async () => {
-            const authToken = localStorage.getItem("accessToken");
+    //         const courseRequests = courses.map(async (course) => {
+    //             const { data } = await axios.get(
+    //                 'http://localhost:8080/api/grade/admin/get-grades-by-course',
+    //                 {
+    //                     params: {
+    //                         page: 0,
+    //                         limit: 1,
+    //                         courseId: course.id, // Giả sử mỗi khóa học có trường 'id'
+    //                     },
+    //                     headers: { Authorization: `Bearer ${authToken}` },
+    //                 }
+    //             );
 
-            const courseRequests = courses.map(async (course) => {
-                const { data } = await axios.get(
-                    'http://localhost:8080/api/grade/admin/get-grades-by-course',
-                    {
-                        params: {
-                            page: 0,
-                            limit: 1,
-                            courseId: course.id, // Giả sử mỗi khóa học có trường 'id'
-                        },
-                        headers: { Authorization: `Bearer ${authToken}` },
-                    }
-                );
+    //             return {
+    //                 ...course,
+    //                 totalElements: data.totalElements || 0, // Lưu trữ tổng số phần tử hoặc 0 nếu không có dữ liệu
+    //             };
+    //         });
 
-                return {
-                    ...course,
-                    totalElements: data.totalElements || 0, // Lưu trữ tổng số phần tử hoặc 0 nếu không có dữ liệu
-                };
-            });
+    //         const updatedCourses = await Promise.all(courseRequests);
+    //         setCourseData(updatedCourses); // Cập nhật dữ liệu khóa học với totalElements
+    //     };
 
-            const updatedCourses = await Promise.all(courseRequests);
-            setCourseData(updatedCourses); // Cập nhật dữ liệu khóa học với totalElements
-        };
-
-        fetchCourseData();
-    }, [courses]); // Chạy lại khi danh sách khóa học thay đổi  
+    //     fetchCourseData();
+    // }, [courses]); // Chạy lại khi danh sách khóa học thay đổi  
 
     return (
         <div className="overflow-x-auto max-h-[400px]">
@@ -120,9 +110,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery, coursesPerPage }
                             Trạng thái
                         </th>
                         <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-                            Ghi chú
-                        </th>
-                        <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
                             Hành động
                         </th>
                     </tr>
@@ -146,10 +133,10 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery, coursesPerPage }
                                 <td className="px-6 py-4 text-sm text-gray-700 text-center">{course.name}</td>
                                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                                     <button
-                                        onClick={() => Router.push(`/admin/course-documents/${encodeURIComponent(course.id)}/${encodeURIComponent(course.name)}`)}
+                                        onClick={() => Router.push(`/admin/courses/course-documents/${encodeURIComponent(course.id)}/${encodeURIComponent(course.name)}`)}
                                         className="flex justify-center items-center mx-auto"
                                     >
-                                        {courseData.find((item) => item.id === course.id)?.totalElements || 0}
+                                        {course.totalGrades}
                                         <FaPaperclip className="ml-2 mt-1 text-green-500" />
                                     </button>
                                 </td>
@@ -167,7 +154,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery, coursesPerPage }
                                         {course.status ? "Hoạt động" : "Tạm ngưng"}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-gray-700 text-center">{course.content || "Trống"}</td>
                                 <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
                                     <button className="text-blue-600 hover:text-blue-800">
                                         <FaEdit className="h-5 w-5" />

@@ -2,11 +2,16 @@ import React from "react";
 
 import CourseTable from "@/app/ui/components/courseTable";
 import ModalCourse from "@/app/ui/components/modalCourse-Ad";
+import { SearchField } from "@/app/ui/components/input";
 
-const CoursePage: React.FC = () => {
-
-  const searchQuery = ""; 
-  const coursesPerPage = 4;
+export default async function CoursePage(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
 
   //const [selectedName, setSelectedName] = useState("");
 
@@ -111,7 +116,8 @@ const CoursePage: React.FC = () => {
         </form> */}
       </div>
 
-      <div className="flex justify-end items-center space-x-4 mb-2 mt-6">
+      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
+        <SearchField className="w-[200px]" placeholder="Tìm theo tên môn học..." />
         <div className="flex items-center space-x-4">
           <ModalCourse buttonLabel="Tạo môn học" />
         </div>
@@ -119,11 +125,9 @@ const CoursePage: React.FC = () => {
 
       {/* Table Section */}
       <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <CourseTable searchQuery={searchQuery} coursesPerPage={coursesPerPage} />
+        <CourseTable searchQuery={query} />
       </div>
 
     </>
   );
 };
-
-export default CoursePage;

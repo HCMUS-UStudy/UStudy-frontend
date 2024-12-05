@@ -1,24 +1,20 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
 import {Button} from "./button";
 import PaginationAdmin from "./paginationAdmin";
-
-interface Grade {
-    id: string;
-    name: string;
-}
+import { CourseItem, GradeItem } from "@/app/types/type";
+import { getGradesByCourseId } from "@/app/lib/api";
 
 interface GradeGridProps {
     courseId: string;
     subject: string;
-    gradesPerPage?: number;
+    searchQuery: string
 }
 
-const GradeGrid: React.FC<GradeGridProps> = ({ courseId, subject, gradesPerPage = 5 }) => {
-    const [grades, setGrades] = useState<Grade[]>([]);
+const GradeGrid: React.FC<GradeGridProps> = ({ searchQuery, courseId, subject}) => {
+    const [grades, setGrades] = useState<GradeItem[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -27,22 +23,22 @@ const GradeGrid: React.FC<GradeGridProps> = ({ courseId, subject, gradesPerPage 
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const fetchGrades = async () => {
+        let filteredData: GradeItem[] = [];
         setLoading(true);
-        const authToken = localStorage.getItem("accessToken");
         try {
-            const response = await axios.get("http://localhost:8080/api/grade/admin/get-grades-by-course", {
-                params: {
-                    page: currentPage - 1,
-                    limit: gradesPerPage,
-                    courseId,
-                },
-                headers: { Authorization: `Bearer ${authToken}` },
-            });
-            setGrades(response.data?.content || []);
+            const response = await getGradesByCourseId(searchQuery, currentPage - 1, courseId);
+
+            filteredData = response.content.map((item: CourseItem) => ({
+                id: item.id,
+                name: item.name
+            }));
+
+            //setGrades(response.data?.content || []);
             setTotalPages(response.data?.totalPages || 0);
         } catch (error) {
             console.error("Failed to fetch grades:", error);
         } finally {
+            setGrades(filteredData);
             setLoading(false);
         }
     };
@@ -81,7 +77,7 @@ const GradeGrid: React.FC<GradeGridProps> = ({ courseId, subject, gradesPerPage 
 
     useEffect(() => {
         fetchGrades();
-    }, [courseId, currentPage]);
+    }, [courseId, currentPage, searchQuery]);
 
     return (
         <div>
@@ -121,7 +117,7 @@ const GradeGrid: React.FC<GradeGridProps> = ({ courseId, subject, gradesPerPage 
                                     <Button
                                         className="text-white font-semibold py-2 px-4 rounded-md shadow-md transition"
                                         onClick={() =>
-                                            window.location.href = `/admin/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`
+                                            window.location.href = `/admin/courses/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`
                                         }>
                                         Xem thư mục
                                     </Button>
