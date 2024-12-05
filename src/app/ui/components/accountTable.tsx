@@ -1,61 +1,54 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { FiLock } from 'react-icons/fi';
 import Loading from './loading';
 import PaginationAdmin from './paginationAdmin'; // Import PaginationAdmin
-
-interface User {
-  id: string;
-  name: string;
-  genId: string;
-  role: string;
-  isActive: boolean;
-  createdAt: string;
-}
+import { AccountItem } from '@/app/types/type';
+import { getAllAccount } from '@/app/lib/api';
 
 interface UserTableProps {
   searchQuery: string;
-  usersPerPage: number;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
-  const [users, setUsers] = useState<User[]>([]);
+const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
+  const [users, setUsers] = useState<AccountItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchQueryState, setSearchQuery] = useState(searchQuery); // Declare setSearchQuery
 
   const fetchUsers = async () => {
+    let filteredData: AccountItem[] = [];
     setLoading(true);
-    const authToken = localStorage.getItem('accessToken');
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/user/clerk/get-list-user`, {
-        params: {
-          page: currentPage - 1, // Adjusting for 0-based indexing
-          limit: usersPerPage,
-          role: 'STUDENT',
-          filter: searchQueryState, // Use searchQueryState here
-        },
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await getAllAccount(searchQuery, currentPage - 1);
 
-      setUsers(response.data?.content || []);
-      setTotalPages(response.data?.totalPages || 1);
-    } catch (err) {
+      filteredData = response.content.map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        genId: item.genId,
+        role: item.role,
+        isActive: item.isActive,
+        createdAt: item.createdAt,
+    }));
+
+      setTotalPages(response.totalPages || 1);
+    } catch (error) {
+      console.log(error);
       setError('Error fetching users.');
     } finally {
+      setUsers(filteredData);
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, searchQueryState]); // Use searchQueryState in the dependency array
+  }, [currentPage, searchQuery]); // Use searchQueryState in the dependency array
 
   return (
     <div>
@@ -73,6 +66,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
         <thead className="bg-gray-100">
           <tr>
             <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">Họ tên</th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Email</th>
             <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Mã số</th>
             <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Chức vụ</th>
             <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Trạng thái</th>
@@ -83,7 +77,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan={6} className="text-center py-4">
+              <td colSpan={7} className="text-center py-4">
                 <Loading />
               </td>
             </tr>
@@ -97,6 +91,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
             users.map((user) => (
               <tr key={user.id}>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.email}</td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.genId}</td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.role}</td>
                 <td className="px-6 py-4 text-sm text-center">
@@ -122,7 +117,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery, usersPerPage }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={6} className="text-center py-4">
+              <td colSpan={7} className="text-center py-4">
                 No users found.
               </td>
             </tr>

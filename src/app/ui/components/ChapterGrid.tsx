@@ -1,66 +1,63 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
 import { Button } from "./button";
 import PaginationAdmin from "./paginationAdmin";
-
-interface Chapter {
-    id: number;
-    name: string;
-    description: string;
-}
+import { ChapterItem } from "@/app/types/type";
+import { getChapterByCourse_GradeId } from "@/app/lib/api";
 
 interface ChapterGridProps {
     courseId: string;
     subject: string;
     gradeId: string;
     grade: string;
-    chaptersPerPage?: number;
+    searchQuery: string
 }
 
-const ChapterGrid: React.FC<ChapterGridProps> = ({ courseId, subject, gradeId, grade, chaptersPerPage = 5 }) => {
-    const [chapters, setChapters] = useState<Chapter[]>([]);
+const ChapterGrid: React.FC<ChapterGridProps> = ({ searchQuery, courseId, subject, gradeId, grade}) => {
+    const [chapters, setChapters] = useState<ChapterItem[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [dropdownPosition, setDropdownPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const fetchChapters = async () => {
+        console.log(courseId)
+        console.log(gradeId)
+        let filteredData: ChapterItem[] = [];
         setLoading(true);
-        const authToken = localStorage.getItem("accessToken");
+        
         try {
-            const response = await axios.get("http://localhost:8080/api/chapter/clerk/get-list-chapter", {
-                params: {
-                    page: currentPage - 1,
-                    limit: chaptersPerPage,
-                    courseId,
-                    gradeId,
-                },
-                headers: { Authorization: `Bearer ${authToken}` },
-            });
-            setChapters(response.data?.content || []);
+            const response = await getChapterByCourse_GradeId(searchQuery, currentPage - 1, courseId, gradeId);
+
+            filteredData = response.content.map((item: ChapterItem) => ({
+                id: item.id,
+                name: item.name,
+                description: item.description
+            }));
+
             setTotalPages(response.data?.totalPages || 0);
         } catch (error) {
             console.error("Failed to fetch chapters:", error);
         } finally {
+            setChapters(filteredData);
             setLoading(false);
         }
     };
 
-    const toggleDropdown = (id: number, event: React.MouseEvent) => {
+    const toggleDropdown = (id: string, event: React.MouseEvent) => {
         const rect = (event.target as HTMLElement).getBoundingClientRect();
         setDropdownPosition({
             top: rect.bottom + window.scrollY,
             left: rect.left + window.scrollX,
         });
-        setActiveDropdown(activeDropdown === id ? null : id);
+        setActiveDropdown(activeDropdown === id ? "" : id);
     };
 
-    const renderDropdown = (id: number) => {
+    const renderDropdown = (id: string) => {
         return (
             activeDropdown === id && (
                 <div
@@ -89,13 +86,13 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({ courseId, subject, gradeId, g
     };
 
     const handleAttachmentClick = (id: string, subject: string, gradeId: string, grade: string, chapterId: string, chapter: string) => {
-        return `/admin/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(grade)}/${encodeURIComponent(chapterId)}/${encodeURIComponent(chapter)}`;
+        return `/admin/courses/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(grade)}/${encodeURIComponent(chapterId)}/${encodeURIComponent(chapter)}`;
     };
 
     
     useEffect(() => {
         fetchChapters();
-    }, [courseId, gradeId, currentPage]);
+    }, [courseId, gradeId, currentPage, searchQuery]);
 
     return (
         <div>

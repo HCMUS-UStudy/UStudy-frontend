@@ -1,4 +1,4 @@
-import { ClassData, ClassSchema, TimeItem } from "../types/type";
+import { AccountData, ClassData, ClassSchema, CourseData, TimeItem } from "../types/type";
 import { Branch } from "../types/type";
 import axiosInstance from "./axios";
 
@@ -124,6 +124,86 @@ export const adminLogin = async (genId: string, password: string) => {
             password: password
         });
         return response;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const getAllCourses = async (query: string, currentPage: number): Promise<CourseData> => {
+    try {
+        const response = await axiosInstance.get('/course/admin/get-list-course', {
+            params: {
+                page: currentPage,
+                limit: 5,
+                filter: query
+            }
+        });
+        return response.data;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const getGradesByCourseId = async (query: string, currentPage: number, courseId: string) => {
+    try {
+        const response = await axiosInstance.get('/grade/admin/get-grades-by-course', {
+            params: {
+                page: currentPage,
+                limit: 5,
+                filter: query,
+                courseId: courseId
+            }
+        });
+        return response.data;
+    } catch(error) {
+        throw error;       
+    }
+}
+
+export const getChapterByCourse_GradeId = async (query: string, currentPage: number, courseId: string, gradeId: string) => {
+    try {
+        const response = await axiosInstance.get('/chapter/clerk/get-list-chapter', {
+            params: {
+                page: currentPage,
+                limit: 5,
+                filter: query,
+                courseId: courseId,
+                gradeId: gradeId
+            }
+        });
+        return response.data;
+    } catch(error) {
+        throw error;       
+    }
+}
+
+export const getMaterialsByChapterId = async (query: string, currentPage: number, chapterId: string) => {
+    try {
+        const response = await axiosInstance.get('/material/all/get-materials', {
+            params: {
+                page: currentPage,
+                limit: 5,
+                filter: query,
+                chapterId: chapterId
+            }
+        });
+        return response.data;
+    } catch(error) {
+        throw error;       
+    }
+}
+
+export const getAllAccount = async (query: string, currentPage: number): Promise<AccountData> => {
+    try {
+        const response = await axiosInstance.get('/user/clerk/get-list-user', {
+            params: {
+                page: currentPage,
+                limit: 5,
+                role: 'STUDENT',
+                filter: query
+            }
+        });
+        return response.data;
     } catch(error) {
         throw error;
     }

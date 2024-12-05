@@ -1,78 +1,61 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { FaEllipsisV, FaSpinner } from "react-icons/fa";
 import { Button } from "./button";
 import PaginationAdmin from "./paginationAdmin";
 import { FaDownload, FaEye, FaFilePdf, FaFileWord } from "react-icons/fa6";
-
-interface Document {
-    id: number;
-    fileName: string;
-    filePath: string
-}
+import { MaterialItem } from "@/app/types/type";
+import { getMaterialsByChapterId } from "@/app/lib/api";
 
 interface DocumentGridProps {
     courseId: string;
     chapterId: string;
-    documentsPerPage?: number;
+    searchQuery: string
 }
 
-const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId, documentsPerPage = 5 }) => {
-    const [documents, setDocuments] = useState<Document[]>([]);
+const DocumentGrid: React.FC<DocumentGridProps> = ({ searchQuery, courseId, chapterId }) => {
+    const [documents, setDocuments] = useState<MaterialItem[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-    const [dropdownPosition, setDropdownPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const fetchGrades = async () => {
+        let filteredData: MaterialItem[] = [];
         setLoading(true);
         if (!courseId) return;
 
-        setLoading(true);
-        const authToken = localStorage.getItem("accessToken");
-
         try {
-            const response = await axios.get(
-                "http://localhost:8080/api/material/all/get-materials",
-                {
-                    params: {
-                        page: currentPage - 1,
-                        limit: documentsPerPage,
-                        chapterId
-                    },
-                    headers: { Authorization: `Bearer ${authToken}` },
-                }
-            );
-            setDocuments(response.data?.content || []);
+            const response = await getMaterialsByChapterId(searchQuery, currentPage - 1, chapterId);
+
+            filteredData = response.content.map((item: MaterialItem) => ({
+                id: item.id,
+                fileName: item.fileName,
+                filePath: item.filePath
+            }))
+
             setTotalPages(response.data?.totalPages || 0);
 
         } catch (error) {
             console.error("Failed to fetch grades:", error);
         } finally {
+            setDocuments(filteredData);
             setLoading(false);
         }
     };
 
-    const toggleDropdown = (id: number, event: React.MouseEvent) => {
-        const rect = (event.target as HTMLElement).getBoundingClientRect();
-        setDropdownPosition({
-            top: rect.bottom + window.scrollY,
-            left: rect.left + window.scrollX,
-        });
-        setActiveDropdown(activeDropdown === id ? null : id);
+    const toggleDropdown = (id: string) => {
+        setActiveDropdown(activeDropdown === id ? "" : id);
     };
 
-    const renderDropdown = (id: number) => {
+    const renderDropdown = (id: string) => {
         return (
             activeDropdown === id && (
                 <div
                     ref={dropdownRef}
                     className="absolute w-32 bg-white border border-gray-200 rounded-md shadow-lg z-50"
-                    style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
                 >
                     <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
                         Cut
@@ -103,7 +86,7 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId, docume
 
     useEffect(() => {
         fetchGrades();
-    }, [chapterId, currentPage]);
+    }, [chapterId, currentPage, searchQuery]);
 
     return (
         <div>
@@ -114,9 +97,9 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId, docume
                         <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
                         <span className="ml-4 text-lg text-blue-500">Loading...</span>
                     </div>
-                ) : (documents.map((doc, index) => (
+                ) : (documents.map((doc) => (
                     <div
-                        key={doc.id || index}
+                        key={doc.id}
                         className={`border p-4 rounded-lg shadow-md hover:shadow-lg transition`}>
                         <div className="flex items-center space-x-4 mb-3">
                             {getFileType(doc.fileName) === "pdf" ? (
@@ -128,7 +111,7 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId, docume
 
                             <button
                                 className="text-gray-600"
-                                onClick={(e) => toggleDropdown(index, e)}>
+                                onClick={() => toggleDropdown(doc.id)}>
                                 <FaEllipsisV />
                             </button>
                             {renderDropdown(doc.id)}

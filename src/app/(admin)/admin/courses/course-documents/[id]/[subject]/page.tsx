@@ -1,9 +1,9 @@
 import { Button } from "@/app/ui/components/button";
 import React from "react";
-import { FaSearch } from "react-icons/fa";
 
 import GradeGrid from "@/app/ui/components/GradeGrid";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
+import { SearchField } from "@/app/ui/components/input";
 
 // params are automatically passed to the page component in App Router
 interface Params {
@@ -11,7 +11,19 @@ interface Params {
   subject: string;
 }
 
-const CourseDocumentsPage = async ({ params }: { params: Params }) => {
+const CourseDocumentsPage = async ({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) => {
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.query || "";
+
   // Await the params to get access to the properties
   const { id, subject } = await params;
 
@@ -34,20 +46,7 @@ const CourseDocumentsPage = async ({ params }: { params: Params }) => {
       {/* Search and Filter Section */}
       <div className="flex justify-end items-center space-x-4 mb-6">
         <div className="flex items-center space-x-4">
-        <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo khối..."
-              // value={searchQuery}
-              // onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
-              <FaSearch className="h-5 w-5" />
-            </button>
-          </div>
+          <SearchField className="w-[200px]" placeholder="Tìm theo tên khối học..." />
           <select className="px-4 py-2 border border-gray-300 rounded-md">
             <option value="">Tất cả khối học</option>
             <option value="Chapter">Khối 1</option>
@@ -62,7 +61,7 @@ const CourseDocumentsPage = async ({ params }: { params: Params }) => {
         </Button>
       </div>
 
-      <GradeGrid courseId={id} subject={subject} gradesPerPage={5} />
+      <GradeGrid searchQuery={query} courseId={id} subject={subject}/>
     </div>
   );
 };
