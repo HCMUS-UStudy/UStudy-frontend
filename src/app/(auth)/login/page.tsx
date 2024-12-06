@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
 import { LoginSpinner } from "@/app/ui/components/spinner";
-import { setTokens } from "@/app/lib/storage";
+import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 
@@ -44,6 +44,7 @@ export default function Login() {
         setIsLoading(true);
         const response = await userLogin(genId, password);
         setTokens(response.access_token, response.refresh_token);
+        setUserInfo(JSON.stringify(response.user));
 
         const role = response.user.role;
         switch (role) {

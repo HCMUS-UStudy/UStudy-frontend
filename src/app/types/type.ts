@@ -150,3 +150,76 @@ export type CustomError = {
   status?: number;
   data?: string | unknown;
 }
+
+type Authority = {
+  authority: string;
+};
+
+export type User = {
+  accountNonExpired: boolean;
+  accountNonLocked: boolean;
+  address: string;
+  authorities: Authority[];
+  avatar: string;
+  birthday: string;
+  branch: string | null;
+  classesEnrolled: string | null; 
+  classesTaught: string | null; 
+  createdAt: string;
+  credentialsNonExpired: boolean;
+  email: string;
+  enabled: boolean;
+  genId: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  id: string;
+  isActive: boolean;
+  name: string;
+  phone: string;
+  role: string;
+  updatedAt: string;
+  username: string;
+};
+
+export type Classroom = {
+  id: string;
+  name: string;
+  description: string;
+  fee: number;
+  grade: {
+    id: string;
+    name: string;
+  };
+  room: {
+    id: string;
+    name: string;
+  };
+  status: boolean;
+  teacher: {
+    avatar: string;
+    email: string;
+    genId: string;
+    gender: "MALE" | "FEMALE" | "OTHER";
+    id: string;
+    name: string;
+  } | null;
+  students: null; 
+  course: {
+    createdAt: string;
+    createdBy: {
+      active: boolean;
+      avatar: string;
+      createdAt: string;
+      email: string;
+      genId: string;
+      gender: string;
+      id: string;
+      name: string;
+      role: string;
+    };
+    description: string;
+    id: string;
+    name: string;
+    status: boolean;
+    totalGrades: number;
+  };
+}

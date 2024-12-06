@@ -1,19 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
 import classNames from "classnames";
-import { PiHandWavingThin } from "react-icons/pi";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import BranchSelector from "./BranchSelector";
 import "../styles/Header.css";
 import Swal from "sweetalert2";
+import { getUserInfo } from "@/app/lib/storage";
+import Breadcrumb from "./breadcrumb";
+import { User } from "@/app/types/type";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+
+  useEffect(() => {
+    setUserInfo(getUserInfo());
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -50,11 +57,18 @@ const Header: React.FC = () => {
 
   return (
     <div className={headerStyle}>
-      <div className="hello">
-        <div className="first-line">
-          Hello!! {<PiHandWavingThin className="icon" size={25} />}
+      <div className="gap-6 justify-between items-center">
+        <div className="first-line text-2xl tracking-wide mb-4">
+          Xin chào{" "}
+          <span className="font-bold bg-gradient-to-r from-sky-800 to-sky-400 inline-block text-transparent bg-clip-text">
+            {userInfo?.name}!
+          </span>{" "}
+          {/* {<PiHandWavingThin className="icon" size={25} />} */}
         </div>
-        <div className="second-line">Chào mừng đến với trang Admin!</div>
+        <Breadcrumb />
+        {pathname.includes("/admin") && (
+          <div className="second-line">Chào mừng đến với trang Admin!</div>
+        )}
       </div>
 
       <div className="right-items">

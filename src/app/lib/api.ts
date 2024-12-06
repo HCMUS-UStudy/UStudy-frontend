@@ -33,7 +33,7 @@ export const getCoursesByGradeId = async (gradeId: string) => {
 
 export const getAllClasses = async (query: string, currentPage: number): Promise<ClassData> => {
     try {
-        const response = await axiosInstance.get('/user/all/get-list-class', {
+        const response = await axiosInstance.get('/class/all/get-list-class', {
             params: {
                 page: currentPage,
                 limit: 5,
@@ -125,6 +125,19 @@ export const adminLogin = async (genId: string, password: string) => {
         });
         return response;
     } catch(error) {
+        throw error;
+    }
+}
+
+export const getClassById = async (classId: string) => {
+    try {
+        const response = await axiosInstance.get("/class/all/get-one", {
+            params: {
+            classId,
+            },
+        });
+        return response;
+    } catch (error) {
         throw error;
     }
 }

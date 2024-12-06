@@ -83,8 +83,6 @@ export function ClassesTable({
             name: item.grade.name,
           },
         }));
-        console.log(filteredData);
-        // console.log(classes);
       } catch (error) {
         console.log(error);
       } finally {
