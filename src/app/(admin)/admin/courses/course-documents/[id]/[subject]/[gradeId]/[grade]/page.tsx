@@ -3,7 +3,7 @@ import React from "react";
 
 import ChapterGrid from "@/app/ui/components/ChapterAdmin/ChapterGrid";
 import Loading from "@/app/ui/components/loading";
-import BreadCrumb from "@/app/ui/components/breadCrumb";
+import BreadCrumb from "@/app/ui/components/breadcrumb";
 import { SearchField } from "@/app/ui/components/input";
 
 interface Params {
@@ -40,7 +40,12 @@ const GradeDocumentsPage = async ({
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen">
-      <BreadCrumb courseId={id} subject={decodedSubject} grade={grade} gradeId={gradeId} />
+      <BreadCrumb
+        courseId={id}
+        subject={decodedSubject}
+        grade={grade}
+        gradeId={gradeId}
+      />
       <h1 className="text-4xl font-extrabold text-gray-800 mb-10 text-center">
         Tài liệu môn {decodedSubject} - {decodedGrade}
       </h1>
@@ -48,7 +53,10 @@ const GradeDocumentsPage = async ({
       {/* Search and Filter Section */}
       <div className="flex justify-end items-center space-x-4 mb-6">
         <div className="flex items-center space-x-4">
-          <SearchField className="w-[200px]" placeholder="Tìm theo tên chương học..." />
+          <SearchField
+            className="w-[200px]"
+            placeholder="Tìm theo tên chương học..."
+          />
           <select
             // value={selectedFilter}
             // onChange={(e) => setSelectedFilter(e.target.value)}

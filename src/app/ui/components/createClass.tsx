@@ -293,7 +293,7 @@ export default function CreateClass() {
             position: "bottom-right",
             autoClose: 3000,
           });
-          router.push(`/clerk/classes/${response.data.id}`);
+          router.push(`/clerk/classes/${response.data.id}/classManagement`);
         } else {
           toast.error(`Tạo lớp học thất bại`, {
             position: "bottom-right",

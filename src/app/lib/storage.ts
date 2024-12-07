@@ -1,3 +1,5 @@
+import { User } from "../types/type";
+
 export const getAccessToken = () => {
     return localStorage.getItem('accessToken');
 }
@@ -21,4 +23,17 @@ export const handleLogout = () => {
 export const setTokens = (accessToken: string, refreshToken: string) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
+}
+
+export const setUserInfo = (userInfo: string) => {
+    localStorage.setItem('userInfo', userInfo);
+}
+
+export const getUserInfo = () => {
+    const userInfo = localStorage.getItem('userInfo');
+    if(userInfo !== null) {
+        const parsedUserInfo: User = JSON.parse(userInfo);
+        return parsedUserInfo;
+    }
+    return null;
 }
