@@ -1,14 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { Input } from "./input";
-import { Label } from "./label";
-import { Button } from "./button";
+import { Input } from "../input";
+import { Label } from "../label";
+import { Button } from "../button";
+import { CourseSchema } from "@/app/types/type";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/ReactToastify.css';
+import { createNewCourse } from "@/app/lib/api";
 
 interface ModalCourseWrapperProps {
   buttonLabel: string;
+}
+
+interface CreateCourseError {
+  name?: string | null;
+  description?: string | null;
+  creator?: string | null;
 }
 
 const ModalCourse: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
@@ -17,6 +25,12 @@ const ModalCourse: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     name: "",
     description: "",
     creator: localStorage.getItem("creator") || "",
+  });
+
+  const [errors, setErrors] = useState<CreateCourseError>({
+    name: null,
+    description: null,
+    creator: null,
   });
 
   const handleOpenModal = () => setShowModal(true);
@@ -32,51 +46,69 @@ const ModalCourse: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     }));
   };
 
+  const isValidForm = (data: CourseSchema): boolean => {
+    let isValid = true;
+    const msg = "Trường bắt buộc";
+    const newErrors: CreateCourseError = {};
+
+    if (!data.name) {
+      newErrors.name = msg;
+      isValid = false;
+    }
+
+    if (!data.description) {
+      newErrors.description = msg;
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
+
+    const payload: CourseSchema = { ...formData };
+
+    if (!isValidForm(payload)) {
+      toast.error("Vui lòng kiểm tra lại các thông tin đã nhập!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      console.log(errors)
+      return; // Stop further processing if validation fails
+    }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/course/admin/add",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await createNewCourse(payload);
 
       if (response.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "Tạo môn học thành công",
-          text: "Vui lòng kiểm tra thông tin môn học.",
-          timer: 8000,
-          showConfirmButton: true,
-        });
-
         setFormData({
           name: "",
           description: "",
           creator: localStorage.getItem("creator") || "",
         });
+
+        toast.success("Tạo môn học thành công! Đang chuyển hướng...", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+
         setShowModal(false);
         window.location.href = "/admin/courses";
       }
     } catch (err) {
       console.error("Error fetching courses:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Tạo môn học thất bại",
-        //text: err.response?.data || "Lỗi hệ thống. Vui lòng thử lại.",
+      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
+        position: "bottom-right",
+        autoClose: 3000,
       });
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <Button onClick={handleOpenModal} className="pl-6 pr-6">
         {buttonLabel}
       </Button>
