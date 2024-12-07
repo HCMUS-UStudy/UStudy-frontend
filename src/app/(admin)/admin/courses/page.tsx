@@ -1,7 +1,7 @@
 import React from "react";
 
-import CourseTable from "@/app/ui/components/courseTable";
-import ModalCourse from "@/app/ui/components/modalCourse-Ad";
+import CourseTable from "@/app/ui/components/CourseAdmin/courseTable";
+import ModalCourse from "@/app/ui/components/CourseAdmin/modalCourse-Ad";
 import { SearchField } from "@/app/ui/components/input";
 
 export default async function CoursePage(props: {
@@ -79,41 +79,6 @@ export default async function CoursePage(props: {
         <h2 className="text-2xl font-bold">
           Tổng số môn học ({11})
         </h2>
-        {/* <form
-          onSubmit={handleSearchSubmit}
-          className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
-          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
-            <input
-              type="text"
-              placeholder="Tìm kiếm môn học..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
-              <FaSearch className="h-5 w-5" />
-            </button>
-          </div>
-          <select
-            value={selectedName}
-            onChange={(e) => setSelectedName(e.target.value)}
-            className="border-2 bg-sky-100 border-gray-300 rounded-full px-6 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
-            <option value="">Tất cả môn học</option>
-            <option value="math">Toán</option>
-            <option value="literature">Ngữ văn</option>
-            <option value="english">Tiếng Anh</option>
-            <option value="physics">Vật lý</option>
-            <option value="chemistry">Hóa</option>
-            <option value="biology">Sinh học</option>
-            <option value="history">Lịch sử</option>
-            <option value="geography">Địa lý</option>
-            <option value="civics">Giáo dục công dân</option>
-            <option value="informatics">Tin học</option>
-            <option value="technology">Công nghệ</option>
-          </select>
-        </form> */}
       </div>
 
       <div className="flex justify-between items-center space-x-4 mb-2 mt-6">

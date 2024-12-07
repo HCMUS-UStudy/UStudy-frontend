@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Input } from "./input";
-import { Label } from "./label";
-import { Button } from "./button";
+import { Input } from "../input";
+import { Label } from "../label";
+import { Button } from "../button";
 
 interface NewUser {
   email: string;

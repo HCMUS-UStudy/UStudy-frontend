@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaSpinner } from "react-icons/fa";
-import { Button } from "./button";
-import PaginationAdmin from "./paginationAdmin";
+import { Button } from "../button";
+import PaginationAdmin from "../paginationAdmin";
 import { FaDownload, FaEye, FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { MaterialItem } from "@/app/types/type";
 import { getMaterialsByChapterId } from "@/app/lib/api";

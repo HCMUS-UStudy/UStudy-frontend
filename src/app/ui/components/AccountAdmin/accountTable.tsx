@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { FiLock } from 'react-icons/fi';
-import Loading from './loading';
-import PaginationAdmin from './paginationAdmin'; // Import PaginationAdmin
 import { AccountItem } from '@/app/types/type';
 import { getAllAccount } from '@/app/lib/api';
+import Loading from '../loading';
+import PaginationAdmin from '../paginationAdmin';
 
 interface UserTableProps {
   searchQuery: string;

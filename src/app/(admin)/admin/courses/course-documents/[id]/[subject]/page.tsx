@@ -1,7 +1,7 @@
 import { Button } from "@/app/ui/components/button";
 import React from "react";
 
-import GradeGrid from "@/app/ui/components/GradeGrid";
+import GradeGrid from "@/app/ui/components/GradeAdmin/GradeGrid";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/input";
 
