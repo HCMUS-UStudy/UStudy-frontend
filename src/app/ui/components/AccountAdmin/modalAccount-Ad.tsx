@@ -1,20 +1,22 @@
 "use client"
 
 import React, { useState } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
 import { Input } from "../input";
 import { Label } from "../label";
 import { Button } from "../button";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/ReactToastify.css';
+import { AccountSchema } from "@/app/types/type";
+import { createNewAccount } from "@/app/lib/api";
 
-interface NewUser {
-  email: string;
-  name: string;
-  phone: string;
-  address: string;
-  birthDate: string;
-  gender: string;
-  role: string;
+interface CreateAccountError {
+  email?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  birthday?: string | null;
+  gender?: string | null;
+  role?: string | null;
 }
 
 interface ModalAccountWrapperProps {
@@ -27,76 +29,154 @@ const ModalAccount: React.FC<ModalAccountWrapperProps> = ({ buttonLabel }) => {
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
-  const [newUser, setNewUser] = useState<NewUser>({
+  const [newUser, setNewUser] = useState<AccountSchema>({
     email: "",
     name: "",
     phone: "",
     address: "",
-    birthDate: "",
-    gender: "male",
-    role: "student",
+    birthday: "",
+    gender: "MALE",
+    role: "STUDENT",
+  });
+
+  const [errors, setErrors] = useState<CreateAccountError>({
+    email: null,
+    name: null,
+    phone: null,
+    address: null,
+    birthday: null,
+    gender: null,
+    role: null,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+  
+    // Convert date to standard format if necessary
+    const formattedValue =
+      name === "birthday" && value ? new Date(value).toISOString().split("T")[0] : value;
+  
     setNewUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      [name]: formattedValue,
     }));
   };
+  
 
+  const isValidForm = (data: AccountSchema): boolean => {
+    let isValid = true;
+    const msg = "Trường bắt buộc";
+    const newErrors: CreateAccountError = {};
+  
+    if (!data.email) {
+      newErrors.email = msg;
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+      newErrors.email = "Email không hợp lệ";
+      isValid = false;
+    }
+  
+    if (!data.name) {
+      newErrors.name = msg;
+      isValid = false;
+    }
+  
+    if (!data.phone) {
+      newErrors.phone = msg;
+      isValid = false;
+    } else if (!/^\d+$/.test(data.phone)) {
+      newErrors.phone = "Số điện thoại chỉ được chứa số";
+      isValid = false;
+    }
+  
+    if (!data.address) {
+      newErrors.address = msg;
+      isValid = false;
+    }
+  
+    if (!data.birthday) {
+      newErrors.birthday = msg;
+      isValid = false;
+    } else {
+      // Optionally validate the date is not in the future
+      const today = new Date().toISOString().split("T")[0];
+      if (data.birthday > today) {
+        newErrors.birthday = "Ngày sinh không được là ngày trong tương lai";
+        isValid = false;
+      }
+    }    
+  
+    const validGenders = ["MALE", "FEMALE"];
+    if (!validGenders.includes(data.gender)) {
+      newErrors.gender = "Giới tính không hợp lệ";
+      isValid = false;
+    }
+  
+    const validRoles = ["STUDENT", "TEACHER", "STAFF"];
+    if (!validRoles.includes(data.role)) {
+      newErrors.role = "Chức vụ không hợp lệ";
+      isValid = false;
+    }
+  
+    setErrors(newErrors);
+    return isValid;
+  };
+  
   const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
-
-    const payload = {
-      email: newUser.email,
-      name: newUser.name,
-      phone: newUser.phone,
-      address: newUser.address,
-      birthday: newUser.birthDate,
-      gender: newUser.gender === "female" ? "FEMALE" : "MALE",
-      role: newUser.role === "student" ? "STUDENT" : newUser.role === "teacher" ? "TEACHER" : "CLERK",
-    };
-
-    try {
-      const response = await axios.post("http://localhost:8080/api/user/admin/add", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  
+    const payload: AccountSchema = { ...newUser };
+  
+    if (!isValidForm(payload)) {
+      toast.error("Vui lòng kiểm tra lại các thông tin đã nhập!", {
+        position: "bottom-right",
+        autoClose: 3000,
       });
-
+      console.log(errors)
+      return; // Stop further processing if validation fails
+    }
+  
+    try {
+      const response = await createNewAccount(payload);
+  
       if (response.status === 200) {
         setNewUser({
           email: "",
           name: "",
           phone: "",
           address: "",
-          birthDate: "",
-          gender: "male",
-          role: "student",
+          birthday: "",
+          gender: "MALE",
+          role: "STUDENT",
         });
-        Swal.fire({
-          icon: "success",
-          title: "Tạo tài khoản thành công",
-          text: "Vui lòng kiểm tra thông tin tài khoản tại bảng bên dưới",
-          timer: 8000,
-          showConfirmButton: true,
+  
+        toast.success("Tạo tài khoản thành công! Đang chuyển hướng...", {
+          position: "bottom-right",
+          autoClose: 3000,
         });
-        window.location.href = "/admin/accounts";
+  
+        setTimeout(() => {
+          window.location.href = "/admin/accounts";
+        }, 3000);
+      } else {
+        toast.error("Đã xảy ra lỗi khi tạo tài khoản.", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
       }
-      setShowModal(false);
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Tạo tài khoản thất bại",
-        text: err.response?.data || "Lỗi hệ thống. Vui lòng thử lại.",
+    } catch (error) {
+      console.error("API error:", error);
+      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
+        position: "bottom-right",
+        autoClose: 3000,
       });
     }
   };
+  
 
   return (
     <>
+      <ToastContainer />
       <Button
         onClick={handleOpenModal}
         className="pl-6 pr-6"
@@ -182,13 +262,17 @@ const ModalAccount: React.FC<ModalAccountWrapperProps> = ({ buttonLabel }) => {
                 <select
                   id="gender"
                   name="gender"
-                  value={newUser.gender}
-                  onChange={handleInputChange}
+                  value={newUser.gender === "MALE" ? "male" : "female"} // Chuyển giá trị lưu trữ thành chữ thường
+                  onChange={(e) =>
+                    setNewUser((prev) => ({
+                      ...prev,
+                      gender: e.target.value === "male" ? "MALE" : "FEMALE", // Chuyển giá trị nhập thành chữ hoa
+                    }))
+                  }
                   className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200"
                 >
                   <option value="male">Nam</option>
                   <option value="female">Nữ</option>
-                  <option value="other">Khác</option>
                 </select>
                 <label htmlFor="gender" className="absolute left-4 text-xs text-indigo-600 bg-white px-1 transition-all duration-200 -top-3.5">
                   Giới tính
@@ -200,8 +284,24 @@ const ModalAccount: React.FC<ModalAccountWrapperProps> = ({ buttonLabel }) => {
                 <select
                   id="role"
                   name="role"
-                  value={newUser.role}
-                  onChange={handleInputChange}
+                  value={
+                    newUser.role === "STUDENT"
+                      ? "student"
+                      : newUser.role === "TEACHER"
+                        ? "teacher"
+                        : "staff" // Chuyển giá trị lưu trữ thành chữ thường
+                  }
+                  onChange={(e) =>
+                    setNewUser((prev) => ({
+                      ...prev,
+                      role:
+                        e.target.value === "student"
+                          ? "STUDENT"
+                          : e.target.value === "teacher"
+                            ? "TEACHER"
+                            : "STAFF", // Chuyển giá trị nhập thành chữ hoa
+                    }))
+                  }
                   className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200"
                   required
                 >
@@ -215,18 +315,18 @@ const ModalAccount: React.FC<ModalAccountWrapperProps> = ({ buttonLabel }) => {
                 </label>
               </div>
 
-              {/* Birthdate */}
+              {/* birthday */}
               <div className="relative mb-6">
                 <input
                   type="date"
-                  id="birthDate"
-                  name="birthDate"
-                  value={newUser.birthDate}
+                  id="birthday"
+                  name="birthday"
+                  value={newUser.birthday}
                   onChange={handleInputChange}
                   className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200"
                   required
                 />
-                <label htmlFor="birthDate" className="absolute left-4 text-xs text-indigo-600 bg-white px-1 transition-all duration-200 -top-3.5">
+                <label htmlFor="birthday" className="absolute left-4 text-xs text-indigo-600 bg-white px-1 transition-all duration-200 -top-3.5">
                   Ngày sinh *
                 </label>
               </div>

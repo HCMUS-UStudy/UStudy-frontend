@@ -1,21 +1,14 @@
 "use client"
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { Button } from "../button";
 import PaginationAdmin from "../paginationAdmin";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  address: string;
-  birthday: string;
-  phone: string;
-  gender: string;
-}
+import { confirmRegister, getRegister, rejectRegister } from "@/app/lib/api";
+import Loading from "../loading";
+import {RegisterItem } from "@/app/types/type";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/ReactToastify.css';
 
 interface AccountRegisterModalProps {
   buttonLabel: string;
@@ -27,8 +20,8 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
   const handleOpenModal = () => setShowModalRe(true);
 
   const [activeTab, setActiveTab] = useState("students"); // "students" or "teachers"
-  const [students, setStudents] = useState<User[]>([]);
-  const [teachers, setTeachers] = useState<User[]>([]);
+  const [students, setStudents] = useState<RegisterItem[]>([]);
+  const [teachers, setTeachers] = useState<RegisterItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPageStu, setCurrentPageStu] = useState(1);
   const [currentPageTea, setCurrentPageTea] = useState(1);
@@ -36,57 +29,54 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
   const [totalPagesTea, setTotalPagesTea] = useState(0);
 
   const fetchStudents = async () => {
+    let StudentData: RegisterItem[] = [];
     setLoading(true);
-    const authToken = localStorage.getItem("accessToken");
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
-        params: {
-          page: currentPageStu - 1, // Adjust page for API (zero-indexed)
-          limit: 1,
-          role: "STUDENT"
-        },
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await getRegister("STUDENT", currentPageStu - 1);
 
-      setStudents(response.data?.content || []);
+      StudentData = response.content.map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        address: item.address,
+        birthday: item.birthday,
+        phone: item.phone,
+        gender: item.gender,
+      }));
+
       // Set total pages for students based on API response
-      setTotalPagesStu(response.data?.totalPages || 0);
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Lỗi khi tải dữ liệu học sinh",
-        text: error.response?.data?.message || "Không thể tải dữ liệu học sinh.",
-      });
+      setTotalPagesStu(response.totalPages || 0);
+    } catch (error) {
+      console.log(error);
     } finally {
+      setStudents(StudentData);
       setLoading(false);
     }
   };
 
   const fetchTeachers = async () => {
+    let TeacherData: RegisterItem[] = [];
     setLoading(true);
-    const authToken = localStorage.getItem("accessToken");
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/register/clerk/waiting-register`, {
-        params: {
-          page: currentPageTea - 1, // Adjust page for API (zero-indexed)
-          limit: 4,
-          role: "TEACHER"
-        },
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await getRegister("TEACHER", currentPageStu - 1);
 
-      setTeachers(response.data?.content || []);
+      TeacherData = response.content.map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        address: item.address,
+        birthday: item.birthday,
+        phone: item.phone,
+        gender: item.gender,
+      }));
       // Set total pages for teachers based on API response
-      setTotalPagesTea(response.data?.totalPages || 0);
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Lỗi khi tải dữ liệu giáo viên",
-        text: error.response?.data?.message || "Không thể tải dữ liệu giáo viên.",
-      });
+      setTotalPagesTea(response.totalPages || 0);
+    } catch (error) {
+      console.log(error)
     } finally {
+      setTeachers(TeacherData);
       setLoading(false);
     }
   };
@@ -98,35 +88,27 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const handleApprove = async (userId: string) => {
     setLoading(true);
-    const authToken = localStorage.getItem("accessToken");
 
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/register/admin/confirm?registerId=${userId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
+      const response = await confirmRegister(userId);
 
       if (response.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "Phê duyệt thành công",
-          text: "Người dùng đã được phê duyệt thành công!",
-          timer: 8000,
-          showConfirmButton: false,
+        toast.success("Phê duyệt thành công! Đang chuyển hướng...", {
+          position: "bottom-right",
+          autoClose: 3000,
         });
 
         fetchStudents();
         fetchTeachers();
       }
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Phê duyệt thất bại",
-        text: error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
-      });
+      else {
+        toast.error("Đã xảy ra lỗi khi phê duyệt.", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -134,35 +116,27 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const handleReject = async (userId: string) => {
     setLoading(true);
-    const authToken = localStorage.getItem("accessToken");
 
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/register/admin/reject?registerId=${userId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
+      const response = await rejectRegister(userId);
 
       if (response.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "Từ chối thành công",
-          text: "Người dùng không được phê duyệt!",
-          timer: 8000,
-          showConfirmButton: false,
+        toast.success("Từ chối thành công! Đang chuyển hướng...", {
+          position: "bottom-right",
+          autoClose: 3000,
         });
 
         fetchStudents();
         fetchTeachers();
       }
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Từ chối thất bại",
-        text: error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại!",
-      });
+      else {
+        toast.error("Đã xảy ra lỗi khi phê duyệt.", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -187,6 +161,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   return (
     <>
+      <ToastContainer />
       <Button
         onClick={handleOpenModal}
         className="pl-6 pr-6"
@@ -218,8 +193,8 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
             <div className="flex space-x-4 border-b mb-6">
               <button
                 className={`py-2 px-4 text-lg font-semibold ${activeTab === "students"
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "text-gray-700"
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-700"
                   }`}
                 onClick={() => setActiveTab("students")}
               >
@@ -227,8 +202,8 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
               </button>
               <button
                 className={`py-2 px-4 text-lg font-semibold ${activeTab === "teachers"
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "text-gray-700"
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-700"
                   }`}
                 onClick={() => setActiveTab("teachers")}
               >
@@ -253,7 +228,13 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student) => (
+                    {loading ? (
+                      <tr>
+                        <td colSpan={7} className="text-center py-4">
+                          <Loading />
+                        </td>
+                      </tr>
+                    ) : (students.map((student) => (
                       <tr key={student.id} className="hover:bg-gray-50">
                         <td className="py-4 px-6 border-b text-gray-600">{student.name}</td>
                         <td className="py-4 px-6 border-b text-gray-600">{student.email}</td>
@@ -280,7 +261,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    )))}
                   </tbody>
                 </table>
                 <PaginationAdmin

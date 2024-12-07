@@ -31,7 +31,7 @@ export default function Classes() {
 
     const fetchClasses = async () => {
         setLoading(true);
-        const authToken = localStorage.getItem("authToken");
+        const authToken = localStorage.getItem("accessToken");
 
         try {
             const response = await axios.get(
@@ -62,7 +62,7 @@ export default function Classes() {
             return; // Avoid fetching if details already exist
         }
 
-        const authToken = localStorage.getItem("authToken");
+        const authToken = localStorage.getItem("accessToken");
 
         try {
             const response = await axios.get(`http://localhost:8080/api/class/all/get-one`, {

@@ -34,7 +34,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
         role: item.role,
         isActive: item.isActive,
         createdAt: item.createdAt,
-    }));
+      }));
 
       setTotalPages(response.totalPages || 1);
     } catch (error) {
