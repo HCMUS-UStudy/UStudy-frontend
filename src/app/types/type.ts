@@ -21,6 +21,16 @@ export type AccountItem = {
   createdAt: string;
 };
 
+export type RegisterItem = {
+  id: string;
+  name: string;
+  email: string;
+  address: string;
+  birthday: string;
+  phone: string;
+  gender: string;
+};
+
 export type GradeItem = {
   id: string;
   name: string
@@ -81,10 +91,26 @@ export type ClassSchema = {
   roomId: string;
 };
 
+export type AccountSchema = {
+  email: string;
+  name: string;
+  phone: string;
+  address: string;
+  birthday: string;
+  gender: "MALE" | "FEMALE";
+  role: "STUDENT" | "TEACHER" | "STAFF";
+};
+
 export type ScheduleItem = {
   display: string;
   dataToSend: number;
   isChosen: boolean;
+}
+
+export type CourseSchema = {
+  name: string;
+  description: string;
+  creator: string;
 }
 
 export const Schedule: ScheduleItem[] = [
@@ -174,6 +200,11 @@ export type CourseData = {
 
 export type AccountData = {
   content: AccountItem[],
+  totalPages: number;
+}
+
+export type RegisterAccountData = {
+  content: RegisterItem[],
   totalPages: number;
 }
 
