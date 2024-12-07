@@ -11,12 +11,14 @@ import Swal from "sweetalert2";
 import { getUserInfo } from "@/app/lib/storage";
 import Breadcrumb from "./breadcrumb";
 import { User } from "@/app/types/type";
+import { useSpecificNameContext } from "@/app/context/context";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
+  const { specificName } = useSpecificNameContext();
 
   useEffect(() => {
     setUserInfo(getUserInfo());
@@ -65,7 +67,7 @@ const Header: React.FC = () => {
           </span>{" "}
           {/* {<PiHandWavingThin className="icon" size={25} />} */}
         </div>
-        <Breadcrumb />
+        <Breadcrumb specificName={specificName ? specificName : ""} />
         {pathname.includes("/admin") && (
           <div className="second-line">Chào mừng đến với trang Admin!</div>
         )}

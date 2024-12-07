@@ -148,7 +148,9 @@ export function ClassesTable({
                 </td>
                 <td className="text-sm text-gray-700 text-center">
                   <button
-                    onClick={() => router.push(`/clerk/classes/${c.id}`)}
+                    onClick={() =>
+                      router.push(`/clerk/classes/${c.id}/classManagement`)
+                    }
                     type="button"
                     className="text-sm font-bold tracking-widest hover:shadow-lg bg-teal-500 hover:bg-background text-white hover:text-teal-500 border-2 border-teal-500 hover:shadow-teal-500/50 transition-all duration-200 px-5 py-1.5  rounded-md ">
                     Xem lớp

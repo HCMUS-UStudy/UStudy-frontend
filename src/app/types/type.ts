@@ -223,3 +223,14 @@ export type Classroom = {
     totalGrades: number;
   };
 }
+
+export type AllChapter = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+  description: string;
+  course: null;
+  grade: null;
+}
+

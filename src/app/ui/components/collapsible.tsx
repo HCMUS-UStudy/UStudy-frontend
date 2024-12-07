@@ -6,7 +6,7 @@ type CollapsibleType = {
   children?: React.ReactNode;
   secondaryColor?: string;
   primaryColor?: string;
-  maxHeight?: string;
+  maxHeight?: string | null;
   defaultChecked?: boolean;
 };
 
@@ -38,8 +38,10 @@ export default function Collapsible({
       />
 
       <div
-        className={`${secondaryColor} rounded-b-xl overflow-hidden transition-al duration-300 max-h-0 peer-checked:max-h-${
-          typeof maxHeight === "undefined" ? "96" : maxHeight
+        className={`${secondaryColor} rounded-b-xl overflow-hidden transition-al duration-300 max-h-0 ${
+          !maxHeight
+            ? "peer-checked:max-h-96"
+            : `peer-checked:max-h-[${maxHeight}]`
         }`}>
         {children}
       </div>

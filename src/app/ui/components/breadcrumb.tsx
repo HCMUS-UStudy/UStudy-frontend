@@ -3,7 +3,8 @@ import { ChevronRight, HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-export default function Breadcrumb() {
+
+export default function Breadcrumb({ specificName }: { specificName: string }) {
   const paths = usePathname();
   const pathnames = paths.split("/").filter((path) => path);
 
@@ -19,8 +20,12 @@ export default function Breadcrumb() {
         return "Trang tổng quát";
       case "classes":
         return "Các lớp học";
+      case "classManagement":
+        return "Quản lý lớp học";
       default:
-        return "Chưa xử lý pathname này";
+        if (paths.includes("/classes/")) {
+          return specificName;
+        }
     }
   };
 
@@ -39,7 +44,6 @@ export default function Breadcrumb() {
     );
     pathnames.map((pathname, i) => {
       const href = `/${pathnames.slice(0, i + 1).join("/")}`;
-      // console.log(href);
       renderedPaths.push(
         <li key={i} className="flex items-center gap-4 text-base">
           {i !== pathnames.length - 1 ? (

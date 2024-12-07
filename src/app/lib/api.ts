@@ -141,3 +141,20 @@ export const getClassById = async (classId: string) => {
         throw error;
     }
 }
+
+export const getListChapter = async (courseId: string, gradeId: string, page: number, limit: number, filter: string = "") => {
+    try {
+        const response = await axiosInstance.get('/chapter/clerk/get-list-chapter', {
+            params: {
+                courseId,
+                gradeId,
+                page,
+                limit,
+                filter
+            }
+        });
+        return response;
+    } catch(error) {
+        throw error;
+    }
+}
