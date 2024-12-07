@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import PaginationAdmin from "./paginationAdmin"; // Make sure the correct path is used
-import { Button } from "./button";
+import { Button } from "../button";
+import PaginationAdmin from "../paginationAdmin";
 
 interface User {
   id: string;
@@ -25,7 +25,6 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
   const [showModalRe, setShowModalRe] = useState(false);
   const handleOpenModal = () => setShowModalRe(true);
-  const handleCloseModal = () => setShowModalRe(false);
 
   const [activeTab, setActiveTab] = useState("students"); // "students" or "teachers"
   const [students, setStudents] = useState<User[]>([]);

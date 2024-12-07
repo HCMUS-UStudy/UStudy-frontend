@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
-import Loading from "./loading";
-import PaginationAdmin from "./paginationAdmin"; // Import PaginationAdmin
+import Loading from "../loading";
+import PaginationAdmin from "../paginationAdmin"; // Import PaginationAdmin
 import { useRouter } from "next/navigation";
 import { getAllCourses } from "@/app/lib/api";
 import { CourseItem } from "@/app/types/type";
