@@ -1,11 +1,8 @@
 "use client";
-import classNames from "classnames";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
 import React, { useEffect } from "react";
 import SidebarMenu from "./SidebarMenu";
 import { SideNavItemGroup } from "@/app/types/type";
-import "../styles/Sidebar.css"; // Import file CSS
-// import { BsList } from 'react-icons/bs';
 import { RiArrowLeftSLine } from "react-icons/ri";
 import Image from "next/image";
 
@@ -35,35 +32,44 @@ const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
     invokeToggleCollapse();
   };
 
-  const asideStyle = classNames("sidebar", {
-    wide: !toggleCollapse,
-    narrow: toggleCollapse,
-  });
-
-  const sidebarToggleStyle = classNames("sidebar-toggle", {
-    isLeft: !toggleCollapse,
-    isRight: toggleCollapse,
-  });
-
   return (
     <>
-      <aside className={asideStyle}>
-        <div className="sidebar-top justify-center space-x-2">
-          <Image src="/UStudyIcon.png" alt="Logo" className="sidebar-logo" width={45} height={45}/>
+      <aside
+        className={`fixed top-4 left-4 bottom-4 shadow-lg rounded-3xl border-r border-l border-gray-300 transition-all duration-300 overflow-y-auto ${
+          toggleCollapse ? "w-[90px]" : "w-[220px]"
+        } bg-[#D5EEFF]`}
+      >
+        <div className="flex items-center justify-center gap-2 pt-12 pb-8">
+          <Image
+            src="/UStudyIcon.png"
+            alt="Logo"
+            className="w-[45px] h-[45px]"
+            width={45}
+            height={45}
+          />
           <h3
-            className={classNames("sidebar-title", { hidden: toggleCollapse })}>
-            <div className="US">US</div>
-            <div>tudy</div>
+            className={`font-bold text-2xl flex ${
+              toggleCollapse ? "hidden" : "min-w-max"
+            }`}
+          >
+            <span className="text-[#0369A1]">US</span>
+            <span>tudy</span>
           </h3>
         </div>
-        <nav className="sidebar-nav">
-          {" "}
+        <nav className="flex flex-col gap-2 px-5">
           {menuItems.map((item, idx) => (
             <SidebarMenu key={idx} menuGroup={item} />
           ))}
         </nav>
       </aside>
-      <button className={sidebarToggleStyle} onClick={sidebarToggle}>
+      <button
+        onClick={sidebarToggle}
+        className={`fixed top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow transition-all duration-300 bg-gray-200 text-black ${
+          toggleCollapse
+            ? "left-[calc(92px)] rotate-180"
+            : "left-[calc(222px)]"
+        }`}
+      >
         <RiArrowLeftSLine size={14} />
       </button>
     </>

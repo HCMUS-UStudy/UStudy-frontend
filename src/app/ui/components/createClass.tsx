@@ -25,7 +25,7 @@ import {
 import clsx from "clsx";
 import { FaTrashCan } from "react-icons/fa6";
 import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
+import { BranchRootState } from "@/app/store/store";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { useRouter } from "next/navigation";
@@ -45,7 +45,7 @@ export default function CreateClass() {
   // CÁC STATE PHỤ
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
+  const { selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
   const [errors, setErrors] = useState<CreateClassError>({
     course: null,
     room: null,
