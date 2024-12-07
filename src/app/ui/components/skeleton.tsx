@@ -7,31 +7,31 @@ export const TableSkeleton = () => {
       rows.push(
         <tr key={i} className="transition-all ">
           <td className="px-3 py-4 text-sm text-gray-700 text-center">
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
           <td className="px-6 py-4 text-sm text-gray-700 text-center">
             {" "}
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
           <td className="px-6 py-4 text-sm text-gray-700 text-center">
             {" "}
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
           <td className="px-6 py-4 text-sm text-gray-700 text-center">
             {" "}
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
           <td className="px-6 py-4 text-sm text-gray-700 text-center">
             {" "}
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
           <td className="px-6 py-4 text-sm text-gray-700 text-center">
             {" "}
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
           <td className="px-6 py-4 text-sm text-gray-700 text-center">
             {" "}
-            <div className="bg-slate-200 h-2 rounded-full"></div>
+            <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
         </tr>
       );

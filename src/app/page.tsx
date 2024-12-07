@@ -1,19 +1,12 @@
-"use client";
 import Link from "next/link";
 import { Button } from "./ui/components/button";
 import Image from "next/image";
-import { FaBars, FaBook, FaX, FaUser } from "react-icons/fa6";
-import { Input } from "./ui/components/input";
+import { FaBook } from "react-icons/fa6";
 import Footer from "./ui/components/footer";
-import { useState } from "react";
-import clsx from "clsx";
+import LandingPageSideBar from "./ui/sidebar/landingPageSideBar";
+import CreateTeacher from "./ui/components/createTeacher";
 
-export default function Home() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const toggleSideBar = () => {
-    console.log(isOpen);
-    setIsOpen(!isOpen);
-  };
+export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
     const contents = [
       {
@@ -67,73 +60,14 @@ export default function Home() {
       </>
     );
   };
-  const SideBar = () => {
-    return (
-      <>
-        <div
-          onClick={toggleSideBar}
-          className={clsx(
-            {
-              hidden: !isOpen,
-              visible: isOpen,
-            },
-            "bg-black opacity-50 fixed inset-0 z-40 transition-opacity"
-          )}></div>
-        <div
-          className={clsx(
-            "fixed top-0 right-0 z-50 w-[70vw] py-2.5 px-4 bg-background h-screen overflow-y-auto tranform transition-transform",
-            { "translate-x-0": isOpen, "translate-x-full": !isOpen }
-          )}>
-          <div>
-            <div className="flex flex-row justify-between">
-              <Button className="font-thin text-base h-[8vh]">
-                <FaUser className=" mr-3" /> Đăng nhập
-              </Button>
-              <button className=" mr-3" onClick={toggleSideBar} type="button">
-                <FaX className="h-5 w-5" />
-              </button>
-            </div>
-            <br />
-            <div className="grid grid-cols-1 divide-y text-xl">
-              <Link
-                href="#"
-                className="flex items-center h-[10vh] text-slate-900  hover:text-black transition duration-200 ease-in-out">
-                Trang chủ
-              </Link>
-              <Link
-                href="#"
-                className=" flex items-center h-[10vh] text-slate-900 hover:text-black transition duration-200 ease-in-out">
-                Giáo viên
-              </Link>
-              <Link
-                href="#"
-                className=" flex items-center h-[10vh] text-slate-900 hover:text-black transition duration-200 ease-in-out">
-                Giáo Vụ
-              </Link>
-              <Link
-                href="#"
-                className=" flex items-center h-[10vh] text-slate-900 hover:text-black transition duration-200 ease-in-out">
-                Lớp học
-              </Link>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  };
   return (
     <div className=" bg-background">
-      <SideBar />
       <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[550px] rounded-b-[50px] md:rounded-bl-[200px] md:rounded-br-none pt-10 min-[320px]:px-8 md:px-20">
         <div id="Top-nav-bar" className="flex justify-between items-center">
           <div id="logo" className="text-3xl font-extrabold">
             <span className=" text-highlight_text">US</span>tudy
           </div>
-          <Button
-            onClick={toggleSideBar}
-            className="w-12 h-12 min-[320px]:flex md:hidden">
-            <FaBars />
-          </Button>
+          <LandingPageSideBar />
           <div
             id="nav-bar"
             className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
@@ -168,13 +102,6 @@ export default function Home() {
           id="hero-content"
           className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-8">
           <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
-            {/* <Image
-              className="object-cover border rounded-[24px] aspect-auto flex"
-              src="/tutorSystem.jpg"
-              width={500}
-              height={500}
-              alt="tutorSystem"
-            /> */}
             <div className="leading-tight md:leading-normal">
               <div className=" tracking-tight md:tracking-normal">
                 <span className="text-highlight_text">Kết nối</span> tri thức
@@ -197,12 +124,11 @@ export default function Home() {
             </Button>
           </div>
           <Image
-            className="object-cover border rounded-[24px] aspect-auto flex"
-            src="/tutorSystem.jpg"
+            className="object-cover border-4 border-sky-600 rounded-[24px] aspect-auto md:flex hidden"
+            src="/tutorSystem3.webp"
             width={500}
-            height={500}
+            height={450}
             alt="tutorSystem"
-            // layout="responsive"
             loading="lazy"
           />
         </div>
@@ -251,39 +177,10 @@ export default function Home() {
           width={500}
           height={500}
           alt="TeacherRegister"
-          loading="lazy"
+          priority
         />
         <div>
-          <div className="font-bold text-[30px] md:text-[50px] tracking-tighter md:tracking-normal text-center">
-            Trở thành<span className="text-highlight_text"> Giáo Viên</span>
-          </div>
-          <div className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5">
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Họ tên"
-            />
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Email"
-            />
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Giới tính"
-            />
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Ngày sinh"
-            />
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Số điện thoại"
-            />
-            <Input
-              className="w-full h-11 text-base text-secondary_text"
-              placeholder="Địa chỉ"
-            />
-            <Button className=" mt-5">Register</Button>
-          </div>
+          <CreateTeacher />
         </div>
       </div>
       <Footer />

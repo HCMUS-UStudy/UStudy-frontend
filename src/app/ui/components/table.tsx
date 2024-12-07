@@ -3,6 +3,7 @@ import { getAllClasses } from "@/app/lib/api";
 import { ClassItem } from "@/app/types/type";
 import React, { useEffect, useState } from "react";
 import { TableSkeleton } from "./skeleton";
+import { useRouter } from "next/navigation";
 
 export interface ColumnContent {
   colName: string;
@@ -60,6 +61,7 @@ export function ClassesTable({
 }) {
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
   // let displays: ClassItem[] = [];
   useEffect(() => {
     const fetchData = async () => {
@@ -68,6 +70,7 @@ export function ClassesTable({
       try {
         const response = await getAllClasses(query, currentPage);
         filteredData = response.content.map((item) => ({
+          id: item.id,
           name: item.name,
           course: {
             name: item.course.name,
@@ -116,6 +119,7 @@ export function ClassesTable({
               <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
                 Học phí
               </th>
+              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center"></th>
             </tr>
           </thead>
           <tbody>
@@ -142,8 +146,6 @@ export function ClassesTable({
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   {c.fee} VNĐ
                 </td>
-<<<<<<< HEAD
-=======
                 <td className="text-sm text-gray-700 text-center">
                   <button
                     onClick={() =>
@@ -154,7 +156,6 @@ export function ClassesTable({
                     Xem lớp
                   </button>
                 </td>
->>>>>>> 404b3fe82dbab96c3d9d3cdfb8ba235d2be23877
               </tr>
             ))}
           </tbody>

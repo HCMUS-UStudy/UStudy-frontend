@@ -4,7 +4,7 @@ import Sidebar from "@/app/ui/sidebar/sidebar";
 import React from "react";
 import HeaderStuTeach from "@/app/ui/components/headerStuTeach";
 
-export default function StaffLayout({
+export default function ClerkLayout({
   children,
 }: {
   children: React.ReactNode;

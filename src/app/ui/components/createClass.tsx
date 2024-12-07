@@ -26,11 +26,36 @@ import clsx from "clsx";
 import { FaTrashCan } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { BranchRootState } from "@/app/store/store";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
+import { useRouter } from "next/navigation";
+
+type CreateClassError = {
+  course?: string | null;
+  room?: string | null;
+  name?: string | null;
+  duration?: string | null;
+  startDate?: string | null;
+  fee?: string | null;
+  grade?: string | null;
+  classTimes?: string | null;
+};
 
 export default function CreateClass() {
   // CÁC STATE PHỤ
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
+  const [errors, setErrors] = useState<CreateClassError>({
+    course: null,
+    room: null,
+    name: null,
+    duration: null,
+    startDate: null,
+    fee: null,
+    grade: null,
+    classTimes: null,
+  });
 
   //   STATE CHO MODAL
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -159,10 +184,73 @@ export default function CreateClass() {
     }
   };
 
+  const isValidForm = (data: ClassSchema): boolean => {
+    let isValid: boolean = true;
+    const msg = "Trường bắt buộc";
+    const newErrors: CreateClassError = {
+      course: null,
+      room: null,
+      name: null,
+      duration: null,
+      startDate: null,
+      fee: null,
+      grade: null,
+      classTimes: null,
+    };
+    if (data.courseId === "") {
+      newErrors.course = msg;
+      isValid = false;
+    }
+    if (data.gradeId === "") {
+      newErrors.grade = msg;
+      isValid = false;
+    }
+    if (data.fee === 0) {
+      newErrors.fee = msg;
+      isValid = false;
+    } else if (data.fee < 0) {
+      newErrors.fee = "Học phí không thể âm";
+      isValid = false;
+    }
+    if (data.branchId === null || data.branchId === "") {
+      toast.error("Vui lòng chọn chi nhánh trước khi tạo lớp", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        transition: Bounce,
+      });
+      isValid = false;
+    }
+    if (data.name === "") {
+      newErrors.name = msg;
+      isValid = false;
+    }
+    if (data.startDate === "") {
+      newErrors.startDate = msg;
+      isValid = false;
+    }
+    if (data.classTimes.length === 0) {
+      newErrors.classTimes = msg;
+      isValid = false;
+    }
+    if (data.roomId === "") {
+      newErrors.room = msg;
+      isValid = false;
+    }
+    if (durationQuantity === "" || durationQuantity === 0) {
+      newErrors.duration = msg;
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleCreateClass = async () => {
     try {
       setIsLoading(true);
-      let newClass: ClassSchema = {
+      const newClass: ClassSchema = {
         name: name,
         courseId: typeof course?.id === "undefined" ? "" : course?.id,
         gradeId: typeof grade?.id === "undefined" ? "" : grade?.id,
@@ -174,6 +262,8 @@ export default function CreateClass() {
         classTimes: [],
         roomId: typeof room?.id === "undefined" ? "" : room?.id,
       };
+      console.log(newClass);
+
       switch (scheduleType) {
         case "Giờ cố định":
           newClass.classTimes = fixedSchedule;
@@ -182,8 +272,36 @@ export default function CreateClass() {
           newClass.classTimes = flexSchedule;
           break;
       }
-      const response = await createNewClass(newClass);
-      console.log(response);
+      if (isValidForm(newClass) === true) {
+        // console.log("here");
+        const response = await createNewClass(newClass);
+        console.log(response);
+        if (response.status === 200) {
+          setName("");
+          setGrade(null);
+          setCourse(null);
+          setStartDate("");
+          setEndDate("");
+          setFixedSchedule([]);
+          setFlexSchedule([]);
+          setEndDate("");
+          setRoom(null);
+          setDurationQuantity("");
+          setFee("");
+          setDescription("");
+          toast.success("Tạo lớp học thành công ! Đang chuyển hướng...", {
+            position: "bottom-right",
+            autoClose: 3000,
+          });
+          router.push(`/clerk/classes/${response.data.id}/classManagement`);
+        } else {
+          toast.error(`Tạo lớp học thất bại`, {
+            position: "bottom-right",
+            autoClose: 3000,
+          });
+        }
+      }
+      console.log(errors);
     } catch (error) {
       console.log(error);
     } finally {
@@ -193,6 +311,7 @@ export default function CreateClass() {
 
   return (
     <div>
+      <ToastContainer />
       <Button
         onClick={() => {
           setIsOpenModal(true);
@@ -222,13 +341,16 @@ export default function CreateClass() {
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Tên lớp"
               name="name"
-              //   isError={state.errors?.name != null}
-              //   errorMsg={state.errors?.name}
+              isError={errors.name !== null}
+              errorMsg={errors.name}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setErrors({ ...errors, name: null });
+              }}
             />
 
-            <div className="flex gap-5">
+            <div className="flex gap-3">
               <div>
                 <SelectingButton
                   onClick={() => {
@@ -236,13 +358,10 @@ export default function CreateClass() {
                   }}
                   placeholder={grade === null ? "Khối" : grade?.name}
                   nameForInput="grade"
+                  isError={errors.grade !== null}
                   className="w-[8vw]"
                 />
-                {/* {state.errors?.grade && (
-                  <span className="text-[13px] text-error">
-                    {state.errors.grade}
-                  </span>
-                )} */}
+                <span className="text-[13px] text-error">{errors.grade}</span>
               </div>
               <div>
                 <SelectingButton
@@ -256,13 +375,10 @@ export default function CreateClass() {
                   placeholder={course === null ? "Môn học" : course.name}
                   nameForInput="subject"
                   className="w-[7vw]"
+                  isError={errors.course !== null}
                   disabled={grade === null}
                 />
-                {/* {state.errors?.subject && (
-                  <span className="text-[13px] text-error">
-                    {state.errors.subject}
-                  </span>
-                )} */}
+                <span className="text-[13px] text-error">{errors.course}</span>
               </div>
 
               <div className="flex-1">
@@ -276,13 +392,12 @@ export default function CreateClass() {
                       : `${durationQuantity} ${durationUnit}`
                   }
                   nameForInput="duration"
-                  className="w-full"
+                  className="w-full h-fit"
+                  isError={errors.duration !== null}
                 />
-                {/* {state.errors?.duration && (
-                  <span className="text-[13px] text-error">
-                    {state.errors.duration}
-                  </span>
-                )} */}
+                <span className="text-[13px] text-error">
+                  {errors.duration}
+                </span>
               </div>
             </div>
 
@@ -295,22 +410,23 @@ export default function CreateClass() {
                   type="date"
                   id="default-datepicker"
                   className={clsx(
-                    // {
-                    //   "border-2 border-error": state.errors?.date,
-                    //   "border border-gray-300": !state.errors?.date,
-                    // },
+                    {
+                      "border-2 border-error": errors?.startDate,
+                      "border border-gray-300": !errors?.startDate,
+                    },
                     "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5"
                   )}
                   placeholder="Ngày bắt đầu"
                   name="startDate"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setErrors({ ...errors, startDate: null });
+                  }}
                 />
-                {/* {state.errors?.date && (
-                  <span className="text-[13px] text-error">
-                    {state.errors.date[0]}
-                  </span>
-                )} */}
+                <span className="text-[13px] text-error">
+                  {errors.startDate}
+                </span>
               </div>
               <div className="w-[15vw]">
                 <h2 className="text-sm text-secondary_text mb-1 ml-1">
@@ -331,57 +447,69 @@ export default function CreateClass() {
             </div>
 
             <div className="flex justify-between gap-8">
-              <SelectingButton
-                onClick={() => {
-                  setIsSelectingSchedule(true);
-                  // setScheduleType("Giờ cố định");
-                }}
-                nameForInput=""
-                placeholder={
-                  scheduleType === null ? "Khung giờ học" : scheduleType
-                }
-                className="w-[15vw]"
-              />
-              <SelectingButton
-                onClick={() => {
-                  if (
+              <div className="flex flex-col w-[15vw]">
+                <SelectingButton
+                  onClick={() => {
+                    setIsSelectingSchedule(true);
+                    // setScheduleType("Giờ cố định");
+                  }}
+                  nameForInput=""
+                  placeholder={
+                    scheduleType === null ? "Khung giờ học" : scheduleType
+                  }
+                  className="w-full h-fit"
+                  isError={errors.classTimes !== null}
+                />
+                <span className="text-[13px] text-error">
+                  {errors.classTimes}
+                </span>
+              </div>
+
+              <div className="flex flex-col w-[15vw]">
+                <SelectingButton
+                  onClick={() => {
+                    if (
+                      (flexSchedule.length === 0 &&
+                        fixedSchedule.length === 0) ||
+                      endDate === "" ||
+                      startDate === "" ||
+                      !selectedBranchId
+                    ) {
+                      return;
+                    }
+                    switch (scheduleType) {
+                      case "Giờ cố định":
+                        displayAvailableRooms(
+                          selectedBranchId,
+                          fixedSchedule,
+                          startDate,
+                          endDate
+                        );
+                        break;
+                      case "Giờ linh hoạt":
+                        displayAvailableRooms(
+                          selectedBranchId,
+                          flexSchedule,
+                          startDate,
+                          endDate
+                        );
+                        break;
+                    }
+                    setIsSelectingRoom(true);
+                  }}
+                  nameForInput=""
+                  placeholder={room === null ? "Phòng học" : room.name}
+                  className="w-full h-fit"
+                  disabled={
                     (flexSchedule.length === 0 && fixedSchedule.length === 0) ||
                     endDate === "" ||
                     startDate === "" ||
                     !selectedBranchId
-                  ) {
-                    return;
                   }
-                  switch (scheduleType) {
-                    case "Giờ cố định":
-                      displayAvailableRooms(
-                        selectedBranchId,
-                        fixedSchedule,
-                        startDate,
-                        endDate
-                      );
-                      break;
-                    case "Giờ linh hoạt":
-                      displayAvailableRooms(
-                        selectedBranchId,
-                        flexSchedule,
-                        startDate,
-                        endDate
-                      );
-                      break;
-                  }
-                  setIsSelectingRoom(true);
-                }}
-                nameForInput=""
-                placeholder={room === null ? "Phòng học" : room.name}
-                className="w-[15vw]"
-                disabled={
-                  (flexSchedule.length === 0 && fixedSchedule.length === 0) ||
-                  endDate === "" ||
-                  startDate === "" ||
-                  !selectedBranchId
-                }
-              />
+                  isError={errors.room !== null}
+                />
+                <span className="text-[13px] text-error">{errors.room}</span>
+              </div>
             </div>
 
             <Input
@@ -396,8 +524,8 @@ export default function CreateClass() {
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Học phí: Đơn vị VNĐ"
               name="fee"
-              // isError={state.errors?.fee != null}
-              // errorMsg={state.errors?.fee}
+              isError={errors?.fee != null}
+              errorMsg={errors?.fee}
               value={fee}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
@@ -434,6 +562,7 @@ export default function CreateClass() {
                 <div
                   onClick={() => {
                     setGrade(data);
+                    setErrors({ ...errors, grade: null });
                     setIsSelectingGrade(false);
                   }}
                   key={i}
@@ -467,6 +596,7 @@ export default function CreateClass() {
                 <div
                   onClick={() => {
                     setIsSelectingSubject(false);
+                    setErrors({ ...errors, course: null });
                     setCourse(data);
                   }}
                   key={i}
@@ -490,6 +620,7 @@ export default function CreateClass() {
           <div className="grid grid-cols-2 gap-2 mx-8 mt-4">
             <input
               type="number"
+              min={1}
               placeholder="VD: 1"
               value={durationQuantity}
               onChange={(e) => {
@@ -509,6 +640,23 @@ export default function CreateClass() {
           </div>
           <Button
             onClick={() => {
+              if (typeof durationQuantity !== "string") {
+                if (durationQuantity < 0) {
+                  // setErrors({
+                  //   ...errors,
+                  //   duration: "Thời gian không thể âm",
+                  // });
+                  toast.error("Thời gian không thể âm", {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                  });
+                  return;
+                } else {
+                  setErrors({ ...errors, duration: null });
+                }
+              } else {
+                setErrors({ ...errors, duration: "Trường bắt buộc" });
+              }
               setIsSelectingDuration(false);
             }}
             className="mx-auto mt-3 w-[30%]">
@@ -529,8 +677,6 @@ export default function CreateClass() {
             <div
               onClick={() => {
                 setScheduleType("Giờ cố định");
-                // setIsFlexibleTime(false);
-                // setIsSelectingStartEndTime(false);
               }}
               className={
                 "border-sky-500 rounded px-2 text-xl text-center cursor-pointer"
@@ -603,6 +749,19 @@ export default function CreateClass() {
                 </div>
                 <Button
                   onClick={() => {
+                    if (endTime < startTime) {
+                      console.log("ne");
+                      toast.error("Giờ bắt đầu phải lớn hơn giờ kết thúc", {
+                        position: "bottom-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: false,
+                        theme: "light",
+                        transition: Bounce,
+                      });
+                      return;
+                    }
                     if (selectedDay === 0) {
                       return;
                     }
@@ -706,6 +865,17 @@ export default function CreateClass() {
           )}
           <Button
             onClick={() => {
+              console.log(endTime);
+              if (endTime < startTime) {
+                toast.error(
+                  "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc",
+                  {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                  }
+                );
+                return;
+              }
               const newTimes: TimeItem[] = [];
               baseSchedule.map((data) => {
                 if (data.isChosen === true) {
@@ -717,7 +887,7 @@ export default function CreateClass() {
                 }
               });
               setFixedSchedule(newTimes);
-              // setIsSelectingTime(false);
+              setErrors({ ...errors, classTimes: null });
               setIsSelectingSchedule(false);
             }}
             className="w-1/3 mt-5">
@@ -743,6 +913,7 @@ export default function CreateClass() {
                 <div
                   onClick={() => {
                     setRoom(data);
+                    setErrors({ ...errors, room: null });
                     setIsSelectingRoom(false);
                   }}
                   key={i}

@@ -1,11 +1,17 @@
 import React from "react";
-import ModalAccount from "@/app/ui/components/modalAccount-Ad";
-import UserTable from "@/app/ui/components/accountTable";
-import AccountRegisterModal from "@/app/ui/components/accountRegister";
+import ModalAccount from "@/app/ui/components/AccountAdmin/modalAccount-Ad";
+import UserTable from "@/app/ui/components/AccountAdmin/accountTable";
+import AccountRegisterModal from "@/app/ui/components/AccountAdmin/accountRegister";
+import { SearchField } from "@/app/ui/components/input";
 
-const AccountPage: React.FC = () => {
-  const searchQuery = "";
-  const usersPerPage = 4;
+export default async function AccountPage(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
 
   // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   console.log("Search")
@@ -60,10 +66,9 @@ const AccountPage: React.FC = () => {
         </form> */}
         </div>
 
-        <div className="flex justify-end items-center space-x-4 mt-6">
-
+        <div className="flex justify-between items-center space-x-4 mt-6">
+          <SearchField className="w-[200px]" placeholder="Tìm theo tên người dùng..." />
           <div className="flex items-center space-x-4 pr-6">
-
             <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
             <ModalAccount buttonLabel="Tạo người dùng" />
           </div>
@@ -71,12 +76,10 @@ const AccountPage: React.FC = () => {
 
         {/* Table Section */}
         <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
-          <UserTable searchQuery={searchQuery} usersPerPage={usersPerPage} />
+          <UserTable searchQuery={query} />
         </div>
       </div>
 
     </>
   );
 };
-
-export default AccountPage;

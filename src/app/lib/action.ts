@@ -1,5 +1,3 @@
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import {z} from 'zod';
 
 const LogInFormSchema = z.object({
@@ -87,6 +85,4 @@ export async function createClass(previousState: CreateClassFormState, formData:
         message: 'Success',
         errors: {}
     }
-    revalidatePath('/staff/classes');
-    redirect('/staff/classes');
 }
