@@ -25,12 +25,12 @@ import {
 import clsx from "clsx";
 import { FaTrashCan } from "react-icons/fa6";
 import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
+import { BranchRootState } from "@/app/store/store";
 
 export default function CreateClass() {
   // CÁC STATE PHỤ
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
+  const { selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
 
   //   STATE CHO MODAL
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);

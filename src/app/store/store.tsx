@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import branchReducer from './branchSlice';
 
-const store = configureStore({
+const branchStore = configureStore({
   reducer: {
     branch: branchReducer,
   },
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type BranchRootState = ReturnType<typeof branchStore.getState>;
+export type BranchAppDispatch = typeof branchStore.dispatch;
 
-export default store;
+export { branchStore };

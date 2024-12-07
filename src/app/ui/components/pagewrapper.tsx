@@ -9,8 +9,8 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
   const bodyStyle = classNames(
     "bg-background flex flex-col p-4 min-h-screen mt-3 mr-4",
     {
-      ["pl-[18.4rem]"]: !toggleCollapse,
-      ["pl-[9.7rem]"]: toggleCollapse,
+      ["pl-[280px]"]: !toggleCollapse,
+      ["pl-[150px]"]: toggleCollapse,
     }
   );
 

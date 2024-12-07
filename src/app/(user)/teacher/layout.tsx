@@ -6,13 +6,13 @@ import HeaderStuTeach from "@/app/ui/components/headerStuTeach";
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
 
-    return (
-        <div className='bg-background'>
-            <Sidebar menuItems={SIDENAV_ITEMS_TEACHER}/>
-            <div className="flex flex-col h-full w-full">
-                <HeaderStuTeach />
-                <PageWrapper> {children} </PageWrapper>
-            </div>
-        </div>
-    );
+  return (
+    <div className='bg-background'>
+      <Sidebar menuItems={SIDENAV_ITEMS_TEACHER} />
+      <div className="flex flex-col h-full w-full">
+        <HeaderStuTeach />
+        <PageWrapper> {children} </PageWrapper>
+      </div>
+    </div>
+  );
 }
