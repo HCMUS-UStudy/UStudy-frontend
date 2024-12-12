@@ -192,7 +192,7 @@ export default function Home() {
 
     ChartJS.register({
         id: 'addDotsAndConnect',
-        afterDraw(chart) {
+        beforeDraw(chart) {
             const { ctx, scales } = chart;
             const xScale = scales.x; // Trục x
             const yScale = scales.y; // Trục y

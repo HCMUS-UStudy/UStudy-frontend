@@ -8,7 +8,6 @@ import {
   BsHouseDoor,
   BsPerson,
   BsPersonWorkspace,
-  // BsFillPeopleFill,
   BsQuestionCircle,
   BsWallet2,
 } from "react-icons/bs";
@@ -136,30 +135,15 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItemGroup[] = [
     ],
   },
   {
-    title: "Học phí",
-    menuList: [
-      {
-        title: "Đóng học phí",
-        path: "/student/tuition/pay",
-        icon: <BsCreditCard size={20} />,
-      },
-      {
-        title: "Tra cứu học phí",
-        path: "/student/tuition/check",
-        icon: <BsWallet2 size={20} />,
-      },
-    ],
-  },
-  {
     title: "Lịch học và lớp học",
     menuList: [
       {
-        title: "Xem lịch học",
+        title: "Lịch học",
         path: "/student/schedule",
         icon: <BsCalendar size={20} />,
       },
       {
-        title: "Xem danh sách các lớp học",
+        title: "Danh sách lớp học",
         path: "/student/classes",
         icon: <SiGoogleclassroom size={20} />,
       },
@@ -174,14 +158,29 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItemGroup[] = [
         icon: <BsCardChecklist size={20} />,
       },
       {
-        title: "Xem nội dung môn học",
+        title: "Nội dung môn học",
         path: "/student/study/content",
         icon: <BsBook size={20} />,
       },
       {
-        title: "Xem kết quả học tập",
+        title: "Kết quả học tập",
         path: "/student/study/results",
         icon: <BsPersonWorkspace size={20} />,
+      },
+    ],
+  },
+  {
+    title: "Học phí",
+    menuList: [
+      {
+        title: "Đóng học phí",
+        path: "/student/tuition/pay",
+        icon: <BsCreditCard size={20} />,
+      },
+      {
+        title: "Tra cứu học phí",
+        path: "/student/tuition/check",
+        icon: <BsWallet2 size={20} />,
       },
     ],
   },
