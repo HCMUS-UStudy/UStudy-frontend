@@ -152,7 +152,7 @@ export function ClassesTable({
                       router.push(`/clerk/classes/${c.id}/classManagement`)
                     }
                     type="button"
-                    className="text-sm font-bold tracking-widest hover:shadow-lg bg-teal-500 hover:bg-background text-white hover:text-teal-500 border-2 border-teal-500 hover:shadow-teal-500/50 transition-all duration-200 px-5 py-1.5  rounded-md ">
+                    className="text-sm font-bold tracking-widest hover:shadow-lg ring-2 ring-blue-600 bg-white hover:bg-blue-600 hover:text-white text-gray-700 hover:shadow-blue-500/50 transition-all duration-200 px-5 py-1.5  rounded-md ">
                     Xem lớp
                   </button>
                 </td>

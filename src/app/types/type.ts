@@ -305,3 +305,15 @@ export type MaterialData = {
   content: MaterialItem[],
   totalPages: number;
 }
+
+export type Teacher = {
+  id: string;
+  genId: string;
+  email: string;
+  name: string;
+  avatar: string;
+  role: string;
+  gender: 'MALE' | 'FEMALE';
+  createdAt: string;
+  active: boolean;
+}

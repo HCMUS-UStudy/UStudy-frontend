@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, SelectingButton } from "./button";
 import Modal from "./modal";
-import { CircleX, Plus } from "lucide-react";
+import { CircleX, Plus, PlusIcon } from "lucide-react";
 import { Input } from "./input";
 import {
   ClassSchema,
@@ -317,8 +317,11 @@ export default function CreateClass() {
           setIsOpenModal(true);
         }}
         type="button"
-        className="pl-6 pr-6">
-        Thêm lớp học
+        className="relative group px-8 bg-gradient-to-tr from-blue-800 via-blue-600  to-blue-800 bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200">
+        <span className="-translate-x-0 group-hover:-translate-x-4 transition-all duration-300">
+          Thêm lớp học
+        </span>
+        <PlusIcon className="size-8 absolute translate-x-14 opacity-0 rotate-45 group-hover:opacity-100 group-hover:rotate-90 transition-all duration-300" />
       </Button>
       <Modal
         modalName="ModalCreateClass"
@@ -538,7 +541,7 @@ export default function CreateClass() {
               }}
               // isPending={isPending}
               type="button"
-              className="mt-5">
+              className="mt-5 bg-blue-600 hover:bg-blue-800">
               Tạo lớp học
             </Button>
           </form>

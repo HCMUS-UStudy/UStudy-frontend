@@ -31,7 +31,7 @@ export default function Modal({
           e.stopPropagation();
         }}
         id="main-content"
-        className={`w-[30vw] h-fit bg-white rounded-xl scale-100 opacity-100 ${className}`}>
+        className={`h-fit bg-white rounded-xl scale-100 opacity-100 ${className}`}>
         {children}
       </div>
     </div>

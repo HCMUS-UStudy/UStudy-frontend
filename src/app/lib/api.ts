@@ -293,3 +293,29 @@ export const rejectRegister = async (userId: string) => {
 		throw error;
 	}
 }
+
+export const getAvailableTeacher = async (classId: string) => {
+	try {
+		const response = await axiosInstance.get('/user/clerk/available-teachers', {
+			params: {
+				classId
+			}
+		});
+		return response;
+	} catch(error) {
+		throw error;
+	}
+}
+
+export const addTeacherToClass = async (classId: string, teacherId: string) => {
+	try {
+		const response = await axiosInstance.post(`/class/clerk/${classId}/add-teacher`, {}, {
+			params: {
+				teacherId
+			}
+		})
+		return response;
+	} catch(error) {
+		throw error;
+	}
+}
