@@ -2,7 +2,7 @@ import { Button } from "@/app/ui/components/button";
 import React from "react";
 
 import GradeGrid from "@/app/ui/components/GradeAdmin/GradeGrid";
-import BreadCrumb from "@/app/ui/components/bread_crumb";
+// import BreadCrumb from "@/app/ui/components/bread_crumb";
 import { SearchField } from "@/app/ui/components/input";
 
 // params are automatically passed to the page component in App Router
@@ -38,7 +38,7 @@ const CourseDocumentsPage = async ({
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen">
-      <BreadCrumb courseId={id} subject={subject} />
+      {/* <BreadCrumb courseId={id} subject={subject} /> */}
       <h1 className="text-4xl font-extrabold text-gray-800 mb-10 text-center">
         Tài liệu môn {decodeURIComponent(subject)}
       </h1>

@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../store/store";
+import { BranchRootState } from "@/app/store/store";
 import { setBranch, setBranches } from "../../store/branchSlice";
-import "../styles/BranchSelector.css";
 import { getAllBranches } from "@/app/lib/api";
 
 interface Branch {
@@ -17,7 +16,7 @@ interface Branch {
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
   const { branches, selectedBranchId } = useSelector(
-    (state: RootState) => state.branch
+    (state: BranchRootState) => state.branch
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -68,19 +67,21 @@ const BranchSelector: React.FC = () => {
   }, []);
 
   return (
-    <div className="branch-select" ref={dropdownRef}>
+    <div className="relative w-[200px]" ref={dropdownRef}>
       {branches.length > 0 ? (
-        <div className="dropdown" onClick={() => setIsOpen(!isOpen)}>
-          <div className="dropdown-selected">
+        <div className="relative cursor-pointer rounded-[20px]" onClick={() => setIsOpen(!isOpen)}>
+          <div className="p-2 border border-[#ccc] rounded-[12px] bg-[#f9f9f9]
+                         flex justify-between items-center relative">
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
+            <span className="absolute right-2 top-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-800 transform -translate-y-1/2"></span>
           </div>
           {isOpen && (
-            <div className="dropdown-options">
+            <div className="absolute top-full left-0 w-full border border-gray-300 rounded-[4px] bg-white z-[1000] shadow-lg">
               {branches.map((branch) => (
                 <div
                   key={branch.id}
-                  className="dropdown-option"
+                  className="p-2 cursor-pointer hover:bg-[#f1f1f1]"
                   onClick={() => handleBranchChange(branch.id)}>
                   {branch.name}
                 </div>

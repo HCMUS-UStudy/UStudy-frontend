@@ -305,3 +305,72 @@ export type MaterialData = {
   content: MaterialItem[],
   totalPages: number;
 }
+
+type Grade = {
+  id: string;
+  name: string;
+};
+
+type Course = {
+  id: string;
+  name: string;
+  description: string;
+  totalGrades: number;
+  status: boolean;
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+    role: string;
+    gender: string;
+    createdAt: string;
+    active: boolean;
+  };
+  createdAt: string;
+};
+
+type Room = {
+  id: string;
+  name: string;
+};
+
+export type Teacher = {
+  id: string;
+  genId: string;
+  email: string;
+  name: string;
+  avatar: string;
+  role: string;
+  gender: 'MALE' | 'FEMALE';
+  createdAt: string;
+  active: boolean;
+}
+
+type UserForTeacher = {
+  gender: string;
+  createdAt: string;
+  active: boolean;
+};
+
+export type ClassTime = {
+  id: string;
+  day: number;
+  startTime: string;
+  endTime: string;
+};
+
+export type ClassTeacher = {
+  id: string;
+  name: string;
+  description: string;
+  grade: Grade;
+  course: Course;
+  room: Room;
+  fee: number;
+  teacher: UserForTeacher;
+  students: UserForTeacher[];
+  classTimes: ClassTime[];
+  status: string | null; // Status can be null
+};

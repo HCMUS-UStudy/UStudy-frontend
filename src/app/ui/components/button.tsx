@@ -28,11 +28,11 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       className={clsx(
         {
-          "hover:bg-sky-900": !disabled,
-          "bg-sky-900 cursor-progress": isPending,
-          "bg-button_primary cursor-pointer": !isPending,
+          "": !disabled,
+          "cursor-progress": isPending,
+          "cursor-pointer": !isPending,
         },
-        `${className} flex items-center justify-center rounded-md px-3 py-2.5 bg-button_primary transition duration-200 ease-in-out cursor-pointer text-white font-bold`
+        `${className} flex items-center justify-center rounded-md px-3 py-2.5 transition duration-200 ease-in-out cursor-pointer text-blue-50 font-bold`
       )}
       {...props}>
       {children}

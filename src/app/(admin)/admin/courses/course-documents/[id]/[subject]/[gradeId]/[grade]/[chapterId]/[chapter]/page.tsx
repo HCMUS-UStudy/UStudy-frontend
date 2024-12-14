@@ -40,14 +40,14 @@ const ChapterDocumentsPage = async ({
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen">
-      <BreadCrumb
+      {/* <BreadCrumb
         courseId={id}
         subject={decodedSubject}
         grade={grade}
         gradeId={gradeId}
         chapter={chapter}
         chapterId={chapterId}
-      />
+      /> */}
       <h1 className="text-4xl font-extrabold text-gray-800 mb-10 text-center">
         Tài liệu môn {decodedSubject} - {decodedGrade} - {decodedChapter}
       </h1>

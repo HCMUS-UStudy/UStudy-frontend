@@ -35,7 +35,7 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
       <li key={"homepage"} className="flex items-center gap-4 text-base ">
         <Link
           href={"/"}
-          className="flex items-center gap-2 hover:text-sky-500 font-bold hover:scale-110 transition-all duration-200">
+          className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200">
           <HomeIcon size={20} />
           Trang chủ
         </Link>
@@ -50,7 +50,7 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
             <>
               <Link
                 href={i === 0 ? `${href}/dashboard` : href}
-                className="flex items-center gap-2 hover:text-sky-500 font-bold hover:scale-110 transition-all duration-200">
+                className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200">
                 {translate(pathname)}
               </Link>
               <ChevronRight size={20} />
@@ -69,7 +69,7 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
   return (
     <div>
       <div>
-        <ul className="flex gap-5 text-sky-700">{renderPaths()}</ul>
+        <ul className="flex gap-5 text-blue-700">{renderPaths()}</ul>
       </div>
     </div>
   );
