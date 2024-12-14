@@ -1,11 +1,11 @@
 :root {
-  --sidebar-width-wide: 230px;  /* Biến cho width của sidebar rộng */
-  --sidebar-width-narrow: 87px;  /* Biến cho width của sidebar hẹp */
+  --sidebar-width-wide: 220px;  /* Biến cho width của sidebar rộng */
+  --sidebar-width-narrow: 90px;  /* Biến cho width của sidebar hẹp */
 }
 
 .header {
   padding-top: 25px;
-  margin-left: calc(66px + var(--sidebar-width-wide));;
+  margin-left: calc(60px + var(--sidebar-width-wide));;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,7 +14,7 @@
 }
 
 .header.isNarrow {
-  margin-left: calc(66px + var(--sidebar-width-narrow));
+  margin-left: calc(60px + var(--sidebar-width-narrow));
 }
 
 .right-items {

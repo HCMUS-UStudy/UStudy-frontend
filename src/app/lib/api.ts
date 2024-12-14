@@ -1,4 +1,4 @@
-import { AccountData, AccountSchema, ClassData, ClassSchema, CourseData, CourseSchema, RegisterAccountData, TimeItem } from "../types/type";
+import { AccountData, AccountSchema, ClassData, ClassSchema, CourseData, CourseSchema, RegisterAccountData, TimeItem, ClassTeacher } from "../types/type";
 import { Branch } from "../types/type";
 import axiosInstance from "./axios";
 
@@ -32,18 +32,18 @@ export const getCoursesByGradeId = async (gradeId: string) => {
 }
 
 export const getAllClasses = async (query: string, currentPage: number): Promise<ClassData> => {
-    try {
-        const response = await axiosInstance.get('/class/all/get-list-class', {
-            params: {
-                page: currentPage,
-                limit: 5,
-                filter: query
-            }
-        });
-        return response.data;
-    } catch(error) {
-        throw error;
-    }
+	try {
+		const response = await axiosInstance.get('/class/all/get-list-class', {
+			params: {
+				page: currentPage,
+				limit: 5,
+				filter: query
+			}
+		});
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
 }
 
 export const getAllBranches = async (page: number, limit: number) => {
@@ -138,45 +138,45 @@ export const handleRefreshToken = async (refreshToken: string | null) => {
 }
 
 export const adminLogin = async (genId: string, password: string) => {
-    try {
-        const response = await axiosInstance.post('/auth/admin/login', {
-            genId: genId,
-            password: password
-        });
-        return response;
-    } catch(error) {
-        throw error;
-    }
+	try {
+		const response = await axiosInstance.post('/auth/admin/login', {
+			genId: genId,
+			password: password
+		});
+		return response;
+	} catch (error) {
+		throw error;
+	}
 }
 
 export const getClassById = async (classId: string) => {
-    try {
-        const response = await axiosInstance.get("/class/all/get-one", {
-            params: {
-            classId,
-            },
-        });
-        return response;
-    } catch (error) {
-        throw error;
-    }
+	try {
+		const response = await axiosInstance.get("/class/all/get-one", {
+			params: {
+				classId,
+			},
+		});
+		return response;
+	} catch (error) {
+		throw error;
+	}
 }
 
 export const getListChapter = async (courseId: string, gradeId: string, page: number, limit: number, filter: string = "") => {
-    try {
-        const response = await axiosInstance.get('/chapter/clerk/get-list-chapter', {
-            params: {
-                courseId,
-                gradeId,
-                page,
-                limit,
-                filter
-            }
-        });
-        return response;
-    } catch(error) {
-        throw error;
-    }
+	try {
+		const response = await axiosInstance.get('/chapter/clerk/get-list-chapter', {
+			params: {
+				courseId,
+				gradeId,
+				page,
+				limit,
+				filter
+			}
+		});
+		return response;
+	} catch (error) {
+		throw error;
+	}
 }
 
 export const getAllCourses = async (query: string, currentPage: number): Promise<CourseData> => {
@@ -307,6 +307,21 @@ export const getAvailableTeacher = async (classId: string) => {
 	}
 }
 
+export const getClassesForTeacher = async () => {
+	try {
+		const response = await axiosInstance.get('/class/all/get-list-class', {
+			params: {
+				page: 0,
+				limit: 10,
+				filter: ''
+			}
+		});
+		return response.data.content;
+	} catch (error) {
+		throw error;
+	}
+}
+
 export const addTeacherToClass = async (classId: string, teacherId: string) => {
 	try {
 		const response = await axiosInstance.post(`/class/clerk/${classId}/add-teacher`, {}, {
@@ -316,6 +331,20 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
 		})
 		return response;
 	} catch(error) {
+		throw error;
+	}
+}
+
+
+export const getOneClass = async (classId: string): Promise<ClassTeacher> => {
+	try {
+		const response = await axiosInstance.get('/class/all/get-one', {
+			params: {
+				classId: classId
+			}
+		});
+		return response.data;
+	} catch (error) {
 		throw error;
 	}
 }
