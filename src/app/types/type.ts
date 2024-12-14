@@ -336,13 +336,19 @@ type Room = {
   name: string;
 };
 
-type UserForTeacher = {
+export type Teacher = {
   id: string;
   genId: string;
   email: string;
   name: string;
   avatar: string;
   role: string;
+  gender: 'MALE' | 'FEMALE';
+  createdAt: string;
+  active: boolean;
+}
+
+type UserForTeacher = {
   gender: string;
   createdAt: string;
   active: boolean;

@@ -253,7 +253,7 @@ export default function Login() {
                   {
                     "hover:scale-105": !isPending,
                   },
-                  "mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform "
+                  "mt-6 w-full bg-blue-600 hover:bg-blue-800 text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform "
                 )}>
                 {isPending || isLoading ? <LoginSpinner /> : "Đăng nhập"}
                 {/* <LoginSpinner /> */}

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Button } from "./ui/components/button";
 import Image from "next/image";
-import { FaBook } from "react-icons/fa6";
+import { FaBook, FaUserGraduate } from "react-icons/fa6";
 import Footer from "./ui/components/footer";
 import LandingPageSideBar from "./ui/sidebar/landingPageSideBar";
 import CreateTeacher from "./ui/components/createTeacher";
+import { IoLogInOutline, IoSparkles } from "react-icons/io5";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -64,7 +65,7 @@ export default async function Home() {
     <div className=" bg-background">
       <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[550px] rounded-b-[50px] md:rounded-bl-[200px] md:rounded-br-none pt-10 min-[320px]:px-8 md:px-20">
         <div id="Top-nav-bar" className="flex justify-between items-center">
-          <div id="logo" className="text-3xl font-extrabold">
+          <div id="logo" className="text-4xl font-extrabold">
             <span className=" text-highlight_text">US</span>tudy
           </div>
           <LandingPageSideBar />
@@ -93,9 +94,14 @@ export default async function Home() {
             </Link>
           </div>
           <Button
-            className="w-[150px] text-lg min-[320px]:hidden md:flex"
+            className=" px-8 font-bold relative text-lg min-[320px]:hidden md:flex bg-gradient-to-tr from-blue-600 to-blue-800 border-2 border-blue-600 300 rounded-xl group transition-all duration-300 hover:scale-110"
             type="submit">
-            <Link href="/login">Đăng nhập</Link>
+            <Link
+              href="/login"
+              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300">
+              Đăng nhập
+            </Link>
+            <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
           </Button>
         </div>
         <div
@@ -118,9 +124,15 @@ export default async function Home() {
               </div>
             </div>
             <Button
-              className="w-full md:w-[200px] font-bold text-lg"
+              className="w-full relative overflow-hidden group md:w-[300px] rounded-xl font-bold text-xl tracking-wider py-4 bg-gradient-to-tr from-blue-600 via-blue-800 to-blue-600 bg-[length:200%_200%] bg-[0%_100%] hover:bg-[100%_0%] hover:scale-110 transition-all duration-300"
               type="submit">
               Bắt đầu
+              <span className="absolute -translate-y-1 translate-x-1 opacity-20">
+                Bắt đầu
+              </span>
+              <IoSparkles className="absolute size-10 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <IoSparkles className="absolute size-12 left-5 bottom-1 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+              <FaUserGraduate className="absolute size-14 -right-7 -bottom-2 origin-bottom group-hover:-rotate-[30deg] opacity-0 group-hover:opacity-100 transition-all duration-300" />
             </Button>
           </div>
           <Image
@@ -150,7 +162,7 @@ export default async function Home() {
         <div className="mx-12 mt-10 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10">
           <RenderMainFeatures />
         </div>
-        <div className="relative max-w-[1120px] h-max-[220px]  px-5 md:px-36 py-10 mt-10 md:mt-32 rounded-3xl text-background text-center mx-8 md:mx-auto text-sm md:text-2xl  bg-gradient-to-r from-sky-500 to-sky-900">
+        <div className="relative max-w-[1120px] h-max-[220px]  px-5 md:px-36 py-10 mt-10 md:mt-32 rounded-3xl text-blue-50 text-center mx-8 md:mx-auto text-sm md:text-2xl  bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900">
           “Làm thế nào anh biết nhiều về mọi thứ? đã hỏi một người rất khôn
           ngoan và thông minh; và câu trả lời là. Bằng cách không bao giờ sợ hãi
           hoặc xấu hổ khi đặt câu hỏi về bất cứ điều gì mà tôi không biết”
@@ -170,7 +182,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-hero mt-[200px] py-8 flex justify-evenly">
+      <div className="bg-hero rounded-tl-[150px] mt-[200px] py-8 flex justify-evenly">
         <Image
           className="md:flex hidden"
           src="/TeacherRegister.png"

@@ -57,14 +57,24 @@ const Header: React.FC = () => {
     ["header isNarrow"]: toggleCollapse,
   });
 
+  const renderTitle = (): React.ReactNode => {
+    if (pathname.startsWith("/clerk")) {
+      if (pathname.includes("classManagement")) {
+        return <div>Quản lý lớp học</div>;
+      }
+      return <div>Trang chủ lớp học</div>;
+    }
+  };
+
   return (
     <div className={headerStyle}>
       <div className="gap-6 justify-between items-center">
-        <div className="first-line text-2xl tracking-wide mb-4">
-          Xin chào{" "}
-          <span className="font-bold bg-gradient-to-r from-sky-800 to-sky-400 inline-block text-transparent bg-clip-text">
+        <div className="first-line text-xl font-bold tracking-wide mb-4">
+          {renderTitle()}
+          {/* Xin chào{" "}
+          <span className="font-bold bg-gradient-to-r from-blue-800 to-blue-400 inline-block text-transparent bg-clip-text">
             {userInfo?.name}!
-          </span>{" "}
+          </span>{" "} */}
           {/* {<PiHandWavingThin className="icon" size={25} />} */}
         </div>
         <Breadcrumb specificName={specificName ? specificName : ""} />
