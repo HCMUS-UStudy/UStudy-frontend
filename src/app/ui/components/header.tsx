@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
 import { useSpecificNameContext } from "@/app/context/context";
-import Breadcrumb from "./breadCrumb";
+import Breadcrumb from "./bread_crumb";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();

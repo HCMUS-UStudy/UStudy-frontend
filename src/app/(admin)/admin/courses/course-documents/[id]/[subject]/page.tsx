@@ -2,7 +2,7 @@ import { Button } from "@/app/ui/components/button";
 import React from "react";
 
 import GradeGrid from "@/app/ui/components/GradeAdmin/GradeGrid";
-import BreadCrumb from "@/app/ui/components/breadCrumb";
+import BreadCrumb from "@/app/ui/components/bread_crumb";
 import { SearchField } from "@/app/ui/components/input";
 
 // params are automatically passed to the page component in App Router
@@ -46,7 +46,10 @@ const CourseDocumentsPage = async ({
       {/* Search and Filter Section */}
       <div className="flex justify-end items-center space-x-4 mb-6">
         <div className="flex items-center space-x-4">
-          <SearchField className="w-[200px]" placeholder="Tìm theo tên khối học..." />
+          <SearchField
+            className="w-[200px]"
+            placeholder="Tìm theo tên khối học..."
+          />
           <select className="px-4 py-2 border border-gray-300 rounded-md">
             <option value="">Tất cả khối học</option>
             <option value="Chapter">Khối 1</option>
@@ -61,7 +64,7 @@ const CourseDocumentsPage = async ({
         </Button>
       </div>
 
-      <GradeGrid searchQuery={query} courseId={id} subject={subject}/>
+      <GradeGrid searchQuery={query} courseId={id} subject={subject} />
     </div>
   );
 };
