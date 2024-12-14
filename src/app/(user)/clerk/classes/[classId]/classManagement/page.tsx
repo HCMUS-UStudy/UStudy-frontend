@@ -9,7 +9,7 @@ import {
 } from "@/app/lib/api";
 import { AllChapter, Classroom, Teacher } from "@/app/types/type";
 import { useSpecificNameContext } from "@/app/context/context";
-import { IoCheckmarkCircle, IoFileTrayFull, IoWarning } from "react-icons/io5";
+import { IoFileTrayFull, IoWarning } from "react-icons/io5";
 import { FaClipboard, FaUserPlus, FaX } from "react-icons/fa6";
 import Modal from "@/app/ui/components/modal";
 import { toast, ToastContainer } from "react-toastify";
