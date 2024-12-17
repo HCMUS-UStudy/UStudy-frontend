@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import { BranchRootState } from '@/app/store/store';
 
 const ClassPage: React.FC = () => {
-  const { branches, selectedBranchId } = useSelector((state: RootState) => state.branch);
+  const { branches, selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
   return (
     <>
       <h1>Hello</h1>

@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
 import { LoginSpinner } from "@/app/ui/components/spinner";
-import { setTokens } from "@/app/lib/storage";
+import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 
@@ -44,6 +44,7 @@ export default function Login() {
         setIsLoading(true);
         const response = await userLogin(genId, password);
         setTokens(response.access_token, response.refresh_token);
+        setUserInfo(JSON.stringify(response.user));
 
         const role = response.user.role;
         switch (role) {
@@ -252,7 +253,7 @@ export default function Login() {
                   {
                     "hover:scale-105": !isPending,
                   },
-                  "mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform "
+                  "mt-6 w-full bg-blue-600 hover:bg-blue-800 text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform "
                 )}>
                 {isPending || isLoading ? <LoginSpinner /> : "Đăng nhập"}
                 {/* <LoginSpinner /> */}

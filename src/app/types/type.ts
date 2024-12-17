@@ -193,6 +193,89 @@ export type CustomError = {
   data?: string | unknown;
 }
 
+type Authority = {
+  authority: string;
+};
+
+export type User = {
+  accountNonExpired: boolean;
+  accountNonLocked: boolean;
+  address: string;
+  authorities: Authority[];
+  avatar: string;
+  birthday: string;
+  branch: string | null;
+  classesEnrolled: string | null; 
+  classesTaught: string | null; 
+  createdAt: string;
+  credentialsNonExpired: boolean;
+  email: string;
+  enabled: boolean;
+  genId: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  id: string;
+  isActive: boolean;
+  name: string;
+  phone: string;
+  role: string;
+  updatedAt: string;
+  username: string;
+};
+
+export type Classroom = {
+  id: string;
+  name: string;
+  description: string;
+  fee: number;
+  grade: {
+    id: string;
+    name: string;
+  };
+  room: {
+    id: string;
+    name: string;
+  };
+  status: boolean;
+  teacher: {
+    avatar: string;
+    email: string;
+    genId: string;
+    gender: "MALE" | "FEMALE" | "OTHER";
+    id: string;
+    name: string;
+  } | null;
+  students: null; 
+  course: {
+    createdAt: string;
+    createdBy: {
+      active: boolean;
+      avatar: string;
+      createdAt: string;
+      email: string;
+      genId: string;
+      gender: string;
+      id: string;
+      name: string;
+      role: string;
+    };
+    description: string;
+    id: string;
+    name: string;
+    status: boolean;
+    totalGrades: number;
+  };
+}
+
+export type AllChapter = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+  description: string;
+  course: null;
+  grade: null;
+}
+
 export type CourseData = {
   content: CourseItem[],
   totalPages: number;
@@ -222,3 +305,72 @@ export type MaterialData = {
   content: MaterialItem[],
   totalPages: number;
 }
+
+type Grade = {
+  id: string;
+  name: string;
+};
+
+type Course = {
+  id: string;
+  name: string;
+  description: string;
+  totalGrades: number;
+  status: boolean;
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+    role: string;
+    gender: string;
+    createdAt: string;
+    active: boolean;
+  };
+  createdAt: string;
+};
+
+type Room = {
+  id: string;
+  name: string;
+};
+
+export type Teacher = {
+  id: string;
+  genId: string;
+  email: string;
+  name: string;
+  avatar: string;
+  role: string;
+  gender: 'MALE' | 'FEMALE';
+  createdAt: string;
+  active: boolean;
+}
+
+type UserForTeacher = {
+  gender: string;
+  createdAt: string;
+  active: boolean;
+};
+
+export type ClassTime = {
+  id: string;
+  day: number;
+  startTime: string;
+  endTime: string;
+};
+
+export type ClassTeacher = {
+  id: string;
+  name: string;
+  description: string;
+  grade: Grade;
+  course: Course;
+  room: Room;
+  fee: number;
+  teacher: UserForTeacher;
+  students: UserForTeacher[];
+  classTimes: ClassTime[];
+  status: string | null; // Status can be null
+};

@@ -1,19 +1,28 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
 import classNames from "classnames";
-import { PiHandWavingThin } from "react-icons/pi";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import BranchSelector from "./BranchSelector";
 import "../styles/Header.css";
 import Swal from "sweetalert2";
+import { getUserInfo } from "@/app/lib/storage";
+import { User } from "@/app/types/type";
+import { useSpecificNameContext } from "@/app/context/context";
+import Breadcrumb from "./bread_crumb";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const { specificName } = useSpecificNameContext();
+
+  useEffect(() => {
+    setUserInfo(getUserInfo());
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -48,13 +57,30 @@ const Header: React.FC = () => {
     ["header isNarrow"]: toggleCollapse,
   });
 
+  const renderTitle = (): React.ReactNode => {
+    if (pathname.startsWith("/clerk")) {
+      if (pathname.includes("classManagement")) {
+        return <div>Quản lý lớp học</div>;
+      }
+      return <div>Trang chủ lớp học</div>;
+    }
+  };
+
   return (
     <div className={headerStyle}>
-      <div className="hello">
-        <div className="first-line">
-          Hello!! {<PiHandWavingThin className="icon" size={25} />}
+      <div className="gap-6 justify-between items-center">
+        <div className="first-line text-xl font-bold tracking-wide mb-4">
+          {renderTitle()}
+          {/* Xin chào{" "}
+          <span className="font-bold bg-gradient-to-r from-blue-800 to-blue-400 inline-block text-transparent bg-clip-text">
+            {userInfo?.name}!
+          </span>{" "} */}
+          {/* {<PiHandWavingThin className="icon" size={25} />} */}
         </div>
-        <div className="second-line">Chào mừng đến với trang Admin!</div>
+        <Breadcrumb specificName={specificName ? specificName : ""} />
+        {pathname.includes("/admin") && (
+          <div className="second-line">Chào mừng đến với trang Admin!</div>
+        )}
       </div>
 
       <div className="right-items">
