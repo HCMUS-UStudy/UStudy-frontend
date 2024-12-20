@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { Input } from "./input";
-import { Button } from "./button";
+import { Input } from "./Input";
+import { Button } from "./Button";
 
 export default function CreateTeacher() {
   return (
@@ -34,7 +34,7 @@ export default function CreateTeacher() {
           className="w-full h-11 text-base text-gray-700"
           placeholder="Địa chỉ"
         />
-        <Button className=" mt-5 bg-blue-600 hover:bg-blue-800">Đăng ký</Button>
+        <Button className=" mt-5">Đăng ký</Button>
       </div>
     </div>
   );

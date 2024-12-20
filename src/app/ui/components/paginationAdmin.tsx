@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from './button';
+import { Button } from './Button';
 
 // Define the expected prop types for PaginationAdmin component
 interface PaginationAdminProps {

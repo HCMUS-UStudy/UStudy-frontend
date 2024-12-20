@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, SelectingButton } from "./button";
+import { Button, SelectingButton } from "./Button";
 import Modal from "./modal";
 import { CircleX, Plus, PlusIcon } from "lucide-react";
-import { Input } from "./input";
+import { Input } from "./Input";
 import {
   ClassSchema,
   CourseItem,
@@ -15,7 +15,7 @@ import {
   ScheduleType,
   TimeItem,
 } from "@/app/types/type";
-import { Spinner } from "./spinner";
+import { Spinner } from "./Spinner";
 import {
   createNewClass,
   getAllGrades,

@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Button } from "./ui/components/button";
+import { Button } from "./ui/components/Button";
 import Image from "next/image";
 import { FaBook, FaUserGraduate } from "react-icons/fa6";
 import Footer from "./ui/components/footer";
-import LandingPageSideBar from "./ui/sidebar/landingPageSideBar";
+import LandingPageSideBar from "./ui/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/createTeacher";
 import { IoLogInOutline, IoSparkles } from "react-icons/io5";
+import Logo from "./ui/components/Logo";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -64,13 +65,10 @@ export default async function Home() {
   return (
     <div className=" bg-background">
       <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[550px] rounded-b-[50px] md:rounded-bl-[200px] md:rounded-br-none pt-10 min-[320px]:px-8 md:px-20">
-        <div id="Top-nav-bar" className="flex justify-between items-center">
-          <div id="logo" className="text-4xl font-extrabold">
-            <span className=" text-highlight_text">US</span>tudy
-          </div>
+        <div className="flex justify-between items-center">
+          <Logo />
           <LandingPageSideBar />
           <div
-            id="nav-bar"
             className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
             <Link
               href="#"
@@ -94,7 +92,7 @@ export default async function Home() {
             </Link>
           </div>
           <Button
-            className=" px-8 font-bold relative text-lg min-[320px]:hidden md:flex bg-gradient-to-tr from-blue-600 to-blue-800 border-2 border-blue-600 300 rounded-xl group transition-all duration-300 hover:scale-110"
+            className="text-lg min-[320px]:hidden md:flex hover:scale-110"
             type="submit">
             <Link
               href="/login"
@@ -105,7 +103,6 @@ export default async function Home() {
           </Button>
         </div>
         <div
-          id="hero-content"
           className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-8">
           <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
             <div className="leading-tight md:leading-normal">
@@ -124,12 +121,12 @@ export default async function Home() {
               </div>
             </div>
             <Button
-              className="w-full relative overflow-hidden group md:w-[300px] rounded-xl font-bold text-xl tracking-wider py-4 bg-gradient-to-tr from-blue-600 via-blue-800 to-blue-600 bg-[length:200%_200%] bg-[0%_100%] hover:bg-[100%_0%] hover:scale-110 transition-all duration-300"
+              className="w-full overflow-hidden md:w-[300px] text-xl py-4 hover:scale-110"
               type="submit">
               Bắt đầu
-              <span className="absolute -translate-y-1 translate-x-1 opacity-20">
+              {/* <span className="absolute -translate-y-1 translate-x-1 opacity-20">
                 Bắt đầu
-              </span>
+              </span> */}
               <IoSparkles className="absolute size-10 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <IoSparkles className="absolute size-12 left-5 bottom-1 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               <FaUserGraduate className="absolute size-14 -right-7 -bottom-2 origin-bottom group-hover:-rotate-[30deg] opacity-0 group-hover:opacity-100 transition-all duration-300" />
@@ -146,7 +143,6 @@ export default async function Home() {
         </div>
       </div>
       <div
-        id="main-content"
         className="md:px-24 mx-auto flex flex-col justify-center">
         <div className="mt-12 mx-9 md:mx-44 text-center">
           <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[52px]">

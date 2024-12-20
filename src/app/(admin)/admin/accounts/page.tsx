@@ -2,7 +2,7 @@ import React from "react";
 import ModalAccount from "@/app/ui/components/AccountAdmin/modalAccount-Ad";
 import UserTable from "@/app/ui/components/AccountAdmin/accountTable";
 import AccountRegisterModal from "@/app/ui/components/AccountAdmin/accountRegister";
-import { SearchField } from "@/app/ui/components/input";
+import { SearchField } from "@/app/ui/components/Input";
 
 export default async function AccountPage(props: {
   searchParams?: Promise<{

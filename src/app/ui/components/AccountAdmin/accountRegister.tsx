@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import { Button } from "../button";
+import { Button } from "../Button";
 import PaginationAdmin from "../paginationAdmin";
 import { confirmRegister, getRegister, rejectRegister } from "@/app/lib/api";
 import Loading from "../loading";

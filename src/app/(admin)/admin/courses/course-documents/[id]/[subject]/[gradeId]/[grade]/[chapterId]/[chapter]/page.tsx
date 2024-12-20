@@ -2,7 +2,7 @@ import React from "react";
 import Loading from "@/app/ui/components/loading";
 import DocumentGrid from "@/app/ui/components/MaterialAdmin/materialGrid";
 import BreadCrumb from "@/app/ui/components/breadcrumb";
-import { SearchField } from "@/app/ui/components/input";
+import { SearchField } from "@/app/ui/components/Input";
 
 interface Params {
   id: string;

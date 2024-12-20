@@ -9,7 +9,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/app/ui/components/dropdown-menu";
-import { Button } from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/Button";
 import {
   Avatar,
   AvatarFallback,

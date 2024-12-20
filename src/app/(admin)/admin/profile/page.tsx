@@ -4,7 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { FiMail, FiCalendar, FiPhone, FiMapPin, FiCreditCard, FiCheckCircle, FiXCircle, FiLock } from "react-icons/fi";
 import { AiOutlineEdit } from "react-icons/ai";
 import "../../../ui/styles/ProfilePage.css";
-import { Button } from "@/app/ui/components/button";
+import { Button } from "@/app/ui/components/Button";
 
 interface UserProfile {
   _id: string;

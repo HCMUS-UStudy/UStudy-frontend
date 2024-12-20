@@ -1,5 +1,5 @@
 import CreateClass from "@/app/ui/components/createClass";
-import { SearchField } from "@/app/ui/components/input";
+import { SearchField } from "@/app/ui/components/Input";
 import Pagination from "@/app/ui/components/pagination";
 import { ClassesTable } from "@/app/ui/components/table";
 import React from "react";

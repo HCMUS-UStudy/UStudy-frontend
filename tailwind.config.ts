@@ -9,10 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: "#1e40af", // blue-800
         background: "#f1f5f9", // slate-50: #f8fafc, #f9fbfc, slate-100: #f1f5f9
         hero: "#dbeafe", // #D5E9F6, blue-100: #dbeafe
         foreground: "var(--foreground)",
         button_primary: "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
+        button_primary_dark: "#1e40af", // blue-800: #1e40af
         highlight_text: "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
         secondary_text: "#808080",
         error: '#dc2626',

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button } from "../components/button";
+import { Button } from "../components/Button";
 import { FaBars, FaUser, FaX } from "react-icons/fa6";
 import clsx from "clsx";
 

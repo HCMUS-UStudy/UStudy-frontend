@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
-import {Button} from "../button";
+import {Button} from "../Button";
 import PaginationAdmin from "../paginationAdmin";
 import { CourseItem, GradeItem } from "@/app/types/type";
 import { getGradesByCourseId } from "@/app/lib/api";

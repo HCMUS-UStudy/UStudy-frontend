@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEdit, FaSearch, FaTrashAlt } from "react-icons/fa";
-import { Button } from "./button";
-import { Input } from "./input";
+import { Button } from "./Button";
+import { Input } from "./Input";
 import { Label } from "./label";
 
 export default function AccountsComponent() {
