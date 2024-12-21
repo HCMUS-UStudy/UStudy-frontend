@@ -16,7 +16,7 @@ interface Branch {
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
   const { branches, selectedBranchId } = useSelector(
-    (state: BranchRootState) => state.branch
+    (state: BranchRootState) => state.branch,
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -25,10 +25,12 @@ const BranchSelector: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await getAllBranches(0, 20);
-        const branchData = response.data.content.map((branch: Branch) => ({
-          id: branch.id,
-          name: branch.name,
-        })).sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
+        const branchData = response.data.content
+          .map((branch: Branch) => ({
+            id: branch.id,
+            name: branch.name,
+          }))
+          .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
 
         // Lưu vào Redux
         dispatch(setBranches(branchData));
@@ -69,9 +71,14 @@ const BranchSelector: React.FC = () => {
   return (
     <div className="relative w-[200px]" ref={dropdownRef}>
       {branches.length > 0 ? (
-        <div className="relative cursor-pointer rounded-[20px]" onClick={() => setIsOpen(!isOpen)}>
-          <div className="p-2 border border-[#ccc] rounded-[12px] bg-[#f9f9f9]
-                         flex justify-between items-center relative">
+        <div
+          className="relative cursor-pointer rounded-[20px]"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <div
+            className="p-2 border border-[#ccc] rounded-[12px] bg-[#f9f9f9]
+                         flex justify-between items-center relative"
+          >
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
             <span className="absolute right-2 top-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-800 transform -translate-y-1/2"></span>
@@ -82,7 +89,8 @@ const BranchSelector: React.FC = () => {
                 <div
                   key={branch.id}
                   className="p-2 cursor-pointer hover:bg-[#f1f1f1]"
-                  onClick={() => handleBranchChange(branch.id)}>
+                  onClick={() => handleBranchChange(branch.id)}
+                >
                   {branch.name}
                 </div>
               ))}

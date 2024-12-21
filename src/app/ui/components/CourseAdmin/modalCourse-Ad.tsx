@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import { Input } from "../Input";
-import { Label } from "../label";
+import { Label } from "../Label";
 import { Button } from "../Button";
 import { CourseSchema } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/ReactToastify.css';
+import "react-toastify/ReactToastify.css";
 import { createNewCourse } from "@/app/lib/api";
 
 interface ModalCourseWrapperProps {
@@ -37,7 +37,7 @@ const ModalCourse: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   const handleCloseModal = () => setShowModal(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -75,7 +75,7 @@ const ModalCourse: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
         position: "bottom-right",
         autoClose: 3000,
       });
-      console.log(errors)
+      console.log(errors);
       return; // Stop further processing if validation fails
     }
 

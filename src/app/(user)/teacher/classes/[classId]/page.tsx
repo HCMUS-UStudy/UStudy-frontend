@@ -39,7 +39,9 @@ export default function ClassDetail() {
     return (
       <div className="text-center mt-20">
         <h1 className="text-3xl font-bold">Class not found</h1>
-        <p className="mt-4">Please check the class ID or go back to the class list.</p>
+        <p className="mt-4">
+          Please check the class ID or go back to the class list.
+        </p>
       </div>
     );
   }
@@ -56,8 +58,17 @@ export default function ClassDetail() {
           {classDetail.students.map((student) => (
             <div key={student.id}>
               {/* avatar */}
-              <Image src={student.avatar} alt={student.name} width={50} height={50} className="rounded-full" />
-              <p> {student.name} ({student.email}) </p>
+              <Image
+                src={student.avatar}
+                alt={student.name}
+                width={50}
+                height={50}
+                className="rounded-full"
+              />
+              <p>
+                {" "}
+                {student.name} ({student.email}){" "}
+              </p>
             </div>
           ))}
         </ul>

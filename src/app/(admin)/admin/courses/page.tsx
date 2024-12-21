@@ -76,13 +76,14 @@ export default async function CoursePage(props: {
       </h2>
 
       <div className="flex items-center justify-between mt-8 mr-6">
-        <h2 className="text-2xl font-bold">
-          Tổng số môn học ({11})
-        </h2>
+        <h2 className="text-2xl font-bold">Tổng số môn học ({11})</h2>
       </div>
 
       <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
-        <SearchField className="w-[200px]" placeholder="Tìm theo tên môn học..." />
+        <SearchField
+          className="w-[200px]"
+          placeholder="Tìm theo tên môn học..."
+        />
         <div className="flex items-center space-x-4">
           <ModalCourse buttonLabel="Tạo môn học" />
         </div>
@@ -92,7 +93,6 @@ export default async function CoursePage(props: {
       <div className="overflow-x-auto mt-6 max-h-[400px]">
         <CourseTable searchQuery={query} />
       </div>
-
     </>
   );
-};
+}

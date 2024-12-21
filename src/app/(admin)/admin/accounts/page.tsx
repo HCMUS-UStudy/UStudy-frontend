@@ -67,7 +67,10 @@ export default async function AccountPage(props: {
         </div>
 
         <div className="flex justify-between items-center space-x-4 mt-6">
-          <SearchField className="w-[200px]" placeholder="Tìm theo tên người dùng..." />
+          <SearchField
+            className="w-[200px]"
+            placeholder="Tìm theo tên người dùng..."
+          />
           <div className="flex items-center space-x-4 pr-6">
             <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
             <ModalAccount buttonLabel="Tạo người dùng" />
@@ -79,7 +82,6 @@ export default async function AccountPage(props: {
           <UserTable searchQuery={query} />
         </div>
       </div>
-
     </>
   );
-};
+}

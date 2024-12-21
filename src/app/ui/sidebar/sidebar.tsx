@@ -65,9 +65,7 @@ const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
       <button
         onClick={sidebarToggle}
         className={`fixed top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow transition-all duration-300 bg-gray-200 text-black ${
-          toggleCollapse
-            ? "left-[calc(92px)] rotate-180"
-            : "left-[calc(222px)]"
+          toggleCollapse ? "left-[calc(92px)] rotate-180" : "left-[calc(222px)]"
         }`}
       >
         <RiArrowLeftSLine size={14} />

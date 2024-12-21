@@ -5,13 +5,16 @@ interface TabSelectorProps {
   setActiveTab: (tab: string) => void;
 }
 
-export default function TabSelector({ activeTab, setActiveTab }: TabSelectorProps) {
+export default function TabSelector({
+  activeTab,
+  setActiveTab,
+}: TabSelectorProps) {
   const tabs = useMemo(
     () => [
       { id: "ongoing", label: "Lớp đang dạy" },
       { id: "completed", label: "Lớp đã hoàn thành" },
     ],
-    []
+    [],
   );
 
   const [sliderStyle, setSliderStyle] = useState({ width: 0, left: 0 });

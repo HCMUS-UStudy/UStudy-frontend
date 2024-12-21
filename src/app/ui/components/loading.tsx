@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import React from "react";
+import { FaSpinner } from "react-icons/fa";
 
 const Loading = () => (
   <div className="flex items-center justify-center h-full">

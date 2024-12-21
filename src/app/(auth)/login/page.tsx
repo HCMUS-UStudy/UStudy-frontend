@@ -68,7 +68,7 @@ export default function Login() {
         const CustomError = error as CustomError;
         if (CustomError.status === 400) {
           setLoginError(
-            typeof CustomError.data === "string" ? CustomError.data : ""
+            typeof CustomError.data === "string" ? CustomError.data : "",
           );
           setShowError(true);
         }
@@ -172,7 +172,7 @@ export default function Login() {
                   {
                     "hover:scale-105": !isPending,
                   },
-                  "mt-6 w-full"
+                  "mt-6 w-full",
                 )}
               >
                 {isPending || isLoading ? (
@@ -181,7 +181,7 @@ export default function Login() {
                     className="flex items-center gap-2 flex-row"
                     customStyle={{
                       spinner: "fill-white w-6 h-6",
-                      text: "mt-0"
+                      text: "mt-0",
                     }}
                   />
                 ) : (

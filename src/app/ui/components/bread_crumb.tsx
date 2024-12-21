@@ -35,12 +35,13 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
       <li key={"homepage"} className="flex items-center gap-4 text-base ">
         <Link
           href={"/"}
-          className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200">
+          className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200"
+        >
           <HomeIcon size={20} />
           Trang chủ
         </Link>
         <ChevronRight size={20} />
-      </li>
+      </li>,
     );
     pathnames.map((pathname, i) => {
       const href = `/${pathnames.slice(0, i + 1).join("/")}`;
@@ -50,7 +51,8 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
             <>
               <Link
                 href={i === 0 ? `${href}/dashboard` : href}
-                className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200">
+                className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200"
+              >
                 {translate(pathname)}
               </Link>
               <ChevronRight size={20} />
@@ -60,7 +62,7 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
               {translate(pathname)}
             </div>
           )}
-        </li>
+        </li>,
       );
     });
     return renderedPaths;

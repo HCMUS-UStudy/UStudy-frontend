@@ -11,30 +11,30 @@ export default function CreateTeacher() {
       </div>
       <div className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5">
         <Input
-          className="w-full h-11 text-base text-gray-700"
+          className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Họ tên"
         />
         <Input
-          className="w-full h-11 text-base text-gray-700"
+          className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Email"
         />
         <Input
-          className="w-full h-11 text-base text-gray-700"
+          className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Giới tính"
         />
         <Input
-          className="w-full h-11 text-base text-gray-700"
+          className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Ngày sinh"
         />
         <Input
-          className="w-full h-11 text-base text-gray-700"
+          className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Số điện thoại"
         />
         <Input
-          className="w-full h-11 text-base text-gray-700"
+          className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Địa chỉ"
         />
-        <Button className=" mt-5">Đăng ký</Button>
+        <Button className="mt-5">Đăng ký</Button>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaEdit, FaSearch, FaTrashAlt } from "react-icons/fa";
 import { Button } from "./Button";
 import { Input } from "./Input";
-import { Label } from "./label";
+import { Label } from "./Label";
 
 export default function AccountsComponent() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,7 +35,7 @@ export default function AccountsComponent() {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setNewUser((prev) => ({ ...prev, [name]: value }));
@@ -65,7 +65,8 @@ export default function AccountsComponent() {
         <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
         <form
           onSubmit={handleSearchSubmit}
-          className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
+          className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]"
+        >
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
             <input
               type="text"
@@ -76,13 +77,15 @@ export default function AccountsComponent() {
             />
             <button
               type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300"
+            >
               <FaSearch className="h-5 w-5" />
             </button>
           </div>
           <select
             onChange={handleFilterChange}
-            className="ml-4 border-2 border-gray-300 rounded-full px-2 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
+            className="ml-4 border-2 border-gray-300 rounded-full px-2 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
+          >
             <option className="" value="">
               Lọc
             </option>
@@ -133,7 +136,8 @@ export default function AccountsComponent() {
                     isFocused.email || email
                       ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                  }`}>
+                  }`}
+                >
                   Enter your email
                 </Label>
               </div>
@@ -163,7 +167,8 @@ export default function AccountsComponent() {
                     isFocused.name || name
                       ? "-top-3.5 text-xs text-indigo-600 bg-white px-1"
                       : "top-1/2 transform -translate-y-1/2 text-gray-400"
-                  }`}>
+                  }`}
+                >
                   Enter your name
                 </Label>
               </div>
@@ -182,7 +187,8 @@ export default function AccountsComponent() {
                 />
                 <label
                   htmlFor="birthDate"
-                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1">
+                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1"
+                >
                   Ngày sinh
                 </label>
               </div>
@@ -197,7 +203,8 @@ export default function AccountsComponent() {
                   className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 
                   focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200 
                   placeholder-transparent"
-                  required>
+                  required
+                >
                   <option value="">Chọn chức vụ</option>
                   <option value="student">Học viên</option>
                   <option value="teacher">Giáo viên</option>
@@ -205,7 +212,8 @@ export default function AccountsComponent() {
                 </select>
                 <label
                   htmlFor="role"
-                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1">
+                  className="absolute left-4 transition-all duration-200 -top-3.5 text-xs text-indigo-600 bg-white px-1"
+                >
                   Chức vụ
                 </label>
               </div>
@@ -216,13 +224,15 @@ export default function AccountsComponent() {
                   type="button"
                   onClick={handleCloseModal}
                   className="px-6 py-3 bg-gray-300 text-black rounded-full hover:bg-gray-400 focus:outline-none 
-                  focus:ring-2 focus:ring-gray-600 transition duration-200">
+                  focus:ring-2 focus:ring-gray-600 transition duration-200"
+                >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none 
-                  focus:ring-2 focus:ring-indigo-500 transition duration-200">
+                  focus:ring-2 focus:ring-indigo-500 transition duration-200"
+                >
                   Tạo
                 </button>
               </div>

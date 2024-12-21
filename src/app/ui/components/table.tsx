@@ -37,7 +37,8 @@ export function Table({ tableName, colNames, content }: TableProps) {
             {content[0].rowContent.map((_, rowIdx) => (
               <tr
                 key={rowIdx}
-                className="odd:bg-white even:bg-sky-50 divide-x divide-gray-300 divide-dashed">
+                className="odd:bg-white even:bg-sky-50 divide-x divide-gray-300 divide-dashed"
+              >
                 {content.map((col, colIdx) => (
                   <td key={colIdx} className="px-6 py-4">
                     {col.rowContent[rowIdx]}
@@ -127,7 +128,8 @@ export function ClassesTable({
             {classes.map((c, i) => (
               <tr
                 key={i}
-                className="hover:bg-gray-50 transition-all duration-200">
+                className="hover:bg-gray-50 transition-all duration-200"
+              >
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   {i + 1}
                 </td>
@@ -152,7 +154,8 @@ export function ClassesTable({
                       router.push(`/clerk/classes/${c.id}/classManagement`)
                     }
                     type="button"
-                    className="text-sm font-bold tracking-widest hover:shadow-lg ring-2 ring-blue-600 bg-white hover:bg-blue-600 hover:text-white text-gray-700 hover:shadow-blue-500/50 transition-all duration-200 px-5 py-1.5  rounded-md ">
+                    className="text-sm font-bold tracking-widest hover:shadow-lg ring-2 ring-blue-600 bg-white hover:bg-blue-600 hover:text-white text-gray-700 hover:shadow-blue-500/50 transition-all duration-200 px-5 py-1.5  rounded-md "
+                  >
                     Xem lớp
                   </button>
                 </td>

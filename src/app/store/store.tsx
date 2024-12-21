@@ -1,5 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit';
-import branchReducer from './branchSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import branchReducer from "./branchSlice";
 
 const branchStore = configureStore({
   reducer: {

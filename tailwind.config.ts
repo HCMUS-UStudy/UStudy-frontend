@@ -17,42 +17,41 @@ const config: Config = {
         button_primary_dark: "#1e40af", // blue-800: #1e40af
         highlight_text: "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
         secondary_text: "#808080",
-        error: '#dc2626',
+        error: "#dc2626",
       },
       keyframes: {
         scale: {
-          '0%': { transform: 'scale(1)'},
-          '50%': {transform: 'scale(1.3)'},
-          '100%': {transform: 'scale(1)'}
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.3)" },
+          "100%": { transform: "scale(1)" },
         },
         wiggle: {
-          '0%': {
-            'transform-origin': 'bottom',
-            transform: 'rotate(0deg)'
+          "0%": {
+            "transform-origin": "bottom",
+            transform: "rotate(0deg)",
           },
-          '25%': {
-            'transform-origin': 'bottom left',
-            transform: 'rotate(-15deg)'
+          "25%": {
+            "transform-origin": "bottom left",
+            transform: "rotate(-15deg)",
           },
-          '50%': {
-            'transform-origin': 'bottom',
-            transform: 'rotate(0deg)'
+          "50%": {
+            "transform-origin": "bottom",
+            transform: "rotate(0deg)",
           },
-          '75%': {
-            'transform-origin': 'bottom right',
-            transform: 'rotate(15deg)'
+          "75%": {
+            "transform-origin": "bottom right",
+            transform: "rotate(15deg)",
           },
-          '100%': {
-            'transform-origin': 'bottom',
-            transform: 'rotate(0deg)'
-          }
-        }
-       
+          "100%": {
+            "transform-origin": "bottom",
+            transform: "rotate(0deg)",
+          },
+        },
       },
       animation: {
-        'scale-effect': 'scale 1s linear infinite',
-        'wiggle-effect': 'wiggle 1.5s linear infinite'
-      }
+        "scale-effect": "scale 1s linear infinite",
+        "wiggle-effect": "wiggle 1.5s linear infinite",
+      },
     },
   },
   plugins: [],

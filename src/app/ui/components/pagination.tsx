@@ -49,15 +49,17 @@ export default function Pagination({ className }: { className?: string }) {
                 "bg-gray-300 cursor-default": isDisabled,
                 "bg-white hover:bg-gray-100 hover:text-gray-700": !isDisabled,
               },
-              "flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 border border-e-0 border-gray-300 rounded-s-lg "
-            )}>
+              "flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 border border-e-0 border-gray-300 rounded-s-lg ",
+            )}
+          >
             <span className="sr-only">Previous</span>
             <svg
               className="w-3 h-3 rtl:rotate-180"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 6 10">
+              viewBox="0 0 6 10"
+            >
               <path
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -79,15 +81,17 @@ export default function Pagination({ className }: { className?: string }) {
                 "bg-gray-300 cursor-default": isDisabled,
                 "bg-white hover:bg-gray-100 hover:text-gray-700": !isDisabled,
               },
-              "flex items-center justify-center px-4 h-10 leading-tight text-gray-500 border border-gray-300 rounded-e-lg"
-            )}>
+              "flex items-center justify-center px-4 h-10 leading-tight text-gray-500 border border-gray-300 rounded-e-lg",
+            )}
+          >
             <span className="sr-only">Next</span>
             <svg
               className="w-3 h-3 rtl:rotate-180"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 6 10">
+              viewBox="0 0 6 10"
+            >
               <path
                 stroke="currentColor"
                 strokeLinecap="round"

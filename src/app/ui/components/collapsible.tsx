@@ -29,9 +29,11 @@ export default function Collapsible({
         className="peer absolute inset-x-0 top-0 opacity-0 h-12 cursor-pointer"
       />
       <div
-        className={`border-${primaryColor} border-blue-500 bg-white border-b-2  rounded-t-xl h-12 w-full pl-5 flex items-center`}>
+        className={`border-${primaryColor} border-blue-500 bg-white border-b-2  rounded-t-xl h-12 w-full pl-5 flex items-center`}
+      >
         <h1
-          className={`text-lg font-bold text-gray-700 tracking-wider flex items-center gap-2`}>
+          className={`text-lg font-bold text-gray-700 tracking-wider flex items-center gap-2`}
+        >
           <IoInformationCircle className="size-7 text-blue-600" />
           {title}
         </h1>
@@ -46,7 +48,8 @@ export default function Collapsible({
           !maxHeight
             ? "peer-checked:max-h-96"
             : `peer-checked:max-h-[${maxHeight}]`
-        }`}>
+        }`}
+      >
         {children}
       </div>
     </div>

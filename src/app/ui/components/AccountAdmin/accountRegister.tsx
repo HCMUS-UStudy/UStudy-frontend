@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
@@ -6,16 +6,17 @@ import { Button } from "../Button";
 import PaginationAdmin from "../paginationAdmin";
 import { confirmRegister, getRegister, rejectRegister } from "@/app/lib/api";
 import Loading from "../loading";
-import {RegisterItem } from "@/app/types/type";
+import { RegisterItem } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/ReactToastify.css';
+import "react-toastify/ReactToastify.css";
 
 interface AccountRegisterModalProps {
   buttonLabel: string;
 }
 
-const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel }) => {
-
+const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
+  buttonLabel,
+}) => {
   const [showModalRe, setShowModalRe] = useState(false);
   const handleOpenModal = () => setShowModalRe(true);
 
@@ -74,7 +75,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
       // Set total pages for teachers based on API response
       setTotalPagesTea(response.totalPages || 0);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setTeachers(TeacherData);
       setLoading(false);
@@ -100,15 +101,14 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
         fetchStudents();
         fetchTeachers();
-      }
-      else {
+      } else {
         toast.error("Đã xảy ra lỗi khi phê duyệt.", {
           position: "bottom-right",
           autoClose: 3000,
         });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -128,15 +128,14 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
 
         fetchStudents();
         fetchTeachers();
-      }
-      else {
+      } else {
         toast.error("Đã xảy ra lỗi khi phê duyệt.", {
           position: "bottom-right",
           autoClose: 3000,
         });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -162,10 +161,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
   return (
     <>
       <ToastContainer />
-      <Button
-        onClick={handleOpenModal}
-        className="pl-6 pr-6"
-      >
+      <Button onClick={handleOpenModal} className="pl-6 pr-6">
         {buttonLabel}
       </Button>
       {showModalRe && (
@@ -192,19 +188,21 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
             {/* Tab Buttons */}
             <div className="flex space-x-4 border-b mb-6">
               <button
-                className={`py-2 px-4 text-lg font-semibold ${activeTab === "students"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-700"
-                  }`}
+                className={`py-2 px-4 text-lg font-semibold ${
+                  activeTab === "students"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-700"
+                }`}
                 onClick={() => setActiveTab("students")}
               >
                 Học viên
               </button>
               <button
-                className={`py-2 px-4 text-lg font-semibold ${activeTab === "teachers"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-700"
-                  }`}
+                className={`py-2 px-4 text-lg font-semibold ${
+                  activeTab === "teachers"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-700"
+                }`}
                 onClick={() => setActiveTab("teachers")}
               >
                 Giáo viên
@@ -218,13 +216,25 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
                   <thead>
                     <tr className="bg-gray-200">
                       <th className="py-3 px-6 text-left text-gray-700">Tên</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Email</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Địa chỉ</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Ngày sinh</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Số điện thoại</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Giới tính</th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Email
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Địa chỉ
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Ngày sinh
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Số điện thoại
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Giới tính
+                      </th>
 
-                      <th className="py-3 px-6 text-center text-gray-700">Hành động</th>
+                      <th className="py-3 px-6 text-center text-gray-700">
+                        Hành động
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -234,34 +244,48 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
                           <Loading />
                         </td>
                       </tr>
-                    ) : (students.map((student) => (
-                      <tr key={student.id} className="hover:bg-gray-50">
-                        <td className="py-4 px-6 border-b text-gray-600">{student.name}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.email}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.address}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">
-                          {new Date(student.birthday).toLocaleDateString("vi-VN")}
-                        </td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.phone}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{student.gender}</td>
-                        <td className="py-4 px-6 border-b text-center">
-                          <div className="flex">
-                            <button
-                              onClick={() => handleApprove(student.id)}
-                              className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
-                            >
-                              <FaCheck />
-                            </button>
-                            <button
-                              onClick={() => handleReject(student.id)}
-                              className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4"
-                            >
-                              <FaTimes />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )))}
+                    ) : (
+                      students.map((student) => (
+                        <tr key={student.id} className="hover:bg-gray-50">
+                          <td className="py-4 px-6 border-b text-gray-600">
+                            {student.name}
+                          </td>
+                          <td className="py-4 px-6 border-b text-gray-600">
+                            {student.email}
+                          </td>
+                          <td className="py-4 px-6 border-b text-gray-600">
+                            {student.address}
+                          </td>
+                          <td className="py-4 px-6 border-b text-gray-600">
+                            {new Date(student.birthday).toLocaleDateString(
+                              "vi-VN",
+                            )}
+                          </td>
+                          <td className="py-4 px-6 border-b text-gray-600">
+                            {student.phone}
+                          </td>
+                          <td className="py-4 px-6 border-b text-gray-600">
+                            {student.gender}
+                          </td>
+                          <td className="py-4 px-6 border-b text-center">
+                            <div className="flex">
+                              <button
+                                onClick={() => handleApprove(student.id)}
+                                className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
+                              >
+                                <FaCheck />
+                              </button>
+                              <button
+                                onClick={() => handleReject(student.id)}
+                                className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 ml-4"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
                 <PaginationAdmin
@@ -280,26 +304,50 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
                   <thead>
                     <tr className="bg-gray-200">
                       <th className="py-3 px-6 text-left text-gray-700">Tên</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Email</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Địa chỉ</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Ngày sinh</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Số điện thoại</th>
-                      <th className="py-3 px-6 text-left text-gray-700">Giới tính</th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Email
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Địa chỉ
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Ngày sinh
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Số điện thoại
+                      </th>
+                      <th className="py-3 px-6 text-left text-gray-700">
+                        Giới tính
+                      </th>
 
-                      <th className="py-3 px-6 text-center text-gray-700">Hành động</th>
+                      <th className="py-3 px-6 text-center text-gray-700">
+                        Hành động
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {teachers.map((teacher) => (
                       <tr key={teacher.id} className="hover:bg-gray-50">
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.name}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.email}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.address}</td>
                         <td className="py-4 px-6 border-b text-gray-600">
-                          {new Date(teacher.birthday).toLocaleDateString("vi-VN")}
+                          {teacher.name}
                         </td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.phone}</td>
-                        <td className="py-4 px-6 border-b text-gray-600">{teacher.gender}</td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.email}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.address}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {new Date(teacher.birthday).toLocaleDateString(
+                            "vi-VN",
+                          )}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.phone}
+                        </td>
+                        <td className="py-4 px-6 border-b text-gray-600">
+                          {teacher.gender}
+                        </td>
                         <td className="py-4 px-6 border-b text-center">
                           <div className="flex">
                             <button
@@ -333,7 +381,6 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ buttonLabel
         </div>
       )}
     </>
-
   );
 };
 

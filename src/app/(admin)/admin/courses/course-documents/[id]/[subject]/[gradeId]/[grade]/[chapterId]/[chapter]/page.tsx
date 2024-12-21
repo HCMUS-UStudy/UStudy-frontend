@@ -1,7 +1,7 @@
 import React from "react";
 import Loading from "@/app/ui/components/loading";
 import DocumentGrid from "@/app/ui/components/MaterialAdmin/materialGrid";
-import BreadCrumb from "@/app/ui/components/breadcrumb";
+import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/Input";
 
 interface Params {
@@ -62,7 +62,8 @@ const ChapterDocumentsPage = async ({
           <select
             // value={selectedFilter}
             // onChange={(e) => setSelectedFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+            className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          >
             <option value="">Tất cả tài liệu</option>
             <option value="pdf">Tài liệu PDF</option>
             <option value="docx">Tài liệu DOCX</option>

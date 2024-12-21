@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/Input";
-import { Label } from "@/app/ui/components/label";
+import { Label } from "@/app/ui/components/Label";
 import Image from "next/image";
 import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/Button";
@@ -14,8 +14,6 @@ import { adminLogin } from "@/app/lib/api";
 import { setTokens } from "@/app/lib/storage";
 
 export default function Login() {
-
-  
   useEffect(() => {
     const authToken = localStorage.getItem("accessToken");
     if (authToken) {
@@ -25,16 +23,19 @@ export default function Login() {
         timer: 9000,
         showConfirmButton: false,
       });
-      
+
       window.location.href = "/admin/dashboard";
     }
   }, []);
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");  
-  const [isFocused, setIsFocused] = useState({ username: false, password: false });
-  
+  const [password, setPassword] = useState("");
+  const [isFocused, setIsFocused] = useState({
+    username: false,
+    password: false,
+  });
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -95,17 +96,20 @@ export default function Login() {
         style={{
           background:
             "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
-        }}>
+        }}
+      >
         <div
           className="
           grid w-full max-w-5xl grid-cols-1 md:grid-cols-2 
-          bg-white rounded-[30px] shadow-lg overflow-hidden">
+          bg-white rounded-[30px] shadow-lg overflow-hidden"
+        >
           {/* Login Form Section */}
           <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-14 relative">
             {/* Back to Home Icon */}
             <Link
               href="/"
-              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600">
+              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600"
+            >
               <HiHome size={24} />
             </Link>
 
@@ -128,7 +132,9 @@ export default function Login() {
                   type="text"
                   id="username"
                   value={username}
-                  onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
+                  onInput={(e) =>
+                    setUsername((e.target as HTMLInputElement).value)
+                  }
                   onFocus={() =>
                     setIsFocused((prev) => ({ ...prev, username: true }))
                   }
@@ -144,7 +150,8 @@ export default function Login() {
                     isFocused.username || username
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-transparent"
-                  }`}>
+                  }`}
+                >
                   Nhập mã người dùng
                 </Label>
               </div>
@@ -158,7 +165,9 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
-                  onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
+                  onInput={(e) =>
+                    setPassword((e.target as HTMLInputElement).value)
+                  }
                   onFocus={() =>
                     setIsFocused((prev) => ({ ...prev, password: true }))
                   }
@@ -174,13 +183,15 @@ export default function Login() {
                     isFocused.password || password
                       ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                       : "top-1/2 transform -translate-y-1/2 text-transparent"
-                  }`}>
+                  }`}
+                >
                   Nhập mật khẩu
                 </Label>
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none">
+                  className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none"
+                >
                   {showPassword ? (
                     <HiEyeOff className="text-gray-600" />
                   ) : (
@@ -192,7 +203,8 @@ export default function Login() {
               <Button
                 onClick={() => {}}
                 type="submit"
-                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
+                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105"
+              >
                 Đăng nhập
               </Button>
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { roboto } from "@/app/ui/fonts";
-import Providers  from "./store/Provider";
+import Providers from "./store/Provider";
 
 export const metadata: Metadata = {
   title: "UStudy",
@@ -17,13 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
-      <html lang="en">
-        <body className={`${roboto.className} antialiased`}>
-          <Providers>
-            {children}
-          </Providers>
-        </body>
-      </html>
+    <html lang="en">
+      <body className={`${roboto.className} antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }

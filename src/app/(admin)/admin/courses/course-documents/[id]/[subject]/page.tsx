@@ -2,7 +2,7 @@ import { Button } from "@/app/ui/components/Button";
 import React from "react";
 
 import GradeGrid from "@/app/ui/components/GradeAdmin/GradeGrid";
-import BreadCrumb from "@/app/ui/components/breadcrumb";
+import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/Input";
 
 // params are automatically passed to the page component in App Router

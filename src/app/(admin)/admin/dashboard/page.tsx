@@ -1,10 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/ui/components/card';
-import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/ui/components/card";
+import React from "react";
 import {
   FaUserGraduate,
   FaChalkboardTeacher,
   FaBuilding,
-
 } from "react-icons/fa";
 
 const DashboardPage: React.FC = () => {
@@ -63,9 +67,8 @@ const DashboardPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
     </>
-  )
+  );
 };
 
 export default DashboardPage;

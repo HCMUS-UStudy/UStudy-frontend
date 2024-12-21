@@ -11,7 +11,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
     {
       ["pl-[280px]"]: !toggleCollapse,
       ["pl-[150px]"]: toggleCollapse,
-    }
+    },
   );
 
   return <div className={bodyStyle}>{children}</div>;

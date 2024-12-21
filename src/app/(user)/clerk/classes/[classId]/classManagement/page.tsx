@@ -60,7 +60,7 @@ export default function ClassManagement({
             classData?.course.id,
             classData?.grade.id,
             0,
-            10
+            10,
           );
           setListChapters(response.data.content);
           //   console.log(response.data.content);
@@ -108,7 +108,8 @@ export default function ClassManagement({
         secondaryColor="bg-white"
         defaultChecked
         maxHeight={null}
-        className=" border-2 border-slate-100 rounded">
+        className=" border-2 border-slate-100 rounded"
+      >
         <div className="grid grid-cols-3 gap-6 py-4 px-10">
           {isLoading ? (
             <>
@@ -194,7 +195,8 @@ export default function ClassManagement({
                       setEmptyPage(false);
                       setOpenModal(true);
                     }}
-                    className=" relative group overflow-hidden transition-all duration-300 bg-red-50 hover:bg-green-100 hover:border-green-700 hover:cursor-pointer px-4 py-3 border-2 border-red-600 rounded-lg text-red-600 mt-4">
+                    className=" relative group overflow-hidden transition-all duration-300 bg-red-50 hover:bg-green-100 hover:border-green-700 hover:cursor-pointer px-4 py-3 border-2 border-red-600 rounded-lg text-red-600 mt-4"
+                  >
                     <div className="flex items-center gap-3 absolute -translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-[400ms] ease-in-out">
                       <FaUserPlus className="size-8 text-green-700" />
                       <span className="font-bold text-green-700">
@@ -232,7 +234,8 @@ export default function ClassManagement({
                 {listChapters.map((l, i) => (
                   <tr
                     key={i}
-                    className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
+                    className="text-center cursor-pointer hover:bg-blue-50 transition-colors"
+                  >
                     <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
                       {i + 1}
                     </td>
@@ -332,7 +335,8 @@ export default function ClassManagement({
           <div className="relative overflow-hidden h-[30vh]">
             <div
               className="w-full h-full flex gap-5 transition-all duration-300 ease-in-out"
-              style={{ transform: `translateX(${curr * -100}%)` }}>
+              style={{ transform: `translateX(${curr * -100}%)` }}
+            >
               <table className="table-auto w-[35vw] max-h-[10vh] shrink-0 bg-white select-none mt-2 ">
                 <thead>
                   <tr className="border-b-2 border-slate-200">
@@ -350,7 +354,8 @@ export default function ClassManagement({
                         setTeacher(t);
                         setCurr(1);
                       }}
-                      className="relative group overflow-hidden text-center cursor-pointer hover:bg-blue-50 ">
+                      className="relative group overflow-hidden text-center cursor-pointer hover:bg-blue-50 "
+                    >
                       <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
                         {t.genId}
                       </td>
@@ -406,7 +411,8 @@ export default function ClassManagement({
                   <button
                     onClick={() => setCurr(0)}
                     type="button"
-                    className="px-2.5 py-2 rounded bg-slate-200 hover:bg-slate-300 transition-colors">
+                    className="px-2.5 py-2 rounded bg-slate-200 hover:bg-slate-300 transition-colors"
+                  >
                     Quay lại
                   </button>
                   <button
@@ -421,7 +427,8 @@ export default function ClassManagement({
                       }
                     }}
                     type="button"
-                    className="text-white rounded px-4 py-2.5 bg-gradient-to-tr from-blue-800 via-blue-600 to-blue-800 bg-[length:100%_175%] bg-[0%_100%] hover:bg-[0%_0%] hover:scale-105 transition-all duration-200">
+                    className="text-white rounded px-4 py-2.5 bg-gradient-to-tr from-blue-800 via-blue-600 to-blue-800 bg-[length:100%_175%] bg-[0%_100%] hover:bg-[0%_0%] hover:scale-105 transition-all duration-200"
+                  >
                     Xác nhận
                   </button>
                 </div>

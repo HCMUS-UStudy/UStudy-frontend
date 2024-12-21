@@ -48,7 +48,8 @@ export default async function Home() {
           return (
             <div
               key={i}
-              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col gap-1 md:gap-3 items-center bg-white border border-slate-300 rounded-xl">
+              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col gap-1 md:gap-3 items-center bg-white border border-slate-300 rounded-xl"
+            >
               <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" />
               <div className="text-lg md:text-2xl font-bold">
                 {c.FeatureName}
@@ -68,42 +69,46 @@ export default async function Home() {
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
-          <div
-            className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
+          <div className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
             <Link
               href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out">
+              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
+            >
               Home
             </Link>
             <Link
               href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out">
+              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
+            >
               Teachers
             </Link>
             <Link
               href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out">
+              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
+            >
               Academic Staff
             </Link>
             <Link
               href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out">
+              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
+            >
               Classroom
             </Link>
           </div>
           <Button
             className="text-lg min-[320px]:hidden md:flex hover:scale-110"
-            type="submit">
+            type="submit"
+          >
             <Link
               href="/login"
-              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300">
+              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300"
+            >
               Đăng nhập
             </Link>
             <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
           </Button>
         </div>
-        <div
-          className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-8">
+        <div className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-8">
           <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
             <div className="leading-tight md:leading-normal">
               <div className=" tracking-tight md:tracking-normal">
@@ -122,7 +127,8 @@ export default async function Home() {
             </div>
             <Button
               className="w-full overflow-hidden md:w-[300px] text-xl py-4 hover:scale-110"
-              type="submit">
+              type="submit"
+            >
               Bắt đầu
               {/* <span className="absolute -translate-y-1 translate-x-1 opacity-20">
                 Bắt đầu
@@ -142,8 +148,7 @@ export default async function Home() {
           />
         </div>
       </div>
-      <div
-        className="md:px-24 mx-auto flex flex-col justify-center">
+      <div className="md:px-24 mx-auto flex flex-col justify-center">
         <div className="mt-12 mx-9 md:mx-44 text-center">
           <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[52px]">
             <span className="text-highlight_text">Why we are</span> best from

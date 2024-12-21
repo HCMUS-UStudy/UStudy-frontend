@@ -33,7 +33,7 @@ export const TableSkeleton = () => {
             {" "}
             <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
-        </tr>
+        </tr>,
       );
     }
     return rows;

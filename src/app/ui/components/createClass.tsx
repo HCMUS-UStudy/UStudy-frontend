@@ -45,7 +45,9 @@ export default function CreateClass() {
   // CÁC STATE PHỤ
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
+  const { selectedBranchId } = useSelector(
+    (state: BranchRootState) => state.branch,
+  );
   const [errors, setErrors] = useState<CreateClassError>({
     course: null,
     room: null,
@@ -156,8 +158,8 @@ export default function CreateClass() {
   const toggleDaysInSchedule = (day: number) => {
     setBaseSchedule((schedule) =>
       schedule.map((item: ScheduleItem) =>
-        item.dataToSend === day ? { ...item, isChosen: !item.isChosen } : item
-      )
+        item.dataToSend === day ? { ...item, isChosen: !item.isChosen } : item,
+      ),
     );
   };
 
@@ -165,7 +167,7 @@ export default function CreateClass() {
     branchId: string,
     times: TimeItem[],
     startDate: string,
-    endDate: string
+    endDate: string,
   ) => {
     try {
       setIsLoading(true);
@@ -173,7 +175,7 @@ export default function CreateClass() {
         branchId,
         times,
         startDate,
-        endDate
+        endDate,
       );
       // console.log(response);
       setRooms(response);
@@ -317,7 +319,8 @@ export default function CreateClass() {
           setIsOpenModal(true);
         }}
         type="button"
-        className="relative group px-8 bg-gradient-to-tr from-blue-800 via-blue-600  to-blue-800 bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200">
+        className="relative group px-8 bg-gradient-to-tr from-blue-800 via-blue-600  to-blue-800 bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200"
+      >
         <span className="-translate-x-0 group-hover:-translate-x-4 transition-all duration-300">
           Thêm lớp học
         </span>
@@ -326,7 +329,8 @@ export default function CreateClass() {
       <Modal
         modalName="ModalCreateClass"
         isOpen={isOpenModal}
-        className="h-fit pb-6">
+        className="h-fit pb-6"
+      >
         <div className="flex flex-col relative">
           <CircleX
             onClick={() => {
@@ -339,7 +343,8 @@ export default function CreateClass() {
           </h1>
           <form
             // action={action}
-            className=" mx-6 mt-10 flex flex-col gap-2 md:gap-5">
+            className=" mx-6 mt-10 flex flex-col gap-2 md:gap-5"
+          >
             <Input
               className="w-full h-11 text-base text-secondary_text"
               placeholder="Tên lớp"
@@ -417,7 +422,7 @@ export default function CreateClass() {
                       "border-2 border-error": errors?.startDate,
                       "border border-gray-300": !errors?.startDate,
                     },
-                    "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5"
+                    "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5",
                   )}
                   placeholder="Ngày bắt đầu"
                   name="startDate"
@@ -439,7 +444,7 @@ export default function CreateClass() {
                   type="date"
                   id="default-datepicker"
                   className={clsx(
-                    "bg-gray-50 text-gray-900 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5"
+                    "bg-gray-50 text-gray-900 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5",
                   )}
                   placeholder="Ngày kết thúc"
                   name="startDate"
@@ -486,7 +491,7 @@ export default function CreateClass() {
                           selectedBranchId,
                           fixedSchedule,
                           startDate,
-                          endDate
+                          endDate,
                         );
                         break;
                       case "Giờ linh hoạt":
@@ -494,7 +499,7 @@ export default function CreateClass() {
                           selectedBranchId,
                           flexSchedule,
                           startDate,
-                          endDate
+                          endDate,
                         );
                         break;
                     }
@@ -541,7 +546,8 @@ export default function CreateClass() {
               }}
               // isPending={isPending}
               type="button"
-              className="mt-5 bg-blue-600 hover:bg-blue-800">
+              className="mt-5 bg-blue-600 hover:bg-blue-800"
+            >
               Tạo lớp học
             </Button>
           </form>
@@ -554,7 +560,8 @@ export default function CreateClass() {
         }}
         modalName="ModalSelectSubject"
         isOpen={isSelectingGrade}
-        className="w-[25vw] py-8">
+        className="w-[25vw] py-8"
+      >
         <div>
           <h1 className="text-xl font-semibold text-gray-800 text-center">
             Chọn khối
@@ -569,7 +576,8 @@ export default function CreateClass() {
                     setIsSelectingGrade(false);
                   }}
                   key={i}
-                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
+                >
                   {data.name}
                 </div>
               ))}
@@ -586,7 +594,8 @@ export default function CreateClass() {
         }}
         modalName="ModalSelectSubject"
         isOpen={isSelectingSubject}
-        className="w-[25vw] py-8">
+        className="w-[25vw] py-8"
+      >
         <div>
           <h1 className="text-xl font-semibold text-gray-800 text-center">
             Chọn môn học
@@ -603,7 +612,8 @@ export default function CreateClass() {
                     setCourse(data);
                   }}
                   key={i}
-                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
+                >
                   {data.name}
                 </div>
               ))}
@@ -615,7 +625,8 @@ export default function CreateClass() {
       <Modal
         modalName="ModalSelectSubject"
         isOpen={isSelectingDuration}
-        className="w-[25vw] py-8">
+        className="w-[25vw] py-8"
+      >
         <div>
           <h1 className="text-xl font-semibold text-gray-800 text-center">
             Thời gian học
@@ -635,7 +646,8 @@ export default function CreateClass() {
             <select
               value={durationUnit}
               onChange={(e) => setDurationUnit(e.target.value as DurationUnit)}
-              className="border-2 border-sky-500 p-2.5 text-sm rounded-lg h-fit">
+              className="border-2 border-sky-500 p-2.5 text-sm rounded-lg h-fit"
+            >
               <option value="Tháng">Tháng</option>
               <option value="Tuần">Tuần</option>
               <option value="Năm">Năm</option>
@@ -662,7 +674,8 @@ export default function CreateClass() {
               }
               setIsSelectingDuration(false);
             }}
-            className="mx-auto mt-3 w-[30%]">
+            className="mx-auto mt-3 w-[30%]"
+          >
             Hoàn tất
           </Button>
         </div>
@@ -674,7 +687,8 @@ export default function CreateClass() {
         }}
         modalName="ModalSelectSubject"
         isOpen={isSelectingSchedule}
-        className="w-[35vw] h-min-[60%] h-[60%] py-8">
+        className="w-[35vw] h-min-[60%] h-[60%] py-8"
+      >
         <div className="flex flex-col items-center justify-between h-full">
           <div className="grid grid-cols-2 gap-8">
             <div
@@ -683,7 +697,8 @@ export default function CreateClass() {
               }}
               className={
                 "border-sky-500 rounded px-2 text-xl text-center cursor-pointer"
-              }>
+              }
+            >
               Giờ cố định
               <div
                 className={clsx(
@@ -691,8 +706,9 @@ export default function CreateClass() {
                     "opacity-100 scale-y-100": scheduleType === "Giờ cố định",
                     "opcacity-0 scale-y-0": scheduleType === "Giờ linh hoạt",
                   },
-                  "h-[1vh] rounded-xl bg-sky-500 mt-1 transition-all duration-100"
-                )}></div>
+                  "h-[1vh] rounded-xl bg-sky-500 mt-1 transition-all duration-100",
+                )}
+              ></div>
             </div>
             <div
               onClick={() => {
@@ -701,7 +717,8 @@ export default function CreateClass() {
               }}
               className={
                 "border-sky-500 rounded px-2 text-xl text-center cursor-pointer"
-              }>
+              }
+            >
               Giờ linh hoạt
               <div
                 className={clsx(
@@ -709,8 +726,9 @@ export default function CreateClass() {
                     "opacity-100 scale-y-100": scheduleType === "Giờ linh hoạt",
                     "opcacity-0 scale-y-0": scheduleType === "Giờ cố định",
                   },
-                  "h-[1vh] rounded-xl bg-sky-500 mt-1 transition"
-                )}></div>
+                  "h-[1vh] rounded-xl bg-sky-500 mt-1 transition",
+                )}
+              ></div>
             </div>
           </div>
           {/* CHỌN GIỜ LINH HOẠT */}
@@ -720,7 +738,8 @@ export default function CreateClass() {
                 <select
                   value={selectedDay}
                   onChange={(e) => setSelectedDay(parseInt(e.target.value))}
-                  className="border-2 border-sky-500 p-2 text-sm rounded-xl h-[5vh]">
+                  className="border-2 border-sky-500 p-2 text-sm rounded-xl h-[5vh]"
+                >
                   <option value={0}>Chọn thứ</option>
                   <option value={1}>Thứ 2</option>
                   <option value={2}>Thứ 3</option>
@@ -770,7 +789,7 @@ export default function CreateClass() {
                     }
                     const newTimes: TimeItem[] = [...flexSchedule];
                     const existingItem = newTimes.find(
-                      (item) => item.day === selectedDay
+                      (item) => item.day === selectedDay,
                     );
                     if (existingItem) {
                       existingItem.startTime = startTime;
@@ -784,7 +803,8 @@ export default function CreateClass() {
                     }
                     setFlexSchedule(newTimes);
                   }}
-                  className="rounded-xl h-[5vh] mx-auto mt-3 px-5">
+                  className="rounded-xl h-[5vh] mx-auto mt-3 px-5"
+                >
                   <Plus size={20} />
                 </Button>
               </div>
@@ -805,7 +825,7 @@ export default function CreateClass() {
                         onClick={() => {
                           const newTimes: TimeItem[] = [...flexSchedule];
                           const updatedTimes = newTimes.filter(
-                            (item) => item.day !== data.day
+                            (item) => item.day !== data.day,
                           );
                           setFlexSchedule(updatedTimes);
                         }}
@@ -837,8 +857,9 @@ export default function CreateClass() {
                             !data.isChosen,
                           "bg-sky-300": data.isChosen,
                         },
-                        "border-2 border-sky-500  rounded-xl px-4 py-1.5 cursor-pointer"
-                      )}>
+                        "border-2 border-sky-500  rounded-xl px-4 py-1.5 cursor-pointer",
+                      )}
+                    >
                       {data.display}
                     </div>
                   ))}
@@ -875,7 +896,7 @@ export default function CreateClass() {
                   {
                     position: "bottom-right",
                     autoClose: 3000,
-                  }
+                  },
                 );
                 return;
               }
@@ -893,7 +914,8 @@ export default function CreateClass() {
               setErrors({ ...errors, classTimes: null });
               setIsSelectingSchedule(false);
             }}
-            className="w-1/3 mt-5">
+            className="w-1/3 mt-5"
+          >
             Hoàn tất
           </Button>
         </div>
@@ -905,7 +927,8 @@ export default function CreateClass() {
         }}
         modalName="ModalSelectSubject"
         isOpen={isSelectingRoom}
-        className="w-[25vw] py-8">
+        className="w-[25vw] py-8"
+      >
         <div>
           <h1 className="text-xl font-semibold text-gray-800 text-center">
             Chọn phòng học
@@ -920,7 +943,8 @@ export default function CreateClass() {
                     setIsSelectingRoom(false);
                   }}
                   key={i}
-                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer">
+                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
+                >
                   {data.name}
                 </div>
               ))}

@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/app/lib/utils";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import { Label } from "./label";
+import { Label } from "./Label";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -22,7 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [isFocused, setIsFocused] = React.useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
     const [inputVal, setInputVal] = React.useState("");
-    
+
     return (
       <div>
         <div className="relative">
@@ -50,7 +50,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             }}
             {...props}
           />
-          
+
           {label && (
             <Label
               htmlFor={inputId}
@@ -58,23 +58,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 isFocused || inputVal
                   ? "-top-3 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
                   : "top-1/2 transform -translate-y-1/2 text-transparent"
-              }`}>
+              }`}
+            >
               {label}
             </Label>
           )}
 
-          {type === "password" &&
+          {type === "password" && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none">
+              className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none"
+            >
               {showPassword ? (
                 <HiEyeOff className="text-gray-600" />
               ) : (
                 <HiEye className="text-gray-600" />
               )}
             </button>
-          }
+          )}
         </div>
 
         {isError && errorMsg && (
@@ -82,7 +84,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 Input.displayName = "Input";
 

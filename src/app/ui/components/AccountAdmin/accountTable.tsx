@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-import { FiLock } from 'react-icons/fi';
-import { AccountItem } from '@/app/types/type';
-import { getAllAccount } from '@/app/lib/api';
-import Loading from '../loading';
-import PaginationAdmin from '../paginationAdmin';
+import React, { useState, useEffect } from "react";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FiLock } from "react-icons/fi";
+import { AccountItem } from "@/app/types/type";
+import { getAllAccount } from "@/app/lib/api";
+import Loading from "../loading";
+import PaginationAdmin from "../paginationAdmin";
 
 interface UserTableProps {
   searchQuery: string;
@@ -15,7 +15,7 @@ interface UserTableProps {
 const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
   const [users, setUsers] = useState<AccountItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
@@ -39,7 +39,7 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
       setTotalPages(response.totalPages || 1);
     } catch (error) {
       console.log(error);
-      setError('Error fetching users.');
+      setError("Error fetching users.");
     } finally {
       setUsers(filteredData);
       setLoading(false);
@@ -65,13 +65,27 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
       <table className="min-w-full table-auto border-collapse">
         <thead className="bg-gray-100">
           <tr>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">Họ tên</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Email</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Mã số</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Chức vụ</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Trạng thái</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Ngày tạo</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Hành động</th>
+            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
+              Họ tên
+            </th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
+              Email
+            </th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
+              Mã số
+            </th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
+              Chức vụ
+            </th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
+              Trạng thái
+            </th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
+              Ngày tạo
+            </th>
+            <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
+              Hành động
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -90,17 +104,31 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
           ) : users.length > 0 ? (
             users.map((user) => (
               <tr key={user.id}>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.email}</td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.genId}</td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">{user.role}</td>
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {user.name}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {user.email}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {user.genId}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                  {user.role}
+                </td>
                 <td className="px-6 py-4 text-sm text-center">
-                  <span className={user.isActive ? 'text-green-600 font-semibold' : 'text-gray-500'}>
-                    {user.isActive ? 'Đang hoạt động' : 'Ngưng hoạt động'}
+                  <span
+                    className={
+                      user.isActive
+                        ? "text-green-600 font-semibold"
+                        : "text-gray-500"
+                    }
+                  >
+                    {user.isActive ? "Đang hoạt động" : "Ngưng hoạt động"}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                  {new Date(user.createdAt).toLocaleDateString("vi-VN")}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
@@ -129,10 +157,13 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
         currentPage={currentPage}
         totalPages={totalPages}
         setCurrentPage={setCurrentPage}
-        handlePreviousPage={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-        handleNextPage={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+        handlePreviousPage={() =>
+          setCurrentPage((prev) => Math.max(prev - 1, 1))
+        }
+        handleNextPage={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+        }
       />
-
     </div>
   );
 };

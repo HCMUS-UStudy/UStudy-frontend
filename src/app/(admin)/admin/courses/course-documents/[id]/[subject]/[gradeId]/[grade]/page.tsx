@@ -3,7 +3,7 @@ import React from "react";
 
 import ChapterGrid from "@/app/ui/components/ChapterAdmin/ChapterGrid";
 import Loading from "@/app/ui/components/loading";
-import BreadCrumb from "@/app/ui/components/breadcrumb";
+import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/Input";
 
 interface Params {
@@ -60,7 +60,8 @@ const GradeDocumentsPage = async ({
           <select
             // value={selectedFilter}
             // onChange={(e) => setSelectedFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md">
+            className="px-4 py-2 border border-gray-300 rounded-md"
+          >
             <option value="">Tất cả chương</option>
             <option value="Chapter">Chương 1</option>
             <option value="Exercises">Chương 2</option>
@@ -72,7 +73,8 @@ const GradeDocumentsPage = async ({
         <Button
           //onClick={onCreateCourse}
           type="button"
-          className="pl-6 pr-6">
+          className="pl-6 pr-6"
+        >
           Tạo chương
         </Button>
       </div>

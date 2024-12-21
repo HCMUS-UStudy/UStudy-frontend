@@ -21,16 +21,20 @@ export default function Classes() {
       try {
         const classes = await getClassesForTeacher();
 
-        const ongoingMapped = classes.filter((cls: ClassTeacher) => cls.status === "PROGRESS");
-        const completedMapped = classes.filter((cls: ClassTeacher) => cls.status === "COMPLETED");
-  
+        const ongoingMapped = classes.filter(
+          (cls: ClassTeacher) => cls.status === "PROGRESS",
+        );
+        const completedMapped = classes.filter(
+          (cls: ClassTeacher) => cls.status === "COMPLETED",
+        );
+
         setOngoingClasses(ongoingMapped);
         setCompletedClasses(completedMapped);
       } catch (error) {
         console.error("Error fetching classes:", error);
       }
     };
-  
+
     fetchClasses();
   }, [dispatch]);
 
@@ -40,11 +44,11 @@ export default function Classes() {
       <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="transition-transform duration-500 ease-in-out">
         {activeTab === "ongoing" ? (
-          <ClassList classes={ongoingClasses} completed={false}/>
+          <ClassList classes={ongoingClasses} completed={false} />
         ) : (
-          <ClassList classes={completedClasses} completed={true}/>
+          <ClassList classes={completedClasses} completed={true} />
         )}
       </div>
-</div>
+    </div>
   );
 }
