@@ -2,56 +2,124 @@
 import { getAllClasses } from "@/app/lib/api";
 import { ClassItem } from "@/app/types/type";
 import React, { useEffect, useState } from "react";
-import { TableSkeleton } from "./skeleton";
+import { TableSkeleton } from "../skeleton";
 import { useRouter } from "next/navigation";
+import { cn } from "@/app/lib/utils";
 
-export interface ColumnContent {
-  colName: string;
-  rowContent: string[];
+// export interface ColumnContent {
+//   colName: string;
+//   rowContent: string[];
+// }
+//
+// export interface TableProps {
+//   tableName: string;
+//   colNames: string[];
+//   content: ColumnContent[];
+// }
+
+// export function Table({ tableName, colNames, content }: TableProps) {
+//   return (
+//     <div className="flex flex-col w-full space-y-4 p-6 bg-white rounded-md shadow-md">
+//       <div className="flex justify-between items-center">
+//         <p className="text-xl text-gray-950 font-extrabold">{tableName}</p>
+//       </div>
+//       <div className="relative overflow-x-auto rounded-md shadow-md">
+//         <table className="w-full text-sm text-left text-secondary_text bg-sky-50 table-auto divide-y divide-gray-300 ">
+//           <thead className="text-gray-950">
+//             <tr className="divide-x divide-gray-300">
+//               {colNames.map((col, index) => (
+//                 <th key={index} scope="row" className="px-6 py-3">
+//                   {col}
+//                 </th>
+//               ))}
+//             </tr>
+//           </thead>
+//           <tbody className="divide-y divide-gray-300 divide-dashed">
+//             {content[0].rowContent.map((_, rowIdx) => (
+//               <tr
+//                 key={rowIdx}
+//                 className="odd:bg-white even:bg-sky-50 divide-x divide-gray-300 divide-dashed"
+//               >
+//                 {content.map((col, colIdx) => (
+//                   <td key={colIdx} className="px-6 py-4">
+//                     {col.rowContent[rowIdx]}
+//                   </td>
+//                 ))}
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   );
+// }
+
+// custom table
+interface TableProps {
+  children: React.ReactNode;
 }
 
-export interface TableProps {
-  tableName: string;
-  colNames: string[];
-  content: ColumnContent[];
-}
-
-export function Table({ tableName, colNames, content }: TableProps) {
+export const Table: React.FC<TableProps> = ({ children }) => {
   return (
-    <div className="flex flex-col w-full space-y-4 p-6 bg-white rounded-md shadow-md">
-      <div className="flex justify-between items-center">
-        <p className="text-xl text-gray-950 font-extrabold">{tableName}</p>
-      </div>
-      <div className="relative overflow-x-auto rounded-md shadow-md">
-        <table className="w-full text-sm text-left text-secondary_text bg-sky-50 table-auto divide-y divide-gray-300 ">
-          <thead className="text-gray-950">
-            <tr className="divide-x divide-gray-300">
-              {colNames.map((col, index) => (
-                <th key={index} scope="row" className="px-6 py-3">
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-300 divide-dashed">
-            {content[0].rowContent.map((_, rowIdx) => (
-              <tr
-                key={rowIdx}
-                className="odd:bg-white even:bg-sky-50 divide-x divide-gray-300 divide-dashed"
-              >
-                {content.map((col, colIdx) => (
-                  <td key={colIdx} className="px-6 py-4">
-                    {col.rowContent[rowIdx]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <table className="min-w-full table-auto border-collapse">{children}</table>
   );
+};
+
+interface TableHeaderProps {
+  columns: string[];
 }
+
+export const TableHeader: React.FC<TableHeaderProps> = ({ columns }) => {
+  return (
+    <thead className="bg-gray-100">
+      <tr>
+        {columns.map((col, index) => (
+          <th
+            key={index}
+            className="px-6 py-3 text-sm font-semibold text-gray-600 text-center"
+          >
+            {col}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
+};
+
+interface TableBodyProps {
+  children: React.ReactNode;
+}
+
+export const TableBody: React.FC<TableBodyProps> = ({ children }) => {
+  return <tbody>{children}</tbody>;
+};
+
+interface TableRowProps {
+  children: React.ReactNode;
+}
+
+export const TableRow: React.FC<TableRowProps> = ({ children }) => {
+  return (
+    <tr className="hover:bg-gray-50 transition-all duration-200">{children}</tr>
+  );
+};
+
+interface TableCellProps extends React.HTMLProps<HTMLTableCellElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const TableCell: React.FC<TableCellProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <td className={cn("px-6 py-4 text-sm text-center", className)} {...props}>
+      {children}
+    </td>
+  );
+};
 
 export function ClassesTable({
   query,

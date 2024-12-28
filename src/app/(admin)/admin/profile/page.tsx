@@ -13,7 +13,7 @@ import {
 } from "react-icons/fi";
 import { AiOutlineEdit } from "react-icons/ai";
 import "../../../ui/styles/ProfilePage.css";
-import { Button } from "@/app/ui/components/Button";
+import { Button } from "@/app/ui/components/common/Button";
 
 interface UserProfile {
   _id: string;

@@ -1,7 +1,7 @@
 import CreateClass from "@/app/ui/components/createClass";
-import { SearchField } from "@/app/ui/components/Input";
+import { SearchField } from "@/app/ui/components/common/Input";
 import Pagination from "@/app/ui/components/pagination";
-import { ClassesTable } from "@/app/ui/components/table";
+import { ClassesTable } from "@/app/ui/components/common/Table";
 import React from "react";
 
 export default async function Classes(props: {

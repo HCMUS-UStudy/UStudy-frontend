@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import { Button } from "../Button";
+import { Button } from "../common/Button";
 import PaginationAdmin from "../paginationAdmin";
 import { confirmRegister, getRegister, rejectRegister } from "@/app/lib/api";
 import Loading from "../loading";
@@ -83,9 +83,11 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
   };
 
   useEffect(() => {
-    fetchStudents();
-    fetchTeachers();
-  }, [currentPageStu, currentPageTea]); // Trigger fetch when page changes
+    if (showModalRe) {
+      fetchStudents();
+      fetchTeachers();
+    }
+  }, [currentPageStu, currentPageTea, showModalRe]); // Trigger fetch when page changes
 
   const handleApprove = async (userId: string) => {
     setLoading(true);

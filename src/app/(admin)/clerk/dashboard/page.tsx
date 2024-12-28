@@ -8,33 +8,33 @@ import {
 import React from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { FaChalkboard, FaPenNib } from "react-icons/fa6";
-import { TableProps } from "@/app/ui/components/table";
+// import { TableProps } from "@/app/ui/components/Table";
 
 export default function ClerkDashboard() {
-  const classTableContent: TableProps = {
-    tableName: "Các lớp học nổi bật",
-    colNames: ["ID", "Tên lớp học", "Số học viên"],
-    content: [
-      {
-        colName: "ID",
-        rowContent: ["1", "2", "3", "4", "5"],
-      },
-      {
-        colName: "Tên lớp học",
-        rowContent: [
-          "Toán nâng cao lớp 9",
-          "Tiếng Anh giao tiếp cơ bản",
-          "Văn học hiện đại lớp 12",
-          "Luyện thi đại học môn Hóa",
-          "Lịch sử thế giới lớp 10",
-        ],
-      },
-      {
-        colName: "Số lượng học viên",
-        rowContent: ["30", "25", "20", "35", "28"],
-      },
-    ],
-  };
+  // const classTableContent: TableProps = {
+  //   tableName: "Các lớp học nổi bật",
+  //   colNames: ["ID", "Tên lớp học", "Số học viên"],
+  //   content: [
+  //     {
+  //       colName: "ID",
+  //       rowContent: ["1", "2", "3", "4", "5"],
+  //     },
+  //     {
+  //       colName: "Tên lớp học",
+  //       rowContent: [
+  //         "Toán nâng cao lớp 9",
+  //         "Tiếng Anh giao tiếp cơ bản",
+  //         "Văn học hiện đại lớp 12",
+  //         "Luyện thi đại học môn Hóa",
+  //         "Lịch sử thế giới lớp 10",
+  //       ],
+  //     },
+  //     {
+  //       colName: "Số lượng học viên",
+  //       rowContent: ["30", "25", "20", "35", "28"],
+  //     },
+  //   ],
+  // };
   return (
     <div>
       <div className="flex gap-4">

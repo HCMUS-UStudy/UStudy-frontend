@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FaEdit, FaSearch, FaTrashAlt } from "react-icons/fa";
-import { Button } from "./Button";
-import { Input } from "./Input";
-import { Label } from "./Label";
+import { Button } from "./common/Button";
+import { Input } from "./common/Input";
+import { Label } from "./common/Label";
 
 export default function AccountsComponent() {
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/app/ui/components/Button";
+import { Button } from "@/app/ui/components/common/Button";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";

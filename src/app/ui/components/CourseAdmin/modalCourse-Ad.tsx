@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "../Input";
-import { Label } from "../Label";
-import { Button } from "../Button";
+import { Input } from "../common/Input";
+import { Label } from "../common/Label";
+import { Button } from "../common/Button";
 import { CourseSchema } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";

@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
-import { Input } from "@/app/ui/components/Input";
-import { Button } from "@/app/ui/components/Button";
+import { Input } from "@/app/ui/components/common/Input";
+import { Button } from "@/app/ui/components/common/Button";
 // import axios from "axios";
 import { getAllBranches } from "@/app/lib/api";
 import { addBranch } from "@/app/lib/api";

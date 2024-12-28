@@ -2,7 +2,7 @@ import React from "react";
 
 import CourseTable from "@/app/ui/components/CourseAdmin/courseTable";
 import ModalCourse from "@/app/ui/components/CourseAdmin/modalCourse-Ad";
-import { SearchField } from "@/app/ui/components/Input";
+import { SearchField } from "@/app/ui/components/common/Input";
 
 export default async function CoursePage(props: {
   searchParams?: Promise<{

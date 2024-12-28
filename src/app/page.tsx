@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Button } from "./ui/components/Button";
+import { Button } from "./ui/components/common/Button";
 import Image from "next/image";
 import { FaBook, FaUserGraduate } from "react-icons/fa6";
 import Footer from "./ui/components/footer";
 import LandingPageSideBar from "./ui/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/createTeacher";
 import { IoLogInOutline, IoSparkles } from "react-icons/io5";
-import Logo from "./ui/components/Logo";
+import Logo from "./ui/components/common/Logo";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {

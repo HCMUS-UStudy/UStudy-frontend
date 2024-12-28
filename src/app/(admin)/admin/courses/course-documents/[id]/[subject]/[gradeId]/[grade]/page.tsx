@@ -1,10 +1,10 @@
-import { Button } from "@/app/ui/components/Button";
+import { Button } from "@/app/ui/components/common/Button";
 import React from "react";
 
 import ChapterGrid from "@/app/ui/components/ChapterAdmin/ChapterGrid";
 import Loading from "@/app/ui/components/loading";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
-import { SearchField } from "@/app/ui/components/Input";
+import { SearchField } from "@/app/ui/components/common/Input";
 
 interface Params {
   id: string;

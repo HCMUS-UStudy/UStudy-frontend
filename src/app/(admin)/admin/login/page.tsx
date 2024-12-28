@@ -3,11 +3,11 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Input } from "@/app/ui/components/Input";
-import { Label } from "@/app/ui/components/Label";
+import { Input } from "@/app/ui/components/common/Input";
+import { Label } from "@/app/ui/components/common/Label";
 import Image from "next/image";
 import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
-import { Button } from "@/app/ui/components/Button";
+import { Button } from "@/app/ui/components/common/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { adminLogin } from "@/app/lib/api";

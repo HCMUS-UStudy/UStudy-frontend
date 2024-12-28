@@ -3,20 +3,20 @@
 import Link from "next/link";
 import React, { useActionState, useEffect, useState } from "react";
 import Head from "next/head";
-import { Input } from "@/app/ui/components/Input";
+import { Input } from "@/app/ui/components/common/Input";
 import Image from "next/image";
 import { HiHome } from "react-icons/hi";
-import { Button } from "@/app/ui/components/Button";
+import { Button } from "@/app/ui/components/common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
-import { Spinner } from "@/app/ui/components/Spinner";
+import { Spinner } from "@/app/ui/components/common/Spinner";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import Logo from "@/app/ui/components/Logo";
+import Logo from "@/app/ui/components/common/Logo";
 
 export default function Login() {
   const router = useRouter();
