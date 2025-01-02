@@ -12,11 +12,11 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
-import { Spinner } from "@/app/ui/components/common/Spinner";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import Logo from "@/app/ui/components/common/Logo";
+import Loading from "@/app/ui/components/common/Loading";
 
 export default function Login() {
   const router = useRouter();
@@ -41,10 +41,10 @@ export default function Login() {
       try {
         setIsLoading(true);
         const response = await userLogin(genId, password);
-        setTokens(response.access_token, response.refresh_token);
-        setUserInfo(JSON.stringify(response.user));
+        setTokens(response.data.access_token, response.data.refresh_token);
+        setUserInfo(JSON.stringify(response.data.user));
 
-        const role = response.user.role;
+        const role = response.data.user.role;
         switch (role) {
           case "CLERK":
             router.push("/clerk/dashboard");
@@ -176,11 +176,11 @@ export default function Login() {
                 )}
               >
                 {isPending || isLoading ? (
-                  <Spinner
-                    text="Đang xử lý"
-                    className="flex items-center gap-2 flex-row"
+                  <Loading
+                    text="Đang xử lý..."
+                    className="flex items-center gap-2 flex-row text-white"
                     customStyle={{
-                      spinner: "fill-white w-6 h-6",
+                      spinner: "w-6 h-6",
                       text: "mt-0",
                     }}
                   />

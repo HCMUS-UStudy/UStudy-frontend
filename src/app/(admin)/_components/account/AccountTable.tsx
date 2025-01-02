@@ -5,8 +5,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
 import { AccountItem } from "@/app/types/type";
 import { getAllAccount } from "@/app/lib/api";
-import Loading from "../loading";
-import PaginationAdmin from "../paginationAdmin";
+import Pagination from "../../../ui/components/common/Pagination";
 import {
   Table,
   TableBody,
@@ -15,11 +14,11 @@ import {
   TableRow,
 } from "@/app/ui/components/common/Table";
 
-interface UserTableProps {
+interface AccountTableProps {
   searchQuery: string;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
+const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
   const [users, setUsers] = useState<AccountItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -80,15 +79,10 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
             "Ngày tạo",
             "Hành động",
           ]}
+          className="bg-gray-100"
         />
-        <TableBody>
-          {loading ? (
-            <TableRow>
-              <TableCell colSpan={7}>
-                <Loading />
-              </TableCell>
-            </TableRow>
-          ) : error ? (
+        <TableBody isLoading={loading}>
+          {error ? (
             <TableRow>
               <TableCell colSpan={7} className="text-red-500">
                 {error}
@@ -227,10 +221,10 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
         </tbody>
       </table>*/}
 
-      <PaginationAdmin
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        setCurrentPage={setCurrentPage}
+        handlePageClick={(page) => setCurrentPage(page)}
         handlePreviousPage={() =>
           setCurrentPage((prev) => Math.max(prev - 1, 1))
         }
@@ -242,4 +236,4 @@ const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
   );
 };
 
-export default UserTable;
+export default AccountTable;

@@ -1,83 +1,91 @@
 "use client";
 import { getAllClasses } from "@/app/lib/api";
 import { ClassItem } from "@/app/types/type";
-import React, { useEffect, useState } from "react";
-import { TableSkeleton } from "../skeleton";
-import { useRouter } from "next/navigation";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/app/lib/utils";
-
-// export interface ColumnContent {
-//   colName: string;
-//   rowContent: string[];
-// }
-//
-// export interface TableProps {
-//   tableName: string;
-//   colNames: string[];
-//   content: ColumnContent[];
-// }
-
-// export function Table({ tableName, colNames, content }: TableProps) {
-//   return (
-//     <div className="flex flex-col w-full space-y-4 p-6 bg-white rounded-md shadow-md">
-//       <div className="flex justify-between items-center">
-//         <p className="text-xl text-gray-950 font-extrabold">{tableName}</p>
-//       </div>
-//       <div className="relative overflow-x-auto rounded-md shadow-md">
-//         <table className="w-full text-sm text-left text-secondary_text bg-sky-50 table-auto divide-y divide-gray-300 ">
-//           <thead className="text-gray-950">
-//             <tr className="divide-x divide-gray-300">
-//               {colNames.map((col, index) => (
-//                 <th key={index} scope="row" className="px-6 py-3">
-//                   {col}
-//                 </th>
-//               ))}
-//             </tr>
-//           </thead>
-//           <tbody className="divide-y divide-gray-300 divide-dashed">
-//             {content[0].rowContent.map((_, rowIdx) => (
-//               <tr
-//                 key={rowIdx}
-//                 className="odd:bg-white even:bg-sky-50 divide-x divide-gray-300 divide-dashed"
-//               >
-//                 {content.map((col, colIdx) => (
-//                   <td key={colIdx} className="px-6 py-4">
-//                     {col.rowContent[rowIdx]}
-//                   </td>
-//                 ))}
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// }
+import { Button } from "@/app/ui/components/common/Button";
+import Pagination from "@/app/ui/components/common/Pagination";
 
 // custom table
-interface TableProps {
+interface TableContextProps {
+  columns: string[];
+  setColumns: (columns: string[]) => void;
+}
+
+const TableContext = createContext<TableContextProps | undefined>(undefined);
+
+const useTableContext = () => {
+  const context = useContext(TableContext);
+  if (!context) {
+    throw new Error("useTableContext must be used within a TableProvider");
+  }
+  return context;
+};
+
+interface TableProviderProps {
   children: React.ReactNode;
 }
 
-export const Table: React.FC<TableProps> = ({ children }) => {
+const TableProvider: React.FC<TableProviderProps> = ({ children }) => {
+  const [columns, setColumns] = useState<string[]>([]);
+
   return (
-    <table className="min-w-full table-auto border-collapse">{children}</table>
+    <TableContext.Provider value={{ columns, setColumns }}>
+      {children}
+    </TableContext.Provider>
+  );
+};
+
+interface TableProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Table component
+ * @param children - TableHeader and TableBody
+ * @param className - string - custom style for table
+ */
+export const Table: React.FC<TableProps> = ({ children, className }) => {
+  return (
+    <TableProvider>
+      <table
+        className={cn(
+          "min-w-full table-auto border-collapse bg-white rounded-lg shadow-md",
+          className,
+        )}
+      >
+        {children}
+      </table>
+    </TableProvider>
   );
 };
 
 interface TableHeaderProps {
   columns: string[];
+  className?: string;
 }
 
-export const TableHeader: React.FC<TableHeaderProps> = ({ columns }) => {
+/**
+ * TableHeader component
+ * @param columns - array of column names
+ * @param className
+ */
+export const TableHeader: React.FC<TableHeaderProps> = ({
+  columns,
+  className,
+}) => {
+  const { setColumns } = useTableContext();
+  useEffect(() => {
+    setColumns(columns);
+  }, [columns, setColumns]);
+
   return (
-    <thead className="bg-gray-100">
-      <tr>
+    <thead className={className}>
+      <tr className="border-b-2 border-slate-200">
         {columns.map((col, index) => (
-          <th
-            key={index}
-            className="px-6 py-3 text-sm font-semibold text-gray-600 text-center"
-          >
+          <th key={index} className="py-3">
             {col}
           </th>
         ))}
@@ -88,19 +96,59 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ columns }) => {
 
 interface TableBodyProps {
   children: React.ReactNode;
+  isLoading?: boolean;
 }
 
-export const TableBody: React.FC<TableBodyProps> = ({ children }) => {
+/**
+ * TableBody component
+ * @param children - TableRow
+ * @param isLoading - boolean default false, if true, show loading animation
+ */
+export const TableBody: React.FC<TableBodyProps> = ({
+  children,
+  isLoading = false,
+}) => {
+  const { columns } = useTableContext();
+
+  if (isLoading) {
+    return (
+      <tbody className="animate-pulse z-0">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <TableRow key={i} className="hover:bg-transparent">
+            {columns.map((_, index) => (
+              <TableCell key={index}>
+                <div className="bg-slate-300 h-2 rounded-full"></div>
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </tbody>
+    );
+  }
+
   return <tbody>{children}</tbody>;
 };
 
 interface TableRowProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export const TableRow: React.FC<TableRowProps> = ({ children }) => {
+/**
+ * TableRow component
+ * @param children - TableCell
+ * @param className
+ */
+export const TableRow: React.FC<TableRowProps> = ({ children, className }) => {
   return (
-    <tr className="hover:bg-gray-50 transition-all duration-200">{children}</tr>
+    <tr
+      className={cn(
+        "hover:bg-blue-50 transition-all duration-200 border-b-2 border-slate-100",
+        className,
+      )}
+    >
+      {children}
+    </tr>
   );
 };
 
@@ -109,13 +157,19 @@ interface TableCellProps extends React.HTMLProps<HTMLTableCellElement> {
   className?: string;
 }
 
+/**
+ * TableCell component
+ * @param children - content of cell
+ * @param className - string
+ * @param props - HTMLTableCellElement props
+ */
 export const TableCell: React.FC<TableCellProps> = ({
   children,
   className,
   ...props
 }) => {
   return (
-    <td className={cn("px-6 py-4 text-sm text-center", className)} {...props}>
+    <td className={cn("px-2 py-3 text-sm text-center", className)} {...props}>
       {children}
     </td>
   );
@@ -131,13 +185,15 @@ export function ClassesTable({
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const [totalPages, setTotalPages] = useState<number>(0);
   // let displays: ClassItem[] = [];
   useEffect(() => {
     const fetchData = async () => {
       let filteredData: ClassItem[] = [];
       setIsLoading(true);
       try {
-        const response = await getAllClasses(query, currentPage);
+        const response = await getAllClasses(query, currentPage - 1);
         filteredData = response.content.map((item) => ({
           id: item.id,
           name: item.name,
@@ -152,6 +208,7 @@ export function ClassesTable({
             name: item.grade.name,
           },
         }));
+        setTotalPages(response.totalPages);
       } catch (error) {
         console.log(error);
       } finally {
@@ -162,76 +219,70 @@ export function ClassesTable({
     fetchData();
   }, [currentPage, query]);
   // console.log(classes);
+
+  const handlePrevClick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      const params = new URLSearchParams();
+      params.set("page", currentPage.toString());
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      const params = new URLSearchParams();
+      params.set("page", currentPage.toString());
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  };
+
+  const handlePageClick = (page: number) => {
+    currentPage = page;
+    const params = new URLSearchParams();
+    params.set("page", currentPage.toString());
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
-    <>
-      {isLoading === true ? (
-        <TableSkeleton />
-      ) : (
-        <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                ID
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center w-[150px]">
-                Tên lớp
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Môn học
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Khối
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Phòng
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Học phí
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* {classes.content.map((c, i) => {})} */}
-            {classes.map((c, i) => (
-              <tr
-                key={i}
-                className="hover:bg-gray-50 transition-all duration-200"
-              >
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {i + 1}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.course.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.grade.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.room.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.fee} VNĐ
-                </td>
-                <td className="text-sm text-gray-700 text-center">
-                  <button
-                    onClick={() =>
-                      router.push(`/clerk/classes/${c.id}/classManagement`)
-                    }
-                    type="button"
-                    className="text-sm font-bold tracking-widest hover:shadow-lg ring-2 ring-blue-600 bg-white hover:bg-blue-600 hover:text-white text-gray-700 hover:shadow-blue-500/50 transition-all duration-200 px-5 py-1.5  rounded-md "
-                  >
-                    Xem lớp
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </>
+    <div>
+      <Table>
+        <TableHeader
+          columns={["ID", "Tên lớp", "Môn học", "Khối", "Phòng", "Học phí", ""]}
+          className="bg-gray-100"
+        />
+        <TableBody isLoading={isLoading}>
+          {classes.map((c, i) => (
+            <TableRow key={i}>
+              <TableCell className="w-20">{i + 1}</TableCell>
+              <TableCell>{c.name}</TableCell>
+              <TableCell>{c.course.name}</TableCell>
+              <TableCell>{c.grade.name}</TableCell>
+              <TableCell>{c.room.name}</TableCell>
+              <TableCell>{c.fee} VNĐ</TableCell>
+              <TableCell className="p-0 w-32">
+                <Button
+                  onClick={() =>
+                    router.push(`/clerk/classes/${c.id}/classManagement`)
+                  }
+                  type="button"
+                  variant="outlined"
+                >
+                  Xem lớp
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageClick={(page) => handlePageClick(page)}
+        handlePreviousPage={handlePrevClick}
+        handleNextPage={handleNextClick}
+      />
+    </div>
   );
 }

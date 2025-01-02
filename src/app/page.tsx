@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "./ui/components/common/Button";
 import Image from "next/image";
 import { FaBook, FaUserGraduate } from "react-icons/fa6";
-import Footer from "./ui/components/footer";
+import Footer from "./ui/components/common/Footer";
 import LandingPageSideBar from "./ui/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/createTeacher";
 import { IoLogInOutline, IoSparkles } from "react-icons/io5";
@@ -54,7 +54,7 @@ export default async function Home() {
               <div className="text-lg md:text-2xl font-bold">
                 {c.FeatureName}
               </div>
-              <div className="text-secondary_text text-xs md:text-base">
+              <div className="text-secondary-text text-xs md:text-base">
                 {c.Description}
               </div>
             </div>
@@ -112,13 +112,13 @@ export default async function Home() {
           <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
             <div className="leading-tight md:leading-normal">
               <div className=" tracking-tight md:tracking-normal">
-                <span className="text-highlight_text">Kết nối</span> tri thức
+                <span className="text-highlight-text">Kết nối</span> tri thức
               </div>
               <div className=" tracking-tight md:tracking-normal">
-                <span className="text-highlight_text">Chinh phục</span> mọi mục
+                <span className="text-highlight-text">Chinh phục</span> mọi mục
                 tiêu
               </div>
-              <div className="text-secondary_text font-light text-sm md:text-base mt-2">
+              <div className="text-secondary-text font-light text-sm md:text-base mt-2">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam,
                 vero maiores minima magni vel reprehenderit impedit culpa, in
                 asperiores voluptatum ut, non quis provident earum deserunt
@@ -151,10 +151,10 @@ export default async function Home() {
       <div className="md:px-24 mx-auto flex flex-col justify-center">
         <div className="mt-12 mx-9 md:mx-44 text-center">
           <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[52px]">
-            <span className="text-highlight_text">Why we are</span> best from
+            <span className="text-highlight-text">Why we are</span> best from
             others?
           </div>
-          <div className="text-secondary_text text-sm md:text-lg font-thin mt-3">
+          <div className="text-secondary-text text-sm md:text-lg font-thin mt-3">
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry&apos;s standard dummy
             text ever since the 1500s.....

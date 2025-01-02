@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import { Button } from "../common/Button";
-import PaginationAdmin from "../paginationAdmin";
+import { Button } from "../../../ui/components/common/Button";
+import Pagination from "../../../ui/components/common/Pagination";
 import { confirmRegister, getRegister, rejectRegister } from "@/app/lib/api";
-import Loading from "../loading";
+import Loading from "../../../ui/components/common/Loading";
 import { RegisterItem } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
@@ -244,6 +244,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
                       <tr>
                         <td colSpan={7} className="text-center py-4">
                           <Loading />
+                          {/*<Spinner />*/}
                         </td>
                       </tr>
                     ) : (
@@ -290,10 +291,10 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
                     )}
                   </tbody>
                 </table>
-                <PaginationAdmin
+                <Pagination
                   currentPage={currentPageStu}
                   totalPages={totalPagesStu}
-                  setCurrentPage={setCurrentPageStu}
+                  handlePageClick={(page) => setCurrentPageStu(page)}
                   handlePreviousPage={handlePreviousPageStu}
                   handleNextPage={handleNextPageStu}
                 />
@@ -370,10 +371,10 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
                     ))}
                   </tbody>
                 </table>
-                <PaginationAdmin
+                <Pagination
                   currentPage={currentPageTea}
                   totalPages={totalPagesTea}
-                  setCurrentPage={setCurrentPageTea}
+                  handlePageClick={(page) => setCurrentPageTea(page)}
                   handlePreviousPage={handlePreviousPageTea}
                   handleNextPage={handleNextPageTea}
                 />

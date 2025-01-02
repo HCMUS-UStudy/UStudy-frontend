@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
 import { Button } from "../common/Button";
-import PaginationAdmin from "../paginationAdmin";
+import Pagination from "../common/Pagination";
 import { ChapterItem } from "@/app/types/type";
 import { getChapterByCourse_GradeId } from "@/app/lib/api";
 
@@ -176,10 +176,10 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
       </div>
 
       {/* Pagination */}
-      <PaginationAdmin
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        setCurrentPage={setCurrentPage}
+        handlePageClick={(page) => setCurrentPage(page)}
         handlePreviousPage={() =>
           setCurrentPage((prev) => Math.max(prev - 1, 1))
         }

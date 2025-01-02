@@ -1,8 +1,8 @@
 import { SIDENAV_ITEMS_STUDENT } from "@/app/menu_constants";
-import PageWrapper from "@/app/ui/components/pagewrapper";
+import PageWrapper from "@/app/ui/components/common/PageWrapper";
 import Sidebar from "@/app/ui/sidebar/sidebar";
 import React from "react";
-import HeaderStuTeach from "@/app/ui/components/headerStuTeach";
+import HeaderStuTeach from "@/app/(user)/_components/Header";
 
 export default function ClerkLayout({
   children,

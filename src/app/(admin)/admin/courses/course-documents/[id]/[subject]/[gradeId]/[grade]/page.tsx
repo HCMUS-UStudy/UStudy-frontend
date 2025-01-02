@@ -2,7 +2,7 @@ import { Button } from "@/app/ui/components/common/Button";
 import React from "react";
 
 import ChapterGrid from "@/app/ui/components/ChapterAdmin/ChapterGrid";
-import Loading from "@/app/ui/components/loading";
+import Loading from "@/app/ui/components/common/Loading";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/common/Input";
 

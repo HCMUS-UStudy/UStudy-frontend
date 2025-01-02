@@ -34,7 +34,7 @@ export default function Breadcrumb({ specificName }: { specificName: string }) {
     renderedPaths.push(
       <li key={"homepage"} className="flex items-center gap-4 text-base ">
         <Link
-          href={"/"}
+          href={"/public"}
           className="flex items-center gap-2 hover:text-blue-500 font-bold hover:scale-110 transition-all duration-200"
         >
           <HomeIcon size={20} />

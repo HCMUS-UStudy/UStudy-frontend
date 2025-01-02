@@ -9,15 +9,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#1e40af", // blue-800
+        primary: "#2563eb", // blue-600
+        "primary-dark": "#1e40af", // blue-800
+
         background: "#f1f5f9", // slate-50: #f8fafc, #f9fbfc, slate-100: #f1f5f9
         hero: "#dbeafe", // #D5E9F6, blue-100: #dbeafe
         foreground: "var(--foreground)",
-        button_primary: "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
-        button_primary_dark: "#1e40af", // blue-800: #1e40af
-        highlight_text: "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
-        secondary_text: "#808080",
+
+        "disabled-dark": "#9ca3af", // gray-400
+        "disabled-light": "#d1d5db", // gray-300
+
+        "button-primary": "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
+        "button-primary-dark": "#1e40af", // blue-800: #1e40af
+
+        "highlight-text": "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
+        "secondary-text": "#808080",
+
+        popover: "#ffffff",
+        "control-border": "#9ca3af", // gray-400
+        "control-hover": "#bfdbfe", // blue-200
+        "control-placeholder": "#4b5563", // gray-600
+        "control-ring": "#3b82f6", // blue-500
+
         error: "#dc2626",
+      },
+      padding: {
+        controlX: "0.75rem",
+        controlY: "0.5rem",
       },
       keyframes: {
         scale: {

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
 import { Button } from "../common/Button";
-import PaginationAdmin from "../paginationAdmin";
+import Pagination from "../common/Pagination";
 import { CourseItem, GradeItem } from "@/app/types/type";
 import { getGradesByCourseId } from "@/app/lib/api";
 
@@ -42,7 +42,7 @@ const GradeGrid: React.FC<GradeGridProps> = ({
       }));
 
       //setGrades(response.data?.content || []);
-      setTotalPages(response.data?.totalPages || 0);
+      setTotalPages(response.totalPages || 0);
     } catch (error) {
       console.error("Failed to fetch grades:", error);
     } finally {
@@ -118,7 +118,8 @@ const GradeGrid: React.FC<GradeGridProps> = ({
               {/* Dropdown Button */}
               <Button
                 onClick={() => toggleDropdown(grade.id)}
-                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                className="absolute top-2 right-2 text-gray-400"
+                variant="basic"
               >
                 <FaEllipsisV />
               </Button>
@@ -126,9 +127,10 @@ const GradeGrid: React.FC<GradeGridProps> = ({
 
               {/* Hover Overlay */}
               {!isSelectMode && (
-                <div className="absolute inset-0 bg-gray-300 bg-opacity-80 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gray-400 bg-opacity-80 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
                   <Button
-                    className="text-white font-semibold py-2 px-4 rounded-md shadow-md transition"
+                    className="hover:bg-transparent text-white"
+                    variant="basic"
                     onClick={() =>
                       (window.location.href = `/admin/courses/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`)
                     }
@@ -143,10 +145,10 @@ const GradeGrid: React.FC<GradeGridProps> = ({
       </div>
 
       {/* Pagination */}
-      <PaginationAdmin
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        setCurrentPage={setCurrentPage}
+        handlePageClick={(page) => setCurrentPage(page)}
         handlePreviousPage={() =>
           setCurrentPage((prev) => Math.max(prev - 1, 1))
         }

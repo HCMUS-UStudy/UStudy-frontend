@@ -15,7 +15,6 @@ import {
   ScheduleType,
   TimeItem,
 } from "@/app/types/type";
-import { Spinner } from "./common/Spinner";
 import {
   createNewClass,
   getAllGrades,
@@ -23,12 +22,25 @@ import {
   getCoursesByGradeId,
 } from "@/app/lib/api";
 import clsx from "clsx";
-import { FaTrashCan } from "react-icons/fa6";
+import { FaChevronDown, FaTrashCan } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { BranchRootState } from "@/app/store/store";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/ui/components/common/Loading";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/app/ui/components/common/Dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/app/ui/components/common/Select";
 
 type CreateClassError = {
   course?: string | null;
@@ -319,35 +331,30 @@ export default function CreateClass() {
           setIsOpenModal(true);
         }}
         type="button"
-        className="relative group px-8 bg-gradient-to-tr from-blue-800 via-blue-600  to-blue-800 bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200"
+        className="relative group w-[180px] bg-gradient-to-tr from-blue-800 via-blue-600  to-blue-800 bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200"
       >
         <span className="-translate-x-0 group-hover:-translate-x-4 transition-all duration-300">
           Thêm lớp học
         </span>
         <PlusIcon className="size-8 absolute translate-x-14 opacity-0 rotate-45 group-hover:opacity-100 group-hover:rotate-90 transition-all duration-300" />
       </Button>
-      <Modal
-        modalName="ModalCreateClass"
+      <Dialog
         isOpen={isOpenModal}
-        className="h-fit pb-6"
+        onClose={() => setIsOpenModal(false)}
+        className="w-full md:w-[60vw] lg:w-[50vw] xl:w-[40vw]"
       >
-        <div className="flex flex-col relative">
-          <CircleX
-            onClick={() => {
-              setIsOpenModal(false);
-            }}
-            className="absolute top-4 right-6 bg-clip-padding w-[8%] h-auto opacity-50 hover:opacity-100 transition duration-200 bg-white cursor-pointer"
-          />
-          <h1 className="mx-auto mt-5 font-bold text-2xl text-gray-700">
-            Tạo lớp học
-          </h1>
+        <DialogHeader>
+          <h1 className="">Tạo lớp học</h1>
+        </DialogHeader>
+        <DialogContent>
           <form
             // action={action}
-            className=" mx-6 mt-10 flex flex-col gap-2 md:gap-5"
+            className="flex flex-col gap-2 md:gap-5"
           >
             <Input
-              className="w-full h-11 text-base text-secondary_text"
+              className="w-full h-11 text-base"
               placeholder="Tên lớp"
+              label="Tên lớp"
               name="name"
               isError={errors.name !== null}
               errorMsg={errors.name}
@@ -359,7 +366,7 @@ export default function CreateClass() {
             />
 
             <div className="flex gap-3">
-              <div>
+              <div className="flex-1">
                 <SelectingButton
                   onClick={() => {
                     setIsSelectingGrade(true);
@@ -367,11 +374,12 @@ export default function CreateClass() {
                   placeholder={grade === null ? "Khối" : grade?.name}
                   nameForInput="grade"
                   isError={errors.grade !== null}
-                  className="w-[8vw]"
+                  errorMsg={errors.grade}
+                  // className="w-[8vw]"
+                  className="w-full"
                 />
-                <span className="text-[13px] text-error">{errors.grade}</span>
               </div>
-              <div>
+              <div className="flex-1">
                 <SelectingButton
                   onClick={() => {
                     if (grade === null) {
@@ -382,11 +390,12 @@ export default function CreateClass() {
                   }}
                   placeholder={course === null ? "Môn học" : course.name}
                   nameForInput="subject"
-                  className="w-[7vw]"
+                  // className="w-[7vw]"
+                  className="w-full"
                   isError={errors.course !== null}
+                  errorMsg={errors.course}
                   disabled={grade === null}
                 />
-                <span className="text-[13px] text-error">{errors.course}</span>
               </div>
 
               <div className="flex-1">
@@ -400,30 +409,24 @@ export default function CreateClass() {
                       : `${durationQuantity} ${durationUnit}`
                   }
                   nameForInput="duration"
-                  className="w-full h-fit"
+                  className="w-full"
                   isError={errors.duration !== null}
+                  errorMsg={errors.duration}
                 />
-                <span className="text-[13px] text-error">
-                  {errors.duration}
-                </span>
               </div>
             </div>
 
-            <div className="flex justify-between gap-8">
-              <div className="w-[15vw]">
-                <h2 className="text-sm text-secondary_text mb-1 ml-1">
+            <div className="flex justify-between gap-6">
+              <div className="w-full">
+                <label
+                  className="text-sm text-secondary-text mb-1 ml-1"
+                  htmlFor="start-date-create-class"
+                >
                   Ngày bắt đầu
-                </h2>
-                <input
+                </label>
+                <Input
                   type="date"
-                  id="default-datepicker"
-                  className={clsx(
-                    {
-                      "border-2 border-error": errors?.startDate,
-                      "border border-gray-300": !errors?.startDate,
-                    },
-                    "bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5",
-                  )}
+                  id="start-date-create-class"
                   placeholder="Ngày bắt đầu"
                   name="startDate"
                   value={startDate}
@@ -431,31 +434,30 @@ export default function CreateClass() {
                     setStartDate(e.target.value);
                     setErrors({ ...errors, startDate: null });
                   }}
+                  isError={errors?.startDate != null}
+                  errorMsg={errors?.startDate}
                 />
-                <span className="text-[13px] text-error">
-                  {errors.startDate}
-                </span>
               </div>
-              <div className="w-[15vw]">
-                <h2 className="text-sm text-secondary_text mb-1 ml-1">
+              <div className="w-full">
+                <label
+                  className="text-sm text-secondary-text mb-1 ml-1"
+                  htmlFor="end-date-create-class"
+                >
                   Ngày kết thúc
-                </h2>
-                <input
+                </label>
+                <Input
                   type="date"
-                  id="default-datepicker"
-                  className={clsx(
-                    "bg-gray-50 text-gray-900 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1.5",
-                  )}
+                  id="end-date-create-class"
                   placeholder="Ngày kết thúc"
-                  name="startDate"
+                  name="endDate"
                   value={endDate}
                   disabled
                 />
               </div>
             </div>
 
-            <div className="flex justify-between gap-8">
-              <div className="flex flex-col w-[15vw]">
+            <div className="flex justify-between gap-6">
+              <div className="flex flex-col w-full">
                 <SelectingButton
                   onClick={() => {
                     setIsSelectingSchedule(true);
@@ -467,13 +469,11 @@ export default function CreateClass() {
                   }
                   className="w-full h-fit"
                   isError={errors.classTimes !== null}
+                  errorMsg={errors.classTimes}
                 />
-                <span className="text-[13px] text-error">
-                  {errors.classTimes}
-                </span>
               </div>
 
-              <div className="flex flex-col w-[15vw]">
+              <div className="flex flex-col w-full">
                 <SelectingButton
                   onClick={() => {
                     if (
@@ -515,13 +515,13 @@ export default function CreateClass() {
                     !selectedBranchId
                   }
                   isError={errors.room !== null}
+                  errorMsg={errors.room}
                 />
-                <span className="text-[13px] text-error">{errors.room}</span>
               </div>
             </div>
 
             <Input
-              className="w-full h-11 text-base text-secondary_text"
+              className="w-full h-11 text-base text-secondary-text"
               placeholder="Mô tả"
               name="description"
               value={description}
@@ -529,7 +529,7 @@ export default function CreateClass() {
             />
             <Input
               type="number"
-              className="w-full h-11 text-base text-secondary_text"
+              className="w-full h-11 text-base text-secondary-text"
               placeholder="Học phí: Đơn vị VNĐ"
               name="fee"
               isError={errors?.fee != null}
@@ -540,99 +540,105 @@ export default function CreateClass() {
                 setFee(isNaN(value) ? "" : value);
               }}
             />
-            <Button
-              onClick={() => {
-                handleCreateClass();
-              }}
-              // isPending={isPending}
-              type="button"
-              className="mt-5 bg-blue-600 hover:bg-blue-800"
-            >
-              Tạo lớp học
-            </Button>
           </form>
-        </div>
-      </Modal>
+        </DialogContent>
+        <DialogFooter>
+          <Button
+            onClick={() => {
+              handleCreateClass();
+            }}
+            // isPending={isPending}
+            type="button"
+            // className="bg-blue-600 hover:bg-blue-800"
+            className="w-full"
+          >
+            Tạo lớp học
+          </Button>
+        </DialogFooter>
+      </Dialog>
       {/* MODAL CHỌN KHỐI */}
-      <Modal
+      <Dialog
+        isOpen={isSelectingGrade}
         onClose={() => {
           setIsSelectingGrade(false);
         }}
-        modalName="ModalSelectSubject"
-        isOpen={isSelectingGrade}
-        className="w-[25vw] py-8"
+        className="w-[25vw]"
       >
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800 text-center">
-            Chọn khối
-          </h1>
-          {isLoading === false ? (
-            <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
-              {grades.map((data, i) => (
-                <div
-                  onClick={() => {
-                    setGrade(data);
-                    setErrors({ ...errors, grade: null });
-                    setIsSelectingGrade(false);
-                  }}
-                  key={i}
-                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
-                >
-                  {data.name}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Spinner />
-          )}
-        </div>
-      </Modal>
+        <DialogHeader>
+          <h1 className="text-center">Chọn khối</h1>
+        </DialogHeader>
+        <DialogContent>
+          <div>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {grades.map((data, i) => (
+                  <div
+                    onClick={() => {
+                      setGrade(data);
+                      setErrors({ ...errors, grade: null });
+                      setIsSelectingGrade(false);
+                    }}
+                    key={i}
+                    className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
+                  >
+                    {data.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* MODAL CHỌN MÔN */}
-      <Modal
+      <Dialog
+        isOpen={isSelectingSubject}
         onClose={() => {
           setIsSelectingSubject(false);
         }}
-        modalName="ModalSelectSubject"
-        isOpen={isSelectingSubject}
-        className="w-[25vw] py-8"
+        className="w-[25vw]"
       >
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800 text-center">
-            Chọn môn học
-          </h1>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
-              {courses.map((data, i) => (
-                <div
-                  onClick={() => {
-                    setIsSelectingSubject(false);
-                    setErrors({ ...errors, course: null });
-                    setCourse(data);
-                  }}
-                  key={i}
-                  className="font-bold border-2 rounded-lg border-sky-500 py-1 text-sm  text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
-                >
-                  {data.name}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </Modal>
+        <DialogHeader>
+          <h1 className="text-center">Chọn môn học</h1>
+        </DialogHeader>
+        <DialogContent>
+          <div>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                {courses.map((data, i) => (
+                  <div
+                    onClick={() => {
+                      setIsSelectingSubject(false);
+                      setErrors({ ...errors, course: null });
+                      setCourse(data);
+                    }}
+                    key={i}
+                    className="font-bold border-2 rounded-lg border-sky-500 px-2 py-1 text-sm text-center bg-sky-100 hover:bg-sky-300 transition-colors cursor-pointer"
+                  >
+                    {data.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* MODAL CHỌN THỜI GIAN HỌC */}
-      <Modal
-        modalName="ModalSelectSubject"
+      <Dialog
         isOpen={isSelectingDuration}
-        className="w-[25vw] py-8"
+        onClose={() => setIsSelectingDuration(false)}
+        className=""
       >
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800 text-center">
-            Thời gian học
-          </h1>
-          <div className="grid grid-cols-2 gap-2 mx-8 mt-4">
-            <input
+        <DialogHeader>
+          <h1 className="text-center">Thời gian học</h1>
+        </DialogHeader>
+        <DialogContent className="">
+          <div className="grid grid-cols-2 gap-2">
+            <Input
               type="number"
               min={1}
               placeholder="VD: 1"
@@ -641,9 +647,8 @@ export default function CreateClass() {
                 const value = parseInt(e.target.value);
                 setDurationQuantity(isNaN(value) ? "" : value);
               }}
-              className=" border-2 border-sky-500 focus:border-sky-600 rounded-lg px-2 py-1.5"
             />
-            <select
+            {/*<select
               value={durationUnit}
               onChange={(e) => setDurationUnit(e.target.value as DurationUnit)}
               className="border-2 border-sky-500 p-2.5 text-sm rounded-lg h-fit"
@@ -651,8 +656,22 @@ export default function CreateClass() {
               <option value="Tháng">Tháng</option>
               <option value="Tuần">Tuần</option>
               <option value="Năm">Năm</option>
-            </select>
+            </select>*/}
+            <Select
+              onValueChange={(value) => setDurationUnit(value as DurationUnit)}
+              defaultValue="Tháng"
+              className="w-[200px]"
+            >
+              <SelectTrigger>Tháng</SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Tháng">Tháng</SelectItem>
+                <SelectItem value="Tuần">Tuần</SelectItem>
+                <SelectItem value="Năm">Năm</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+        </DialogContent>
+        <DialogFooter>
           <Button
             onClick={() => {
               if (typeof durationQuantity !== "string") {
@@ -674,23 +693,23 @@ export default function CreateClass() {
               }
               setIsSelectingDuration(false);
             }}
-            className="mx-auto mt-3 w-[30%]"
+            className="mx-auto w-[30%]"
           >
             Hoàn tất
           </Button>
-        </div>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
       {/* MODAL CHỌN KHUNG GIỜ HỌC */}
-      <Modal
+      <Dialog
+        isOpen={isSelectingSchedule}
         onClose={() => {
           setIsSelectingSchedule(false);
         }}
-        modalName="ModalSelectSubject"
-        isOpen={isSelectingSchedule}
-        className="w-[35vw] h-min-[60%] h-[60%] py-8"
+        displayCloseButton={false}
+        className="w-[40vw] h-min-[60%] h-[60%]"
       >
-        <div className="flex flex-col items-center justify-between h-full">
-          <div className="grid grid-cols-2 gap-8">
+        <DialogHeader>
+          <div className="grid grid-cols-2">
             <div
               onClick={() => {
                 setScheduleType("Giờ cố định");
@@ -731,11 +750,13 @@ export default function CreateClass() {
               ></div>
             </div>
           </div>
-          {/* CHỌN GIỜ LINH HOẠT */}
+        </DialogHeader>
+
+        <DialogContent>
           {scheduleType === "Giờ linh hoạt" ? (
             <div>
-              <div className="flex items-end gap-3 mt-5">
-                <select
+              <div className="flex items-end gap-3">
+                {/*<select
                   value={selectedDay}
                   onChange={(e) => setSelectedDay(parseInt(e.target.value))}
                   className="border-2 border-sky-500 p-2 text-sm rounded-xl h-[5vh]"
@@ -748,24 +769,63 @@ export default function CreateClass() {
                   <option value={5}>Thứ 6</option>
                   <option value={6}>Thứ 7</option>
                   <option value={7}>Chủ Nhật</option>
-                </select>
+                </select>*/}
+                <Select
+                  onValueChange={(value) => setSelectedDay(value as number)}
+                  className="w-[120px] flex-none h-[40px]"
+                >
+                  <SelectTrigger>Chọn thứ</SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={2}>Thứ 2</SelectItem>
+                    <SelectItem value={3}>Thứ 3</SelectItem>
+                    <SelectItem value={4}>Thứ 4</SelectItem>
+                    <SelectItem value={5}>Thứ 5</SelectItem>
+                    <SelectItem value={6}>Thứ 6</SelectItem>
+                    <SelectItem value={7}>Thứ 7</SelectItem>
+                    <SelectItem value={1}>Chủ Nhật</SelectItem>
+                  </SelectContent>
+                </Select>
                 <div className="flex justify-center gap-4">
                   <div className="flex flex-col justify-between">
-                    <h1 className="ml-2 text-sm">Bắt đầu:</h1>
-                    <input
+                    <label
+                      htmlFor="start-time-create-class-flex"
+                      className="ml-2 text-sm"
+                    >
+                      Bắt đầu:
+                    </label>
+                    {/*<input
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
                       type="time"
                       className="cursor-pointer h-[5vh] text-sm border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                    />*/}
+                    <Input
+                      id="start-time-create-class-flex"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      type="time"
+                      className="mt-1 h-[40px]"
                     />
                   </div>
                   <div className="flex flex-col justify-between">
-                    <h1 className="ml-2 text-sm">Kết thúc:</h1>
-                    <input
+                    <label
+                      htmlFor="end-time-create-class-flex"
+                      className="ml-2 text-sm"
+                    >
+                      Kết thúc:
+                    </label>
+                    {/*<input
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
                       type="time"
                       className="cursor-pointer h-[5vh] text-sm border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                    />*/}
+                    <Input
+                      id="end-time-create-class-flex"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      type="time"
+                      className="mt-1 h-[40px]"
                     />
                   </div>
                 </div>
@@ -803,7 +863,7 @@ export default function CreateClass() {
                     }
                     setFlexSchedule(newTimes);
                   }}
-                  className="rounded-xl h-[5vh] mx-auto mt-3 px-5"
+                  className="rounded-xl h-[40px]"
                 >
                   <Plus size={20} />
                 </Button>
@@ -841,8 +901,8 @@ export default function CreateClass() {
             </div>
           ) : (
             <>
-              {/* CHỌN GIỜ CỐ ĐỊNH */}
-              <div className="mt-5 mx-3">
+              {/*CHỌN GIỜ CỐ ĐỊNH*/}
+              <div className="">
                 <h1 className="text-center">Chọn các ngày sẽ học</h1>
                 <div className="flex flex-wrap justify-center gap-2 text-sm mt-3 font-bold">
                   {baseSchedule.map((data, i) => (
@@ -867,26 +927,47 @@ export default function CreateClass() {
               </div>
               <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
-                  <h1 className="ml-2 mb-1">Bắt đầu:</h1>
-                  <input
+                  <label htmlFor="start-time-create-class" className="ml-2">
+                    Bắt đầu:
+                  </label>
+                  {/*<input
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                     type="time"
                     className="cursor-pointer border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                  />*/}
+                  <Input
+                    id="start-time-create-class"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    type="time"
+                    className="mt-1"
                   />
                 </div>
                 <div>
-                  <h1 className="ml-2 mb-1">Kết thúc:</h1>
-                  <input
+                  <label htmlFor="end-time-create-class" className="ml-2">
+                    Kết thúc:
+                  </label>
+                  {/*<input
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                     type="time"
                     className="cursor-pointer border-2 border-sky-500 rounded-xl px-2 py-2 font-bold bg-sky-100 hover:bg-sky-300 transition-colors"
+                  />*/}
+                  <Input
+                    id="end-time-create-class"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    type="time"
+                    className="mt-1"
                   />
                 </div>
               </div>
             </>
           )}
+        </DialogContent>
+
+        <DialogFooter>
           <Button
             onClick={() => {
               console.log(endTime);
@@ -914,27 +995,27 @@ export default function CreateClass() {
               setErrors({ ...errors, classTimes: null });
               setIsSelectingSchedule(false);
             }}
-            className="w-1/3 mt-5"
+            className="w-1/3 mx-auto"
           >
             Hoàn tất
           </Button>
-        </div>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
+
       {/* MODAL CHỌN PHÒNG HỌC */}
-      <Modal
+      <Dialog
+        isOpen={isSelectingRoom}
         onClose={() => {
           setIsSelectingRoom(false);
         }}
-        modalName="ModalSelectSubject"
-        isOpen={isSelectingRoom}
-        className="w-[25vw] py-8"
+        className="w-[25vw]"
       >
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800 text-center">
-            Chọn phòng học
-          </h1>
-          {isLoading === false ? (
-            <div className="grid grid-cols-3 gap-2 mx-8 mt-4">
+        <DialogHeader>
+          <h1 className="text-center">Chọn phòng học</h1>
+        </DialogHeader>
+        <DialogContent>
+          {!isLoading ? (
+            <div className="grid grid-cols-3 gap-2">
               {rooms.map((data, i) => (
                 <div
                   onClick={() => {
@@ -950,10 +1031,10 @@ export default function CreateClass() {
               ))}
             </div>
           ) : (
-            <Spinner />
+            <Loading />
           )}
-        </div>
-      </Modal>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

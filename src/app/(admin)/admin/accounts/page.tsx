@@ -1,7 +1,7 @@
 import React from "react";
 import ModalAccount from "@/app/ui/components/AccountAdmin/modalAccount-Ad";
-import UserTable from "@/app/ui/components/AccountAdmin/accountTable";
-import AccountRegisterModal from "@/app/ui/components/AccountAdmin/accountRegister";
+import AccountTable from "@/app/(admin)/_components/account/AccountTable";
+import AccountRegisterModal from "@/app/(admin)/_components/account/AccountRegisterModal";
 import { SearchField } from "@/app/ui/components/common/Input";
 
 export default async function AccountPage(props: {
@@ -79,7 +79,7 @@ export default async function AccountPage(props: {
 
         {/* Table Section */}
         <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
-          <UserTable searchQuery={query} />
+          <AccountTable searchQuery={query} />
         </div>
       </div>
     </>

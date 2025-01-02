@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Collapsible from "@/app/ui/components/collapsible";
+import Collapsible from "@/app/ui/components/Collapsible";
 import {
   addTeacherToClass,
   getAvailableTeacher,
@@ -15,6 +15,13 @@ import Modal from "@/app/ui/components/modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { revalidatePath } from "next/cache";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/app/ui/components/common/Table";
 
 export default function ClassManagement({
   params,
@@ -221,37 +228,23 @@ export default function ClassManagement({
             <IoFileTrayFull className="size-8" /> Tài liệu học tập
           </div>
           <div className="px-2.5 py-2 mt-2 bg-white border-2 border-slate-100 rounded-lg">
-            <table className="table-auto w-full bg-white select-none">
-              <thead>
-                <tr className="border-b-2 border-slate-200">
-                  <th className="py-2.5">ID</th>
-                  <th>Tên chương</th>
-                  <th>Mô tả</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table className="shadow-none">
+              <TableHeader
+                columns={["ID", "Tên chương", "Mô tả", "Trạng thái"]}
+              />
+              <TableBody>
                 {listChapters.map((l, i) => (
-                  <tr
-                    key={i}
-                    className="text-center cursor-pointer hover:bg-blue-50 transition-colors"
-                  >
-                    <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                      {i + 1}
-                    </td>
-                    <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                      {l.name}
-                    </td>
-                    <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                      {l.description}
-                    </td>
-                    <td className=" px-2 py-2.5 border-b-2 border-slate-100 font-bold text-blue-800">
+                  <TableRow key={i}>
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{l.name}</TableCell>
+                    <TableCell>{l.description}</TableCell>
+                    <TableCell className="font-bold text-blue-800">
                       Đang được sử dụng
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
         <div>
@@ -259,61 +252,18 @@ export default function ClassManagement({
             <FaClipboard className="size-8" /> Tình trạng lớp học
           </div>
           <div className="px-2.5 py-2 mt-2 bg-white border-2 border-slate-100 rounded-lg">
-            <table className="table-auto w-full bg-white select-none">
-              <thead>
-                <tr className="border-b-2 border-slate-200">
-                  <th className="py-2.5">ID</th>
-                  <th>Mô tả</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <Table className="shadow-none">
+              <TableHeader columns={["ID", "Mô tả", "Trạng thái"]} />
+              <TableBody>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <TableRow key={i} className="cursor-pointer">
+                    <TableCell className="font-bold">12038123</TableCell>
+                    <TableCell>Quạt hỏng</TableCell>
+                    <TableCell>Chưa xử lý</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>

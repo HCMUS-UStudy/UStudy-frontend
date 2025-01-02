@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
-import Header from "@/app/ui/components/header";
-import PageWrapper from "@/app/ui/components/pagewrapper";
+import Header from "@/app/(admin)/_components/Header";
+import PageWrapper from "@/app/ui/components/common/PageWrapper";
 import Sidebar from "@/app/ui/sidebar/sidebar";
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu_constants";
 import { SpecificNameProvider } from "@/app/context/context";

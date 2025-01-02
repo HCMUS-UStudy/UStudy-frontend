@@ -47,10 +47,10 @@ export default function Login() {
       const response = await adminLogin(username, password);
 
       if (response.status === 200) {
-        const token = response.data.access_token;
-        const refresh_token = response.data.refresh_token;
-        const creator = response.data.user.name;
-        const user = response.data.user;
+        const token = response.data.data.access_token;
+        const refresh_token = response.data.data.refresh_token;
+        const creator = response.data.data.user.name;
+        const user = response.data.data.user;
 
         setTokens(token, refresh_token);
 

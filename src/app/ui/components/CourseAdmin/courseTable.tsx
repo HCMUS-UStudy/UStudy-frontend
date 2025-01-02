@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
-import Loading from "../loading";
-import PaginationAdmin from "../paginationAdmin"; // Import PaginationAdmin
+import Loading from "../common/Loading";
+import Pagination from "../common/Pagination"; // Import Pagination
 import { useRouter } from "next/navigation";
 import { getAllCourses } from "@/app/lib/api";
 import { CourseItem } from "@/app/types/type";
@@ -182,10 +182,10 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
         </tbody>
       </table>
 
-      <PaginationAdmin
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        setCurrentPage={setCurrentPage}
+        handlePageClick={(page) => setCurrentPage(page)}
         handlePreviousPage={() =>
           setCurrentPage((prev) => Math.max(prev - 1, 1))
         }

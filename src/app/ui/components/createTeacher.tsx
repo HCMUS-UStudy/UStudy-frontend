@@ -7,7 +7,7 @@ export default function CreateTeacher() {
   return (
     <div>
       <div className="font-bold text-[30px] md:text-[50px] tracking-tighter md:tracking-normal text-center">
-        Trở thành<span className="text-highlight_text"> Giáo Viên</span>
+        Trở thành<span className="text-highlight-text"> Giáo Viên</span>
       </div>
       <div className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5">
         <Input

@@ -1,5 +1,5 @@
 import React from "react";
-import Loading from "@/app/ui/components/loading";
+import Loading from "@/app/ui/components/common/Loading";
 import DocumentGrid from "@/app/ui/components/MaterialAdmin/materialGrid";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/common/Input";

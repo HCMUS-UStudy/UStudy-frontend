@@ -1,5 +1,4 @@
 import { cn } from "@/app/lib/utils";
-import clsx from "clsx";
 import React from "react";
 import { FaChevronDown } from "react-icons/fa6";
 
@@ -11,7 +10,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   nameForInput?: string;
   dataToSend?: string;
   isError?: boolean;
-  variant?: "basic" | "primary";
+  errorMsg?: string | null;
+  variant?: "basic" | "primary" | "outlined";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -31,14 +31,18 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       className={cn(
         {
-          "": !disabled,
           "cursor-progress": isPending,
           "cursor-pointer": !isPending,
+          "relative flex items-center justify-center group bg-gradient-to-tr from-button-primary-dark via-button-primary to-button-primary-dark bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200 text-white disabled:from-disabled-dark disabled:to-disabled-dark disabled:text-disabled-light":
+            variant === "primary",
+          // "flex items-center justify-center transition duration-200 ease-in-out text-gray-400 hover:text-gray-600":
+          "flex items-center justify-center transition duration-200 ease-in-out text-button-primary hover:bg-button-primary/10 disabled:text-disabled-dark disabled:hover:bg-transparent":
+            variant === "basic",
+          "tracking-widest hover:shadow-lg border-[1.5px] border-button-primary bg-transparent hover:bg-button-primary/10 text-button-primary hover:shadow-button-primary/20 transition-all duration-200 disabled:border-disabled-dark disabled:text-disabled-dark disabled:hover:bg-transparent disabled:hover:shadow-none":
+            variant === "outlined",
         },
-        variant === "primary" &&
-          `${className} relative flex items-center justify-center group px-8 py-2.5 bg-gradient-to-tr from-blue-800 via-blue-600 to-blue-800 bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200 text-blue-50 font-bold rounded-xl`,
-        "disabled:opacity-50",
-        // variant === "basic" && `${className} flex items-center justify-center rounded-md px-3 py-2.5 transition duration-200 ease-in-out cursor-pointer text-blue-50 font-bold bg-blue-600 hover:bg-blue-800`,
+        "w-fit font-bold px-3 py-2 rounded-md disabled:cursor-auto",
+        className,
       )}
       {...props}
     >
@@ -54,33 +58,50 @@ const SelectingButton: React.FC<ButtonProps> = ({
   className,
   disabled,
   isError,
+  errorMsg,
 }) => {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={clsx(
-        {
-          "bg-gray-400 cursor-not-allowed": disabled,
-          "bg-white hover:bg-gray-200": !disabled,
-        },
-        {
-          "border-error": isError,
-          "border-gray-400": !isError,
-        },
-        `${className} w-[10vw] flex justify-between items-center text-sm  border-2 px-2.5 py-1.5 rounded-lg transition-colors`,
+    <div>
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        // className={clsx(
+        //   {
+        //     "bg-gray-400 cursor-not-allowed": disabled,
+        //     "bg-white hover:bg-gray-200": !disabled,
+        //   },
+        //   {
+        //     "border-error": isError,
+        //     "border-gray-400": !isError,
+        //   },
+        //   `${className} w-[10vw] flex justify-between items-center text-sm  border-2 px-2.5 py-1.5 rounded-lg transition-colors`,
+        // )}
+        className={cn(
+          "bg-transparent",
+          {
+            "border-control-border border": !isError,
+            "border-error border-2": isError,
+          },
+          "flex justify-between items-center gap-2 w-full transition-colors rounded-md px-3 py-2 text-sm active:ring-2 active:ring-control-ring disabled:cursor-not-allowed disabled:opacity-50 disabled:ring-0",
+          className,
+        )}
+      >
+        <span className="">{placeholder}</span>
+        {!disabled && <FaChevronDown />}
+        <input
+          type="text"
+          name={nameForInput}
+          value={placeholder}
+          readOnly
+          className="hidden"
+        />
+      </button>
+
+      {isError && errorMsg && (
+        <span className="text-[13px] text-error mt-2">{errorMsg}</span>
       )}
-    >
-      <span className="">{placeholder}</span>
-      {!disabled && <FaChevronDown />}
-      <input
-        type="text"
-        name={nameForInput}
-        value={placeholder}
-        readOnly
-        className="hidden"
-      />
-    </button>
+    </div>
   );
 };
 

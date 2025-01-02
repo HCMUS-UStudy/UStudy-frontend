@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/app/ui/components/dropdown-menu";
+} from "@/app/ui/components/common/DropdownMenu";
 import { Button } from "@/app/ui/components/common/Button";
 import {
   Avatar,
