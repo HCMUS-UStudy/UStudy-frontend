@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, SelectingButton } from "./button";
 import Modal from "./modal";
-import { CircleX, Plus, PlusIcon } from "lucide-react";
+import { Plus, PlusIcon, XIcon } from "lucide-react";
 import { Input } from "./input";
 import {
   ClassSchema,
@@ -45,7 +45,9 @@ export default function CreateClass() {
   // CÁC STATE PHỤ
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
+  const { selectedBranchId } = useSelector(
+    (state: BranchRootState) => state.branch
+  );
   const [errors, setErrors] = useState<CreateClassError>({
     course: null,
     room: null,
@@ -328,11 +330,11 @@ export default function CreateClass() {
         isOpen={isOpenModal}
         className="h-fit pb-6">
         <div className="flex flex-col relative">
-          <CircleX
+          <XIcon
             onClick={() => {
               setIsOpenModal(false);
             }}
-            className="absolute top-4 right-6 bg-clip-padding w-[8%] h-auto opacity-50 hover:opacity-100 transition duration-200 bg-white cursor-pointer"
+            className="absolute top-5 right-6 bg-clip-padding size-8 h-auto opacity-50 hover:opacity-100 transition duration-200 bg-white cursor-pointer"
           />
           <h1 className="mx-auto mt-5 font-bold text-2xl text-gray-700">
             Tạo lớp học

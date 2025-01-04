@@ -31,7 +31,7 @@ export const getCoursesByGradeId = async (gradeId: string) => {
 	}
 }
 
-export const getAllClasses = async (query: string, currentPage: number): Promise<ClassData> => {
+export const getAllClasses = async (query: string, currentPage: number) => {
 	try {
 		const response = await axiosInstance.get('/class/all/get-list-class', {
 			params: {
@@ -40,7 +40,7 @@ export const getAllClasses = async (query: string, currentPage: number): Promise
 				filter: query
 			}
 		});
-		return response.data;
+		return response;
 	} catch (error) {
 		throw error;
 	}
@@ -151,11 +151,7 @@ export const adminLogin = async (genId: string, password: string) => {
 
 export const getClassById = async (classId: string) => {
 	try {
-		const response = await axiosInstance.get("/class/all/get-one", {
-			params: {
-				classId,
-			},
-		});
+		const response = await axiosInstance.get(`/class/all/get-one/${classId}`);
 		return response;
 	} catch (error) {
 		throw error;

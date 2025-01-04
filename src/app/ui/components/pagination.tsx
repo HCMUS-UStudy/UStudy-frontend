@@ -1,32 +1,40 @@
 "use client";
-import { getAllClasses } from "@/app/lib/api";
+// import { getAllClasses } from "@/app/lib/api";
 import clsx from "clsx";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
 
-export default function Pagination({ className }: { className?: string }) {
-  const searchParams = useSearchParams();
+export default function Pagination({
+  className,
+  currentPage,
+  totalPages,
+}: {
+  className?: string;
+  currentPage: number;
+  totalPages: number;
+}) {
+  // const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  let currentPage = Number(searchParams.get("page")) || 0;
-  const query = searchParams.get("query") || "";
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // let currentPage = Number(searchParams.get("page")) || 0;
+  // const query = searchParams.get("query") || "";
+  // const [totalPages, setTotalPages] = useState<number>(0);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchData = async (query: string, currentPage: number) => {
-      try {
-        setIsLoading(true);
-        const response = await getAllClasses(query, currentPage);
-        setTotalPages(response.totalPages);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData(query, currentPage);
-  }, [currentPage, query]);
+  // useEffect(() => {
+  //   const fetchData = async (query: string, currentPage: number) => {
+  //     try {
+  //       setIsLoading(true);
+  //       const response = await getAllClasses(query, currentPage);
+  //       setTotalPages(response.totalPages);
+  //     } catch (error) {
+  //       console.log(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchData(query, currentPage);
+  // }, [currentPage, query]);
 
   const ArrowButton = ({
     direction,
@@ -118,14 +126,7 @@ export default function Pagination({ className }: { className?: string }) {
           }}
         />
         <li className="cursor-default flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300">
-          {isLoading ? (
-            <span>...</span>
-          ) : (
-            <span>
-              {currentPage + 1} /{" "}
-              {totalPages === 0 ? currentPage + 1 : totalPages}
-            </span>
-          )}
+          {currentPage + 1} / {totalPages === 0 ? currentPage + 1 : totalPages}
         </li>
         <ArrowButton
           direction="right"
@@ -142,4 +143,45 @@ export default function Pagination({ className }: { className?: string }) {
       </ul>
     </nav>
   );
+
+  // return (
+  //   <nav aria-label="Page navigation example" className={className}>
+  //     <ul className="flex items-center -space-x-px h-10 text-base">
+  //       <ArrowButton
+  //         direction="left"
+  //         isDisabled={currentPage <= 0}
+  //         handleClick={() => {
+  //           if (currentPage > 0) {
+  //             currentPage--;
+  //             const params = new URLSearchParams();
+  //             params.set("page", currentPage.toString());
+  //             replace(`${pathname}?${params.toString()}`);
+  //           }
+  //         }}
+  //       />
+  //       <li className="cursor-default flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300">
+  //         {isLoading ? (
+  //           <span>...</span>
+  //         ) : (
+  //           <span>
+  //             {currentPage + 1} /{" "}
+  //             {totalPages === 0 ? currentPage + 1 : totalPages}
+  //           </span>
+  //         )}
+  //       </li>
+  //       <ArrowButton
+  //         direction="right"
+  //         isDisabled={currentPage >= totalPages - 1}
+  //         handleClick={() => {
+  //           if (currentPage < totalPages - 1) {
+  //             currentPage++;
+  //             const params = new URLSearchParams();
+  //             params.set("page", currentPage.toString());
+  //             replace(`${pathname}?${params.toString()}`);
+  //           }
+  //         }}
+  //       />
+  //     </ul>
+  //   </nav>
+  // );
 }

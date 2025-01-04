@@ -51,6 +51,7 @@ const SearchField: React.FC<SearchProps> = ({ placeholder, className }) => {
     const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("query", term);
+      params.set("page", "0");
     } else {
       params.delete("query");
     }
@@ -64,7 +65,7 @@ const SearchField: React.FC<SearchProps> = ({ placeholder, className }) => {
         }}
         defaultValue={searchParams.get("query")?.toString()}
         placeholder={placeholder}
-        className={`${className} flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
+        className={`${className} flex h-10 rounded-md border-2 border-slate-200 bg-white px-3 py-2 text-sm`}
       />
     </>
   );

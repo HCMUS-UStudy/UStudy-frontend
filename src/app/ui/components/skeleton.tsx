@@ -29,18 +29,14 @@ export const TableSkeleton = () => {
             {" "}
             <div className="bg-slate-300 h-2 rounded-full"></div>
           </td>
-          <td className="px-6 py-4 text-sm text-gray-700 text-center">
-            {" "}
-            <div className="bg-slate-300 h-2 rounded-full"></div>
-          </td>
         </tr>
       );
     }
     return rows;
   };
   return (
-    <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg h-80 max-h-80">
-      <thead className="bg-gray-100">
+    <table className="min-w-full table-auto border-collapse bg-white rounded-lg h-80 max-h-80">
+      <thead className="">
         <tr>
           <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
             ID
@@ -49,19 +45,16 @@ export const TableSkeleton = () => {
             Tên lớp
           </th>
           <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
+            Môn học
+          </th>
+          <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
+            Khối
+          </th>
+          <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
             Phòng
           </th>
           <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-            Ngày bắt đầu
-          </th>
-          <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-            Ngày kết thúc
-          </th>
-          <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-            Tên chi nhánh
-          </th>
-          <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-            Địa chỉ
+            Học phí
           </th>
         </tr>
       </thead>

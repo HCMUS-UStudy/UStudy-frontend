@@ -4,6 +4,7 @@ import { ClassItem } from "@/app/types/type";
 import React, { useEffect, useState } from "react";
 import { TableSkeleton } from "./skeleton";
 import { useRouter } from "next/navigation";
+import Pagination from "./pagination";
 
 export interface ColumnContent {
   colName: string;
@@ -63,13 +64,14 @@ export function ClassesTable({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   // let displays: ClassItem[] = [];
+  const [totalPages, setTotalPages] = useState<number>(0);
   useEffect(() => {
     const fetchData = async () => {
       let filteredData: ClassItem[] = [];
       setIsLoading(true);
       try {
         const response = await getAllClasses(query, currentPage);
-        filteredData = response.content.map((item) => ({
+        filteredData = response.data.content.map((item: ClassItem) => ({
           id: item.id,
           name: item.name,
           course: {
@@ -83,6 +85,8 @@ export function ClassesTable({
             name: item.grade.name,
           },
         }));
+        console.log(response.data.totalPages);
+        setTotalPages(response.data.totalPages);
       } catch (error) {
         console.log(error);
       } finally {
@@ -94,73 +98,80 @@ export function ClassesTable({
   }, [currentPage, query]);
   // console.log(classes);
   return (
-    <>
-      {isLoading === true ? (
-        <TableSkeleton />
-      ) : (
-        <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                ID
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center w-[150px]">
-                Tên lớp
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Môn học
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Khối
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Phòng
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center">
-                Học phí
-              </th>
-              <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* {classes.content.map((c, i) => {})} */}
-            {classes.map((c, i) => (
-              <tr
-                key={i}
-                className="hover:bg-gray-50 transition-all duration-200">
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {i + 1}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.course.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.grade.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.room.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {c.fee} VNĐ
-                </td>
-                <td className="text-sm text-gray-700 text-center">
-                  <button
-                    onClick={() =>
-                      router.push(`/clerk/classes/${c.id}/classManagement`)
-                    }
-                    type="button"
-                    className="text-sm font-bold tracking-widest hover:shadow-lg ring-2 ring-blue-600 bg-white hover:bg-blue-600 hover:text-white text-gray-700 hover:shadow-blue-500/50 transition-all duration-200 px-5 py-1.5  rounded-md ">
-                    Xem lớp
-                  </button>
-                </td>
+    <div className="flex flex-col gap-3">
+      <div className="border-2 bg-white py-2 px-4 rounded border-slate-200">
+        {isLoading === true ? (
+          <TableSkeleton />
+        ) : (
+          <table className="min-w-full table-auto border-collapse  rounded-lg">
+            <thead className="">
+              <tr>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300">
+                  ID
+                </th>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300 w-[150px]">
+                  Tên lớp
+                </th>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300">
+                  Môn học
+                </th>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300">
+                  Khối
+                </th>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300">
+                  Phòng
+                </th>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300">
+                  Học phí
+                </th>
+                <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center border-b-2 border-slate-300"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </>
+            </thead>
+            <tbody>
+              {/* {classes.content.map((c, i) => {})} */}
+              {classes.map((c, i) => (
+                <tr
+                  key={i}
+                  className="hover:bg-gray-50 transition-all duration-200">
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    {i + 1}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    {c.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    {c.course.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    {c.grade.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    {c.room.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    {c.fee} VNĐ
+                  </td>
+                  <td className="text-sm text-gray-700 text-center border-b-2 border-slate-100">
+                    <button
+                      onClick={() =>
+                        router.push(`/clerk/classes/${c.id}/classManagement`)
+                      }
+                      type="button"
+                      className="text-sm font-bold tracking-widest hover:shadow-lg ring-1 ring-blue-600 bg-white hover:bg-blue-600 hover:text-white text-gray-700 transition-all duration-200 px-5 py-1  rounded-md ">
+                      Xem lớp
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        className="self-end"
+      />
+    </div>
   );
 }

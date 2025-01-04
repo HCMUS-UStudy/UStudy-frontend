@@ -9,8 +9,8 @@ import {
 } from "@/app/lib/api";
 import { AllChapter, Classroom, Teacher } from "@/app/types/type";
 import { useSpecificNameContext } from "@/app/context/context";
-import { IoFileTrayFull, IoWarning } from "react-icons/io5";
-import { FaClipboard, FaUserPlus, FaX } from "react-icons/fa6";
+import { IoWarning } from "react-icons/io5";
+import { FaUserPlus, FaX } from "react-icons/fa6";
 import Modal from "@/app/ui/components/modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
@@ -41,6 +41,7 @@ export default function ClassManagement({
           getClassById(classId),
           getAvailableTeacher(classId),
         ]);
+        console.log(fetchClass);
         setClassData(fetchClass.data);
         setAvailableTeachers(fetchTeachers.data);
       } catch (error) {
@@ -215,8 +216,8 @@ export default function ClassManagement({
 
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          <div className="flex items-center gap-2 text-lg font-bold text-gray-700 tracking-wider mt-5 pl-5">
-            <IoFileTrayFull className="size-8" /> Tài liệu học tập
+          <div className="flex items-center gap-2 text-base font-bold text-gray-700 tracking-wider mt-5">
+            Tài liệu học tập
           </div>
           <div className="px-2.5 py-2 mt-2 bg-white border-2 border-slate-100 rounded-lg">
             <table className="table-auto w-full bg-white select-none">
@@ -252,65 +253,27 @@ export default function ClassManagement({
           </div>
         </div>
         <div>
-          <div className="flex items-center gap-2 text-lg font-bold text-gray-700 tracking-wider mt-5 pl-5">
-            <FaClipboard className="size-8" /> Tình trạng lớp học
+          <div className="flex items-center gap-2 text-base font-bold text-gray-700 tracking-wider mt-5">
+            Tiến độ lớp học
           </div>
-          <div className="px-2.5 py-2 mt-2 bg-white border-2 border-slate-100 rounded-lg">
-            <table className="table-auto w-full bg-white select-none">
-              <thead>
-                <tr className="border-b-2 border-slate-200">
-                  <th className="py-2.5">ID</th>
-                  <th>Mô tả</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-                <tr className="text-center cursor-pointer hover:bg-blue-50 transition-colors">
-                  <td className="font-bold px-2 py-2.5 border-b-2 border-slate-100">
-                    12038123
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Quạt hỏng
-                  </td>
-                  <td className=" px-2 py-2.5 border-b-2 border-slate-100">
-                    Chưa xử lý
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="px-6 py-4 mt-2 bg-white border-2 border-slate-100 rounded-lg">
+            <div>
+              <div className="mb-2 text-sm font-medium text-gray-700 ">
+                Lớp học đã đạt 45% tiến độ
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 ">
+                <div
+                  className="bg-gradient-to-tr bg-[length:100%_200%] from-blue-800 via-blue-500 to-blue-800 h-2.5 rounded-full"
+                  style={{ width: "45%" }}
+                />
+              </div>
+              <div className="mb-1 text-sm font-medium text-gray-700 ">
+                Số buổi học đã đạt: 40/100
+              </div>
+              <div className="mb-1 text-sm font-medium text-gray-700 ">
+                Số bài kiểm tra đã hoàn thành: 40/100
+              </div>
+            </div>
           </div>
         </div>
       </div>
