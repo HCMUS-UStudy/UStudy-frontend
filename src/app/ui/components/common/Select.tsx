@@ -15,19 +15,19 @@ interface SelectProps {
   children: ReactNode;
   className?: string;
   defaultValue?: string | number;
+  defaultLabel?: string;
   onValueChange?: (value: string | number) => void;
   name?: string;
   disabled?: boolean;
   required?: boolean;
+  id?: string;
+  label?: string;
 }
 
 interface SelectContextProps {
   selectedValue: string | number;
-  selectedLabel: string;
   handleSetSelectedValue: (value: string | number, label: string) => void;
-  isOpen: boolean;
   toggleOpen: () => void;
-  disabled?: boolean;
 }
 
 const SelectContext = createContext<SelectContextProps | undefined>(undefined);
@@ -36,23 +36,42 @@ const Select: React.FC<SelectProps> = ({
   children,
   className,
   defaultValue = "",
+  defaultLabel = "",
   onValueChange,
   name,
   disabled = false,
   required = false,
+  id,
+  label,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | number>(
     defaultValue,
   );
-  const [selectedLabel, setSelectedLabel] = useState<string>("");
+  const [selectedLabel, setSelectedLabel] = useState<string>(defaultLabel);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const selectRef = useRef<HTMLDivElement>(null);
+  const [parentBgColor, setParentBgColor] = React.useState<string>("");
 
   useEffect(() => {
     if (onValueChange) {
       onValueChange(selectedValue);
     }
-  }, [selectedValue, onValueChange]);
+  }, [selectedValue]);
+
+  // Get parent background color to set label background color
+  useEffect(() => {
+    if (selectRef.current) {
+      let element = selectRef.current.parentElement;
+      while (element) {
+        const bgColor = window.getComputedStyle(element).backgroundColor;
+        if (bgColor !== "transparent" && bgColor !== "rgba(0, 0, 0, 0)") {
+          setParentBgColor(bgColor);
+          break;
+        }
+        element = element.parentElement;
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -85,21 +104,52 @@ const Select: React.FC<SelectProps> = ({
     <SelectContext.Provider
       value={{
         selectedValue,
-        selectedLabel,
         handleSetSelectedValue,
-        isOpen,
         toggleOpen,
-        disabled,
       }}
     >
-      <div className={cn("relative", className)} ref={selectRef}>
+      <div
+        id={id}
+        className={cn("relative text-sm", className)}
+        ref={selectRef}
+      >
         <input
           type="hidden"
           name={name}
-          value={selectedValue}
+          defaultValue={selectedValue}
           required={required}
         />
-        {children}
+        <button
+          className={cn(
+            "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring",
+            className,
+          )}
+          onClick={(e) => {
+            e.preventDefault();
+            toggleOpen();
+          }}
+          disabled={disabled}
+        >
+          {selectedLabel}
+          <IoChevronDown size={18} />
+        </button>
+        {label && (
+          <label
+            className={cn(
+              "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-blue-500 px-1",
+            )}
+            style={{
+              backgroundColor: parentBgColor,
+            }}
+          >
+            {label}
+          </label>
+        )}
+        {isOpen ? (
+          <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto">
+            {children}
+          </div>
+        ) : null}
       </div>
     </SelectContext.Provider>
   );
@@ -111,46 +161,6 @@ const useSelectContext = () => {
     throw new Error("useSelectContext must be used within a Select");
   }
   return context;
-};
-
-interface SelectTriggerProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-const SelectTrigger: React.FC<SelectTriggerProps> = ({
-  children,
-  className,
-}) => {
-  const { selectedLabel, toggleOpen, disabled } = useSelectContext();
-
-  return (
-    <button
-      className={cn(
-        "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2",
-        className,
-      )}
-      onClick={toggleOpen}
-      disabled={disabled}
-    >
-      {selectedLabel || children}
-      <IoChevronDown size={18} />
-    </button>
-  );
-};
-
-interface SelectContentProps {
-  children: React.ReactNode;
-}
-
-const SelectContent: React.FC<SelectContentProps> = ({ children }) => {
-  const { isOpen } = useSelectContext();
-
-  return isOpen ? (
-    <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto">
-      {children}
-    </div>
-  ) : null;
 };
 
 interface SelectItemProps {
@@ -186,4 +196,4 @@ const SelectItem: React.FC<SelectItemProps> = ({
   );
 };
 
-export { Select, SelectTrigger, SelectContent, SelectItem };
+export { Select, SelectItem };

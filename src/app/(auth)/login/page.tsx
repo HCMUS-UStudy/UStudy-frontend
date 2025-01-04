@@ -166,6 +166,7 @@ export default function Login() {
               </div>
 
               <Button
+                isPending={isPending || isLoading}
                 disabled={isPending || isLoading}
                 type="submit"
                 className={clsx(
@@ -175,18 +176,7 @@ export default function Login() {
                   "mt-6 w-full",
                 )}
               >
-                {isPending || isLoading ? (
-                  <Loading
-                    text="Đang xử lý..."
-                    className="flex items-center gap-2 flex-row text-white"
-                    customStyle={{
-                      spinner: "w-6 h-6",
-                      text: "mt-0",
-                    }}
-                  />
-                ) : (
-                  "Đăng nhập"
-                )}
+                Đăng nhập
               </Button>
 
               {/* Forgot Password Link */}

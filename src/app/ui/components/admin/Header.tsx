@@ -1,25 +1,35 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
 import classNames from "classnames";
-import { PiHandWavingThin } from "react-icons/pi";
-import { IoMailOutline, IoNotificationsOutline } from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import "../../ui/styles/Header.css";
+import { usePathname } from "next/navigation";
+import BranchSelector from "../BranchSelector";
+import "../../styles/Header.css";
 import Swal from "sweetalert2";
+import { getUserInfo } from "@/app/lib/storage";
+import { User } from "@/app/types/type";
+import { useSpecificNameContext } from "@/app/context/context";
+import Breadcrumb from "../common/Breadcrumb";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
+  const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [hasNewNotification] = useState(false);
-  const [hasNewMessage] = useState(false);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const { specificName } = useSpecificNameContext();
+
+  useEffect(() => {
+    setUserInfo(getUserInfo());
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const handleProfileClick = () => {
-    window.location.href = "/student/profile"; // Chuyển hướng tới trang profile
+    window.location.href = "/admin/profile"; // Chuyển hướng tới trang profile
   };
 
   const handleLogout = () => {
@@ -39,7 +49,7 @@ const Header: React.FC = () => {
     });
 
     // Chuyển hướng người dùng về trang đăng nhập
-    window.location.href = "/login";
+    window.location.href = "/admin/login";
   };
 
   const headerStyle = classNames({
@@ -47,25 +57,37 @@ const Header: React.FC = () => {
     ["header isNarrow"]: toggleCollapse,
   });
 
+  const renderTitle = (): React.ReactNode => {
+    if (pathname.startsWith("/clerk")) {
+      if (pathname.includes("classManagement")) {
+        return <div>Quản lý lớp học</div>;
+      }
+      return <div>Trang chủ lớp học</div>;
+    }
+  };
+
   return (
     <div className={headerStyle}>
-      <div className="hello">
-        <div className="first-line">
-          Hi!! {<PiHandWavingThin className="icon" size={25} />}
+      <div className="gap-6 justify-between items-center">
+        <div className="first-line text-xl font-bold tracking-wide mb-4">
+          {renderTitle()}
+          {/* Xin chào{" "}
+          <span className="font-bold bg-gradient-to-r from-blue-800 to-blue-400 inline-block text-transparent bg-clip-text">
+            {userInfo?.name}!
+          </span>{" "} */}
+          {/* {<PiHandWavingThin className="icon" size={25} />} */}
         </div>
-        <div className="second-line">Chào mừng bạn quay trở lại!</div>
+        <Breadcrumb specificName={specificName ? specificName : ""} />
+        {pathname.includes("/admin") && (
+          <div className="second-line">Chào mừng đến với trang Admin!</div>
+        )}
       </div>
 
       <div className="right-items">
-        <div className={`notification ${hasNewNotification ? "new" : ""}`}>
-          <IoNotificationsOutline size={20} />
-          {<span className="badge">1</span>} {/* Số lượng thông báo mới */}
-        </div>
+        {pathname !== "/admin/branches" && <BranchSelector />}
 
-        <div className={`message ${hasNewMessage ? "new" : ""}`}>
-          <IoMailOutline size={20} />
-          {hasNewMessage && <span className="badge">3</span>}{" "}
-          {/* Số lượng tin nhắn mới */}
+        <div className="notification">
+          <IoNotificationsOutline size={20} />
         </div>
 
         <div className="user-setting">

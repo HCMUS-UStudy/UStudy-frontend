@@ -34,7 +34,7 @@ export default function CreateTeacher() {
           className="w-full h-11 text-base text-gray-700 bg-white"
           placeholder="Địa chỉ"
         />
-        <Button className="mt-5">Đăng ký</Button>
+        <Button className="mt-5 w-full">Đăng ký</Button>
       </div>
     </div>
   );

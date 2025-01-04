@@ -1,4 +1,4 @@
-import Header from "@/app/(admin)/_components/Header";
+import Header from "@/app/ui/components/admin/Header";
 import { SIDENAV_ITEMS_CLERK } from "@/app/menu_constants";
 import PageWrapper from "@/app/ui/components/common/PageWrapper";
 import Sidebar from "@/app/ui/sidebar/sidebar";

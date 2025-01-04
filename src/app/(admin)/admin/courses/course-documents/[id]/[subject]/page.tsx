@@ -4,12 +4,7 @@ import React from "react";
 import GradeGrid from "@/app/ui/components/GradeAdmin/GradeGrid";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/common/Input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/app/ui/components/common/Select";
+import { Select, SelectItem } from "@/app/ui/components/common/Select";
 
 // params are automatically passed to the page component in App Router
 interface Params {
@@ -61,13 +56,10 @@ const CourseDocumentsPage = async ({
             <option value="Chapter">Khối 1</option>
             <option value="Exercises">Khối 2</option>
           </select>*/}
-          <Select>
-            <SelectTrigger className="w-[200px]">Tất cả khối học</SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Tất cả khối học</SelectItem>
-              <SelectItem value="Chapter">Khối 1</SelectItem>
-              <SelectItem value="Exercises">Khối 2</SelectItem>
-            </SelectContent>
+          <Select className="w-[200px]" defaultLabel="Tất cả khối học">
+            <SelectItem value="">Tất cả khối học</SelectItem>
+            <SelectItem value="Chapter">Khối 1</SelectItem>
+            <SelectItem value="Exercises">Khối 2</SelectItem>
           </Select>
         </div>
       </div>

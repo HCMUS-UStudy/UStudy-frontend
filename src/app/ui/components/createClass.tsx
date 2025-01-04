@@ -35,12 +35,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/app/ui/components/common/Dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/app/ui/components/common/Select";
+import { Select, SelectItem } from "@/app/ui/components/common/Select";
 
 type CreateClassError = {
   course?: string | null;
@@ -660,14 +655,12 @@ export default function CreateClass() {
             <Select
               onValueChange={(value) => setDurationUnit(value as DurationUnit)}
               defaultValue="Tháng"
+              defaultLabel="Tháng"
               className="w-[200px]"
             >
-              <SelectTrigger>Tháng</SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Tháng">Tháng</SelectItem>
-                <SelectItem value="Tuần">Tuần</SelectItem>
-                <SelectItem value="Năm">Năm</SelectItem>
-              </SelectContent>
+              <SelectItem value="Tháng">Tháng</SelectItem>
+              <SelectItem value="Tuần">Tuần</SelectItem>
+              <SelectItem value="Năm">Năm</SelectItem>
             </Select>
           </div>
         </DialogContent>
@@ -773,17 +766,15 @@ export default function CreateClass() {
                 <Select
                   onValueChange={(value) => setSelectedDay(value as number)}
                   className="w-[120px] flex-none h-[40px]"
+                  defaultLabel="Chọn thứ"
                 >
-                  <SelectTrigger>Chọn thứ</SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={2}>Thứ 2</SelectItem>
-                    <SelectItem value={3}>Thứ 3</SelectItem>
-                    <SelectItem value={4}>Thứ 4</SelectItem>
-                    <SelectItem value={5}>Thứ 5</SelectItem>
-                    <SelectItem value={6}>Thứ 6</SelectItem>
-                    <SelectItem value={7}>Thứ 7</SelectItem>
-                    <SelectItem value={1}>Chủ Nhật</SelectItem>
-                  </SelectContent>
+                  <SelectItem value={2}>Thứ 2</SelectItem>
+                  <SelectItem value={3}>Thứ 3</SelectItem>
+                  <SelectItem value={4}>Thứ 4</SelectItem>
+                  <SelectItem value={5}>Thứ 5</SelectItem>
+                  <SelectItem value={6}>Thứ 6</SelectItem>
+                  <SelectItem value={7}>Thứ 7</SelectItem>
+                  <SelectItem value={1}>Chủ Nhật</SelectItem>
                 </Select>
                 <div className="flex justify-center gap-4">
                   <div className="flex flex-col justify-between">

@@ -3,7 +3,6 @@ import * as React from "react";
 
 import { cn } from "@/app/lib/utils";
 import { useDebouncedCallback } from "use-debounce";
-import { Label } from "./Label";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { IoSearchOutline } from "react-icons/io5";
 import { useEffect } from "react";
@@ -12,6 +11,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   type?: string;
   label?: string;
+  alwaysShowLabel?: boolean;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isError?: boolean;
@@ -26,6 +26,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       className,
       type,
       label,
+      alwaysShowLabel = false,
       disabled = false,
       onChange,
       isError,
@@ -78,10 +79,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={showPassword ? "text" : type}
             className={cn(
-              "w-full bg-transparent disabled:cursor-not-allowed file:border-0 file:bg-transparent file:text-sm file:font-medium outline-none placeholder-control-placeholder",
+              "peer w-full bg-transparent disabled:cursor-not-allowed file:border-0 file:bg-transparent file:text-sm file:font-medium outline-none placeholder-control-placeholder",
               {
-                "placeholder-transparent transition-colors duration-200":
-                  label && (isFocused || inputVal),
+                "focus:placeholder-transparent focus:transition-colors focus:duration-200":
+                  label,
               },
             )}
             ref={ref}
@@ -98,21 +99,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
 
           {label && (
-            <Label
+            <label
               htmlFor={inputId}
-              className={cn(
-                "absolute left-4 transition-all duration-150",
-                `${isFocused || inputVal ? `-top-2.5 text-xs text-blue-500 px-1` : "top-1/2 transform -translate-y-1/2 text-transparent"}`,
-                {
-                  "cursor-not-allowed": disabled,
-                },
-              )}
+              className={cn({
+                "absolute left-4 -top-2.5 visible text-blue-500 text-xs px-1 transition-all duration-75 peer-placeholder-shown:top-2 peer-placeholder-shown:invisible peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:visible":
+                  !alwaysShowLabel,
+                "absolute left-4 -top-2.5 visible text-blue-500 text-xs px-1":
+                  alwaysShowLabel,
+              })}
               style={{
-                backgroundColor: (isFocused || inputVal) && parentBgColor,
+                backgroundColor:
+                  type === "date" || alwaysShowLabel || isFocused || inputVal
+                    ? parentBgColor
+                    : "",
               }}
             >
               {label}
-            </Label>
+            </label>
           )}
 
           {type === "password" && (

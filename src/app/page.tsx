@@ -96,7 +96,7 @@ export default async function Home() {
             </Link>
           </div>
           <Button
-            className="text-lg min-[320px]:hidden md:flex hover:scale-110"
+            className="px-8 text-lg min-[320px]:hidden md:flex hover:scale-110"
             type="submit"
           >
             <Link

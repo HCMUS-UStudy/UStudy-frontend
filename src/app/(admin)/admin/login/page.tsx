@@ -4,9 +4,8 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Input } from "@/app/ui/components/common/Input";
-import { Label } from "@/app/ui/components/common/Label";
 import Image from "next/image";
-import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
+import { HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/common/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -28,20 +27,13 @@ export default function Login() {
     }
   }, []);
 
-  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isFocused, setIsFocused] = useState({
-    username: false,
-    password: false,
-  });
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await adminLogin(username, password);
@@ -83,6 +75,8 @@ export default function Login() {
           text: unexpectedError,
         });
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,84 +120,38 @@ export default function Login() {
               {/* Floating Label for Username */}
               <div className="relative mb-4">
                 <Input
-                  className={`p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
-                          focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                          ${isFocused.username ? "placeholder-transparent" : "placeholder-gray-400"}`}
                   type="text"
                   id="username"
                   value={username}
-                  onInput={(e) =>
+                  onChange={(e) =>
                     setUsername((e.target as HTMLInputElement).value)
                   }
-                  onFocus={() =>
-                    setIsFocused((prev) => ({ ...prev, username: true }))
-                  }
-                  onBlur={() =>
-                    setIsFocused((prev) => ({ ...prev, username: false }))
-                  }
                   placeholder="Nhập mã người dùng"
+                  label="Mã người dùng"
                   required
                 />
-                <Label
-                  htmlFor="username"
-                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
-                    isFocused.username || username
-                      ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-transparent"
-                  }`}
-                >
-                  Nhập mã người dùng
-                </Label>
               </div>
 
               {/* Floating Label for Password */}
               <div className="relative mb-6 mt-6">
                 <Input
-                  className={`p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
-                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                    ${isFocused.password ? "placeholder-transparent" : "placeholder-gray-400"}`}
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   id="password"
                   value={password}
-                  onInput={(e) =>
+                  onChange={(e) =>
                     setPassword((e.target as HTMLInputElement).value)
                   }
-                  onFocus={() =>
-                    setIsFocused((prev) => ({ ...prev, password: true }))
-                  }
-                  onBlur={() =>
-                    setIsFocused((prev) => ({ ...prev, password: false }))
-                  }
                   placeholder="Nhập mật khẩu"
+                  label="Mật khẩu"
                   required
                 />
-                <Label
-                  htmlFor="password"
-                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
-                    isFocused.password || password
-                      ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-transparent"
-                  }`}
-                >
-                  Nhập mật khẩu
-                </Label>
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none"
-                >
-                  {showPassword ? (
-                    <HiEyeOff className="text-gray-600" />
-                  ) : (
-                    <HiEye className="text-gray-600" />
-                  )}
-                </button>
               </div>
 
               <Button
-                onClick={() => {}}
                 type="submit"
-                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105"
+                className="mt-6 w-full hover:scale-105"
+                isPending={isLoading}
+                disabled={isLoading}
               >
                 Đăng nhập
               </Button>

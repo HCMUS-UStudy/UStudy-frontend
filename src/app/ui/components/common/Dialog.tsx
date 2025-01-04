@@ -64,7 +64,7 @@ export const Dialog: React.FC<DialogProps> = ({
     >
       <div
         className={clsx(
-          "fixed inset-0 flex justify-center items-center transition-colors duration-200 bg-black/20",
+          "fixed inset-0 flex justify-center items-center transition-colors duration-200 bg-black/20 z-10",
         )}
         onClick={enableClickOutside ? onClose : undefined}
       >

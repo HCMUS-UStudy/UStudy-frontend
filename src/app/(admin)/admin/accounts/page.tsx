@@ -1,8 +1,9 @@
 import React from "react";
-import ModalAccount from "@/app/ui/components/AccountAdmin/modalAccount-Ad";
-import AccountTable from "@/app/(admin)/_components/account/AccountTable";
-import AccountRegisterModal from "@/app/(admin)/_components/account/AccountRegisterModal";
+import AddAccountModal from "@/app/ui/components/admin/account/AddAccountModal";
+import AccountTable from "@/app/ui/components/admin/account/AccountTable";
+import AccountRegisterModal from "@/app/ui/components/admin/account/AccountRegisterModal";
 import { SearchField } from "@/app/ui/components/common/Input";
+import { Button } from "@/app/ui/components/common/Button";
 
 export default async function AccountPage(props: {
   searchParams?: Promise<{
@@ -71,9 +72,9 @@ export default async function AccountPage(props: {
             className="w-[200px]"
             placeholder="Tìm theo tên người dùng..."
           />
-          <div className="flex items-center space-x-4 pr-6">
+          <div className="flex items-center pr-6">
             <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
-            <ModalAccount buttonLabel="Tạo người dùng" />
+            <AddAccountModal buttonLabel="Tạo người dùng" />
           </div>
         </div>
 
