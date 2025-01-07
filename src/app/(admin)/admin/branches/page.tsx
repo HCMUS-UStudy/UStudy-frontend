@@ -4,8 +4,7 @@ import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
 import { Input } from "@/app/ui/components/common/Input";
 import { Button } from "@/app/ui/components/common/Button";
 // import axios from "axios";
-import { getAllBranches } from "@/app/lib/api";
-import { addBranch } from "@/app/lib/api";
+import { addBranch, getAllBranches } from "@/app/lib/services/branch";
 
 interface Branch {
   id: string;

@@ -35,18 +35,21 @@ export default function ClassCard({
   };
 
   const details = [
-    { icon: <MdMeetingRoom className="font-semibold" />, text: cls.room.name },
+    { icon: <MdMeetingRoom className="font-semibold" />, text: cls.room?.name },
     {
       icon: <FaRegClock className="font-semibold" />,
-      text: getTime(cls.classTimes),
+      // text: getTime(cls.classTimes),
+      text: "",
     },
     {
       icon: <GrScheduleNew className="font-semibold" />,
-      text: getDay(cls.classTimes),
+      // text: getDay(cls.classTimes),
+      text: "",
     },
     {
       icon: <MdPeopleOutline className="font-semibold" />,
-      text: `${cls.students.length} học sinh`,
+      // text: `${cls.students.length} học sinh`,
+      text: "",
     },
   ];
 

@@ -10,7 +10,7 @@ import "../../styles/Header.css";
 import Swal from "sweetalert2";
 import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
-import { useSpecificNameContext } from "@/app/context/context";
+import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import Breadcrumb from "../common/Breadcrumb";
 
 const Header: React.FC = () => {
@@ -18,7 +18,8 @@ const Header: React.FC = () => {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
-  const { specificName } = useSpecificNameContext();
+  // const { specificName } = useBreadcrumbContext();
+  const { dynamicBreadcrumbs } = useBreadcrumbContext();
 
   useEffect(() => {
     setUserInfo(getUserInfo());
@@ -59,7 +60,7 @@ const Header: React.FC = () => {
 
   const renderTitle = (): React.ReactNode => {
     if (pathname.startsWith("/clerk")) {
-      if (pathname.includes("classManagement")) {
+      if (pathname.includes("class-management")) {
         return <div>Quản lý lớp học</div>;
       }
       return <div>Trang chủ lớp học</div>;
@@ -77,7 +78,8 @@ const Header: React.FC = () => {
           </span>{" "} */}
           {/* {<PiHandWavingThin className="icon" size={25} />} */}
         </div>
-        <Breadcrumb specificName={specificName ? specificName : ""} />
+        {/*<Breadcrumb specificName={specificName ? specificName : ""} />*/}
+        <Breadcrumb />
         {pathname.includes("/admin") && (
           <div className="second-line">Chào mừng đến với trang Admin!</div>
         )}

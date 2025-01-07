@@ -7,7 +7,7 @@ import { Button } from "../common/Button";
 import { CourseSchema } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { createNewCourse } from "@/app/lib/api";
+import { createNewCourse } from "@/app/lib/services/course";
 
 interface ModalCourseWrapperProps {
   buttonLabel: string;

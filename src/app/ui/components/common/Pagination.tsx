@@ -12,6 +12,17 @@ interface PaginationAdminProps {
 
 const MAX_DISPLAY_PAGES = 3;
 
+/**
+ * Pagination component for admin pages
+ *
+ * @param currentPage Current page number (from 1)
+ * @param totalPages Total number of pages
+ * @param handlePageClick Function to handle page click
+ * @param handlePreviousPage Function to handle previous page click
+ * @param handleNextPage Function to handle next page click
+ *
+ * @returns Pagination component
+ * */
 const Pagination: React.FC<PaginationAdminProps> = ({
   currentPage,
   totalPages,
@@ -19,6 +30,8 @@ const Pagination: React.FC<PaginationAdminProps> = ({
   handlePreviousPage,
   handleNextPage,
 }) => {
+  if (totalPages === 0) return;
+
   const getPageNumbers = () => {
     const pages: number[] = [];
     const half = Math.floor(MAX_DISPLAY_PAGES / 2);

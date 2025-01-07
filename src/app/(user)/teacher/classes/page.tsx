@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import TabSelector from "@/app/ui/components/Teacher-Classes/TabSelector";
 import ClassList from "@/app/ui/components/Teacher-Classes/ClassList";
 import { ClassTeacher } from "@/app/types/type";
-import { getClassesForTeacher } from "@/app/lib/api";
+import { getAllClasses, getClassesForTeacher } from "@/app/lib/services/class";
 
 export default function Classes() {
   const [activeTab, setActiveTab] = useState<string>("ongoing");

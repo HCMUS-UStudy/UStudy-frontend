@@ -10,13 +10,13 @@ import { Button } from "@/app/ui/components/common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import { userLogin } from "@/app/lib/api";
 import { CustomError } from "@/app/types/type";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import Logo from "@/app/ui/components/common/Logo";
 import Loading from "@/app/ui/components/common/Loading";
+import { userLogin } from "@/app/lib/services/auth";
 
 export default function Login() {
   const router = useRouter();

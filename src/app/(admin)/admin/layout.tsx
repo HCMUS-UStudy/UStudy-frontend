@@ -4,7 +4,7 @@ import Header from "@/app/ui/components/admin/Header";
 import PageWrapper from "@/app/ui/components/common/PageWrapper";
 import Sidebar from "@/app/ui/sidebar/sidebar";
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu_constants";
-import { SpecificNameProvider } from "@/app/context/context";
+import { BreadcrumbProvider } from "@/app/context/BreadcrumbContext";
 
 export default function AdminLayout({
   children,
@@ -19,7 +19,7 @@ export default function AdminLayout({
   }
 
   return (
-    <SpecificNameProvider>
+    <BreadcrumbProvider>
       <div className="bg-background">
         <Sidebar menuItems={SIDENAV_ITEMS_ADMIN} />
         <div>
@@ -27,6 +27,6 @@ export default function AdminLayout({
           <PageWrapper>{children}</PageWrapper>
         </div>
       </div>
-    </SpecificNameProvider>
+    </BreadcrumbProvider>
   );
 }

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { getTokens, handleLogout, setTokens } from "./storage";
 import { CustomError } from "../types/type";
-import { handleRefreshToken } from "./api";
+import { handleRefreshToken } from "@/app/lib/services/auth";
 
 const requestUrl = ["/auth/user/login", "/auth/admin/login"];
 

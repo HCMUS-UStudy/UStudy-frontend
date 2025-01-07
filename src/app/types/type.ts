@@ -311,7 +311,7 @@ type Grade = {
   name: string;
 };
 
-type Course = {
+export type Course = {
   id: string;
   name: string;
   description: string;

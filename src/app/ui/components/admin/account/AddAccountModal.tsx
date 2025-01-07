@@ -6,7 +6,6 @@ import { Button } from "../../common/Button";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { AccountSchema } from "@/app/types/type";
-import { createNewAccount } from "@/app/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,7 @@ import {
   DialogHeader,
 } from "@/app/ui/components/common/Dialog";
 import { Select, SelectItem } from "@/app/ui/components/common/Select";
+import { createNewAccount } from "@/app/lib/services/user";
 
 interface AddAccountError {
   email?: string | null;

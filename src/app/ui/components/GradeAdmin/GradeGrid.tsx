@@ -5,18 +5,21 @@ import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
 import { Button } from "../common/Button";
 import Pagination from "../common/Pagination";
 import { CourseItem, GradeItem } from "@/app/types/type";
-import { getGradesByCourseId } from "@/app/lib/api";
+import { useParams, useRouter } from "next/navigation";
+import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
+import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
+import { getGradesByCourseId } from "@/app/lib/services/grade";
 
 interface GradeGridProps {
   courseId: string;
-  subject: string;
+  // subject: string;
   searchQuery: string;
 }
 
 const GradeGrid: React.FC<GradeGridProps> = ({
   searchQuery,
   courseId,
-  subject,
+  // subject,
 }) => {
   const [grades, setGrades] = useState<GradeItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,6 +28,12 @@ const GradeGrid: React.FC<GradeGridProps> = ({
   const [isSelectMode] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const { setGradeName } = useCourseAdminContext();
+
+  // const { id } = useParams<{ id: string }>();
+
+  const router = useRouter();
 
   const fetchGrades = async () => {
     let filteredData: GradeItem[] = [];
@@ -131,9 +140,13 @@ const GradeGrid: React.FC<GradeGridProps> = ({
                   <Button
                     className="hover:bg-transparent text-white"
                     variant="basic"
-                    onClick={() =>
-                      (window.location.href = `/admin/courses/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`)
-                    }
+                    onClick={() => {
+                      // (window.location.href = `/admin/courses/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`)
+                      router.push(
+                        `/admin/courses/course-documents/${courseId}/${grade.id}`,
+                      );
+                      setGradeName(grade.name);
+                    }}
                   >
                     Xem thư mục
                   </Button>

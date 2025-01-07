@@ -9,8 +9,8 @@ import { HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/common/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { adminLogin } from "@/app/lib/api";
 import { setTokens } from "@/app/lib/storage";
+import { adminLogin } from "@/app/lib/services/auth";
 
 export default function Login() {
   useEffect(() => {
@@ -38,26 +38,24 @@ export default function Login() {
     try {
       const response = await adminLogin(username, password);
 
-      if (response.status === 200) {
-        const token = response.data.data.access_token;
-        const refresh_token = response.data.data.refresh_token;
-        const creator = response.data.data.user.name;
-        const user = response.data.data.user;
+      const token = response.data.access_token;
+      const refresh_token = response.data.refresh_token;
+      const creator = response.data.user.name;
+      const user = response.data.user;
 
-        setTokens(token, refresh_token);
+      setTokens(token, refresh_token);
 
-        localStorage.setItem("creator", creator);
-        localStorage.setItem("userData", JSON.stringify(user));
+      localStorage.setItem("creator", creator);
+      localStorage.setItem("userData", JSON.stringify(user));
 
-        Swal.fire({
-          icon: "success",
-          title: "Đăng nhập thành công",
-          text: "Chào mừng quay trở lại!",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        window.location.href = "/admin/dashboard";
-      }
+      Swal.fire({
+        icon: "success",
+        title: "Đăng nhập thành công",
+        text: "Chào mừng quay trở lại!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      window.location.href = "/admin/dashboard";
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const message =

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { Button } from "../../common/Button";
 import Pagination from "../../common/Pagination";
-import { confirmRegister, getRegister, rejectRegister } from "@/app/lib/api";
 import { RegisterItem } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
@@ -21,6 +20,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/common/Table";
+import {
+  confirmRegister,
+  getRegister,
+  rejectRegister,
+} from "@/app/lib/services/register";
 
 interface AccountRegisterModalProps {
   buttonLabel: string;

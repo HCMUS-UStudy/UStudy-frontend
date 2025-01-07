@@ -6,7 +6,7 @@ import { Button } from "../common/Button";
 import Pagination from "../common/Pagination";
 import { FaDownload, FaEye, FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { MaterialItem } from "@/app/types/type";
-import { getMaterialsByChapterId } from "@/app/lib/api";
+import { getMaterialsByChapterId } from "@/app/lib/services/material";
 
 interface DocumentGridProps {
   courseId: string;
@@ -15,9 +15,9 @@ interface DocumentGridProps {
 }
 
 const DocumentGrid: React.FC<DocumentGridProps> = ({
-  searchQuery,
   courseId,
   chapterId,
+  searchQuery,
 }) => {
   const [documents, setDocuments] = useState<MaterialItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +26,7 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchGrades = async () => {
+  const fetchMaterials = async () => {
     let filteredData: MaterialItem[] = [];
     setLoading(true);
     if (!courseId) return;
@@ -92,7 +92,7 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({
   };
 
   useEffect(() => {
-    fetchGrades();
+    fetchMaterials();
   }, [chapterId, currentPage, searchQuery]);
 
   return (

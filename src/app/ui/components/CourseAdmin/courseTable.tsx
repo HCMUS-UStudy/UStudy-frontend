@@ -5,8 +5,9 @@ import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
 import Loading from "../common/Loading";
 import Pagination from "../common/Pagination"; // Import Pagination
 import { useRouter } from "next/navigation";
-import { getAllCourses } from "@/app/lib/api";
 import { CourseItem } from "@/app/types/type";
+import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
+import { getAllCourses } from "@/app/lib/services/course";
 
 interface CourseTableProps {
   searchQuery: string;
@@ -18,8 +19,9 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
   const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const { setCourseName } = useCourseAdminContext();
 
-  const Router = useRouter();
+  const router = useRouter();
 
   const fetchCourses = async () => {
     let filteredData: CourseItem[] = [];
@@ -33,7 +35,8 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
         name: item.name,
         description: item.description,
         createdBy: {
-          name: item.createdBy.name,
+          // name: item.createdBy.name,
+          name: "",
         },
 
         createdAt: item.createdAt,
@@ -135,11 +138,12 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
                   <button
-                    onClick={() =>
-                      Router.push(
-                        `/admin/courses/course-documents/${encodeURIComponent(course.id)}/${encodeURIComponent(course.name)}`,
-                      )
-                    }
+                    onClick={() => {
+                      router.push(
+                        `/admin/courses/course-documents/${course.id}`,
+                      );
+                      setCourseName(course.name);
+                    }}
                     className="flex justify-center items-center mx-auto"
                   >
                     {course.totalGrades}

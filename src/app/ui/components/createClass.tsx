@@ -15,12 +15,6 @@ import {
   ScheduleType,
   TimeItem,
 } from "@/app/types/type";
-import {
-  createNewClass,
-  getAllGrades,
-  getAvailableRooms,
-  getCoursesByGradeId,
-} from "@/app/lib/api";
 import clsx from "clsx";
 import { FaChevronDown, FaTrashCan } from "react-icons/fa6";
 import { useSelector } from "react-redux";
@@ -36,6 +30,10 @@ import {
   DialogHeader,
 } from "@/app/ui/components/common/Dialog";
 import { Select, SelectItem } from "@/app/ui/components/common/Select";
+import { getAllGrades } from "@/app/lib/services/grade";
+import { getCoursesByGradeId } from "@/app/lib/services/course";
+import { getAvailableRooms } from "@/app/lib/services/room";
+import { createNewClass } from "@/app/lib/services/class";
 
 type CreateClassError = {
   course?: string | null;
@@ -153,8 +151,8 @@ export default function CreateClass() {
   const displayCourses = async (gradeId: string) => {
     try {
       setIsLoading(true);
-      const courses = await getCoursesByGradeId(gradeId);
-      setCourses(courses);
+      const res = await getCoursesByGradeId(gradeId);
+      setCourses(res.content);
     } catch (error) {
       console.log(error);
     } finally {

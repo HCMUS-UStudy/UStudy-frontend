@@ -1,14 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Collapsible from "@/app/ui/components/Collapsible";
-import {
-  addTeacherToClass,
-  getAvailableTeacher,
-  getClassById,
-  getListChapter,
-} from "@/app/lib/api";
 import { AllChapter, Classroom, Teacher } from "@/app/types/type";
-import { useSpecificNameContext } from "@/app/context/context";
+import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { IoFileTrayFull, IoWarning } from "react-icons/io5";
 import { FaClipboard, FaUserPlus, FaX } from "react-icons/fa6";
 import Modal from "@/app/ui/components/modal";
@@ -22,6 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/common/Table";
+import { getAvailableTeacher } from "@/app/lib/services/user";
+import { addTeacherToClass, getClassById } from "@/app/lib/services/class";
+import { getListChapter } from "@/app/lib/services/chapter";
 
 export default function ClassManagement({
   params,
@@ -30,7 +27,8 @@ export default function ClassManagement({
 }) {
   const { classId } = React.use(params);
   const [classData, setClassData] = useState<Classroom | null>(null);
-  const { setSpecificName } = useSpecificNameContext();
+  // const { setSpecificName } = useBreadcrumbContext();
+  const { setDynamicBreadcrumbs } = useBreadcrumbContext();
   const [listChapters, setListChapters] = useState<AllChapter[]>([]);
   const [availableTeachers, setAvailableTeachers] = useState<Teacher[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -69,7 +67,7 @@ export default function ClassManagement({
             0,
             10,
           );
-          setListChapters(response.data.content);
+          setListChapters(response.content);
           //   console.log(response.data.content);
         }
         return;
@@ -78,11 +76,12 @@ export default function ClassManagement({
       }
     };
     if (classData?.name !== undefined) {
-      setSpecificName(classData?.name);
+      // setSpecificName(classData?.name);
       console.log(classData);
+      setDynamicBreadcrumbs((prev) => [...prev, classData?.name]);
     }
     fetchListChapters();
-  }, [classData, setSpecificName]);
+  }, [classData]);
 
   const handleAddTeacher = async (teacherId: string) => {
     try {
@@ -168,7 +167,7 @@ export default function ClassManagement({
                   </div>
                   <div>
                     Phòng:{" "}
-                    <span className="font-bold">{classData?.room.name}</span>
+                    <span className="font-bold">{classData?.room?.name}</span>
                   </div>
                   <div>
                     Chi nhánh:{" "}

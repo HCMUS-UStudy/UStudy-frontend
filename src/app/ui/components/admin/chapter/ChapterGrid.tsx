@@ -2,25 +2,27 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
-import { Button } from "../common/Button";
-import Pagination from "../common/Pagination";
+import { Button } from "../../common/Button";
+import Pagination from "../../common/Pagination";
 import { ChapterItem } from "@/app/types/type";
-import { getChapterByCourse_GradeId } from "@/app/lib/api";
+import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
+import { useRouter } from "next/navigation";
+import { getChapterByCourse_GradeId } from "@/app/lib/services/chapter";
 
 interface ChapterGridProps {
   courseId: string;
-  subject: string;
+  // subject: string;
   gradeId: string;
-  grade: string;
+  // grade: string;
   searchQuery: string;
 }
 
 const ChapterGrid: React.FC<ChapterGridProps> = ({
   searchQuery,
   courseId,
-  subject,
+  // subject,
   gradeId,
-  grade,
+  // grade,
 }) => {
   const [chapters, setChapters] = useState<ChapterItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,9 +35,10 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
   }>({ top: 0, left: 0 });
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  const router = useRouter();
+  const { setChapterName } = useCourseAdminContext();
+
   const fetchChapters = async () => {
-    console.log(courseId);
-    console.log(gradeId);
     let filteredData: ChapterItem[] = [];
     setLoading(true);
 
@@ -107,7 +110,7 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
     chapterId: string,
     chapter: string,
   ) => {
-    return `/admin/courses/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(grade)}/${encodeURIComponent(chapterId)}/${encodeURIComponent(chapter)}`;
+    return `/admin/courses/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(chapterId)}`;
   };
 
   useEffect(() => {
@@ -157,14 +160,20 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
                 <Button
                   className="text-white font-semibold py-2 px-4 rounded-md shadow-md transition"
                   onClick={() =>
-                    (window.location.href = handleAttachmentClick(
-                      courseId,
-                      subject,
-                      gradeId,
-                      grade,
-                      chapter.id.toString(),
-                      chapter.name,
-                    ))
+                    // (window.location.href = handleAttachmentClick(
+                    //   courseId,
+                    //   subject,
+                    //   gradeId,
+                    //   grade,
+                    //   chapter.id.toString(),
+                    //   chapter.name,
+                    // ))
+                    {
+                      router.push(
+                        `/admin/courses/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(chapter.id)}`,
+                      );
+                      setChapterName(chapter.name);
+                    }
                   }
                 >
                   Xem thư mục
