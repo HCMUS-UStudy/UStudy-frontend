@@ -8,6 +8,7 @@ import { ChapterItem } from "@/app/types/type";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useRouter } from "next/navigation";
 import { getChapterByCourse_GradeId } from "@/app/lib/services/chapter";
+import Loading from "@/app/ui/components/_common/Loading";
 
 interface ChapterGridProps {
   courseId: string;
@@ -122,9 +123,12 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {loading ? (
+          /*<div className="flex items-center justify-center col-span-full">
+              <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
+              <span className="ml-4 text-lg text-blue-500">Loading...</span>
+            </div>*/
           <div className="flex items-center justify-center col-span-full">
-            <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
-            <span className="ml-4 text-lg text-blue-500">Loading...</span>
+            <Loading text="Loading..." />
           </div>
         ) : (
           chapters.map((chapter) => (
@@ -156,9 +160,10 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
               {renderDropdown(chapter.id)}
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gray-300 bg-opacity-80 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gray-400 bg-opacity-80 flex items-center justify-center rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <Button
-                  className="text-white font-semibold py-2 px-4 rounded-md shadow-md transition"
+                  variant="basic"
+                  className="hover:bg-transparent text-white"
                   onClick={() =>
                     // (window.location.href = handleAttachmentClick(
                     //   courseId,

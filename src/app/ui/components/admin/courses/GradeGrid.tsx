@@ -107,7 +107,9 @@ const GradeGrid: React.FC<GradeGridProps> = ({
             <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
             <span className="ml-4 text-lg text-blue-500">Loading...</span>
           </div>*/
-          <Loading text="Loading..." />
+          <div className="flex items-center justify-center col-span-full">
+            <Loading text="Loading..." />
+          </div>
         ) : (
           grades.map((grade) => (
             <div

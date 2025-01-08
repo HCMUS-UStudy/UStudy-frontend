@@ -127,6 +127,7 @@ export default function Login() {
                   placeholder="Nhập mã người dùng"
                   label="Mã người dùng"
                   required
+                  customStyle={{ labelBg: "#D5E9F6" }}
                 />
               </div>
 
@@ -142,6 +143,7 @@ export default function Login() {
                   placeholder="Nhập mật khẩu"
                   label="Mật khẩu"
                   required
+                  customStyle={{ labelBg: "#D5E9F6" }}
                 />
               </div>
 

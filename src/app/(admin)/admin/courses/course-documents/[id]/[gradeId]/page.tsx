@@ -3,7 +3,7 @@
 import { Button } from "@/app/ui/components/_common/Button";
 import React, { useEffect } from "react";
 
-import ChapterGrid from "@/app/ui/components/admin/chapters/ChapterGrid";
+import ChapterGrid from "@/app/ui/components/admin/courses/ChapterGrid";
 import Loading from "@/app/ui/components/_common/Loading";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { SearchField } from "@/app/ui/components/_common/Input";
@@ -12,6 +12,7 @@ import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
 import { getCourseById } from "@/app/lib/services/course";
 import { getGradeById } from "@/app/lib/services/grade";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 interface Params {
   id: string;
@@ -83,7 +84,7 @@ const GradeDocumentsPage = () => {
             className="w-[200px]"
             placeholder="Tìm theo tên chương học..."
           />
-          <select
+          {/*<select
             // value={selectedFilter}
             // onChange={(e) => setSelectedFilter(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-md"
@@ -91,7 +92,16 @@ const GradeDocumentsPage = () => {
             <option value="">Tất cả chương</option>
             <option value="Chapter">Chương 1</option>
             <option value="Exercises">Chương 2</option>
-          </select>
+          </select>*/}
+          <Select
+            className="w-[200px]"
+            defaultLabel="Tất cả chương"
+            // onValueChange={(value) => setSelectedFilter(value)}
+          >
+            <SelectItem value="">Tất cả khối học</SelectItem>
+            <SelectItem value="chapter-1">Chương 1</SelectItem>
+            <SelectItem value="chapter-2">Chương 2</SelectItem>
+          </Select>
         </div>
       </div>
 

@@ -31,7 +31,7 @@ export default function Breadcrumb() {
         return "Quản trị viên";
       case "branches":
         return "Chi nhánh";
-      case "courses-documents":
+      case "course-documents":
         return null;
       default: {
         return "";
@@ -62,6 +62,7 @@ export default function Breadcrumb() {
         label = dynamicBreadcrumbs[dynamicIdx];
         dynamicIdx++;
       }
+
       renderedPaths.push(
         <li key={i} className="flex items-center gap-4 text-base">
           {i !== pathnames.length - 1 ? (

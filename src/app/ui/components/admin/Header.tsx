@@ -12,6 +12,13 @@ import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/app/ui/components/_common/DropdownMenu";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
@@ -93,21 +100,24 @@ const Header: React.FC = () => {
         </div>
 
         <div className="user-setting">
-          <FaUserCircle
-            size={35}
-            className="user-icon"
-            onClick={toggleDropdown}
-          />
-          {dropdownOpen && (
-            <div className="dropdown-menu">
-              <div className="dropdown-item" onClick={handleProfileClick}>
-                <FaUserCircle className="dropdown-icon" /> Profile
-              </div>
-              <div className="dropdown-item" onClick={handleLogout}>
-                <FaSignOutAlt className="dropdown-icon" /> Logout
-              </div>
-            </div>
-          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <FaUserCircle size={35} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={handleProfileClick}>
+                <div className="flex gap-3 items-center">
+                  <FaUserCircle size={18} className="" /> Profile
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                <div className="flex gap-3 items-center">
+                  <FaSignOutAlt size={18} className="" /> Logout
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
