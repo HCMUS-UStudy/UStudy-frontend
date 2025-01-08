@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button, SelectingButton } from "@/app/ui/components/_common/Button";
-import Modal from "../../modal";
 import { CircleX, Plus, PlusIcon } from "lucide-react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import {

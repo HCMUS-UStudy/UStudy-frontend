@@ -51,11 +51,17 @@ export default function Breadcrumb() {
         return "Chi nhánh";
       case "course-documents":
         return null;
+      case "class-management":
+        return null;
       default: {
         return "";
       }
     }
   };
+
+  const displayedPathnames = pathnames.filter(
+    (pathname) => translate(pathname) !== null,
+  );
 
   const renderPaths = () => {
     const renderedPaths: React.ReactNode[] = [];
@@ -73,17 +79,22 @@ export default function Breadcrumb() {
     );
     let dynamicIdx = 0;
     pathnames.map((pathname, i) => {
+      console.log(pathname, i);
       const href = `/${pathnames.slice(0, i + 1).join("/")}`;
       let label = translate(pathname);
-      if (label == null) return;
+      if (label == null) {
+        console.log("skipping", pathname);
+        return;
+      }
       if (label === "") {
+        console.log(dynamicBreadcrumbs, dynamicIdx);
         label = dynamicBreadcrumbs[dynamicIdx];
         dynamicIdx++;
       }
 
       renderedPaths.push(
         <li key={i} className="flex items-center gap-4 text-base">
-          {i !== pathnames.length - 1 ? (
+          {i !== displayedPathnames.length - 1 ? (
             <>
               <Link
                 href={i === 0 ? `${href}/dashboard` : href}

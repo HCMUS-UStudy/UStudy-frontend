@@ -5,7 +5,6 @@ import { AllChapter, Classroom, Teacher } from "@/app/types/type";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { IoFileTrayFull, IoWarning } from "react-icons/io5";
 import { FaClipboard, FaUserPlus, FaX } from "react-icons/fa6";
-import Modal from "@/app/ui/components/modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { revalidatePath } from "next/cache";
@@ -19,6 +18,7 @@ import {
 import { getAvailableTeacher } from "@/app/lib/services/user";
 import { addTeacherToClass, getClassById } from "@/app/lib/services/class";
 import { getListChapter } from "@/app/lib/services/chapter";
+import { Dialog, DialogHeader } from "@/app/ui/components/_common/Dialog";
 
 export default function ClassManagement({
   params,
@@ -266,8 +266,15 @@ export default function ClassManagement({
           </div>
         </div>
       </div>
-      <Modal isOpen={openModal} className="max-w-[50vw] w-[40vw] px-7 py-5">
-        <div className="flex justify-between items-center px-3">
+      <Dialog
+        isOpen={openModal}
+        onClose={() => {
+          setOpenModal(false);
+          setEmptyPage(true);
+        }}
+        className="max-w-[50vw] w-[40vw] px-7 py-5"
+      >
+        {/*<div className="flex justify-between items-center px-3">
           <h1 className="font-bold text-lg text-center">Chọn giáo viên</h1>
           <FaX
             onClick={() => {
@@ -276,7 +283,8 @@ export default function ClassManagement({
             }}
             className="size-5 text-gray-500 hover:text-gray-800 cursor-pointer hover:scale-125"
           />
-        </div>
+        </div>*/}
+        <DialogHeader>Chọn giáo viên</DialogHeader>
 
         {emptyPage ? (
           <></>
@@ -385,7 +393,7 @@ export default function ClassManagement({
             </div>
           </div>
         )}
-      </Modal>
+      </Dialog>
       <ToastContainer />
     </>
   );

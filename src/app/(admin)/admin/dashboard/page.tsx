@@ -33,17 +33,6 @@ const DashboardPage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Tổng số học viên</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CardTitle>Tổng số học viên</CardTitle>
-            <CardDescription>Content</CardDescription>
-          </CardContent>
-        </Card>
-
         <Card className="rounded-md shadow-md border border-gray-200 hover:shadow-lg transition-shadow p-3">
           <CardHeader className="flex flex-row items-center justify-between p-2 bg-gray-50 rounded-t-md">
             <CardTitle className="text-lg font-semibold text-gray-800">

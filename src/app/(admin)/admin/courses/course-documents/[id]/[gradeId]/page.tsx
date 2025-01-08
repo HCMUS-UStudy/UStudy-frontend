@@ -5,7 +5,6 @@ import React, { useEffect } from "react";
 
 import ChapterGrid from "@/app/ui/components/admin/courses/ChapterGrid";
 import Loading from "@/app/ui/components/_common/Loading";
-import BreadCrumb from "@/app/ui/components/breadCrumb";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
