@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
-import { Input } from "@/app/ui/components/_common/Input";
+import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 // import axios from "axios";
 import { addBranch, getAllBranches } from "@/app/lib/services/branch";
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 
 interface Branch {
   id: string;
@@ -211,8 +212,14 @@ const BranchPage: React.FC = () => {
     return pages;
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   console.log("Search query:", event.target.value);
+  //   setSearchQuery(event.target.value);
+  // };
+
+  const handleSearch = (term: string) => {
+    console.log("Search query:", term);
+    setSearchQuery(term);
   };
 
   const onCreateBranch = () => {
@@ -295,7 +302,7 @@ const BranchPage: React.FC = () => {
       </h2>
 
       <div className="flex items-center justify-between mt-8">
-        <form className="flex items-center w-full lg:w-[20rem]">
+        {/*<form className="flex items-center w-full lg:w-[20rem]">
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
             <input
               type="text"
@@ -311,7 +318,12 @@ const BranchPage: React.FC = () => {
               <FaSearch className="h-5 w-5" />
             </button>
           </div>
-        </form>
+        </form>*/}
+        <SearchField
+          className="w-[200px]"
+          placeholder="Tìm kiếm chi nhánh..."
+          onSearch={handleSearch}
+        />
         <Button onClick={onCreateBranch} className="px-6 py-2">
           Thêm chi nhánh
         </Button>

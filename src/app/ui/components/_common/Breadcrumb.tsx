@@ -5,6 +5,24 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 
+/**
+ * Breadcrumb component
+ *
+ * @description
+ * To add a new breadcrumb, add a new case in the translate() function
+ *
+ * - Return null if you want to skip rendering the breadcrumb
+ * - Return an empty string if you want to render the dynamic breadcrumb
+ *
+ * @description
+ * To set the dynamic breadcrumbs, use the useBreadcrumbContext hook
+ * and call setDynamicBreadcrumbs with an array of strings.
+ * @example
+ * ```tsx
+ *  const { setDynamicBreadcrumbs } = useBreadcrumbContext();
+ *  setDynamicBreadcrumbs(["Name 1", "Name 2"]);
+ * ```
+ */
 export default function Breadcrumb() {
   const paths = usePathname();
   const pathnames = paths.split("/").filter((path) => path);

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Input } from "@/app/ui/components/_common/Input";
+import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 
 export default function CreateTeacher() {

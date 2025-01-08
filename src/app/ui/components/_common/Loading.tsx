@@ -11,7 +11,19 @@ interface LoadingProps {
   };
 }
 
-const Loading: React.FC<LoadingProps> = ({ text, className, customStyle }) => (
+/**
+ * Loading component
+ *
+ * @param text - The text to display
+ * @param className - The className for the container
+ * @param customStyle - The custom styles for the spinner and text
+ *
+ * @example
+ * ```tsx
+ *  <Loading text="Loading..." />
+ * ```
+ */
+const Loading = ({ text, className, customStyle }: LoadingProps) => (
   <div className={cn("flex items-center justify-center gap-4", className)}>
     <FaSpinner
       className={cn("animate-spin text-primary h-8 w-8", customStyle?.spinner)}

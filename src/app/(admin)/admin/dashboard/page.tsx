@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/app/ui/components/_common/Card";
@@ -30,6 +31,16 @@ const DashboardPage: React.FC = () => {
                 +5.00%
               </span>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tổng số học viên</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardTitle>Tổng số học viên</CardTitle>
+            <CardDescription>Content</CardDescription>
           </CardContent>
         </Card>
 

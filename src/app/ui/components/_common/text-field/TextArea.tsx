@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/app/lib/utils";
+import { Label } from "@/app/ui/components/_common/Label";
 
 interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -13,15 +14,38 @@ interface TextAreaProps
   };
 }
 
+/**
+ * TextArea component
+ *
+ * @param className - Classes name
+ * @param isError - Whether the input has error or not
+ * @param errorMsg - Error message
+ * @param label - Input label
+ * @param alwaysShowLabel - Whether to always show the label (default: false)
+ * @param customStyle - Custom style
+ * @param props - Other textarea props
+ *
+ * @example
+ * ```tsx
+ * <TextArea
+ *   className="w-full"
+ *   label="Label"
+ *   placeholder="Enter your text here"
+ *   isError={false}
+ *   errorMsg="This field is required"
+ *   customStyle={{ labelBg: "#000000" }}
+ * />
+ * ```
+ */
 const TextArea: React.FC<TextAreaProps> = ({
   className,
-  isError,
+  isError = false,
   errorMsg,
   label,
-  alwaysShowLabel,
+  alwaysShowLabel = false,
   customStyle,
   ...props
-}) => {
+}: TextAreaProps) => {
   return (
     <div>
       <div
@@ -46,7 +70,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         />
 
         {label && (
-          <label
+          <Label
             className={cn({
               "absolute left-4 -top-2.5 visible text-blue-500 text-xs px-1 transition-all duration-75 peer-placeholder-shown:top-2 peer-placeholder-shown:invisible peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:visible":
                 !alwaysShowLabel,
@@ -60,7 +84,7 @@ const TextArea: React.FC<TextAreaProps> = ({
             }}
           >
             {label}
-          </label>
+          </Label>
         )}
       </div>
 

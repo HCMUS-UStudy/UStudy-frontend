@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "@/app/ui/components/_common/Input";
+import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Label } from "@/app/ui/components/_common/Label";
 import { Button } from "@/app/ui/components/_common/Button";
 import { CourseSchema } from "@/app/types/type";
@@ -14,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
-import TextArea from "@/app/ui/components/_common/TextArea";
+import TextArea from "@/app/ui/components/_common/text-field/TextArea";
 
 interface ModalCourseWrapperProps {
   buttonLabel: string;

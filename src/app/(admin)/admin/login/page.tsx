@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Input } from "@/app/ui/components/_common/Input";
+import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/_common/Button";

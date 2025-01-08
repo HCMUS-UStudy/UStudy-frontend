@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { cn } from "@/app/lib/utils";
+import { Label } from "@/app/ui/components/_common/Label";
 
 interface SelectProps {
   children: ReactNode;
@@ -22,6 +23,9 @@ interface SelectProps {
   required?: boolean;
   id?: string;
   label?: string;
+  customStyle?: {
+    labelBg?: string;
+  };
 }
 
 interface SelectContextProps {
@@ -32,6 +36,39 @@ interface SelectContextProps {
 
 const SelectContext = createContext<SelectContextProps | undefined>(undefined);
 
+/**
+ * Select component
+ *
+ * @param children - SelectItem components
+ * @param className - Additional classes
+ * @param defaultValue - Default value
+ * @param defaultLabel - Default label to display
+ * @param onValueChange - Callback function when value changes
+ * @param name - Input name
+ * @param disabled - Disabled state
+ * @param required - Required state
+ * @param id - Input id
+ * @param label - Label text
+ * @param customStyle - Custom style (label background color)
+ *
+ * @example
+ * ```tsx
+ * <Select
+ *    defaultValue="1"
+ *    defaultLabel="Select an option"
+ *    onValueChange={(value) => console.log(value)}
+ *    name="select"
+ *    disabled={false}
+ *    required={true}
+ *    id="select"
+ *    label="Select"
+ *    customStyle={{ labelBg: "#000000" }}
+ *  >
+ *    <SelectItem value="1">Option 1</SelectItem>
+ *    <SelectItem value="2">Option 2</SelectItem>
+ *  </Select>
+ * ```
+ */
 const Select: React.FC<SelectProps> = ({
   children,
   className,
@@ -43,6 +80,7 @@ const Select: React.FC<SelectProps> = ({
   required = false,
   id,
   label,
+  customStyle,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | number>(
     defaultValue,
@@ -50,7 +88,7 @@ const Select: React.FC<SelectProps> = ({
   const [selectedLabel, setSelectedLabel] = useState<string>(defaultLabel);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const selectRef = useRef<HTMLDivElement>(null);
-  const [parentBgColor, setParentBgColor] = React.useState<string>("");
+  // const [parentBgColor, setParentBgColor] = React.useState<string>("");
 
   useEffect(() => {
     if (onValueChange) {
@@ -59,19 +97,19 @@ const Select: React.FC<SelectProps> = ({
   }, [selectedValue]);
 
   // Get parent background color to set label background color
-  useEffect(() => {
-    if (selectRef.current) {
-      let element = selectRef.current.parentElement;
-      while (element) {
-        const bgColor = window.getComputedStyle(element).backgroundColor;
-        if (bgColor !== "transparent" && bgColor !== "rgba(0, 0, 0, 0)") {
-          setParentBgColor(bgColor);
-          break;
-        }
-        element = element.parentElement;
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (selectRef.current) {
+  //     let element = selectRef.current.parentElement;
+  //     while (element) {
+  //       const bgColor = window.getComputedStyle(element).backgroundColor;
+  //       if (bgColor !== "transparent" && bgColor !== "rgba(0, 0, 0, 0)") {
+  //         setParentBgColor(bgColor);
+  //         break;
+  //       }
+  //       element = element.parentElement;
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -134,16 +172,18 @@ const Select: React.FC<SelectProps> = ({
           <IoChevronDown size={18} />
         </button>
         {label && (
-          <label
+          <Label
             className={cn(
               "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-blue-500 px-1",
             )}
             style={{
-              backgroundColor: parentBgColor,
+              backgroundColor: customStyle?.labelBg
+                ? customStyle.labelBg
+                : "white",
             }}
           >
             {label}
-          </label>
+          </Label>
         )}
         {isOpen ? (
           <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto">
@@ -169,6 +209,17 @@ interface SelectItemProps {
   className?: string;
 }
 
+/**
+ * SelectItem component
+ * @param value - Value of the item
+ * @param children - Item label
+ * @param className - Additional classes
+ *
+ * @example
+ * ```tsx
+ * <SelectItem value="1">Option 1</SelectItem>
+ * ```
+ */
 const SelectItem: React.FC<SelectItemProps> = ({
   value,
   children,

@@ -47,6 +47,25 @@ interface DialogProps {
   displayCloseButton?: boolean;
 }
 
+/**
+ * Dialog component
+ *
+ * @param isOpen - Whether the dialog is open
+ * @param onClose - Function to close the dialog
+ * @param children - DialogHeader, DialogContent, DialogFooter
+ * @param className - Additional classes for the dialog
+ * @param enableClickOutside - Whether clicking outside the dialog should close it
+ * @param displayCloseButton - Whether to display the close button in the header
+ *
+ * @example
+ * ```tsx
+ *  <Dialog isOpen={isOpen} onClose={onClose}>
+ *    <DialogHeader>Dialog Title</DialogHeader>
+ *    <DialogContent>Dialog Content</DialogContent>
+ *    <DialogFooter>Dialog Footer</DialogFooter>
+ *  </Dialog>
+ *  ```
+ */
 export const Dialog: React.FC<DialogProps> = ({
   isOpen,
   onClose,
@@ -54,7 +73,7 @@ export const Dialog: React.FC<DialogProps> = ({
   className,
   enableClickOutside = true,
   displayCloseButton = true,
-}) => {
+}: DialogProps) => {
   if (!isOpen) return null;
   return (
     <DialogProvider
@@ -87,6 +106,19 @@ interface DialogHeaderProps {
   className?: string;
 }
 
+/**
+ * DialogHeader component
+ *
+ * Use inside a Dialog component to display the header
+ *
+ * @param children - Dialog header content
+ * @param className - Additional classes for the header
+ *
+ * @example
+ * ```tsx
+ * <DialogHeader>Dialog Title</DialogHeader>
+ * ```
+ */
 export const DialogHeader: React.FC<DialogHeaderProps> = ({
   children,
   className,
@@ -119,6 +151,19 @@ interface DialogContentProps {
   className?: string;
 }
 
+/**
+ * DialogContent component
+ *
+ * Use inside a Dialog component to display the body content
+ *
+ * @param children - Dialog content
+ * @param className - Additional classes for the content
+ *
+ * @example
+ * ```tsx
+ *  <DialogContent>Dialog Content</DialogContent>
+ *  ```
+ */
 export const DialogContent: React.FC<DialogContentProps> = ({
   children,
   className,
@@ -131,6 +176,19 @@ interface DialogFooterProps {
   className?: string;
 }
 
+/**
+ * DialogFooter component
+ *
+ * Use inside a Dialog component to display the footer
+ *
+ * @param children - Dialog footer content
+ * @param className - Additional classes for the footer
+ *
+ * @example
+ * ```tsx
+ * <DialogFooter>Dialog Footer</DialogFooter>
+ * ```
+ */
 export const DialogFooter: React.FC<DialogFooterProps> = ({
   children,
   className,

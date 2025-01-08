@@ -4,12 +4,12 @@ import { Button } from "@/app/ui/components/_common/Button";
 import React, { useEffect } from "react";
 
 import GradeGrid from "@/app/ui/components/admin/courses/GradeGrid";
-import { SearchField } from "@/app/ui/components/_common/Input";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
 import { getCourseById } from "@/app/lib/services/course";
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 
 export default function CourseDocumentsPage() {
   const searchParams = useSearchParams();

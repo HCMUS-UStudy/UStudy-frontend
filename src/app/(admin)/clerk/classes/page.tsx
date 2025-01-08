@@ -1,7 +1,7 @@
 import CreateClass from "@/app/ui/components/admin/classes/CreateClass";
-import { SearchField } from "@/app/ui/components/_common/Input";
 import React from "react";
 import ClassesTable from "@/app/ui/components/admin/classes/ClassesTable";
+import { SearchField } from "@/app/ui/components/_common/text-field/SearchField";
 
 export default async function Classes(props: {
   searchParams?: Promise<{

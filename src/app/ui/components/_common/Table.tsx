@@ -39,10 +39,31 @@ interface TableProps {
 
 /**
  * Table component
+ *
  * @param children - TableHeader and TableBody
  * @param className - string - custom style for table
+ *
+ * @example
+ * ```tsx
+ * <Table>
+ *   <TableHeader columns={["Column 1", "Column 2"]} />
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell>Row 1, Cell 1</TableCell>
+ *       <TableCell>Row 1, Cell 2</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell>Row 2, Cell 1</TableCell>
+ *       <TableCell>Row 2, Cell 2</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ * </Table>
+ * ```
  */
-export const Table: React.FC<TableProps> = ({ children, className }) => {
+export const Table: React.FC<TableProps> = ({
+  children,
+  className,
+}: TableProps) => {
   return (
     <TableProvider>
       <table
@@ -64,13 +85,19 @@ interface TableHeaderProps {
 
 /**
  * TableHeader component
+ *
  * @param columns - array of column names
- * @param className
+ * @param className - custom style for table header
+ *
+ * @example
+ * ```tsx
+ * <TableHeader columns={["Column 1", "Column 2"]} />
+ * ```
  */
 export const TableHeader: React.FC<TableHeaderProps> = ({
   columns,
   className,
-}) => {
+}: TableHeaderProps) => {
   const { setColumns } = useTableContext();
   useEffect(() => {
     setColumns(columns);
@@ -96,13 +123,34 @@ interface TableBodyProps {
 
 /**
  * TableBody component
+ *
  * @param children - TableRow
  * @param isLoading - boolean default false, if true, show loading animation
+ *
+ * @example - without loading
+ * ```tsx
+ * <TableBody>
+ *   <TableRow>
+ *     <TableCell>Row 1, Cell 1</TableCell>
+ *     <TableCell>Row 1, Cell 2</TableCell>
+ *   </TableRow>
+ *  </TableBody>
+ *  ```
+ *  @example - with loading
+ *  ```tsx
+ *  const [isLoading, setIsLoading] = useState(true);
+ *  <TableBody isLoading={isLoading}>
+ *    <TableRow>
+ *      <TableCell>Row 1, Cell 1</TableCell>
+ *      <TableCell>Row 1, Cell 2</TableCell>
+ *    </TableRow>
+ *  </TableBody>
+ *  ```
  */
 export const TableBody: React.FC<TableBodyProps> = ({
   children,
   isLoading = false,
-}) => {
+}: TableBodyProps) => {
   const { columns } = useTableContext();
 
   if (isLoading) {
@@ -131,10 +179,22 @@ interface TableRowProps {
 
 /**
  * TableRow component
+ *
  * @param children - TableCell
- * @param className
+ * @param className - Custom style for table row
+ *
+ * @example
+ * ```tsx
+ * <TableRow>
+ *   <TableCell>Row 1, Cell 1</TableCell>
+ *   <TableCell>Row 1, Cell 2</TableCell>
+ * </TableRow>
+ * ```
  */
-export const TableRow: React.FC<TableRowProps> = ({ children, className }) => {
+export const TableRow: React.FC<TableRowProps> = ({
+  children,
+  className,
+}: TableRowProps) => {
   return (
     <tr
       className={cn(
@@ -154,15 +214,21 @@ interface TableCellProps extends React.HTMLProps<HTMLTableCellElement> {
 
 /**
  * TableCell component
+ *
  * @param children - content of cell
- * @param className - string
+ * @param className - custom style for table cell
  * @param props - HTMLTableCellElement props
+ *
+ * @example
+ * ```tsx
+ * <TableCell>Row 1, Cell 1</TableCell>
+ * ```
  */
 export const TableCell: React.FC<TableCellProps> = ({
   children,
   className,
   ...props
-}) => {
+}: TableCellProps) => {
   return (
     <td className={cn("px-2 py-3 text-sm text-center", className)} {...props}>
       {children}

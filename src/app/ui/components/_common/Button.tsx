@@ -15,6 +15,32 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "basic" | "primary" | "outlined";
 }
 
+/**
+ * Button component
+ *
+ * @param onClick - Function to handle button click
+ * @param children - Button children
+ * @param type - Button type
+ * @param variant - Button variant "basic" | "primary" | "outlined" (default: primary)
+ * @param className - Button classes name
+ * @param disabled - Disable the button
+ * @param isPending - Button is pending or not - Show loading spinner (default: false)
+ * @param props - Other button props
+ *
+ * @example
+ * ```tsx
+ *  <Button
+ *    variant="outlined"
+ *    type="button"
+ *    onClick={() => console.log("Button clicked")}
+ *    disabled={false}
+ *    className="w-1/2"
+ *    isPending={false}
+ *  >
+ *    Click me
+ *  </Button>
+ * ```
+ */
 const Button: React.FC<ButtonProps> = ({
   onClick,
   children,
@@ -24,7 +50,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   isPending,
   ...props
-}) => {
+}: ButtonProps) => {
   return (
     <button
       type={type}
@@ -60,7 +86,35 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const SelectingButton: React.FC<ButtonProps> = ({
+/**
+ * SelectingButton component
+ *
+ * This component is used to create a dropdown button to open a modal for selecting items.
+ *
+ * @param onClick
+ * @param placeholder
+ * @param nameForInput
+ * @param className
+ * @param disabled
+ * @param isError
+ * @param errorMsg
+ *
+ * @example
+ * ```tsx
+ *  <SelectingButton
+ *    onClick={() => console.log("Open selecting modal")}
+ *    placeholder="Select"
+ *    nameForInput="select"
+ *    className="w-1/2"
+ *    disabled={false}
+ *    isError={false}
+ *    errorMsg="Error message"
+ *  >
+ *    Click me
+ *  </SelectingButton>
+ *  ```
+ */
+const SelectingButton = ({
   onClick,
   placeholder,
   nameForInput,
@@ -68,24 +122,13 @@ const SelectingButton: React.FC<ButtonProps> = ({
   disabled,
   isError,
   errorMsg,
-}) => {
+}: ButtonProps) => {
   return (
     <div>
       <button
         type="button"
         onClick={onClick}
         disabled={disabled}
-        // className={clsx(
-        //   {
-        //     "bg-gray-400 cursor-not-allowed": disabled,
-        //     "bg-white hover:bg-gray-200": !disabled,
-        //   },
-        //   {
-        //     "border-error": isError,
-        //     "border-gray-400": !isError,
-        //   },
-        //   `${className} w-[10vw] flex justify-between items-center text-sm  border-2 px-2.5 py-1.5 rounded-lg transition-colors`,
-        // )}
         className={cn(
           "bg-transparent",
           {

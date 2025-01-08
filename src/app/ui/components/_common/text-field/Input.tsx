@@ -2,9 +2,9 @@
 import * as React from "react";
 
 import { cn } from "@/app/lib/utils";
-import { useDebouncedCallback } from "use-debounce";
 import { HiEye, HiEyeOff } from "react-icons/hi";
-import { IoSearchOutline } from "react-icons/io5";
+import { Label } from "@/app/ui/components/_common/Label";
+
 // import { useEffect } from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -27,7 +27,6 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 /**
  * Input component
  *
- * @component
  * @example
  * ```tsx
  * <Input
@@ -44,18 +43,18 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
  *  />
  *  ```
  *
- * @param {string} className - Input classes name
- * @param {string} type - Input type
- * @param {string} label - Input label
- * @param {boolean} alwaysShowLabel - Always show label (default: false)
- * @param {boolean} disabled - Disable the input
- * @param {Function} onChange - Function to handle input change
- * @param {boolean} isError - Input has error or not (default: false)
- * @param {string} errorMsg - Error message
- * @param {React.ReactNode} icon - Input icon
- * @param {boolean} isIconLeft - Icon position (default: true - left)
- * @param {{labelBg: string}} customStyle - Custom style (label background color)
- * @param {React.Ref<HTMLInputElement>} ref - Input ref
+ * @param className - Input classes name
+ * @param type - Input type
+ * @param label - Input label
+ * @param alwaysShowLabel - Always show label (default: false)
+ * @param disabled - Disable the input
+ * @param onChange - Function to handle input change
+ * @param isError - Input has error or not (default: false)
+ * @param errorMsg - Error message
+ * @param icon - Input icon
+ * @param isIconLeft - Icon position (default: true - left)
+ * @param customStyle - Custom style (label background color)
+ * @param ref - Input ref
  * @param {React.InputHTMLAttributes<HTMLInputElement>} props - Other input props
  *
  * @returns {React.forwardRef<HTMLInputElement, InputProps>}
@@ -75,7 +74,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       isIconLeft = true,
       customStyle,
       ...props
-    },
+    }: InputProps,
     ref,
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -144,7 +143,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
 
           {label && (
-            <label
+            <Label
               className={cn({
                 "absolute left-4 -top-2.5 visible text-blue-500 text-xs px-1 transition-all duration-75 peer-placeholder-shown:top-2 peer-placeholder-shown:invisible peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:visible":
                   !alwaysShowLabel,
@@ -164,7 +163,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               }}
             >
               {label}
-            </label>
+            </Label>
           )}
 
           {type === "password" && (
@@ -195,44 +194,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-interface SearchProps {
-  placeholder: string;
-  className?: string;
-  defaultValue?: string;
-  onSearch?: (term: string) => void;
-}
-
-const SearchField: React.FC<SearchProps> = ({
-  placeholder,
-  className,
-  defaultValue,
-  onSearch,
-}) => {
-  // const searchParams = useSearchParams();
-  const handleSearch = useDebouncedCallback((term: string) => {
-    onSearch?.(term);
-  }, 1000);
-  return (
-    <div
-      className={cn(
-        "flex items-center w-full rounded-md focus-within:bg-white focus-within:outline-none focus-within:ring-2 focus-within:ring-control-ring focus-within:shadow-sm border-input border-gray-400 border",
-        className,
-      )}
-    >
-      <div className="pl-3">
-        <IoSearchOutline size={20} />
-      </div>
-      <input
-        type="text"
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        onChange={(e) => {
-          handleSearch(e.target.value);
-        }}
-        className="w-full rounded-md px-3 py-2 text-sm text-ellipsis outline-none placeholder-gray-600 bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
-      />
-    </div>
-  );
-};
-
-export { Input, SearchField };
+export { Input };

@@ -2,8 +2,8 @@ import React from "react";
 import AddAccountModal from "@/app/ui/components/admin/accounts/AddAccountModal";
 import AccountTable from "@/app/ui/components/admin/accounts/AccountTable";
 import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
-import { SearchField } from "@/app/ui/components/_common/Input";
 import { Button } from "@/app/ui/components/_common/Button";
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 
 export default async function AccountPage(props: {
   searchParams?: Promise<{
