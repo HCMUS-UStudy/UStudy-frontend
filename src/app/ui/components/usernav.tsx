@@ -8,13 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/app/ui/components/common/DropdownMenu";
-import { Button } from "@/app/ui/components/common/Button";
+} from "@/app/ui/components/_common/DropdownMenu";
+import { Button } from "@/app/ui/components/_common/Button";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/app/ui/components/avatar";
+} from "@/app/ui/components/_common/Avatar";
 import Link from "next/link";
 
 export function UserNav() {

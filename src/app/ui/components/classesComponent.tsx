@@ -89,7 +89,7 @@
 //   // CHỈNH SỬA DATA
 //   const [className, setClassName] = useState<string>("");
 //   const [grade, setGrade] = useState<GradeItem | null>(null);
-//   const [course, setCourse] = useState<CourseItem | null>(null);
+//   const [courses, setCourse] = useState<CourseItem | null>(null);
 //   const [description, setDescription] = useState<string>("");
 //   const [fee, setFee] = useState<number>(0);
 //   const [startDateObj, setStartDateObj] = useState<string>("");
@@ -182,7 +182,7 @@
 //   // const CreateNewClass = async (newClass: ClassSchema) => {
 //   //   try {
 //   //     console.log(newClass);
-//   //     const response = await axiosInstance.post("/class/clerk/add", {
+//   //     const response = await axiosInstance.post("/classes/clerk/add", {
 //   //       name: newClass.name,
 //   //       courseId: newClass.courseId,
 //   //       gradeId: newClass.gradeId,
@@ -311,7 +311,7 @@
 //                     selectCoursesByGrade(grade.id);
 //                     setIsSelectingSubject(true);
 //                   }}
-//                   placeholder={course === null ? "Môn học" : course.name}
+//                   placeholder={courses === null ? "Môn học" : courses.name}
 //                   nameForInput="subject"
 //                   className="w-[7vw]"
 //                   disabled={grade === null}

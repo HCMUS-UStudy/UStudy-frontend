@@ -3,10 +3,10 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Input } from "@/app/ui/components/common/Input";
+import { Input } from "@/app/ui/components/_common/Input";
 import Image from "next/image";
 import { HiHome } from "react-icons/hi";
-import { Button } from "@/app/ui/components/common/Button";
+import { Button } from "@/app/ui/components/_common/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { setTokens } from "@/app/lib/storage";

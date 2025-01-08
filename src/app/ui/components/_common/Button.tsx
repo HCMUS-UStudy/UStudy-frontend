@@ -1,7 +1,7 @@
 import { cn } from "@/app/lib/utils";
 import React from "react";
 import { FaChevronDown } from "react-icons/fa6";
-import Loading from "@/app/ui/components/common/Loading";
+import Loading from "@/app/ui/components/_common/Loading";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;

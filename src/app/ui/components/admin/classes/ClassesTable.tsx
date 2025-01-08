@@ -4,15 +4,15 @@ import React, { useEffect, useState } from "react";
 import { ClassItem } from "@/app/types/type";
 import { usePathname, useRouter } from "next/navigation";
 import { getAllClasses } from "@/app/lib/services/class";
-import { Button } from "@/app/ui/components/common/Button";
-import Pagination from "@/app/ui/components/common/Pagination";
+import { Button } from "@/app/ui/components/_common/Button";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "@/app/ui/components/common/Table";
+} from "@/app/ui/components/_common/Table";
 
 export default function ClassesTable({
   query,

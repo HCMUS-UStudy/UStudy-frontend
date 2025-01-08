@@ -1,8 +1,8 @@
 import React from "react";
 
-import CourseTable from "@/app/ui/components/CourseAdmin/courseTable";
-import ModalCourse from "@/app/ui/components/CourseAdmin/modalCourse-Ad";
-import { SearchField } from "@/app/ui/components/common/Input";
+import CourseTable from "@/app/ui/components/admin/courses/CourseTable";
+import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
+import { SearchField } from "@/app/ui/components/_common/Input";
 
 export default async function CoursePage(props: {
   searchParams?: Promise<{
@@ -48,7 +48,7 @@ export default async function CoursePage(props: {
   //     }
 
   //     // Cập nhật danh sách toàn bộ khóa học
-  //     const allIds = new Set(allCourses.map((course) => course.id));
+  //     const allIds = new Set(allCourses.map((courses) => courses.id));
   //     setAllCourseIds(allIds);
 
   //     console.log("Tất cả khóa học đã được fetch:", allCourses);
@@ -63,7 +63,7 @@ export default async function CoursePage(props: {
   // }, []);
 
   // const handleAttachmentClick = (id: string, subject: string) => {
-  //   return `/admin/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}`;
+  //   return `/admin/courses-documents/${encodeURIComponent(id)}/${encodeURIComponent(subject)}`;
   // };
 
   return (
@@ -84,8 +84,8 @@ export default async function CoursePage(props: {
           className="w-[200px]"
           placeholder="Tìm theo tên môn học..."
         />
-        <div className="flex items-center space-x-4">
-          <ModalCourse buttonLabel="Tạo môn học" />
+        <div className="flex items-center">
+          <AddCourseModal buttonLabel="Tạo môn học" />
         </div>
       </div>
 

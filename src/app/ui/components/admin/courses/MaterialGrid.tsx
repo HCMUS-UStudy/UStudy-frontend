@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaSpinner } from "react-icons/fa";
-import { Button } from "../common/Button";
-import Pagination from "../common/Pagination";
+import { Button } from "@/app/ui/components/_common/Button";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import { FaDownload, FaEye, FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { MaterialItem } from "@/app/types/type";
 import { getMaterialsByChapterId } from "@/app/lib/services/material";
+import Loading from "@/app/ui/components/_common/Loading";
 
 interface DocumentGridProps {
   courseId: string;
@@ -100,10 +101,11 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {loading ? (
-          <div className="flex items-center justify-center col-span-full">
+          /*<div className="flex items-center justify-center col-span-full">
             <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
             <span className="ml-4 text-lg text-blue-500">Loading...</span>
-          </div>
+          </div>*/
+          <Loading text="Loading..." />
         ) : (
           documents.map((doc) => (
             <div

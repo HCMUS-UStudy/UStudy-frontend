@@ -1,7 +1,7 @@
 "use client";
-import PageWrapper from "@/app/ui/components/common/PageWrapper";
-import Sidebar from "@/app/ui/sidebar/sidebar";
-import { SIDENAV_ITEMS_TEACHER } from "@/app/menu_constants";
+import PageWrapper from "@/app/ui/components/_common/PageWrapper";
+import Sidebar from "@/app/ui/components/_common/sidebar/Sidebar";
+import { SIDENAV_ITEMS_TEACHER } from "@/app/menu-constants";
 import HeaderStuTeach from "@/app/ui/components/user/Header";
 
 export default function TeacherLayout({

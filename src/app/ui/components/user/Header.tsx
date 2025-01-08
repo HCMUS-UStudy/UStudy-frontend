@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { PiHandWavingThin } from "react-icons/pi";
 import { IoMailOutline, IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import "../../styles/Header.css";
+import "../../styles/header.css";
 import Swal from "sweetalert2";
 
 const Header: React.FC = () => {

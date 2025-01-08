@@ -4,14 +4,14 @@ import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
 import { AccountItem } from "@/app/types/type";
-import Pagination from "../../common/Pagination";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "@/app/ui/components/common/Table";
+} from "@/app/ui/components/_common/Table";
 import { getAllAccount } from "@/app/lib/services/user";
 
 interface AccountTableProps {
@@ -31,7 +31,6 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
 
     try {
       const response = await getAllAccount(searchQuery, currentPage - 1);
-      console.log(response);
 
       filteredData = response.content.map((item) => ({
         id: item.id,

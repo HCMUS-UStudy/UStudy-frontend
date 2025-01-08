@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Loading from "@/app/ui/components/common/Loading";
-import DocumentGrid from "@/app/ui/components/MaterialAdmin/materialGrid";
-import { SearchField } from "@/app/ui/components/common/Input";
+import Loading from "@/app/ui/components/_common/Loading";
+import DocumentGrid from "@/app/ui/components/admin/courses/MaterialGrid";
+import { SearchField } from "@/app/ui/components/_common/Input";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
@@ -24,15 +24,15 @@ const ChapterDocumentsPage = () => {
   // const resolvedSearchParams = await searchParams;
   // const query = resolvedSearchParams?.query || "";
   //
-  // const { id, subject, gradeId, grade, chapterId, chapter } = await params;
+  // const { id, subject, gradeId, grade, chapterId, chapters } = await params;
   //
   // const decodedCourseId = decodeURIComponent(id);
   // const decodedSubject = decodeURIComponent(subject);
   // const decodedGrade = decodeURIComponent(grade);
-  // const decodedChapter = decodeURIComponent(chapter);
+  // const decodedChapter = decodeURIComponent(chapters);
   // const decodedChapterId = decodeURIComponent(chapterId);
   //
-  // if (!id || !subject || !grade || !gradeId || !chapter || !chapterId) {
+  // if (!id || !subject || !grade || !gradeId || !chapters || !chapterId) {
   //   return <Loading />;
   // }
 
@@ -86,7 +86,7 @@ const ChapterDocumentsPage = () => {
         subject={decodedSubject}
         grade={grade}
         gradeId={gradeId}
-        chapter={chapter}
+        chapters={chapters}
         chapterId={chapterId}
       />*/}
       <h1 className="text-4xl font-extrabold text-gray-800 mb-10 text-center">

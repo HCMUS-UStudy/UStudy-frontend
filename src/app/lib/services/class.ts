@@ -52,6 +52,6 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
 };
 
 // export const getOneClass = async (classId: string): Promise<ClassTeacher> => {
-//   const response = await axiosInstance.get(`/class/all/get-one/${classId}`);
+//   const response = await axiosInstance.get(`/classes/all/get-one/${classId}`);
 //   return response.data.data;
 // };

@@ -5,13 +5,13 @@ import classNames from "classnames";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import BranchSelector from "../BranchSelector";
-import "../../styles/Header.css";
+import BranchSelector from "./BranchSelector";
+import "../../styles/header.css";
 import Swal from "sweetalert2";
 import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
-import Breadcrumb from "../common/Breadcrumb";
+import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
@@ -60,7 +60,7 @@ const Header: React.FC = () => {
 
   const renderTitle = (): React.ReactNode => {
     if (pathname.startsWith("/clerk")) {
-      if (pathname.includes("class-management")) {
+      if (pathname.includes("classes-management")) {
         return <div>Quản lý lớp học</div>;
       }
       return <div>Trang chủ lớp học</div>;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/app/ui/components/common/Button";
+import { Button } from "@/app/ui/components/_common/Button";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
@@ -78,11 +78,11 @@ export default function Classes() {
 
       setClassDetails((prevDetails) => {
         const updatedDetails = { ...prevDetails, [classId]: response.data };
-        console.log("Updated class details:", updatedDetails); // Log the updated state
+        console.log("Updated classes details:", updatedDetails); // Log the updated state
         return updatedDetails;
       });
     } catch (err) {
-      console.error("Error fetching class details:", err);
+      console.error("Error fetching classes details:", err);
     }
   };
 

@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, SelectingButton } from "./common/Button";
-import Modal from "./modal";
+import { Button, SelectingButton } from "@/app/ui/components/_common/Button";
+import Modal from "../../modal";
 import { CircleX, Plus, PlusIcon } from "lucide-react";
-import { Input } from "./common/Input";
+import { Input } from "@/app/ui/components/_common/Input";
 import {
   ClassSchema,
   CourseItem,
@@ -22,14 +22,14 @@ import { BranchRootState } from "@/app/store/store";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { useRouter } from "next/navigation";
-import Loading from "@/app/ui/components/common/Loading";
+import Loading from "@/app/ui/components/_common/Loading";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-} from "@/app/ui/components/common/Dialog";
-import { Select, SelectItem } from "@/app/ui/components/common/Select";
+} from "@/app/ui/components/_common/Dialog";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { getAllGrades } from "@/app/lib/services/grade";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
 import { getAvailableRooms } from "@/app/lib/services/room";

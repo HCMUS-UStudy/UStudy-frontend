@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Collapsible from "@/app/ui/components/Collapsible";
+import Collapsible from "@/app/ui/components/admin/classes/Collapsible";
 import { AllChapter, Classroom, Teacher } from "@/app/types/type";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { IoFileTrayFull, IoWarning } from "react-icons/io5";
@@ -15,7 +15,7 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from "@/app/ui/components/common/Table";
+} from "@/app/ui/components/_common/Table";
 import { getAvailableTeacher } from "@/app/lib/services/user";
 import { addTeacherToClass, getClassById } from "@/app/lib/services/class";
 import { getListChapter } from "@/app/lib/services/chapter";

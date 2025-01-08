@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/ui/components/common/Card";
+} from "@/app/ui/components/_common/Card";
 import React from "react";
 import {
   FaUserGraduate,

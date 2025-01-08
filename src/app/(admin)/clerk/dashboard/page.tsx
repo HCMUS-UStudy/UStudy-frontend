@@ -4,7 +4,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/ui/components/common/Card";
+} from "@/app/ui/components/_common/Card";
 import React from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { FaChalkboard, FaPenNib } from "react-icons/fa6";

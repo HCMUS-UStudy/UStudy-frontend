@@ -3,10 +3,10 @@
 import Link from "next/link";
 import React, { useActionState, useEffect, useState } from "react";
 import Head from "next/head";
-import { Input } from "@/app/ui/components/common/Input";
+import { Input } from "@/app/ui/components/_common/Input";
 import Image from "next/image";
 import { HiHome } from "react-icons/hi";
-import { Button } from "@/app/ui/components/common/Button";
+import { Button } from "@/app/ui/components/_common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
@@ -14,8 +14,7 @@ import { CustomError } from "@/app/types/type";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import Logo from "@/app/ui/components/common/Logo";
-import Loading from "@/app/ui/components/common/Loading";
+import Logo from "@/app/ui/components/_common/Logo";
 import { userLogin } from "@/app/lib/services/auth";
 
 export default function Login() {
@@ -143,6 +142,7 @@ export default function Login() {
                   (state?.errors?.genID && state?.errors?.genID[0]) ||
                   loginError
                 }
+                customStyle={{ labelBg: "#D5E9F6" }}
               />
 
               {/* Floating Label for Password */}
@@ -162,6 +162,7 @@ export default function Login() {
                     (state?.errors?.password && state?.errors?.password[0]) ||
                     loginError
                   }
+                  customStyle={{ labelBg: "#D5E9F6" }}
                 />
               </div>
 

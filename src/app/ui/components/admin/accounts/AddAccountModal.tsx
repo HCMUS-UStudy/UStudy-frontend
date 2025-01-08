@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "../../common/Input";
-import { Button } from "../../common/Button";
+import { Input } from "@/app/ui/components/_common/Input";
+import { Button } from "@/app/ui/components/_common/Button";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { AccountSchema } from "@/app/types/type";
@@ -11,8 +11,8 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-} from "@/app/ui/components/common/Dialog";
-import { Select, SelectItem } from "@/app/ui/components/common/Select";
+} from "@/app/ui/components/_common/Dialog";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { createNewAccount } from "@/app/lib/services/user";
 
 interface AddAccountError {
@@ -356,7 +356,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
           </form>
         </DialogContent>
         <DialogFooter>
-          <div className="flex gap-4 justify-end">
+          <div className="flex justify-between">
             <Button
               variant="basic"
               type="button"
@@ -369,7 +369,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
               variant="primary"
               form="add-account-admin-form"
               type="submit"
-              className=" w-[15%]"
+              className="w-[15%]"
             >
               Tạo
             </Button>

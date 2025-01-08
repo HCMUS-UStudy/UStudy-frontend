@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import { Button } from "../../common/Button";
-import Pagination from "../../common/Pagination";
+import { Button } from "@/app/ui/components/_common/Button";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import { RegisterItem } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
@@ -11,15 +11,15 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-} from "@/app/ui/components/common/Dialog";
-import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/common/Tabs";
+} from "@/app/ui/components/_common/Dialog";
+import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "@/app/ui/components/common/Table";
+} from "@/app/ui/components/_common/Table";
 import {
   confirmRegister,
   getRegister,

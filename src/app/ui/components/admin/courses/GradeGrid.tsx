@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
-import { Button } from "../common/Button";
-import Pagination from "../common/Pagination";
+import { Button } from "@/app/ui/components/_common/Button";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import { CourseItem, GradeItem } from "@/app/types/type";
 import { useParams, useRouter } from "next/navigation";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
+import Loading from "@/app/ui/components/_common/Loading";
 
 interface GradeGridProps {
   courseId: string;
@@ -102,10 +103,11 @@ const GradeGrid: React.FC<GradeGridProps> = ({
       {/* Grades Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="flex items-center justify-center col-span-full">
+          /*<div className="flex items-center justify-center col-span-full">
             <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
             <span className="ml-4 text-lg text-blue-500">Loading...</span>
-          </div>
+          </div>*/
+          <Loading text="Loading..." />
         ) : (
           grades.map((grade) => (
             <div
@@ -141,7 +143,7 @@ const GradeGrid: React.FC<GradeGridProps> = ({
                     className="hover:bg-transparent text-white"
                     variant="basic"
                     onClick={() => {
-                      // (window.location.href = `/admin/courses/course-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`)
+                      // (window.location.href = `/admin/courses/courses-documents/${encodeURIComponent(courseId)}/${encodeURIComponent(subject)}/${encodeURIComponent(grade.id)}/${encodeURIComponent(grade.name)}`)
                       router.push(
                         `/admin/courses/course-documents/${courseId}/${grade.id}`,
                       );

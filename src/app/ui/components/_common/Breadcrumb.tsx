@@ -25,13 +25,13 @@ export default function Breadcrumb() {
         return "Trang tổng quát";
       case "classes":
         return "Lớp học";
-      case "class-management":
+      case "classes-management":
         return "Quản lý lớp học";
       case "admin":
         return "Quản trị viên";
       case "branches":
         return "Chi nhánh";
-      case "course-documents":
+      case "courses-documents":
         return null;
       default: {
         return "";

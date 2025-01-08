@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
-import "../styles/SidebarMenu.css"; // Import file CSS
+import "../../../styles/sidebar-menu.css"; // Import file CSS
 
 const getLinkClass = (isActive: boolean, toggleCollapse: boolean) =>
   classNames("inactive-link", {

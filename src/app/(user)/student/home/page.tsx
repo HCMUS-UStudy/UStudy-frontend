@@ -5,7 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/ui/components/common/Card";
+} from "@/app/ui/components/_common/Card";
 import React, { useState } from "react";
 import {
   FaBook,

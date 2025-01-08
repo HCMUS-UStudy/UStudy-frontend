@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/app/ui/components/common/Button";
+import { Button } from "@/app/ui/components/_common/Button";
 import React, { useEffect } from "react";
 
-import ChapterGrid from "@/app/ui/components/admin/chapter/ChapterGrid";
-import Loading from "@/app/ui/components/common/Loading";
+import ChapterGrid from "@/app/ui/components/admin/chapters/ChapterGrid";
+import Loading from "@/app/ui/components/_common/Loading";
 import BreadCrumb from "@/app/ui/components/breadCrumb";
-import { SearchField } from "@/app/ui/components/common/Input";
+import { SearchField } from "@/app/ui/components/_common/Input";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";

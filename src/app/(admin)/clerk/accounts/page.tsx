@@ -1,5 +1,5 @@
 "use client";
-import AccountsComponent from "@/app/ui/components/accountsComponent";
+import AccountsComponent from "@/app/ui/components/admin/accounts/AccountsComponent";
 import React from "react";
 
 export default function Accounts() {

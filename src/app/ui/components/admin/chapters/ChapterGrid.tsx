@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
-import { Button } from "../../common/Button";
-import Pagination from "../../common/Pagination";
+import { Button } from "@/app/ui/components/_common/Button";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import { ChapterItem } from "@/app/types/type";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useRouter } from "next/navigation";
@@ -165,8 +165,8 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
                     //   subject,
                     //   gradeId,
                     //   grade,
-                    //   chapter.id.toString(),
-                    //   chapter.name,
+                    //   chapters.id.toString(),
+                    //   chapters.name,
                     // ))
                     {
                       router.push(

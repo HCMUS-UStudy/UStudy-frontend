@@ -17,7 +17,7 @@ export default function ClassDetail() {
         const response = await getClassById(classId);
         setClassDetail(response.data);
       } catch (error) {
-        console.error("Error fetching class:", error);
+        console.error("Error fetching classes:", error);
       }
     };
 

@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import TabSelector from "@/app/ui/components/Teacher-Classes/TabSelector";
-import ClassList from "@/app/ui/components/Teacher-Classes/ClassList";
+import TabSelector from "@/app/ui/components/user/classes/TabSelector";
+import ClassList from "@/app/ui/components/user/classes/ClassList";
 import { ClassTeacher } from "@/app/types/type";
 import { getAllClasses, getClassesForTeacher } from "@/app/lib/services/class";
 

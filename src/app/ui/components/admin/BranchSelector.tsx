@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BranchRootState } from "@/app/store/store";
-import { setBranch, setBranches } from "../../store/branchSlice";
+import { setBranch, setBranches } from "../../../store/branch-slice";
 import { getAllBranches } from "@/app/lib/services/branch";
 
 interface Branch {

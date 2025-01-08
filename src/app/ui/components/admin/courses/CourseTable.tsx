@@ -2,12 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
-import Loading from "../common/Loading";
-import Pagination from "../common/Pagination"; // Import Pagination
+import Pagination from "@/app/ui/components/_common/Pagination"; // Import Pagination
 import { useRouter } from "next/navigation";
 import { CourseItem } from "@/app/types/type";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { getAllCourses } from "@/app/lib/services/course";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/app/ui/components/_common/Table";
 
 interface CourseTableProps {
   searchQuery: string;
@@ -63,21 +69,21 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
   //     const fetchCourseData = async () => {
   //         const authToken = localStorage.getItem("accessToken");
 
-  //         const courseRequests = courses.map(async (course) => {
+  //         const courseRequests = courses.map(async (courses) => {
   //             const { data } = await axios.get(
   //                 'http://localhost:8080/api/grade/admin/get-grades-by-course',
   //                 {
   //                     params: {
   //                         page: 0,
   //                         limit: 1,
-  //                         courseId: course.id, // Giả sử mỗi khóa học có trường 'id'
+  //                         courseId: courses.id, // Giả sử mỗi khóa học có trường 'id'
   //                     },
   //                     headers: { Authorization: `Bearer ${authToken}` },
   //                 }
   //             );
 
   //             return {
-  //                 ...course,
+  //                 ...courses,
   //                 totalElements: data.totalElements || 0, // Lưu trữ tổng số phần tử hoặc 0 nếu không có dữ liệu
   //             };
   //         });
@@ -91,52 +97,30 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
 
   return (
     <div className="overflow-x-auto max-h-[400px]">
-      <table className="min-w-full table-auto border-collapse bg-white rounded-lg shadow-lg">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Môn học
-            </th>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Tệp đính kèm
-            </th>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Mô tả
-            </th>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Người tạo
-            </th>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Ngày tạo
-            </th>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Trạng thái
-            </th>
-            <th className="px-6 py-3 text-sm font-semibold text-gray-600 text-center whitespace-nowrap">
-              Hành động
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={8} className="text-center py-4">
-                <Loading />
-              </td>
-            </tr>
-          ) : error ? (
-            <tr>
-              <td colSpan={8} className="text-center py-4 text-red-500">
+      <Table>
+        <TableHeader
+          columns={[
+            "Môn học",
+            "Tệp đính kèm",
+            "Mô tả",
+            "Người tạo",
+            "Ngày tạo",
+            "Trạng thái",
+            "Hành động",
+          ]}
+        />
+        <TableBody isLoading={loading}>
+          {error ? (
+            <TableRow>
+              <TableCell colSpan={8} className="text-center py-4 text-red-500">
                 {error}
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ) : courses.length > 0 ? (
             courses.map((course) => (
-              <tr key={course.id}>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {course.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+              <TableRow key={course.id}>
+                <TableCell>{course.name}</TableCell>
+                <TableCell>
                   <button
                     onClick={() => {
                       router.push(
@@ -149,42 +133,40 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
                     {course.totalGrades}
                     <FaPaperclip className="ml-2 mt-1 text-green-500" />
                   </button>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {course.description || "Trống"}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
-                  {course.createdBy?.name || "Trống"}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                </TableCell>
+                <TableCell>{course.description || "Trống"}</TableCell>
+                <TableCell>{course.createdBy?.name || "Trống"}</TableCell>
+                <TableCell>
                   {new Date(course.createdAt).toLocaleDateString("vi-VN")}
-                </td>
-                <td className="px-6 py-4 text-sm text-center">
+                </TableCell>
+                <TableCell>
                   <span
-                    className={`px-2 py-1 rounded-full text-white ${course.status ? "bg-green-500" : "bg-red-500"}`}
+                    className={`px-2 py-1 rounded-full text-white ${
+                      course.status ? "bg-green-500" : "bg-red-500"
+                    }`}
                   >
                     {course.status ? "Hoạt động" : "Tạm ngưng"}
                   </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700 flex justify-center items-center space-x-3">
+                </TableCell>
+                <TableCell className="flex justify-center items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
                     <FaEdit className="h-5 w-5" />
                   </button>
                   <button className="text-red-600 hover:text-red-800">
                     <FaTrashAlt className="h-4 w-4" />
                   </button>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))
           ) : (
-            <tr>
-              <td colSpan={8} className="text-center py-4">
+            <TableRow>
+              <TableCell colSpan={8} className="text-center py-4">
                 Không tìm thấy khóa học.
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           )}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
 
       <Pagination
         currentPage={currentPage}

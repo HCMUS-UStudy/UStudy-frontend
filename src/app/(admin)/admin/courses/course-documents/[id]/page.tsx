@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/app/ui/components/common/Button";
+import { Button } from "@/app/ui/components/_common/Button";
 import React, { useEffect } from "react";
 
-import GradeGrid from "@/app/ui/components/GradeAdmin/GradeGrid";
-import { SearchField } from "@/app/ui/components/common/Input";
-import { Select, SelectItem } from "@/app/ui/components/common/Select";
+import GradeGrid from "@/app/ui/components/admin/courses/GradeGrid";
+import { SearchField } from "@/app/ui/components/_common/Input";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
@@ -39,7 +39,7 @@ export default function CourseDocumentsPage() {
   const { courseName, setCourseName } = useCourseAdminContext();
 
   useEffect(() => {
-    // Get course by id
+    // Get courses by id
     const fetchCourseData = async () => {
       try {
         const res = await getCourseById(id);
