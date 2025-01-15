@@ -1,11 +1,13 @@
 "use client";
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { BranchRootState } from '@/app/store/store';
+import React from "react";
+import { useSelector } from "react-redux";
+import { BranchRootState } from "@/app/store/store";
 
 const ClassPage: React.FC = () => {
-  const { branches, selectedBranchId } = useSelector((state: BranchRootState) => state.branch);
+  const { branches, selectedBranchId } = useSelector(
+    (state: BranchRootState) => state.branch,
+  );
   return (
     <>
       <h1>Hello</h1>
@@ -17,9 +19,8 @@ const ClassPage: React.FC = () => {
       </ul>
       <h2>Selected Branch</h2>
       <p>{selectedBranchId}</p>
-
     </>
-  )
+  );
 };
 
 export default ClassPage;

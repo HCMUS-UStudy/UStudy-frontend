@@ -2,25 +2,25 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  // DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
+  // DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
+  // DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/app/ui/components/dropdown-menu";
-import { Button } from "@/app/ui/components/button";
+} from "@/app/ui/components/_common/DropdownMenu";
+import { Button } from "@/app/ui/components/_common/Button";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/app/ui/components/avatar";
+} from "@/app/ui/components/_common/Avatar";
 import Link from "next/link";
 
 export function UserNav() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button className="relative h-8 w-8 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarImage src="/avatars/02.png" alt="" />
@@ -29,7 +29,7 @@ export function UserNav() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 z-[99998]">
-        <DropdownMenuLabel>
+        {/*<DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">Sijin Raj</p>
             <p className="text-xs leading-none text-muted-foreground">
@@ -51,7 +51,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Link href="/login">Log out</Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem>*/}
       </DropdownMenuContent>
     </DropdownMenu>
   );

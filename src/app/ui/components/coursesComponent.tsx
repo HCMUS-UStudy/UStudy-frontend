@@ -116,18 +116,18 @@
 //     },
 //   ];
 
-//   const filteredCourses = courses.filter((course) => {
+//   const filteredCourses = courses.filter((courses) => {
 //     return (
-//       (selectedSubject ? course.subject === selectedSubject : true) &&
+//       (selectedSubject ? courses.subject === selectedSubject : true) &&
 //       (searchQuery
-//         ? course.subject.toLowerCase().includes(searchQuery.toLowerCase())
+//         ? courses.subject.toLowerCase().includes(searchQuery.toLowerCase())
 //         : true)
 //     );
 //   });
 
 //   const handleAttachmentClick = (subject: string) => {
-//     // Navigate to the course page using the subject
-//     router.push(`/admin/course-documents?subject=${subject}`);
+//     // Navigate to the courses page using the subject
+//     router.push(`/admin/courses-documents?subject=${subject}`);
 //   };
 
 //   return (
@@ -202,38 +202,38 @@
 //             </tr>
 //           </thead>
 //           <tbody>
-//             {filteredCourses.map((course, index) => (
+//             {filteredCourses.map((courses, index) => (
 //               <tr
 //                 key={index}
 //                 className="hover:bg-gray-50 transition-all duration-200">
 //                 <td className="px-6 py-4 text-sm text-gray-700">
-//                   {course.creator}
+//                   {courses.creator}
 //                 </td>
 //                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
-//                   {course.subject}
+//                   {courses.subject}
 //                 </td>
 //                 <td
 //                   className="px-6 py-4 text-sm text-gray-700 mt-3 flex items-center hover:underline"
-//                   onClick={() => handleAttachmentClick(course.subject)}>
-//                   {course.attachments}
+//                   onClick={() => handleAttachmentClick(courses.subject)}>
+//                   {courses.attachments}
 //                   <FaPaperclip className=" ml-2 text-green-500" />
 //                 </td>
 //                 <td className="px-6 py-4 text-sm text-gray-700">
-//                   {course.description}
+//                   {courses.description}
 //                 </td>
 //                 <td className="px-6 py-4 text-sm text-gray-700 text-center">
-//                   {course.createdAt}
+//                   {courses.createdAt}
 //                 </td>
 //                 <td className="px-6 py-4 text-sm text-center text-gray-700">
 //                   <span
 //                     className={`px-2 py-1 rounded-full text-white ${
-//                       course.status === "Active" ? "bg-green-500" : "bg-red-500"
+//                       courses.status === "Active" ? "bg-green-500" : "bg-red-500"
 //                     }`}>
-//                     {course.status}
+//                     {courses.status}
 //                   </span>
 //                 </td>
 //                 <td className="px-6 py-4 text-sm text-gray-700">
-//                   {course.notes}
+//                   {courses.notes}
 //                 </td>
 //                 <td className="px-6 py-4 text-sm text-gray-700 flex items-center space-x-3 text-center">
 //                   <button className="text-blue-600 hover:text-blue-800">

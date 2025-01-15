@@ -89,7 +89,7 @@
 //   // CHỈNH SỬA DATA
 //   const [className, setClassName] = useState<string>("");
 //   const [grade, setGrade] = useState<GradeItem | null>(null);
-//   const [course, setCourse] = useState<CourseItem | null>(null);
+//   const [courses, setCourse] = useState<CourseItem | null>(null);
 //   const [description, setDescription] = useState<string>("");
 //   const [fee, setFee] = useState<number>(0);
 //   const [startDateObj, setStartDateObj] = useState<string>("");
@@ -182,7 +182,7 @@
 //   // const CreateNewClass = async (newClass: ClassSchema) => {
 //   //   try {
 //   //     console.log(newClass);
-//   //     const response = await axiosInstance.post("/class/clerk/add", {
+//   //     const response = await axiosInstance.post("/classes/clerk/add", {
 //   //       name: newClass.name,
 //   //       courseId: newClass.courseId,
 //   //       gradeId: newClass.gradeId,
@@ -277,7 +277,7 @@
 //             action={action}
 //             className=" mx-6 mt-10 flex flex-col gap-2 md:gap-5">
 //             <Input
-//               className="w-full h-11 text-base text-secondary_text"
+//               className="w-full h-11 text-base text-secondary-text"
 //               placeholder="Tên lớp"
 //               name="className"
 //               isError={state.errors?.name != null}
@@ -311,7 +311,7 @@
 //                     selectCoursesByGrade(grade.id);
 //                     setIsSelectingSubject(true);
 //                   }}
-//                   placeholder={course === null ? "Môn học" : course.name}
+//                   placeholder={courses === null ? "Môn học" : courses.name}
 //                   nameForInput="subject"
 //                   className="w-[7vw]"
 //                   disabled={grade === null}
@@ -346,7 +346,7 @@
 
 //             <div className="flex justify-between gap-8">
 //               <div className="w-[15vw]">
-//                 <h2 className="text-sm text-secondary_text mb-1 ml-1">
+//                 <h2 className="text-sm text-secondary-text mb-1 ml-1">
 //                   Ngày bắt đầu
 //                 </h2>
 //                 <input
@@ -371,7 +371,7 @@
 //                 )}
 //               </div>
 //               <div className="w-[15vw]">
-//                 <h2 className="text-sm text-secondary_text mb-1 ml-1">
+//                 <h2 className="text-sm text-secondary-text mb-1 ml-1">
 //                   Ngày kết thúc
 //                 </h2>
 //                 <input
@@ -427,7 +427,7 @@
 //             </div>
 
 //             <Input
-//               className="w-full h-11 text-base text-secondary_text"
+//               className="w-full h-11 text-base text-secondary-text"
 //               placeholder="Mô tả"
 //               name="description"
 //               value={description}
@@ -435,7 +435,7 @@
 //             />
 //             <Input
 //               type="number"
-//               className="w-full h-11 text-base text-secondary_text"
+//               className="w-full h-11 text-base text-secondary-text"
 //               placeholder="Học phí"
 //               name="fee"
 //               isError={state.errors?.fee != null}

@@ -1,7 +1,7 @@
-import Header from "@/app/ui/components/header";
-import { SIDENAV_ITEMS_CLERK } from "@/app/menu_constants";
-import PageWrapper from "@/app/ui/components/pagewrapper";
-import Sidebar from "@/app/ui/sidebar/sidebar";
+import Header from "@/app/ui/components/admin/Header";
+import { SIDENAV_ITEMS_CLERK } from "@/app/menu-constants";
+import PageWrapper from "@/app/ui/components/_common/PageWrapper";
+import Sidebar from "@/app/ui/components/_common/sidebar/Sidebar";
 import React from "react";
 
 export default function ClerkLayout({
