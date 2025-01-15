@@ -130,11 +130,11 @@ export default function StudyContent() {
               <h2 className="text-2xl font-semibold text-blue-600 hover:text-blue-700 transition-all">Tổng quan</h2>
             </div>
             <button
-    onClick={toggleAllSections}
-    className="px-4 py-2 text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all mb-6"
-  >
-    {allExpanded ? "Thu gọn tất cả" : "Mở rộng tất cả"}
-  </button>
+              onClick={toggleAllSections}
+              className="px-4 py-2 text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all mb-6"
+            >
+              {allExpanded ? "Thu gọn tất cả" : "Mở rộng tất cả"}
+            </button>
           </div>
 
 

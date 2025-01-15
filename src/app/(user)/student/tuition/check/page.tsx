@@ -6,7 +6,7 @@ import "react-calendar/dist/Calendar.css";
 
 export default function CheckTuition() {
   const [date, setDate] = useState(new Date());
-  const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
+  const [paymentStatus] = useState<boolean>(false);
 
   const handleDateChange = (selectedDate: any) => {
     setDate(selectedDate);
