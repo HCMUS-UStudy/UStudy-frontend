@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
+import { FaEllipsisV, FaFolder } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { CourseItem, GradeItem } from "@/app/types/type";
-import { useParams, useRouter } from "next/navigation";
-import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
+import { useRouter } from "next/navigation";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
 import Loading from "@/app/ui/components/_common/Loading";

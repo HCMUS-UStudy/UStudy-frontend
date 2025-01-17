@@ -4,7 +4,6 @@ import { Button } from "@/app/ui/components/_common/Button";
 import React, { useEffect } from "react";
 
 import ChapterGrid from "@/app/ui/components/admin/courses/ChapterGrid";
-import Loading from "@/app/ui/components/_common/Loading";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
@@ -12,13 +11,6 @@ import { getCourseById } from "@/app/lib/services/course";
 import { getGradeById } from "@/app/lib/services/grade";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-
-interface Params {
-  id: string;
-  // subject: string;
-  // grade: string;
-  gradeId: string;
-}
 
 const GradeDocumentsPage = () => {
   // const resolvedSearchParams = await searchParams;

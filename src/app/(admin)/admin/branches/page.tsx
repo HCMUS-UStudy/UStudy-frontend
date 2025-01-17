@@ -1,6 +1,7 @@
+/* eslint-disable prettier/prettier */
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 // import axios from "axios";
@@ -50,6 +51,7 @@ interface BranchResponse {
 
 const BranchPage: React.FC = () => {
   const [branches, setBranches] = useState<Branch[]>([]);
+  const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
   // const [shifts, setShifts] = useState<Shift[]>([]);
   // const [editShift, setEditShift] = useState<Shift | null>({ id: "", name: "", day: "", time: "" });
 
@@ -68,6 +70,7 @@ const BranchPage: React.FC = () => {
           }))
           .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
         setBranches(modifiedData);
+        setFilteredBranches(modifiedData);
       } catch (error) {
         console.error("Failed to fetch branches:", error);
       }
@@ -145,6 +148,14 @@ const BranchPage: React.FC = () => {
     // shifts: "",
   });
 
+  useEffect(() => {
+    const filtered = branches.filter((branch) =>
+      branch.name && branch.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredBranches(filtered);
+    setCurrentPage(1); // Reset to page 1 after filtering
+  }, [searchQuery, branches]);
+
   // const sortShiftsByDayTime = (shifts: Shift[]) => {
   //   return [...shifts].sort((a, b) => {
   //     // So sánh theo `day` trước
@@ -185,15 +196,15 @@ const BranchPage: React.FC = () => {
 
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
-    setTotalPages(Math.ceil(branches.length / branchesPerPage));
-  }, [branches]);
+    setTotalPages(Math.ceil(filteredBranches.length / branchesPerPage));
+  }, [filteredBranches]);
   const [paginatedBranches, setPaginatedBranches] = useState<Branch[]>([]);
   useEffect(() => {
     const startIndex = (currentPage - 1) * branchesPerPage;
     setPaginatedBranches(
-      branches.slice(startIndex, startIndex + branchesPerPage),
+      filteredBranches.slice(startIndex, startIndex + branchesPerPage),
     );
-  }, [branches, currentPage]);
+  }, [filteredBranches, currentPage]);
 
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -244,9 +255,18 @@ const BranchPage: React.FC = () => {
         { ...response.data, rooms: parseInt(newBranch.rooms, 10) },
       ]);
 
+      setFilteredBranches((prevBranches) => [
+        ...prevBranches,
+        { ...response.data, rooms: parseInt(newBranch.rooms, 10) },
+      ]);
+
       setIsError(false);
       setMessage("Thêm chi nhánh thành công!");
-      setTimeout(() => setMessage(null), 3000);
+
+      setTimeout(() => {
+        window.location.href = "/admin/branches";
+      }, 3000);
+
     } catch (error) {
       console.error("Failed to create branch:", error);
       setIsError(true);
@@ -356,7 +376,7 @@ const BranchPage: React.FC = () => {
           </thead>
           <tbody>
             {paginatedBranches.map((branch: Branch) => (
-              <tr key={branch.id} className="border-b bg-white">
+              <tr key={branch.id || branch.name} className="border-b bg-white">
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {branch.name}
                 </td>
@@ -389,11 +409,10 @@ const BranchPage: React.FC = () => {
         <Button
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === 1
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
         >
           Trước
         </Button>
@@ -401,11 +420,10 @@ const BranchPage: React.FC = () => {
           <Button
             key={1}
             onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${
-              currentPage === 1
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
+              ? "bg-blue-700 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
           >
             1
           </Button>
@@ -414,11 +432,10 @@ const BranchPage: React.FC = () => {
             <Button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all ${
-                currentPage === page
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
             >
               {page}
             </Button>
@@ -427,11 +444,10 @@ const BranchPage: React.FC = () => {
         <Button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === totalPages
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
         >
           Sau
         </Button>

@@ -10,7 +10,6 @@ import "../../styles/header.css";
 import Swal from "sweetalert2";
 import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
-import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
 import {
   DropdownMenu,
@@ -23,24 +22,19 @@ import {
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
   const pathname = usePathname();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   // const { specificName } = useBreadcrumbContext();
-  const { dynamicBreadcrumbs } = useBreadcrumbContext();
 
   useEffect(() => {
     setUserInfo(getUserInfo());
   }, []);
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
 
   const handleProfileClick = () => {
     window.location.href = "/admin/profile"; // Chuyển hướng tới trang profile
   };
 
   const handleLogout = () => {
+    console.log(userInfo);
     // Xóa token và các thông tin khác trong localStorage
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");

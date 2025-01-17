@@ -99,6 +99,7 @@ export type AccountSchema = {
   birthday: string;
   gender: "MALE" | "FEMALE";
   role: "STUDENT" | "TEACHER" | "STAFF";
+  permissions: Array<string>;
 };
 
 export type ScheduleItem = {

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Loading from "@/app/ui/components/_common/Loading";
 import DocumentGrid from "@/app/ui/components/admin/courses/MaterialGrid";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useParams, useSearchParams } from "next/navigation";
@@ -10,15 +9,6 @@ import { getCourseById } from "@/app/lib/services/course";
 import { getGradeById } from "@/app/lib/services/grade";
 import { getChapterById } from "@/app/lib/services/chapter";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-
-interface Params {
-  id: string;
-  subject: string;
-  grade: string;
-  gradeId: string;
-  chapterId: string;
-  chapter: string;
-}
 
 const ChapterDocumentsPage = () => {
   // const resolvedSearchParams = await searchParams;

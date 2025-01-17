@@ -16,7 +16,8 @@ export const getAllAccount = async (
       page: currentPage,
       limit: 5,
       role: "STUDENT",
-      filter: query,
+      filterNameOrGenId: query,
+      classId: "",
     },
   });
   return response.data.data;
