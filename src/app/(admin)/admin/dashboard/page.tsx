@@ -1,10 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/ui/components/card';
-import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/ui/components/_common/Card";
+import React from "react";
 import {
   FaUserGraduate,
   FaChalkboardTeacher,
   FaBuilding,
-
 } from "react-icons/fa";
 
 const DashboardPage: React.FC = () => {
@@ -28,7 +33,6 @@ const DashboardPage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-
         <Card className="rounded-md shadow-md border border-gray-200 hover:shadow-lg transition-shadow p-3">
           <CardHeader className="flex flex-row items-center justify-between p-2 bg-gray-50 rounded-t-md">
             <CardTitle className="text-lg font-semibold text-gray-800">
@@ -63,9 +67,8 @@ const DashboardPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      
     </>
-  )
+  );
 };
 
 export default DashboardPage;

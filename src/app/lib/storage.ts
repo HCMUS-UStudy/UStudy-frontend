@@ -1,39 +1,39 @@
 import { User } from "../types/type";
 
 export const getAccessToken = () => {
-    return localStorage.getItem('accessToken');
-}
+  return localStorage.getItem("accessToken");
+};
 
 export const getRefreshToken = () => {
-    return localStorage.getItem('refreshToken');
-}
+  return localStorage.getItem("refreshToken");
+};
 
 export const getTokens = () => {
-    const tokens: {accessToken: string | null, refreshToken: string | null} = {
-        accessToken: localStorage.getItem('accessToken'),
-        refreshToken: localStorage.getItem('refreshToken')
-    }
-    return tokens;
-}
+  const tokens: { accessToken: string | null; refreshToken: string | null } = {
+    accessToken: localStorage.getItem("accessToken"),
+    refreshToken: localStorage.getItem("refreshToken"),
+  };
+  return tokens;
+};
 
 export const handleLogout = () => {
-    localStorage.clear();
-}
+  localStorage.clear();
+};
 
 export const setTokens = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-}
+  localStorage.setItem("accessToken", accessToken);
+  localStorage.setItem("refreshToken", refreshToken);
+};
 
 export const setUserInfo = (userInfo: string) => {
-    localStorage.setItem('userInfo', userInfo);
-}
+  localStorage.setItem("userInfo", userInfo);
+};
 
 export const getUserInfo = () => {
-    const userInfo = localStorage.getItem('userInfo');
-    if(userInfo !== null) {
-        const parsedUserInfo: User = JSON.parse(userInfo);
-        return parsedUserInfo;
-    }
-    return null;
-}
+  const userInfo = localStorage.getItem("userInfo");
+  if (userInfo !== null) {
+    const parsedUserInfo: User = JSON.parse(userInfo);
+    return parsedUserInfo;
+  }
+  return null;
+};

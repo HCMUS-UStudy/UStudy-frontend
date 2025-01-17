@@ -1,10 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { FiMail, FiCalendar, FiPhone, FiMapPin, FiCreditCard, FiCheckCircle, FiXCircle, FiLock } from "react-icons/fi";
+import {
+  FiMail,
+  FiCalendar,
+  FiPhone,
+  FiMapPin,
+  FiCreditCard,
+  FiCheckCircle,
+  FiXCircle,
+  FiLock,
+} from "react-icons/fi";
 import { AiOutlineEdit } from "react-icons/ai";
-import "../../../ui/styles/ProfilePage.css";
-import { Button } from "@/app/ui/components/button";
+import "../../../ui/styles/profile-page.css";
+import { Button } from "@/app/ui/components/_common/Button";
 
 interface UserProfile {
   _id: string;
@@ -13,7 +22,7 @@ interface UserProfile {
   address: string;
   password: string;
   birthday: string;
-  genId: string; 
+  genId: string;
   phone: string;
   role: string;
   isActive: boolean;
@@ -63,7 +72,7 @@ const ProfilePage: React.FC = () => {
           <div className="contact-item">
             <FiCalendar size={20} className="contact-icon" />
             <span className="contact-text">
-                Ngày sinh: {new Date(user.birthday).toLocaleDateString("vi-VN")}
+              Ngày sinh: {new Date(user.birthday).toLocaleDateString("vi-VN")}
             </span>
           </div>
           <div className="contact-item">

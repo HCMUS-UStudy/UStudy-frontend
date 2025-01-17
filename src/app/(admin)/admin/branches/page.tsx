@@ -1,11 +1,12 @@
+/* eslint-disable prettier/prettier */
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrashAlt, FaSearch } from "react-icons/fa";
-import { Input } from "@/app/ui/components/input";
-import { Button } from "@/app/ui/components/button";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { Input } from "@/app/ui/components/_common/text-field/Input";
+import { Button } from "@/app/ui/components/_common/Button";
 // import axios from "axios";
-import { getAllBranches } from "@/app/lib/api";
-import { addBranch } from "@/app/lib/api";
+import { addBranch, getAllBranches } from "@/app/lib/services/branch";
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 
 interface Branch {
   id: string;
@@ -50,6 +51,7 @@ interface BranchResponse {
 
 const BranchPage: React.FC = () => {
   const [branches, setBranches] = useState<Branch[]>([]);
+  const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
   // const [shifts, setShifts] = useState<Shift[]>([]);
   // const [editShift, setEditShift] = useState<Shift | null>({ id: "", name: "", day: "", time: "" });
 
@@ -62,12 +64,13 @@ const BranchPage: React.FC = () => {
         // const response = await api.get("/branch/clerk/get-all");
         const response = await getAllBranches(0, 20);
         const modifiedData = response.data.content
-        .map((item: BranchResponse) => ({
-          ...item, // Giữ nguyên các cột ban đầu
-          rooms: 10, // Số phòng học cố định
-        }))
-        .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
+          .map((item: BranchResponse) => ({
+            ...item, // Giữ nguyên các cột ban đầu
+            rooms: 10, // Số phòng học cố định
+          }))
+          .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
         setBranches(modifiedData);
+        setFilteredBranches(modifiedData);
       } catch (error) {
         console.error("Failed to fetch branches:", error);
       }
@@ -145,6 +148,14 @@ const BranchPage: React.FC = () => {
     // shifts: "",
   });
 
+  useEffect(() => {
+    const filtered = branches.filter((branch) =>
+      branch.name && branch.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredBranches(filtered);
+    setCurrentPage(1); // Reset to page 1 after filtering
+  }, [searchQuery, branches]);
+
   // const sortShiftsByDayTime = (shifts: Shift[]) => {
   //   return [...shifts].sort((a, b) => {
   //     // So sánh theo `day` trước
@@ -156,13 +167,13 @@ const BranchPage: React.FC = () => {
   //     return a.time.localeCompare(b.time);
   //   });
   // };
-  
+
   // const formatShiftName = (day: string, time: string): string => {
   //   let timePrefix = '';
-  
+
   //   // Xác định prefix dựa trên thời gian
   //   if (time === "17:00 - 19:00") {
-  //     timePrefix = 'C'; 
+  //     timePrefix = 'C';
   //   } else if (time === "19:00 - 21:00") {
   //     timePrefix = 'T';
   //   } else if (time === "8:00 - 11:00") {
@@ -174,7 +185,7 @@ const BranchPage: React.FC = () => {
   //   } else {
   //     timePrefix = 'S';
   //   }
-  
+
   //   // Loại bỏ ký tự '-' trong ngày và ghép với prefix
   //   const formattedDay = day.replace(/-/g, '').toUpperCase();
   //   return `${timePrefix}-${formattedDay}`;
@@ -185,13 +196,15 @@ const BranchPage: React.FC = () => {
 
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
-    setTotalPages(Math.ceil(branches.length / branchesPerPage));
-  }, [branches]);
+    setTotalPages(Math.ceil(filteredBranches.length / branchesPerPage));
+  }, [filteredBranches]);
   const [paginatedBranches, setPaginatedBranches] = useState<Branch[]>([]);
   useEffect(() => {
     const startIndex = (currentPage - 1) * branchesPerPage;
-    setPaginatedBranches(branches.slice(startIndex, startIndex + branchesPerPage));
-  }, [branches, currentPage]);
+    setPaginatedBranches(
+      filteredBranches.slice(startIndex, startIndex + branchesPerPage),
+    );
+  }, [filteredBranches, currentPage]);
 
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -210,8 +223,14 @@ const BranchPage: React.FC = () => {
     return pages;
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   console.log("Search query:", event.target.value);
+  //   setSearchQuery(event.target.value);
+  // };
+
+  const handleSearch = (term: string) => {
+    console.log("Search query:", term);
+    setSearchQuery(term);
   };
 
   const onCreateBranch = () => {
@@ -219,7 +238,7 @@ const BranchPage: React.FC = () => {
   };
 
   const handleModalInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = event.target;
     setNewBranch((prev) => ({ ...prev, [name]: value }));
@@ -236,9 +255,18 @@ const BranchPage: React.FC = () => {
         { ...response.data, rooms: parseInt(newBranch.rooms, 10) },
       ]);
 
+      setFilteredBranches((prevBranches) => [
+        ...prevBranches,
+        { ...response.data, rooms: parseInt(newBranch.rooms, 10) },
+      ]);
+
       setIsError(false);
       setMessage("Thêm chi nhánh thành công!");
-      setTimeout(() => setMessage(null), 3000);
+
+      setTimeout(() => {
+        window.location.href = "/admin/branches";
+      }, 3000);
+
     } catch (error) {
       console.error("Failed to create branch:", error);
       setIsError(true);
@@ -270,29 +298,31 @@ const BranchPage: React.FC = () => {
   return (
     <>
       {message && (
-      <div
-        style={{
-          position: "fixed",
-          top: "10px",
-          right: "10px",
-          backgroundColor: isError ? "#f44336" : "#4caf50", // Màu thay đổi tùy trạng thái
-          color: "white",
-          padding: "10px 20px",
-          borderRadius: "5px",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-          zIndex: 1000,
-          fontSize: "16px",
-          fontWeight: "bold",
-        }}
-      >
-        {message}
-      </div>
-    )}
+        <div
+          style={{
+            position: "fixed",
+            top: "10px",
+            right: "10px",
+            backgroundColor: isError ? "#f44336" : "#4caf50", // Màu thay đổi tùy trạng thái
+            color: "white",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+            zIndex: 1000,
+            fontSize: "16px",
+            fontWeight: "bold",
+          }}
+        >
+          {message}
+        </div>
+      )}
 
-      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">Quản lý chi nhánh</h2>
+      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">
+        Quản lý chi nhánh
+      </h2>
 
       <div className="flex items-center justify-between mt-8">
-        <form className="flex items-center w-full lg:w-[20rem]">
+        {/*<form className="flex items-center w-full lg:w-[20rem]">
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
             <input
               type="text"
@@ -303,11 +333,17 @@ const BranchPage: React.FC = () => {
             />
             <button
               type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
+              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300"
+            >
               <FaSearch className="h-5 w-5" />
             </button>
           </div>
-        </form>
+        </form>*/}
+        <SearchField
+          className="w-[200px]"
+          placeholder="Tìm kiếm chi nhánh..."
+          onSearch={handleSearch}
+        />
         <Button onClick={onCreateBranch} className="px-6 py-2">
           Thêm chi nhánh
         </Button>
@@ -340,13 +376,17 @@ const BranchPage: React.FC = () => {
           </thead>
           <tbody>
             {paginatedBranches.map((branch: Branch) => (
-              <tr key={branch.id} className="border-b bg-white">
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.address}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{branch.contactNumber}</td>
+              <tr key={branch.id || branch.name} className="border-b bg-white">
                 <td className="px-6 py-4 text-sm text-gray-700">
-                  10
+                  {branch.name}
                 </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.address}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {branch.contactNumber}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">10</td>
                 {/* <td className="px-6 py-4 text-sm text-gray-700">
                   {branch.shifts}
                 </td> */}
@@ -369,11 +409,10 @@ const BranchPage: React.FC = () => {
         <Button
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === 1
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
         >
           Trước
         </Button>
@@ -384,7 +423,8 @@ const BranchPage: React.FC = () => {
             className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
               ? "bg-blue-700 text-white"
               : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}>
+              }`}
+          >
             1
           </Button>
         ) : (
@@ -395,7 +435,8 @@ const BranchPage: React.FC = () => {
               className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
                 ? "bg-blue-700 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}>
+                }`}
+            >
               {page}
             </Button>
           ))
@@ -403,11 +444,10 @@ const BranchPage: React.FC = () => {
         <Button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === totalPages
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
         >
           Sau
         </Button>
@@ -460,7 +500,8 @@ const BranchPage: React.FC = () => {
                 <Button
                   type="button"
                   onClick={handleCloseModal}
-                  className="bg-gray-300">
+                  className="bg-gray-300"
+                >
                   Hủy
                 </Button>
                 <Button type="submit" className="bg-indigo-600">

@@ -8,8 +8,8 @@ export type SideNavItem = {
 
 export type SideNavItemGroup = {
   title?: string;
-  menuList: SideNavItem[]
-}
+  menuList: SideNavItem[];
+};
 
 export type AccountItem = {
   id: string;
@@ -33,19 +33,19 @@ export type RegisterItem = {
 
 export type GradeItem = {
   id: string;
-  name: string
+  name: string;
 };
 
 export type ChapterItem = {
   id: string;
   name: string;
-  description: string
+  description: string;
 };
 
 export type MaterialItem = {
   id: string;
   fileName: string;
-  filePath: string
+  filePath: string;
 };
 
 export type CourseItem = {
@@ -57,7 +57,7 @@ export type CourseItem = {
   };
   createdAt: string;
   status: boolean;
-  totalGrades: string
+  totalGrades: string;
 };
 
 export type TimeItem = {
@@ -99,69 +99,70 @@ export type AccountSchema = {
   birthday: string;
   gender: "MALE" | "FEMALE";
   role: "STUDENT" | "TEACHER" | "STAFF";
+  permissions: Array<string>;
 };
 
 export type ScheduleItem = {
   display: string;
   dataToSend: number;
   isChosen: boolean;
-}
+};
 
 export type CourseSchema = {
   name: string;
   description: string;
   creator: string;
-}
+};
 
 export const Schedule: ScheduleItem[] = [
   {
-    display: 'Thứ hai',
+    display: "Thứ hai",
     dataToSend: 1,
-    isChosen: false
+    isChosen: false,
   },
   {
-    display: 'Thứ ba',
+    display: "Thứ ba",
     dataToSend: 2,
-    isChosen: false
+    isChosen: false,
   },
   {
-    display: 'Thứ tư',
+    display: "Thứ tư",
     dataToSend: 3,
-    isChosen: false
+    isChosen: false,
   },
   {
-    display: 'Thứ năm',
+    display: "Thứ năm",
     dataToSend: 4,
-    isChosen: false
+    isChosen: false,
   },
   {
-    display: 'Thứ sáu',
+    display: "Thứ sáu",
     dataToSend: 5,
-    isChosen: false
+    isChosen: false,
   },
   {
-    display: 'Thứ bảy',
+    display: "Thứ bảy",
     dataToSend: 6,
-    isChosen: false
+    isChosen: false,
   },
   {
-    display: 'Chủ nhật',
+    display: "Chủ nhật",
     dataToSend: 7,
-    isChosen: false
+    isChosen: false,
   },
-]
+];
 
 export type Branch = {
   name: string;
   address: string;
   contactNumber: string;
   rooms: string;
-}
+};
 
 export type Duration = {
   quantity: number;
   unit: string | null;
-}
+};
 
 export type ClassItem = {
   id: string;
@@ -172,26 +173,26 @@ export type ClassItem = {
   fee: number;
   room: {
     name: string;
-  }
+  };
   grade: {
     name: string;
-  }
-}
+  };
+};
 
 export type ClassData = {
-  content: ClassItem[],
+  content: ClassItem[];
   totalPages: number;
-}
+};
 
-export type DurationUnit = 'Tuần' | 'Tháng' | 'Năm'
+export type DurationUnit = "Tuần" | "Tháng" | "Năm";
 
-export type ScheduleType = 'Giờ cố định' | 'Giờ linh hoạt'
+export type ScheduleType = "Giờ cố định" | "Giờ linh hoạt";
 
 export type CustomError = {
   message?: string;
   status?: number;
   data?: string | unknown;
-}
+};
 
 type Authority = {
   authority: string;
@@ -205,8 +206,8 @@ export type User = {
   avatar: string;
   birthday: string;
   branch: string | null;
-  classesEnrolled: string | null; 
-  classesTaught: string | null; 
+  classesEnrolled: string | null;
+  classesTaught: string | null;
   createdAt: string;
   credentialsNonExpired: boolean;
   email: string;
@@ -244,7 +245,7 @@ export type Classroom = {
     id: string;
     name: string;
   } | null;
-  students: null; 
+  students: null;
   course: {
     createdAt: string;
     createdBy: {
@@ -264,7 +265,7 @@ export type Classroom = {
     status: boolean;
     totalGrades: number;
   };
-}
+};
 
 export type AllChapter = {
   id: string;
@@ -274,44 +275,44 @@ export type AllChapter = {
   description: string;
   course: null;
   grade: null;
-}
+};
 
 export type CourseData = {
-  content: CourseItem[],
+  content: CourseItem[];
   totalPages: number;
-}
+};
 
 export type AccountData = {
-  content: AccountItem[],
+  content: AccountItem[];
   totalPages: number;
-}
+};
 
 export type RegisterAccountData = {
-  content: RegisterItem[],
+  content: RegisterItem[];
   totalPages: number;
-}
+};
 
 export type GradeData = {
-  content: GradeItem[],
+  content: GradeItem[];
   totalPages: number;
-}
+};
 
 export type ChapterData = {
-  content: ChapterItem[],
+  content: ChapterItem[];
   totalPages: number;
-}
+};
 
 export type MaterialData = {
-  content: MaterialItem[],
+  content: MaterialItem[];
   totalPages: number;
-}
+};
 
 type Grade = {
   id: string;
   name: string;
 };
 
-type Course = {
+export type Course = {
   id: string;
   name: string;
   description: string;
@@ -343,10 +344,10 @@ export type Teacher = {
   name: string;
   avatar: string;
   role: string;
-  gender: 'MALE' | 'FEMALE';
+  gender: "MALE" | "FEMALE";
   createdAt: string;
   active: boolean;
-}
+};
 
 type UserForTeacher = {
   gender: string;

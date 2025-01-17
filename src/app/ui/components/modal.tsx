@@ -24,14 +24,16 @@ export default function Modal({
           invisible: !isOpen,
           "visible bg-black/20": isOpen,
         },
-        `fixed inset-0 flex justify-center items-center transition-colors duration-200`
-      )}>
+        `fixed inset-0 flex justify-center items-center transition-colors duration-200`,
+      )}
+    >
       <div
         onClick={(e: React.FormEvent) => {
           e.stopPropagation();
         }}
         id="main-content"
-        className={`h-fit bg-white rounded-xl scale-100 opacity-100 ${className}`}>
+        className={`h-fit bg-white rounded-xl scale-100 opacity-100 ${className}`}
+      >
         {children}
       </div>
     </div>

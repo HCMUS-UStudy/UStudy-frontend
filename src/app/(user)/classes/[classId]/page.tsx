@@ -31,7 +31,8 @@ export default function Class({
         {mainSections.map((data, i) => (
           <div
             key={i}
-            className="w-[15vw] bg-sky-600 hover:bg-sky-800 hover:cursor-pointer transition-colors text-background font-bold text-center text-lg tracking-wider py-5 rounded-xl">
+            className="w-[15vw] bg-sky-600 hover:bg-sky-800 hover:cursor-pointer transition-colors text-background font-bold text-center text-lg tracking-wider py-5 rounded-xl"
+          >
             {data}
           </div>
         ))}

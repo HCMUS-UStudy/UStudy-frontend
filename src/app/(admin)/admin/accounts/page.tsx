@@ -1,18 +1,7 @@
 import React from "react";
-import ModalAccount from "@/app/ui/components/AccountAdmin/modalAccount-Ad";
-import UserTable from "@/app/ui/components/AccountAdmin/accountTable";
-import AccountRegisterModal from "@/app/ui/components/AccountAdmin/accountRegister";
-import { SearchField } from "@/app/ui/components/input";
+import AccountTable from "@/app/ui/components/admin/accounts/AccountTable";
 
-export default async function AccountPage(props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-  const query = searchParams?.query || "";
-
+export default async function AccountPage() {
   // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   console.log("Search")
   // };
@@ -66,20 +55,23 @@ export default async function AccountPage(props: {
         </form> */}
         </div>
 
-        <div className="flex justify-between items-center space-x-4 mt-6">
-          <SearchField className="w-[200px]" placeholder="Tìm theo tên người dùng..." />
-          <div className="flex items-center space-x-4 pr-6">
+        <div className="">
+          {/* <SearchField
+            className="w-[200px]"
+            placeholder="Tìm theo tên người dùng..."
+            onSearch={(term) => {
+              window.location.href = `?query=${term}`; // Update the URL with the search term
+            }}
+          /> */}
+          {/* <div className="flex items-center pr-6">
             <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
-            <ModalAccount buttonLabel="Tạo người dùng" />
-          </div>
+            <AddAccountModal buttonLabel="Tạo người dùng" />
+          </div> */}
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
-          <UserTable searchQuery={query} />
-        </div>
+        <AccountTable />
       </div>
-
     </>
   );
-};
+}

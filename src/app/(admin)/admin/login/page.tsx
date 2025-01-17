@@ -3,19 +3,16 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Input } from "@/app/ui/components/input";
-import { Label } from "@/app/ui/components/label";
+import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
-import { HiEye, HiEyeOff, HiHome } from "react-icons/hi";
-import { Button } from "@/app/ui/components/button";
+import { HiHome } from "react-icons/hi";
+import { Button } from "@/app/ui/components/_common/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { adminLogin } from "@/app/lib/api";
 import { setTokens } from "@/app/lib/storage";
+import { adminLogin } from "@/app/lib/services/auth";
 
 export default function Login() {
-
-  
   useEffect(() => {
     const authToken = localStorage.getItem("accessToken");
     if (authToken) {
@@ -25,46 +22,40 @@ export default function Login() {
         timer: 9000,
         showConfirmButton: false,
       });
-      
+
       window.location.href = "/admin/dashboard";
     }
   }, []);
-  
-  const [showPassword, setShowPassword] = useState(false);
+
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");  
-  const [isFocused, setIsFocused] = useState({ username: false, password: false });
-  
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await adminLogin(username, password);
 
-      if (response.status === 200) {
-        const token = response.data.access_token;
-        const refresh_token = response.data.refresh_token;
-        const creator = response.data.user.name;
-        const user = response.data.user;
+      const token = response.data.access_token;
+      const refresh_token = response.data.refresh_token;
+      const creator = response.data.user.name;
+      const user = response.data.user;
 
-        setTokens(token, refresh_token);
+      setTokens(token, refresh_token);
 
-        localStorage.setItem("creator", creator);
-        localStorage.setItem("userData", JSON.stringify(user));
+      localStorage.setItem("creator", creator);
+      localStorage.setItem("userData", JSON.stringify(user));
 
-        Swal.fire({
-          icon: "success",
-          title: "Đăng nhập thành công",
-          text: "Chào mừng quay trở lại!",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        window.location.href = "/admin/dashboard";
-      }
+      Swal.fire({
+        icon: "success",
+        title: "Đăng nhập thành công",
+        text: "Chào mừng quay trở lại!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      window.location.href = "/admin/dashboard";
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const message =
@@ -82,6 +73,8 @@ export default function Login() {
           text: unexpectedError,
         });
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,17 +88,20 @@ export default function Login() {
         style={{
           background:
             "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
-        }}>
+        }}
+      >
         <div
           className="
           grid w-full max-w-5xl grid-cols-1 md:grid-cols-2 
-          bg-white rounded-[30px] shadow-lg overflow-hidden">
+          bg-white rounded-[30px] shadow-lg overflow-hidden"
+        >
           {/* Login Form Section */}
           <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-14 relative">
             {/* Back to Home Icon */}
             <Link
               href="/"
-              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600">
+              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600"
+            >
               <HiHome size={24} />
             </Link>
 
@@ -122,77 +118,41 @@ export default function Login() {
               {/* Floating Label for Username */}
               <div className="relative mb-4">
                 <Input
-                  className={`p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
-                          focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                          ${isFocused.username ? "placeholder-transparent" : "placeholder-gray-400"}`}
                   type="text"
                   id="username"
                   value={username}
-                  onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
-                  onFocus={() =>
-                    setIsFocused((prev) => ({ ...prev, username: true }))
-                  }
-                  onBlur={() =>
-                    setIsFocused((prev) => ({ ...prev, username: false }))
+                  onChange={(e) =>
+                    setUsername((e.target as HTMLInputElement).value)
                   }
                   placeholder="Nhập mã người dùng"
+                  label="Mã người dùng"
                   required
+                  customStyle={{ labelBg: "#D5E9F6" }}
                 />
-                <Label
-                  htmlFor="username"
-                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
-                    isFocused.username || username
-                      ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-transparent"
-                  }`}>
-                  Nhập mã người dùng
-                </Label>
               </div>
 
               {/* Floating Label for Password */}
               <div className="relative mb-6 mt-6">
                 <Input
-                  className={`p-2 pl-4 bg-transparent rounded-full text-[#1E1E1E] border border-gray-400
-                    focus:border-indigo-600 focus:bg-white transition-all duration-200 
-                    ${isFocused.password ? "placeholder-transparent" : "placeholder-gray-400"}`}
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   id="password"
                   value={password}
-                  onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
-                  onFocus={() =>
-                    setIsFocused((prev) => ({ ...prev, password: true }))
-                  }
-                  onBlur={() =>
-                    setIsFocused((prev) => ({ ...prev, password: false }))
+                  onChange={(e) =>
+                    setPassword((e.target as HTMLInputElement).value)
                   }
                   placeholder="Nhập mật khẩu"
+                  label="Mật khẩu"
                   required
+                  customStyle={{ labelBg: "#D5E9F6" }}
                 />
-                <Label
-                  htmlFor="password"
-                  className={`absolute left-4 transition-all duration-200 hover:cursor-auto ${
-                    isFocused.password || password
-                      ? "-top-3.5 text-xs text-indigo-600 bg-[#D5E9F6] px-1"
-                      : "top-1/2 transform -translate-y-1/2 text-transparent"
-                  }`}>
-                  Nhập mật khẩu
-                </Label>
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none">
-                  {showPassword ? (
-                    <HiEyeOff className="text-gray-600" />
-                  ) : (
-                    <HiEye className="text-gray-600" />
-                  )}
-                </button>
               </div>
 
               <Button
-                onClick={() => {}}
                 type="submit"
-                className="mt-6 w-full text-white rounded-l-full rounded-r-full font-semibold text-base transition-all duration-200 shadow-md transform hover:scale-105">
+                className="mt-6 w-full hover:scale-105"
+                isPending={isLoading}
+                disabled={isLoading}
+              >
                 Đăng nhập
               </Button>
 
