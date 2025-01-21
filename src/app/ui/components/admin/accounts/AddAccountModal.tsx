@@ -43,6 +43,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
     birthday: "",
     gender: "MALE",
     role: "STUDENT",
+    permissions: ["TEST"],
   });
 
   const [errors, setErrors] = useState<AddAccountError>({
@@ -146,9 +147,11 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
     }
 
     try {
+      console.log(payload);
       const response = await createNewAccount(payload);
+      console.log(response);
 
-      if (response.status === 200) {
+      if (response.statusCode === "OK") {
         setNewUser({
           email: "",
           name: "",
@@ -157,6 +160,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
           birthday: "",
           gender: "MALE",
           role: "STUDENT",
+          permissions: ["TEST"],
         });
 
         toast.success("Tạo tài khoản thành công! Đang chuyển hướng...", {

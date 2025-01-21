@@ -219,7 +219,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
                       <TableCell>{student.phone}</TableCell>
                       <TableCell>{student.gender}</TableCell>
                       <TableCell>
-                        <div className="flex">
+                        <div className="flex items-center justify-center">
                           <Button
                             variant="basic"
                             onClick={() => handleApprove(student.id)}
@@ -274,7 +274,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
                       <TableCell>{teacher.phone}</TableCell>
                       <TableCell>{teacher.gender}</TableCell>
                       <TableCell>
-                        <div className="flex">
+                        <div className="flex items-center justify-center">
                           <Button
                             variant="basic"
                             onClick={() => handleApprove(teacher.id)}
