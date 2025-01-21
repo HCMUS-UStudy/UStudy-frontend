@@ -37,8 +37,7 @@ const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
       <aside
         className={`fixed top-4 left-4 bottom-4 shadow-lg rounded-3xl border-r border-l border-gray-300 transition-all duration-300 overflow-y-auto ${
           toggleCollapse ? "w-[90px]" : "w-[220px]"
-        } bg-[#D5EEFF]`}
-      >
+        } bg-blue-200`}>
         <div className="flex items-center justify-center gap-2 pt-12 pb-8">
           <Image
             src="/UStudyIcon.png"
@@ -50,9 +49,8 @@ const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
           <h3
             className={`font-bold text-2xl flex ${
               toggleCollapse ? "hidden" : "min-w-max"
-            }`}
-          >
-            <span className="text-[#0369A1]">US</span>
+            }`}>
+            <span className="text-blue-800">US</span>
             <span>tudy</span>
           </h3>
         </div>
@@ -66,8 +64,7 @@ const Sidebar = ({ menuItems }: { menuItems: SideNavItemGroup[] }) => {
         onClick={sidebarToggle}
         className={`fixed top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow transition-all duration-300 bg-gray-200 text-black ${
           toggleCollapse ? "left-[calc(92px)] rotate-180" : "left-[calc(222px)]"
-        }`}
-      >
+        }`}>
         <RiArrowLeftSLine size={14} />
       </button>
     </>

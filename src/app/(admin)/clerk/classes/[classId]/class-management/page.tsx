@@ -46,6 +46,7 @@ export default function ClassManagement({
           getClassById(classId),
           getAvailableTeacher(classId),
         ]);
+        console.log(fetchClass);
         setClassData(fetchClass.data);
         setAvailableTeachers(fetchTeachers.data);
       } catch (error) {
@@ -223,8 +224,8 @@ export default function ClassManagement({
 
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          <div className="flex items-center gap-2 text-lg font-bold text-gray-700 tracking-wider mt-5 pl-5">
-            <IoFileTrayFull className="size-8" /> Tài liệu học tập
+          <div className="flex items-center gap-2 text-base font-bold text-gray-700 tracking-wider mt-5">
+            Tài liệu học tập
           </div>
           <div className="px-2.5 py-2 mt-2 bg-white border-2 border-slate-100 rounded-lg">
             <Table className="shadow-none">
@@ -247,8 +248,8 @@ export default function ClassManagement({
           </div>
         </div>
         <div>
-          <div className="flex items-center gap-2 text-lg font-bold text-gray-700 tracking-wider mt-5 pl-5">
-            <FaClipboard className="size-8" /> Tình trạng lớp học
+          <div className="flex items-center gap-2 text-base font-bold text-gray-700 tracking-wider mt-5">
+            Tiến độ lớp học
           </div>
           <div className="px-2.5 py-2 mt-2 bg-white border-2 border-slate-100 rounded-lg">
             <Table className="shadow-none">

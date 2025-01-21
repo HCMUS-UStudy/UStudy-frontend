@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { XIcon } from "lucide-react";
 import React from "react";
 
 interface ModalCreateClassProps {
@@ -17,24 +18,23 @@ export default function Modal({
 }: ModalCreateClassProps) {
   return (
     <div
-      onClick={onClose}
+      // onClick={onClose}
       id="modal-create-class"
       className={clsx(
         {
-          invisible: !isOpen,
-          "visible bg-black/20": isOpen,
+          'opacity-0 scale-0': !isOpen,
+          "opacity-100 scale-100": isOpen,
         },
-        `fixed inset-0 flex justify-center items-center transition-colors duration-200`,
-      )}
-    >
+        `fixed inset-0 flex justify-center items-center transition-colors duration-200  bg-black/20`
+      )}>
       <div
         onClick={(e: React.FormEvent) => {
           e.stopPropagation();
         }}
         id="main-content"
-        className={`h-fit bg-white rounded-xl scale-100 opacity-100 ${className}`}
-      >
+        className={`relative bg-white rounded-xl scale-100 opacity-100 ${className}`}>
         {children}
+        <XIcon className="size-8 absolute right-5 top-5 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" onClick={onClose} />
       </div>
     </div>
   );
