@@ -7,7 +7,7 @@ export const getAllGrades = async () => {
       limit: 10,
     },
   });
-  return response.data.data.content;
+  return response;
 };
 
 export const getGradesByCourseId = async (

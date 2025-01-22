@@ -26,7 +26,7 @@ export const getCoursesByGradeId = async (gradeId: string) => {
       },
     },
   );
-  return response.data.data;
+  return response;
 };
 
 export const createNewCourse = async (data: CourseSchema) => {
