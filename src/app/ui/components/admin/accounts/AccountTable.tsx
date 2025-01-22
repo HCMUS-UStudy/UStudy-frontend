@@ -19,7 +19,6 @@ import AddAccountModal from "./AddAccountModal";
 
 const AccountTable: React.FC = () => {
   const [users, setUsers] = useState<AccountItem[]>([]);
-  const [filteredData, setFilteredData] = useState<AccountItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -31,7 +30,7 @@ const AccountTable: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await getAllAccount("", currentPage - 1);
+      const response = await getAllAccount(searchQuery, currentPage - 1);
       const allUsers = response.content.map((item) => ({
         id: item.id,
         name: item.name,
@@ -44,7 +43,6 @@ const AccountTable: React.FC = () => {
 
       setTotalPages(response.totalPages || 1);
       setUsers(allUsers);
-      setFilteredData(allUsers); // Initialize filtered data with all users
     } catch (error) {
       console.log(error);
       setError("Error fetching users.");
@@ -55,37 +53,11 @@ const AccountTable: React.FC = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage]);
-
-  useEffect(() => {
-    // Filter users based on search query
-    if (searchQuery.trim() === "") {
-      setFilteredData(users); // If no search term, show all users
-    } else {
-      const filtered = users.filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-      setFilteredData(filtered);
-    }
-  }, [searchQuery, users]);
-
-  useEffect(() => {
-    // Read search query from URL on component mount
-    const queryParams = new URLSearchParams(window.location.search);
-    const query = queryParams.get("query") || "";
-    setSearchQuery(query);
-  }, []);
-
-  useEffect(() => {
-    // Update URL when searchQuery changes
-    if (searchQuery.trim() !== "") {
-      const newUrl = `?query=${searchQuery}`; // Construct the new URL with the search term
-      window.history.pushState({ searchQuery }, "", newUrl); // Update the URL without reloading the page
-    }
-  }, [searchQuery]);
+  }, [currentPage, searchQuery]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value); // Update the state with the input value
+    setSearchQuery(e.target.value); // Update search query
+    setCurrentPage(1); // Reset to the first page when search query changes
   };
 
   return (
@@ -125,8 +97,8 @@ const AccountTable: React.FC = () => {
                   {error}
                 </TableCell>
               </TableRow>
-            ) : filteredData.length > 0 ? (
-              filteredData.map((user) => (
+            ) : users.length > 0 ? (
+              users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>

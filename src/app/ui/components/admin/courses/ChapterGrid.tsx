@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { FaEllipsisV, FaFolder, FaSpinner } from "react-icons/fa";
+import { FaEllipsisV, FaFolder } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { ChapterItem } from "@/app/types/type";
@@ -9,23 +9,23 @@ import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { useRouter } from "next/navigation";
 import { getChapterByCourse_GradeId } from "@/app/lib/services/chapter";
 import Loading from "@/app/ui/components/_common/Loading";
+import SearchField from "../../_common/text-field/SearchField";
+import { Select, SelectItem } from "../../_common/Select";
 
 interface ChapterGridProps {
   courseId: string;
   // subject: string;
   gradeId: string;
-  // grade: string;
-  searchQuery: string;
 }
 
 const ChapterGrid: React.FC<ChapterGridProps> = ({
-  searchQuery,
   courseId,
   // subject,
   gradeId,
   // grade,
 }) => {
   const [chapters, setChapters] = useState<ChapterItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,6 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
         name: item.name,
         description: item.description,
       }));
-
       setTotalPages(response.data?.totalPages || 0);
     } catch (error) {
       console.error("Failed to fetch chapters:", error);
@@ -103,23 +102,51 @@ const ChapterGrid: React.FC<ChapterGridProps> = ({
     );
   };
 
-  const handleAttachmentClick = (
-    id: string,
-    subject: string,
-    gradeId: string,
-    grade: string,
-    chapterId: string,
-    chapter: string,
-  ) => {
-    return `/admin/courses/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(chapterId)}`;
-  };
+  // const handleAttachmentClick = (
+  //   id: string,
+  //   subject: string,
+  //   gradeId: string,
+  //   grade: string,
+  //   chapterId: string,
+  //   chapter: string,
+  // ) => {
+  //   return `/admin/courses/course-documents/${encodeURIComponent(id)}/${encodeURIComponent(gradeId)}/${encodeURIComponent(chapterId)}`;
+  // };
 
   useEffect(() => {
     fetchChapters();
   }, [courseId, gradeId, currentPage, searchQuery]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value); // Update search query
+    setCurrentPage(1); // Reset to the first page when search query changes
+  };
+
   return (
     <div>
+      {/* Search and Filter Section */}
+      <div className="flex justify-end items-center space-x-4 mb-6">
+        <div className="flex items-center space-x-4">
+          <SearchField
+            className="w-[200px]"
+            placeholder="Tìm theo tên chương học..."
+            value={searchQuery} // Bind the value to searchQuery state
+            onChange={handleSearchChange} // Handle input changes
+          />
+          <Select className="w-[200px]" defaultLabel="Tất cả chương">
+            <SelectItem value="">Tất cả khối học</SelectItem>
+            <SelectItem value="chapter-1">Chương 1</SelectItem>
+            <SelectItem value="chapter-2">Chương 2</SelectItem>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-4 mb-4">
+        <Button type="button" className="pl-6 pr-6">
+          Tạo chương
+        </Button>
+      </div>
+
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {loading ? (
