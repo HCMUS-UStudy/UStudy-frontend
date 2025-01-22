@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
-import { Label } from "@/app/ui/components/_common/Label";
 import { Button } from "@/app/ui/components/_common/Button";
 import { CourseSchema } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
@@ -89,7 +88,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     try {
       const response = await createNewCourse(payload);
 
-      if (response.status === 200) {
+      if (response.statusCode === "OK") {
         setFormData({
           name: "",
           description: "",
