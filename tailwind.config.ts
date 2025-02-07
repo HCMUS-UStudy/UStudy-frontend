@@ -23,6 +23,11 @@ const config: Config = {
           '50%': {transform: 'scale(1.3)'},
           '100%': {transform: 'scale(1)'}
         },
+        fall: {
+          '0%': { transform: 'translateY(0vh)' },
+          '50%': { transform: 'translateY(50vh)' },
+          '100%': { transform: 'translateY(100vh)' }
+        },
         wiggle: {
           '0%': {
             'transform-origin': 'bottom',
@@ -49,7 +54,12 @@ const config: Config = {
       },
       animation: {
         'scale-effect': 'scale 1s linear infinite',
-        'wiggle-effect': 'wiggle 1.5s linear infinite'
+        'wiggle-effect': 'wiggle 1.5s linear infinite',
+        fall_1: 'fall 2.5s linear 0s infinite',
+        fall_2: 'fall 3s linear 1s infinite',
+        fall_3: 'fall 2.5s linear 2s infinite',
+        fall_4: 'fall 3s linear 1.5s infinite',
+        fall_5: 'fall 3s linear 2.5s infinite',
       }
     },
   },
