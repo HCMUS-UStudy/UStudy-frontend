@@ -36,7 +36,7 @@ export default function CourseSelector() {
   };
   return (
     <div className="flex flex-col mb-3">
-      <h1 className="text-center font-medium text-lg">Chọn khối cho lớp học</h1>
+      <h1 className="text-center font-medium text-lg">Chọn môn cho lớp học</h1>
       <div className="grid grid-cols-3 divide-x-2 divide-slate-200 mt-4">
         <div className="col-span-2 flex flex-wrap gap-4 px-10">
           {loading ? (
@@ -51,7 +51,7 @@ export default function CourseSelector() {
                 >
                   <input
                     type="radio"
-                    name="selectGrade"
+                    name="selectCourse"
                     id={course.id}
                     className="hidden peer"
                     value={course.id}
