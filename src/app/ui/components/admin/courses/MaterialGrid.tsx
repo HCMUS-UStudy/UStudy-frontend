@@ -2,25 +2,23 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { FaDownload, FaEye, FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { Button } from "@/app/ui/components/_common/Button";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { FaDownload, FaEye, FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { MaterialItem } from "@/app/types/type";
 import { getMaterialsByChapterId } from "@/app/lib/services/material";
 import Loading from "@/app/ui/components/_common/Loading";
+import SearchField from "../../_common/text-field/SearchField";
+import { Select, SelectItem } from "../../_common/Select";
 
 interface DocumentGridProps {
   courseId: string;
   chapterId: string;
-  searchQuery: string;
 }
 
-const DocumentGrid: React.FC<DocumentGridProps> = ({
-  courseId,
-  chapterId,
-  searchQuery,
-}) => {
+const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId }) => {
   const [documents, setDocuments] = useState<MaterialItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -58,53 +56,74 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({
     setActiveDropdown(activeDropdown === id ? "" : id);
   };
 
-  const renderDropdown = (id: string) => {
-    return (
-      activeDropdown === id && (
-        <div
-          ref={dropdownRef}
-          className="absolute w-32 bg-white border border-gray-200 rounded-md shadow-lg z-50"
-        >
-          <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-            Cut
-          </button>
-          <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-            Copy
-          </button>
-          <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-            Move to
-          </button>
-          <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-            Rename
-          </button>
-          <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-            Delete
-          </button>
-        </div>
-      )
+  const renderDropdown = (id: string) =>
+    activeDropdown === id && (
+      <div
+        ref={dropdownRef}
+        className="absolute w-32 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+      >
+        <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+          Cut
+        </button>
+        <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+          Copy
+        </button>
+        <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+          Move to
+        </button>
+        <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+          Rename
+        </button>
+        <button className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+          Delete
+        </button>
+      </div>
     );
-  };
 
   const getFileType = (title: string) => {
-    const extension = title.split(".").pop()?.toLowerCase(); // Lấy phần mở rộng của tệp
+    const extension = title.split(".").pop()?.toLowerCase();
+    if (["jpg", "jpeg", "png", "gif"].includes(extension || "")) return "image";
     if (extension === "pdf") return "pdf";
     if (["doc", "docx"].includes(extension || "")) return "docx";
-    return "other"; // Mặc định cho các loại tệp không xác định
+    return "other";
   };
 
   useEffect(() => {
     fetchMaterials();
   }, [chapterId, currentPage, searchQuery]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value); // Update search query
+    setCurrentPage(1); // Reset to the first page when search query changes
+  };
+
   return (
     <div>
-      {/* Chapters Grid */}
+      {/* Search and Filter Section */}
+      <div className="flex justify-end items-center space-x-4 mb-6">
+        <div className="flex items-center space-x-4">
+          <SearchField
+            className="w-[200px]"
+            placeholder="Tìm kiếm theo tên tài liệu..."
+            value={searchQuery} // Bind the value to searchQuery state
+            onChange={handleSearchChange} // Handle input changes
+          />
+          <Select className="w-[200px]" defaultLabel="Tất cả tài liệu">
+            <SelectItem value="">Tất cả tài liệu</SelectItem>
+            <SelectItem value="chapter-1">Tài liệu DOCX</SelectItem>
+            <SelectItem value="chapter-2">Tài liệu PDF</SelectItem>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-4 mb-4">
+        <Button type="button" className="pl-6 pr-6">
+          Thêm tài liệu
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {loading ? (
-          /*<div className="flex items-center justify-center col-span-full">
-            <FaSpinner className="animate-spin text-blue-500 h-8 w-8" />
-            <span className="ml-4 text-lg text-blue-500">Loading...</span>
-          </div>*/
           <Loading text="Loading..." />
         ) : (
           documents.map((doc) => (
@@ -113,13 +132,18 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({
               className={`border p-4 rounded-lg shadow-md hover:shadow-lg transition`}
             >
               <div className="flex items-center space-x-4 mb-3">
-                {getFileType(doc.fileName) === "pdf" ? (
-                  <FaFilePdf className="text-red-500 text-3xl" />
+                {getFileType(doc.fileName) === "image" ? (
+                  <img
+                    src={doc.filePath}
+                    alt={doc.fileName}
+                    className="w-9 h-9 object-cover rounded"
+                  />
+                ) : getFileType(doc.fileName) === "pdf" ? (
+                  <FaFilePdf className="text-red-500 text-4xl" />
                 ) : (
-                  <FaFileWord className="text-blue-500 text-3xl" />
+                  <FaFileWord className="text-blue-500 text-4xl" />
                 )}
                 <h3 className="font-semibold flex-1">{doc.fileName}</h3>
-
                 <button
                   className="text-gray-600"
                   onClick={() => toggleDropdown(doc.id)}
@@ -147,7 +171,6 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({
         )}
       </div>
 
-      {/* Pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

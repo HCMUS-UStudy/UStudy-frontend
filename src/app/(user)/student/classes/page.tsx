@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/app/ui/components/_common/Button";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
@@ -32,10 +31,11 @@ export default function Classes() {
   const fetchClasses = async () => {
     setLoading(true);
     const authToken = localStorage.getItem("accessToken");
+    console.log(authToken);
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/user/all/get-list-class`,
+        `http://localhost:8080/api/class/all/get-list-class`,
         {
           params: {
             page: currentPage - 1,
@@ -69,20 +69,19 @@ export default function Classes() {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/class/all/get-one`,
+        `http://localhost:8080/api/class/all/get-one/${classId}`,
         {
-          params: { classId },
           headers: { Authorization: `Bearer ${authToken}` },
         },
       );
 
       setClassDetails((prevDetails) => {
         const updatedDetails = { ...prevDetails, [classId]: response.data };
-        console.log("Updated classes details:", updatedDetails); // Log the updated state
+        console.log("Updated class details:", updatedDetails); // Log the updated state
         return updatedDetails;
       });
     } catch (err) {
-      console.error("Error fetching classes details:", err);
+      console.error("Error fetching class details:", err);
     }
   };
 
@@ -125,7 +124,7 @@ export default function Classes() {
     const pages = [];
     const maxPages = Math.min(3, totalPages);
 
-    let start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+    const start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
     for (let i = start; i < start + maxPages; i++) {
       pages.push(i);
     }
@@ -143,40 +142,53 @@ export default function Classes() {
           </span>
         </h2>
         <div className="flex flex-col space-y-6">
-          {classes.map((classItem) => (
-            <div
-              key={classItem.id}
-              className="flex items-center bg-gradient-to-r from-white to-blue-50 shadow-xl border border-gray-200 p-6 rounded-2xl hover:shadow-2xl transition-transform transform hover:scale-105"
-            >
-              {/* Avatar */}
-              <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-extrabold text-lg mr-6 shadow-inner">
-                {classDetails[classItem.id]?.course?.name.charAt(0)}
-              </div>
-              {/* Class Details */}
-              <div className="flex-grow">
-                <h3 className="text-xl font-semibold text-gray-700 mb-1">
-                  {classDetails[classItem.id]?.course?.name
-                    ? `${classDetails[classItem.id]?.course?.name} ${classDetails[classItem.id]?.grade?.name} - Lớp ${classItem.name}`
-                    : classItem.name}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  <strong>Giáo viên:</strong>{" "}
-                  {classDetails[classItem.id]?.teacher?.name ||
-                    "Chưa có giáo viên"}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <strong>Phòng học:</strong> {classItem.room.name}
-                </p>
-              </div>
-              {/* Action */}
-              <button
-                className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full shadow-md hover:bg-blue-600 transition-all"
-                onClick={() => fetchClassDetails(classItem.id)}
+          {loading ? (
+            <Loading />
+          ) : classes.length > 0 ? (
+            classes.map((classItem) => (
+              <div
+                key={classItem.id}
+                className="flex items-center bg-gradient-to-r from-white to-blue-50 shadow-xl border border-gray-200 p-6 rounded-2xl hover:shadow-2xl transition-transform transform hover:scale-105"
               >
-                Xem chi tiết
-              </button>
+                {/* Avatar */}
+                <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-extrabold text-lg mr-6 shadow-inner">
+                  {classDetails[classItem.id]?.course?.name.charAt(0)}
+                </div>
+                {/* Class Details */}
+                <div className="flex-grow">
+                  <h3 className="text-xl font-semibold text-gray-700 mb-1">
+                    {classDetails[classItem.id]?.course?.name
+                      ? `Lớp ${classItem.name} - ${classDetails[classItem.id]?.course?.name} ${classDetails[classItem.id]?.grade?.name}`
+                      : classItem.name}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    <strong>Giáo viên:</strong>{" "}
+                    {classDetails[classItem.id]?.teacher?.name ||
+                      "Chưa có giáo viên"}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <strong>Phòng học:</strong> {classItem.room.name}
+                  </p>
+                </div>
+                {/* Action */}
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full shadow-md hover:bg-blue-600 transition-all"
+                  onClick={() => {
+                    setLoading(true);
+                    fetchClassDetails(classItem.id).finally(() =>
+                      setLoading(false),
+                    );
+                  }}
+                >
+                  Xem chi tiết
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500">
+              Không có lớp học nào.
             </div>
-          ))}
+          )}
         </div>
 
         {/* Pagination Section */}
@@ -194,7 +206,7 @@ export default function Classes() {
           </button>
 
           {totalPages === 1 ? (
-            <Button
+            <button
               key={1}
               onClick={() => setCurrentPage(1)}
               className={`px-4 py-2 rounded-md font-semibold transition-all ${
@@ -204,10 +216,10 @@ export default function Classes() {
               }`}
             >
               1
-            </Button>
+            </button>
           ) : (
             getPageNumbers().map((page) => (
-              <Button
+              <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`px-4 py-2 rounded-md font-semibold transition-all ${
@@ -217,11 +229,11 @@ export default function Classes() {
                 }`}
               >
                 {page}
-              </Button>
+              </button>
             ))
           )}
 
-          <Button
+          <button
             onClick={handleNextPage}
             className={`px-4 py-2 rounded-md text-white font-semibold transition-all ${
               currentPage === totalPages
@@ -231,11 +243,12 @@ export default function Classes() {
             disabled={currentPage === totalPages}
           >
             Sau
-          </Button>
+          </button>
         </div>
       </div>
+
       {/* Calendar Section */}
-      <div className="w-full md:w-1/4 bg-white bg-opacity-90 backdrop-blur-md shadow-lg border-t md:border-l border-gray-200 p-6 rounded-t-3xl md:rounded-l-3xl">
+      <div className="w-full md:w-1/4 bg-white bg-opacity-90 backdrop-blur-md border-t md:border-2 border-slate-200 p-6 rounded-t-lg md:rounded-l-lg">
         <h3 className="text-2xl font-extrabold mb-4 text-gray-800 text-center md:text-left">
           Lịch cá nhân
         </h3>
