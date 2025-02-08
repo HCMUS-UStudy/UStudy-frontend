@@ -20,5 +20,5 @@ export const getAvailableRooms = async (
       limit: 10,
     },
   });
-  return response.data.data.content;
+  return response;
 };

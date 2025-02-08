@@ -29,6 +29,7 @@ export default function GradeSelector() {
     setNewClass((currentClass) => ({
       ...currentClass,
       gradeId: e.target.value,
+      courseId: "",
     }));
     context.nextStep();
   };

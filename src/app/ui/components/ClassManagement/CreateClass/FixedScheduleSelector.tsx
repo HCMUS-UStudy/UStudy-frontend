@@ -96,7 +96,7 @@ export default function FixedScheduleSelector() {
               </label>
             ))}
           </div>
-          <div className="flex gap-5 mt-5">
+          <div className="flex gap-5 mt-5 text-sm">
             <div className="flex gap-2 items-center">
               <label
                 htmlFor="startTime"

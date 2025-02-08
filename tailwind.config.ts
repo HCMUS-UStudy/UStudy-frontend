@@ -69,10 +69,24 @@ const config: Config = {
             transform: "rotate(0deg)",
           },
         },
+        color_change: {
+          "0%": {
+            color: "#BFDBFE", // blue 200
+          },
+          "50%": {
+            color: "#3B82F6", // blue 500
+          },
+          "100%": {
+            color: "#BFDBFE",
+          },
+        },
       },
       animation: {
         "scale-effect": "scale 1s linear infinite",
         "wiggle-effect": "wiggle 1.5s linear infinite",
+        "color-change-1": "color_change 1s linear 0s infinite",
+        "color-change-2": "color_change 1s linear 0.2s infinite",
+        "color-change-3": "color_change 1s linear 0.4s infinite",
       },
     },
   },

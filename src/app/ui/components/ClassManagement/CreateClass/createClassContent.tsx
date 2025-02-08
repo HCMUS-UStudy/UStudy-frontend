@@ -15,6 +15,8 @@ type CreateClassType = {
   classTimes: TimeItem[];
   startDate: string;
   endDate: string;
+  roomId: string;
+  description: string;
 };
 
 interface CreateClassContextType {
@@ -44,6 +46,8 @@ export default function CreateClassContent() {
     classTimes: [],
     startDate: "",
     endDate: "",
+    roomId: "",
+    description: "",
   });
   return (
     <CreateClassContext.Provider

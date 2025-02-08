@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSlider } from "../../slider";
+import { useCreateClassContext } from "./createClassContent";
 
 export default function ClassDescription() {
   const context = useSlider();
+  const [description, setDescription] = useState<string>("");
+  const { setNewClass } = useCreateClassContext();
+  const handleNextStep = () => {
+    setNewClass((currentClass) => ({
+      ...currentClass,
+      description,
+    }));
+    context.nextStep();
+  };
   return (
     <div className="flex flex-col">
       <h1 className="text-center font-medium text-lg">Mô tả về lớp học</h1>
@@ -13,11 +23,13 @@ export default function ClassDescription() {
             id="classDescription"
             placeholder="Nhập mô tả về lớp học..."
             className="border-2 border-slate-200 p-2.5 w-full outline-none rounded max-h-[200px] h-[200px] overflow-y-auto"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
         <div className="flex flex-col gap-2 px-3">
           <button
-            onClick={context.nextStep}
+            onClick={handleNextStep}
             type="button"
             className="px-6 py-3 bg-blue-600 hover:bg-blue-800 transition-colors text-white text-sm rounded"
           >
