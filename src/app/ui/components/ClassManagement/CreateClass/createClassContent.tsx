@@ -8,13 +8,17 @@ import FixedScheduleSelector from "./FixedScheduleSelector";
 import FlexibleScheduleSelector from "./FlexibleScheduleSelector";
 import RoomSelector from "./RoomSelector";
 import ClassDescription from "./ClassDescription";
+import ClassConfirmation from "./ClassConfirmation";
 
 type CreateClassType = {
+  name: string;
   gradeId: string;
   courseId: string;
   classTimes: TimeItem[];
   startDate: string;
   endDate: string;
+  roomId: string;
+  description: string;
 };
 
 interface CreateClassContextType {
@@ -39,11 +43,14 @@ export const useCreateClassContext = () => {
 export default function CreateClassContent() {
   const [isFixedSchedule, setFixedSchedule] = useState<boolean>(true);
   const [newClass, setNewClass] = useState<CreateClassType>({
+    name: "",
     gradeId: "",
     courseId: "",
     classTimes: [],
     startDate: "",
     endDate: "",
+    roomId: "",
+    description: "",
   });
   return (
     <CreateClassContext.Provider
@@ -71,6 +78,9 @@ export default function CreateClassContent() {
         </SliderPage>
         <SliderPage>
           <ClassDescription />
+        </SliderPage>
+        <SliderPage>
+          <ClassConfirmation />
         </SliderPage>
       </Slider>
     </CreateClassContext.Provider>

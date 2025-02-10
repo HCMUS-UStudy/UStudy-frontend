@@ -68,22 +68,35 @@ const config: Config = {
             'transform-origin': 'bottom right',
             transform: 'rotate(15deg)'
           },
-          '100%': {
-            'transform-origin': 'bottom',
-            transform: 'rotate(0deg)'
-          }
-        }
-       
+          "100%": {
+            "transform-origin": "bottom",
+            transform: "rotate(0deg)",
+          },
+        },
+        color_change: {
+          "0%": {
+            color: "#BFDBFE", // blue 200
+          },
+          "50%": {
+            color: "#3B82F6", // blue 500
+          },
+          "100%": {
+            color: "#BFDBFE",
+          },
+        },
       },
       animation: {
-        'scale-effect': 'scale 1s linear infinite',
-        'wiggle-effect': 'wiggle 1.5s linear infinite',
+        "scale-effect": "scale 1s linear infinite",
+        "wiggle-effect": "wiggle 1.5s linear infinite",
+        "color-change-1": "color_change 1s linear 0s infinite",
+        "color-change-2": "color_change 1s linear 0.2s infinite",
+        "color-change-3": "color_change 1s linear 0.4s infinite",
         fall_1: 'fall 2.5s linear 0s infinite',
         fall_2: 'fall 3s linear 1s infinite',
         fall_3: 'fall 2.5s linear 2s infinite',
         fall_4: 'fall 3s linear 1.5s infinite',
         fall_5: 'fall 3s linear 2.5s infinite',
-      }
+      },
     },
   },
   plugins: [],

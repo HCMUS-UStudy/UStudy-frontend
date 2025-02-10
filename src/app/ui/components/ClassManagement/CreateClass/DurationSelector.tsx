@@ -32,7 +32,7 @@ export default function DurationSelector() {
       return;
     }
     const startDateObj = new Date(startDate);
-    console.log(startDateObj);
+    // console.log(startDateObj);
     const endDateObj = new Date(startDateObj);
     switch (unit) {
       case "week":
