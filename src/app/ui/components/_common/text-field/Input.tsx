@@ -127,7 +127,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             // id={inputId}
             type={showPassword ? "text" : type}
             className={cn(
-              "peer w-full bg-transparent disabled:cursor-not-allowed file:border-0 file:bg-transparent file:text-sm file:font-medium outline-none placeholder-control-placeholder",
+              "peer w-full bg-transparent text-gray-700 disabled:cursor-not-allowed file:border-0 file:bg-transparent file:text-sm file:font-medium outline-none placeholder-control-placeholder",
               {
                 "focus:placeholder-transparent focus:transition-colors focus:duration-200":
                   label,
@@ -173,9 +173,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className="pl-3"
             >
               {showPassword ? (
-                <HiEyeOff className="text-gray-600" />
+                <HiEyeOff className="text-gray-700" />
               ) : (
-                <HiEye className="text-gray-600" />
+                <HiEye className="text-gray-700" />
               )}
             </button>
           )}
