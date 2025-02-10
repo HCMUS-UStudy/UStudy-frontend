@@ -93,121 +93,93 @@ export default function Login() {
   return (
     <>
       <ToastContainer />
-      <Head>
-        <link rel="preload" href="/bgLogin.jpg" as="image" />
-      </Head>
-      <main
-        className="h-screen flex items-center justify-center p-4 md:p-10"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(91, 168, 160, 0.9), rgba(203, 229, 174, 0.8))",
-        }}
-      >
-        <div
-          className="
-          grid w-full max-w-5xl grid-cols-1 md:grid-cols-2 
-          bg-white rounded-[30px] shadow-lg overflow-hidden"
-        >
-          {/* Login Form Section */}
-          <div className="bg-[#D5E9F6] text-[#1E1E1E] flex items-center justify-center flex-col p-14 relative">
-            {/* Back to Home Icon */}
-            <Link
-              href="/"
-              className="absolute top-8 left-8 text-gray-600 hover:text-indigo-600"
-            >
-              <HiHome size={24} />
-            </Link>
-
-            <div className="mt-4 mb-10 text-center">
-              <Logo />
-              <p className="mt-2 text-sm text-gray-600">
-                Chào mừng đến với hệ thống quản lý học tập
-              </p>
-            </div>
-
-            <form action={action} className="w-full max-w-xs">
-              {/* Floating Label for Email */}
+      <div className="flex items-center justify-center h-screen overflow-hidden">
+        <div className="flex flex-col items-center justify-center w-4/5 h-full bg-[#d5e9e1]">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={280}
+            height={280}
+          />
+          <h1 className="text-2xl font-bold text-[#273526]">Học tập toàn diện, Vươn tầm tri thức</h1>
+        </div>
+        <div className="flex relative items-center h-full justify-center w-full bg-[#F6F5F5]">
+          <Image className='absolute animate-fall_1 -top-[100px] opacity-50 left-[0%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
+          <Image className='absolute animate-fall_2 -top-[100px] opacity-50 left-[22%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
+          <Image className='absolute animate-fall_3 -top-[100px] opacity-50 left-[44%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
+          <Image className='absolute animate-fall_4 -top-[100px] opacity-50 left-[66%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
+          <Image className='absolute animate-fall_5 -top-[100px] opacity-50 left-[90%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
+      
+          <form action={action} className="bg-white py-16 px-16 rounded-3xl shadow-lg z-[100]">
+            <div className="text-[#F48C06] text-3xl font-bold flex justify-center">Đăng nhập</div>
+            <div className="mt-6 mb-4 w-[350px]">
+              {/* <Label className="text-[13px] ml-2" htmlFor="username">Mã người dùng</Label> */}
               <Input
-                type="text"
+                className="text-[14px]"
                 name="genID"
                 value={genId}
+                type="text"
+                placeholder="Nhập mã người dùng"
+                label="Mã người dùng"
                 onChange={(e) => {
                   setShowError(false);
                   setGenId(e.target.value);
                 }}
-                placeholder="Nhập mã người dùng"
-                label="Mã người dùng"
                 isError={showError}
                 errorMsg={
                   (state?.errors?.genID && state?.errors?.genID[0]) ||
                   loginError
                 }
-                customStyle={{ labelBg: "#D5E9F6" }}
               />
-
-              {/* Floating Label for Password */}
-              <div className="mt-6">
-                <Input
-                  type="password"
-                  value={password}
-                  name="password"
-                  onChange={(e) => {
-                    setShowError(false);
-                    setPassword(e.target.value);
-                  }}
-                  placeholder="Nhập mật khẩu"
-                  label="Mật khẩu"
-                  isError={showError}
-                  errorMsg={
-                    (state?.errors?.password && state?.errors?.password[0]) ||
-                    loginError
-                  }
-                  customStyle={{ labelBg: "#D5E9F6" }}
-                />
+            </div>
+            <div>
+              {/* <Label className="text-[13px] ml-2" htmlFor="password">Mật khẩu</Label> */}
+              <Input
+                className="text-[14px]"
+                type="password"
+                value={password}
+                name="password"
+                onChange={(e) => {
+                  setShowError(false);
+                  setPassword(e.target.value);
+                }}
+                placeholder="Nhập mật khẩu"
+                label="Mật khẩu"
+                isError={showError}
+                errorMsg={
+                  (state?.errors?.password && state?.errors?.password[0]) ||
+                  loginError
+                }
+              />
+            </div>
+            <div className="flex w-full justify-between mt-4 px-1">
+              <div className="flex items-center justify-center">
+                <input type="checkbox" id="rememberMe" className="mr-1" />
+                <div className="text-[13px] text-gray-600">Ghi nhớ đăng nhập</div>
               </div>
-
-              <Button
-                isPending={isPending || isLoading}
-                disabled={isPending || isLoading}
-                type="submit"
-                className={clsx(
-                  {
-                    "hover:scale-105": !isPending,
-                  },
-                  "mt-6 w-full",
-                )}
-              >
-                Đăng nhập
-              </Button>
-
-              {/* Forgot Password Link */}
-              <div className="flex justify-end w-full mt-6 mb-2">
-                <p className="text-[13px] text-gray-600">
-                  <a href="/forgot-password" className="hover:underline">
-                    Quên mật khẩu?
-                  </a>
-                </p>
+              <div className="flex">
+                <Link href="/forgot-password" className="text-[13px] text-gray-600 hover:underline">
+                  Quên mật khẩu?
+                </Link>
               </div>
-            </form>
-
-            {/* <p className="mt-6 text-xs text-gray-600">
-              &copy; 2024 All rights reserved
-            </p> */}
-          </div>
-
-          {/* Image Section */}
-          <div className="relative hidden md:flex items-center justify-center bg-cover">
-            <Image
-              className="object-cover w-full h-full"
-              fill
-              src="/bgLogin.jpg"
-              alt="Background Image"
-              sizes="(max-width: 640px) 100vw, (min-width: 641px) 50vw"
-              priority
-            />
-          </div>
+            </div>
+            <Button
+              // className="flex w-full justify-center bg-[#AEDDCE] text-sm text-black font-semibold py-[12px] 
+              //           rounded-lg shadow-md mt-6 hover:bg-[#9ad7c3] transition duration-200 ease-in-out" 
+              className="mt-6"
+              isPending={isPending || isLoading}
+              disabled={isPending || isLoading}
+              type="submit"
+            >
+              Đăng nhập
+            </Button>
+            
+            {/* <div className="flex w-full justify-center mt-5">
+              <p className="text-[13px] text-gray-600">Bạn chưa có tài khoản? <Link href="/register" className="hover:underline">Đăng ký</Link></p>
+            </div> */}
+          </form>
         </div>
-      </main>
+      </div>
     </>
   );
 }

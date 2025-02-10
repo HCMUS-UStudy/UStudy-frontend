@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { roboto } from "@/app/ui/fonts";
+import { varelaRound } from "@/app/ui/fonts";
 import Providers from "./store/Provider";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.className} antialiased bg-background`}>
+      <body className={`${varelaRound.className} antialiased bg-background`}>
         <Providers>{children}</Providers>
       </body>
     </html>
