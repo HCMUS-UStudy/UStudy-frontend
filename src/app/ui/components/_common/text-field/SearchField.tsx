@@ -4,6 +4,7 @@ import * as React from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { cn } from "@/app/lib/utils";
 import { IoSearchOutline } from "react-icons/io5";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface SearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
@@ -32,9 +33,20 @@ const SearchField = ({
   onSearch,
   ...props
 }: SearchProps): React.JSX.Element => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const handleSearch = useDebouncedCallback((term: string) => {
     onSearch?.(term);
-  }, 1000);
+    console.log(term);
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("query", term);
+    } else {
+      params.delete("query");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 500);
   return (
     <div
       className={cn(
