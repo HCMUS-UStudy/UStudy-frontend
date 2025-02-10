@@ -1,15 +1,24 @@
 import React from "react";
 import ChapterDataContent from "@/app/ui/components/admin/courses/ChapterDataContent";
 
-export default async function ChapterDocumentsPage({
-  params,
-}: {
-  params: Promise<{ id: string; gradeId: string; chapterId: string }>;
+export default async function ChapterDocumentsPage(props: {
+  params?: Promise<{
+    id?: string;
+    gradeId?: string;
+    chapterId?: string;
+  }>;
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
 }) {
-  const resolvedParams = await params; // Unwrap the promise
-  const courseId = resolvedParams.id;
-  const gradeId = resolvedParams.gradeId;
-  const chapterId = resolvedParams.chapterId;
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const query = searchParams?.query || "";
+  const courseId = params?.id || "";
+  const gradeId = params?.gradeId || "";
+  const chapterId = params?.chapterId || "";
 
   if (!courseId || !gradeId || !chapterId) {
     return (
@@ -24,6 +33,7 @@ export default async function ChapterDocumentsPage({
       courseId={courseId}
       gradeId={gradeId}
       chapterId={chapterId}
+      query={query}
     />
   );
 }
