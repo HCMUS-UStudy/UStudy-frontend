@@ -25,7 +25,7 @@ export default function CreateClass() {
         isOpen={isOpenModal}
         onClose={() => setIsOpenModal(false)}
         modalName="Tạo lớp học"
-        className="w-[65vw] max-h-[58vh] p-6"
+        className="w-[65vw] h-[62vh] p-6"
       >
         <div className="h-full">
           <h1 className="text-center font-bold text-lg mt-3">
