@@ -6,7 +6,6 @@ import { PiHandWavingThin } from "react-icons/pi";
 import { IoMailOutline, IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import "../../styles/header.css";
-import Swal from "sweetalert2";
 
 const Header: React.FC = () => {
   const { toggleCollapse } = useSideBarToggle();
@@ -27,16 +26,16 @@ const Header: React.FC = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("creator");
-    localStorage.removeItem("userData");
+    localStorage.removeItem("userInfo");
 
     // Hiển thị thông báo thành công
-    Swal.fire({
-      icon: "success",
-      title: "Logout Successful",
-      text: "You have been logged out successfully.",
-      timer: 8000,
-      showConfirmButton: false,
-    });
+    // Swal.fire({
+    //   icon: "success",
+    //   title: "Logout Successful",
+    //   text: "You have been logged out successfully.",
+    //   timer: 8000,
+    //   showConfirmButton: false,
+    // });
 
     // Chuyển hướng người dùng về trang đăng nhập
     window.location.href = "/login";

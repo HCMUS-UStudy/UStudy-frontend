@@ -2,19 +2,15 @@
 
 import Link from "next/link";
 import React, { useActionState, useEffect, useState } from "react";
-import Head from "next/head";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
-import { HiHome } from "react-icons/hi";
 import { Button } from "@/app/ui/components/_common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
-import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { CustomError } from "@/app/types/type";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import Logo from "@/app/ui/components/_common/Logo";
 import { userLogin } from "@/app/lib/services/auth";
 
 export default function Login() {
@@ -44,15 +40,15 @@ export default function Login() {
         setUserInfo(JSON.stringify(response.data.user));
 
         const role = response.data.user.role;
+        toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
+          position: "bottom-right",
+          autoClose: 5000,
+          closeOnClick: false,
+          pauseOnHover: false,
+        });
         switch (role) {
           case "CLERK":
             router.push("/clerk/dashboard");
-            toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
-              position: "bottom-right",
-              autoClose: 5000,
-              closeOnClick: false,
-              pauseOnHover: false,
-            });
             break;
           case "TEACHER":
             router.push("/teacher/classes");
@@ -94,24 +90,56 @@ export default function Login() {
     <>
       <ToastContainer />
       <div className="flex items-center justify-center h-screen overflow-hidden">
-        <div className="flex flex-col items-center justify-center w-4/5 h-full bg-[#d5e9e1]">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={280}
-            height={280}
-          />
-          <h1 className="text-2xl font-bold text-[#273526]">Học tập toàn diện, Vươn tầm tri thức</h1>
+        <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
+          <Image src="/logo.png" alt="Logo" width={280} height={280} />
+          <h1 className="text-2xl font-bold text-[#273526]">
+            Học tập toàn diện, Vươn tầm tri thức
+          </h1>
         </div>
-        <div className="flex relative items-center h-full justify-center w-full bg-[#F6F5F5]">
-          <Image className='absolute animate-fall_1 -top-[100px] opacity-50 left-[0%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
-          <Image className='absolute animate-fall_2 -top-[100px] opacity-50 left-[22%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
-          <Image className='absolute animate-fall_3 -top-[100px] opacity-50 left-[44%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
-          <Image className='absolute animate-fall_4 -top-[100px] opacity-50 left-[66%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
-          <Image className='absolute animate-fall_5 -top-[100px] opacity-50 left-[90%]' src='/Intersect.png' alt="Intersect" width={100} height={100} /> 
-      
-          <form action={action} className="bg-white py-16 px-16 rounded-3xl shadow-lg z-[100]">
-            <div className="text-[#F48C06] text-3xl font-bold flex justify-center">Đăng nhập</div>
+        <div className="flex relative items-center h-full justify-center w-full bg-background">
+          <Image
+            className="absolute animate-fall_1 -top-[100px] opacity-50 left-[0%]"
+            src="/Intersect.png"
+            alt="Intersect"
+            width={100}
+            height={100}
+          />
+          <Image
+            className="absolute animate-fall_2 -top-[100px] opacity-50 left-[22%]"
+            src="/Intersect.png"
+            alt="Intersect"
+            width={100}
+            height={100}
+          />
+          <Image
+            className="absolute animate-fall_3 -top-[100px] opacity-50 left-[44%]"
+            src="/Intersect.png"
+            alt="Intersect"
+            width={100}
+            height={100}
+          />
+          <Image
+            className="absolute animate-fall_4 -top-[100px] opacity-50 left-[66%]"
+            src="/Intersect.png"
+            alt="Intersect"
+            width={100}
+            height={100}
+          />
+          <Image
+            className="absolute animate-fall_5 -top-[100px] opacity-50 left-[90%]"
+            src="/Intersect.png"
+            alt="Intersect"
+            width={100}
+            height={100}
+          />
+
+          <form
+            action={action}
+            className="bg-white py-18 px-16 rounded-3xl shadow-lg z-[100]"
+          >
+            <div className="text-[#F48C06] text-3xl font-bold flex justify-center">
+              Đăng nhập
+            </div>
             <div className="mt-6 mb-4 w-[350px]">
               {/* <Label className="text-[13px] ml-2" htmlFor="username">Mã người dùng</Label> */}
               <Input
@@ -155,25 +183,30 @@ export default function Login() {
             <div className="flex w-full justify-between mt-4 px-1">
               <div className="flex items-center justify-center">
                 <input type="checkbox" id="rememberMe" className="mr-1" />
-                <div className="text-[13px] text-gray-600">Ghi nhớ đăng nhập</div>
+                <div className="text-[13px] text-gray-600">
+                  Ghi nhớ đăng nhập
+                </div>
               </div>
               <div className="flex">
-                <Link href="/forgot-password" className="text-[13px] text-gray-600 hover:underline">
+                <Link
+                  href="/forgot-password"
+                  className="text-[13px] text-gray-600 hover:underline"
+                >
                   Quên mật khẩu?
                 </Link>
               </div>
             </div>
             <Button
-              // className="flex w-full justify-center bg-[#AEDDCE] text-sm text-black font-semibold py-[12px] 
-              //           rounded-lg shadow-md mt-6 hover:bg-[#9ad7c3] transition duration-200 ease-in-out" 
-              className="mt-6"
+              // className="flex w-full justify-center bg-[#AEDDCE] text-sm text-black font-semibold py-[12px]
+              //           rounded-lg shadow-md mt-6 hover:bg-[#9ad7c3] transition duration-200 ease-in-out"
+              className="mt-6 w-full"
               isPending={isPending || isLoading}
               disabled={isPending || isLoading}
               type="submit"
             >
               Đăng nhập
             </Button>
-            
+
             {/* <div className="flex w-full justify-center mt-5">
               <p className="text-[13px] text-gray-600">Bạn chưa có tài khoản? <Link href="/register" className="hover:underline">Đăng ký</Link></p>
             </div> */}
