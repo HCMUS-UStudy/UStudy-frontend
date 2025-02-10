@@ -8,17 +8,19 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 import { MaterialItem } from "@/app/types/type";
 import { getMaterialsByChapterId } from "@/app/lib/services/material";
 import Loading from "@/app/ui/components/_common/Loading";
-import SearchField from "../../_common/text-field/SearchField";
-import { Select, SelectItem } from "../../_common/Select";
 
 interface DocumentGridProps {
   courseId: string;
   chapterId: string;
+  searchQuery: string;
 }
 
-const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId }) => {
+const DocumentGrid: React.FC<DocumentGridProps> = ({
+  searchQuery,
+  courseId,
+  chapterId,
+}) => {
   const [documents, setDocuments] = useState<MaterialItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -92,36 +94,8 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ courseId, chapterId }) => {
     fetchMaterials();
   }, [chapterId, currentPage, searchQuery]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value); // Update search query
-    setCurrentPage(1); // Reset to the first page when search query changes
-  };
-
   return (
     <div>
-      {/* Search and Filter Section */}
-      <div className="flex justify-end items-center space-x-4 mb-6">
-        <div className="flex items-center space-x-4">
-          <SearchField
-            className="w-[200px]"
-            placeholder="Tìm kiếm theo tên tài liệu..."
-            value={searchQuery} // Bind the value to searchQuery state
-            onChange={handleSearchChange} // Handle input changes
-          />
-          <Select className="w-[200px]" defaultLabel="Tất cả tài liệu">
-            <SelectItem value="">Tất cả tài liệu</SelectItem>
-            <SelectItem value="chapter-1">Tài liệu DOCX</SelectItem>
-            <SelectItem value="chapter-2">Tài liệu PDF</SelectItem>
-          </Select>
-        </div>
-      </div>
-
-      <div className="flex justify-end space-x-4 mb-4">
-        <Button type="button" className="pl-6 pr-6">
-          Thêm tài liệu
-        </Button>
-      </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {loading ? (
           <Loading text="Loading..." />
