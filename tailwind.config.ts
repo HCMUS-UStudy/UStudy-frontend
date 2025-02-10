@@ -9,8 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#2563eb", // blue-600
-        "primary-dark": "#1e40af", // blue-800
+        // primary: "#2563eb", // blue-600
+        primary: "#BEE5D1",
+        // "primary-dark": "#1e40af", // blue-800
+        "primary-dark": "#95BFA9",
 
         neutral: "#d1d5db", // gray-300
 
@@ -21,8 +23,8 @@ const config: Config = {
         "disabled-dark": "#9ca3af", // gray-400
         "disabled-light": "#d1d5db", // gray-300
 
-        "button-primary": "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
-        "button-primary-dark": "#1e40af", // blue-800: #1e40af
+        "button-primary": "#BEE5D1", // sky-600: #2563eb, blue-600: #2563eb
+        "button-primary-dark": "#95BFA9", // blue-800: #1e40af
 
         "highlight-text": "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
         "primary-text": "var(--color-text-primary)",
@@ -32,7 +34,7 @@ const config: Config = {
         "control-border": "#9ca3af", // gray-400
         "control-hover": "#bfdbfe", // blue-200
         "control-placeholder": "#4b5563", // gray-600
-        "control-ring": "#3b82f6", // blue-500
+        "control-ring": "#BEE5D1",
 
         success: "#22c55e", // green-500
         error: "#dc2626",

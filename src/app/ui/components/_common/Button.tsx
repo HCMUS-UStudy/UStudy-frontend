@@ -60,7 +60,7 @@ const Button: React.FC<ButtonProps> = ({
         {
           "cursor-progress": isPending,
           "cursor-pointer": !isPending,
-          "relative group bg-gradient-to-tr from-button-primary-dark via-button-primary to-button-primary-dark bg-[length:200%] bg-[0%_100%] hover:bg-[100%_0%] transition-all duration-200 text-white disabled:from-disabled-dark disabled:to-disabled-dark disabled:text-disabled-light":
+          "relative group bg-[#AEDDCE] hover:bg-[#9ad7c3] transition-all duration-200 text-black disabled:from-disabled-dark disabled:to-disabled-dark disabled:text-disabled-light":
             variant === "primary",
           // "flex items-center justify-center transition duration-200 ease-in-out text-gray-400 hover:text-gray-600":
           "transition duration-200 ease-in-out text-button-primary hover:bg-button-primary/10 disabled:text-disabled-dark disabled:hover:bg-transparent":
@@ -68,7 +68,7 @@ const Button: React.FC<ButtonProps> = ({
           "tracking-widest hover:shadow-lg border-[1.5px] border-button-primary bg-transparent hover:bg-button-primary/10 text-button-primary hover:shadow-button-primary/20 transition-all duration-200 disabled:border-disabled-dark disabled:text-disabled-dark disabled:hover:bg-transparent disabled:hover:shadow-none":
             variant === "outlined",
         },
-        "flex items-center justify-center w-fit font-bold px-3 py-2 rounded-md disabled:cursor-auto",
+        "flex items-center justify-center w-full font-bold px-3 py-2 rounded-lg disabled:cursor-auto",
         className,
       )}
       {...props}

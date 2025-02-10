@@ -145,9 +145,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <Label
               className={cn({
-                "absolute left-4 -top-2.5 visible text-blue-500 text-xs px-1 transition-all duration-75 peer-placeholder-shown:top-2 peer-placeholder-shown:invisible peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:visible":
+                "absolute left-4 -top-2.5 visible text-[#649c7f] text-xs px-1 transition-all duration-75 peer-placeholder-shown:top-2 peer-placeholder-shown:invisible peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:visible":
                   !alwaysShowLabel,
-                "absolute left-4 -top-2.5 visible text-blue-500 text-xs px-1":
+                "absolute left-4 -top-2.5 visible text-[#649c7f] text-xs px-1":
                   alwaysShowLabel,
               })}
               // style={{
