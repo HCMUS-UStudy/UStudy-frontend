@@ -15,7 +15,6 @@ import {
 const DashboardPage: React.FC = () => {
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight my-4">Dashboard</h2>
       <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mr-6">
         <Card className="rounded-md shadow-md border border-gray-200 hover:shadow-lg transition-shadow p-3">
           <CardHeader className="flex flex-row items-center justify-between p-2 bg-gray-50 rounded-t-md">

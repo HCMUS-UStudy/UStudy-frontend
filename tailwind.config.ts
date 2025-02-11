@@ -28,6 +28,8 @@ const config: Config = {
         "button-primary": "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
         "button-primary-dark": "#1e40af", // blue-800: #1e40af
 
+        "hover-primary": "#AEDAC3",
+
         "highlight-text": "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
         "primary-text": "var(--color-text-primary)",
         "secondary-text": "#808080",

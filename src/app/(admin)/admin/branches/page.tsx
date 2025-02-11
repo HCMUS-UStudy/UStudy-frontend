@@ -149,8 +149,10 @@ const BranchPage: React.FC = () => {
   });
 
   useEffect(() => {
-    const filtered = branches.filter((branch) =>
-      branch.name && branch.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = branches.filter(
+      (branch) =>
+        branch.name &&
+        branch.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredBranches(filtered);
     setCurrentPage(1); // Reset to page 1 after filtering
@@ -266,7 +268,6 @@ const BranchPage: React.FC = () => {
       setTimeout(() => {
         window.location.href = "/admin/branches";
       }, 3000);
-
     } catch (error) {
       console.error("Failed to create branch:", error);
       setIsError(true);
@@ -317,9 +318,9 @@ const BranchPage: React.FC = () => {
         </div>
       )}
 
-      <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">
+      {/* <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">
         Quản lý chi nhánh
-      </h2>
+      </h2> */}
 
       <div className="flex items-center justify-between mt-8">
         {/*<form className="flex items-center w-full lg:w-[20rem]">
@@ -409,10 +410,11 @@ const BranchPage: React.FC = () => {
         <Button
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === 1
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
-            }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
+            currentPage === 1
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
           Trước
         </Button>
@@ -420,10 +422,11 @@ const BranchPage: React.FC = () => {
           <Button
             key={1}
             onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === 1
-              ? "bg-blue-700 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+            className={`px-4 py-2 rounded-md font-semibold transition-all ${
+              currentPage === 1
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
           >
             1
           </Button>
@@ -432,10 +435,11 @@ const BranchPage: React.FC = () => {
             <Button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all ${currentPage === page
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                currentPage === page
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
             >
               {page}
             </Button>
@@ -444,10 +448,11 @@ const BranchPage: React.FC = () => {
         <Button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${currentPage === totalPages
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
-            }`}
+          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
+            currentPage === totalPages
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
           Sau
         </Button>

@@ -20,8 +20,8 @@ export default function AdminLayout({
 
   return (
     <BreadcrumbProvider>
-      <div className="bg-background">
-        <Sidebar menuItems={SIDENAV_ITEMS_ADMIN} />
+      <div>
+        <Sidebar />
         <div>
           <Header />
           <PageWrapper>{children}</PageWrapper>
