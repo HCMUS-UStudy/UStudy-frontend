@@ -1,8 +1,19 @@
 import React from "react";
 
 import CourseTable from "@/app/ui/components/admin/courses/CourseTable";
+import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
 
-export default async function CoursePage() {
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+
+export default async function CoursePage(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
+
   //const [selectedName, setSelectedName] = useState("");
 
   //const [setCourses] = useState<[]>([]);
@@ -58,19 +69,30 @@ export default async function CoursePage() {
 
   return (
     <>
-      <div className="h-screen">
-        <h2 className="text-3xl font-bold tracking-tight my-4">
-          Quản lý tài liệu môn học
-        </h2>
-        <h2 className="text-xl tracking-tight mb-6">
-          Tìm tất cả tài liệu của nền tảng tại đây
-        </h2>
+      <h2 className="text-3xl font-bold tracking-tight my-4">
+        Quản lý tài liệu môn học
+      </h2>
+      <h2 className="text-xl tracking-tight mb-6">
+        Tìm tất cả tài liệu của nền tảng tại đây
+      </h2>
 
-        <div className="flex items-center justify-between mt-8 mr-6">
-          <h2 className="text-2xl font-bold">Tổng số môn học ({11})</h2>
+      <div className="flex items-center justify-between mt-8 mr-6">
+        <h2 className="text-2xl font-bold">Tổng số môn học ({11})</h2>
+      </div>
+
+      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
+        <SearchField
+          className="w-[200px]"
+          placeholder="Tìm theo tên môn học..."
+        />
+        <div className="flex items-center">
+          <AddCourseModal buttonLabel="Tạo môn học" />
         </div>
+      </div>
 
-        <CourseTable />
+      {/* Table Section */}
+      <div className="overflow-x-auto mt-6 max-h-[400px]">
+        <CourseTable searchQuery={query} />
       </div>
     </>
   );

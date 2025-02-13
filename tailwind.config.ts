@@ -11,14 +11,16 @@ const config: Config = {
       colors: {
         // primary: "#2563eb", // blue-600
         primary: "#BEE5D1",
+        "primary-light": "#d5e9e1",
         // "primary-dark": "#1e40af", // blue-800
         "primary-dark": "#95BFA9",
 
         neutral: "#d1d5db", // gray-300
 
         background: "#f1f5f9", // slate-50: #f8fafc, #f9fbfc, slate-100: #f1f5f9
+        // background: "#F6F5F5",
         hero: "#dbeafe", // #D5E9F6, blue-100: #dbeafe
-        foreground: "var(--foreground)",
+        foreground: "#feffff", // white
 
         "disabled-dark": "#9ca3af", // gray-400
         "disabled-light": "#d1d5db", // gray-300

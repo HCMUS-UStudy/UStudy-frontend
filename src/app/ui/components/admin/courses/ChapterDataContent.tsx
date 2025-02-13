@@ -7,17 +7,22 @@ import { getCourseById } from "@/app/lib/services/course";
 import { getGradeById } from "@/app/lib/services/grade";
 import { getChapterById } from "@/app/lib/services/chapter";
 import DocumentGrid from "./MaterialGrid";
+import SearchField from "../../_common/text-field/SearchField";
+import { Select, SelectItem } from "../../_common/Select";
+import { Button } from "../../_common/Button";
 
 interface ChapterDataContentProps {
   courseId: string;
   gradeId: string;
   chapterId: string;
+  query: string;
 }
 
 const ChapterDataContent: React.FC<ChapterDataContentProps> = ({
   courseId,
   gradeId,
   chapterId,
+  query,
 }) => {
   const { setDynamicBreadcrumbs } = useBreadcrumbContext();
   const {
@@ -60,7 +65,32 @@ const ChapterDataContent: React.FC<ChapterDataContentProps> = ({
         Tài liệu môn {courseName} - {gradeName} - {chapterName}
       </h1>
 
-      <DocumentGrid courseId={courseId} chapterId={chapterId} />
+      {/* Search and Filter Section */}
+      <div className="flex justify-end items-center space-x-4 mb-6">
+        <div className="flex items-center space-x-4">
+          <SearchField
+            className="w-[200px]"
+            placeholder="Tìm kiếm theo tên tài liệu..."
+          />
+          <Select className="w-[200px]" defaultLabel="Tất cả tài liệu">
+            <SelectItem value="">Tất cả tài liệu</SelectItem>
+            <SelectItem value="chapter-1">Tài liệu DOCX</SelectItem>
+            <SelectItem value="chapter-2">Tài liệu PDF</SelectItem>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-4 mb-4">
+        <Button type="button" className="pl-6 pr-6">
+          Thêm tài liệu
+        </Button>
+      </div>
+
+      <DocumentGrid
+        searchQuery={query}
+        courseId={courseId}
+        chapterId={chapterId}
+      />
     </div>
   );
 };

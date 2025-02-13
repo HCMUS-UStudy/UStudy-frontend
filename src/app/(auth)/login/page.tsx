@@ -40,15 +40,15 @@ export default function Login() {
         setUserInfo(JSON.stringify(response.data.user));
 
         const role = response.data.user.role;
+        toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
+          position: "bottom-right",
+          autoClose: 5000,
+          closeOnClick: false,
+          pauseOnHover: false,
+        });
         switch (role) {
           case "CLERK":
             router.push("/clerk/dashboard");
-            toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
-              position: "bottom-right",
-              autoClose: 5000,
-              closeOnClick: false,
-              pauseOnHover: false,
-            });
             break;
           case "TEACHER":
             router.push("/teacher/classes");
@@ -90,13 +90,13 @@ export default function Login() {
     <>
       <ToastContainer />
       <div className="flex items-center justify-center h-screen overflow-hidden">
-        <div className="flex flex-col items-center justify-center w-4/5 h-full bg-[#d5e9e1]">
+        <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <Image src="/logo.png" alt="Logo" width={280} height={280} />
           <h1 className="text-2xl font-bold text-[#273526]">
             Học tập toàn diện, Vươn tầm tri thức
           </h1>
         </div>
-        <div className="flex relative items-center h-full justify-center w-full bg-[#F6F5F5]">
+        <div className="flex relative items-center h-full justify-center w-full bg-background">
           <Image
             className="absolute animate-fall_1 -top-[100px] opacity-50 left-[0%]"
             src="/Intersect.png"
@@ -135,7 +135,7 @@ export default function Login() {
 
           <form
             action={action}
-            className="bg-white py-16 px-16 rounded-3xl shadow-lg z-[100]"
+            className="bg-white py-18 px-16 rounded-3xl shadow-lg z-[100]"
           >
             <div className="text-[#F48C06] text-3xl font-bold flex justify-center">
               Đăng nhập
@@ -199,7 +199,7 @@ export default function Login() {
             <Button
               // className="flex w-full justify-center bg-[#AEDDCE] text-sm text-black font-semibold py-[12px]
               //           rounded-lg shadow-md mt-6 hover:bg-[#9ad7c3] transition duration-200 ease-in-out"
-              className="mt-6"
+              className="mt-6 w-full"
               isPending={isPending || isLoading}
               disabled={isPending || isLoading}
               type="submit"

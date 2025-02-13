@@ -7,7 +7,6 @@ import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import BranchSelector from "./BranchSelector";
 import "../../styles/header.css";
-import Swal from "sweetalert2";
 import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
 import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
@@ -34,7 +33,6 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
-    console.log(userInfo);
     // Xóa token và các thông tin khác trong localStorage
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -42,13 +40,13 @@ const Header: React.FC = () => {
     localStorage.removeItem("userData");
 
     // Hiển thị thông báo thành công
-    Swal.fire({
-      icon: "success",
-      title: "Logout Successful",
-      text: "You have been logged out successfully.",
-      timer: 8000,
-      showConfirmButton: false,
-    });
+    // Swal.fire({
+    //   icon: "success",
+    //   title: "Logout Successful",
+    //   text: "You have been logged out successfully.",
+    //   timer: 8000,
+    //   showConfirmButton: false,
+    // });
 
     // Chuyển hướng người dùng về trang đăng nhập
     window.location.href = "/admin/login";
