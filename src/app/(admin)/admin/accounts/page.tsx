@@ -3,6 +3,8 @@ import AddAccountModal from "@/app/ui/components/admin/accounts/AddAccountModal"
 import AccountTable from "@/app/ui/components/admin/accounts/AccountTable";
 import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { FiFilter } from "react-icons/fi";
+import { HiAdjustments } from "react-icons/hi";
 
 export default async function AccountPage(props: {
   searchParams?: Promise<{
@@ -13,75 +15,37 @@ export default async function AccountPage(props: {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
 
-  // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   console.log("Search")
-  // };
-
-  // const handleSearchSubmit = () => {
-  //   console.log("Search query submitted:", searchQuery);
-  // };
-
-  // const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   console.log("Selected filter:", event.target.value);
-  // }
-
   return (
-    <>
-      <div className="h-screen">
-        <h2 className="text-3xl font-bold tracking-tight my-4">
-          Quản lý tài khoản người dùng
-        </h2>
-        <h2 className="text-xl tracking-tight mb-6">
-          Tìm tất cả người dùng của nền tảng tại đây
-        </h2>
-
-        <div className="flex items-center justify-between mt-8 mr-6">
-          <h2 className="text-2xl font-bold">Tổng số người dùng ({100})</h2>
-          {/* <form
-          onSubmit={handleSearchSubmit}
-          className="flex items-center space-x-4 w-full md:w-96 lg:w-[30rem]">
-          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
-            <input
-              type="text"
-              placeholder="Tìm kiếm người dùng..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300">
-              <FaSearch className="h-5 w-5" />
-            </button>
-          </div>
-          <select
-            onChange={handleFilterChange}
-            className="ml-4 border-2 border-gray-300 rounded-full px-4 py-2 shadow-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all">
-            <option value="">Lọc</option>
-            <option value="student">Học viên</option>
-            <option value="parents">Phụ huynh</option>
-            <option value="teacher">Giáo viên</option>
-            <option value="staff">Giáo vụ</option>
-          </select>
-        </form> */}
-        </div>
-
-        <div className="flex justify-between items-center space-x-4 mt-6">
-          <SearchField
-            className="w-[200px]"
-            placeholder="Tìm theo tên người dùng..."
-          />
-          <div className="flex items-center pr-6">
-            <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
-            <AddAccountModal buttonLabel="Tạo người dùng" />
-          </div>
-        </div>
-
-        {/* Table Section */}
-        <div className="overflow-x-auto mt-6 max-h-[400px] mr-6">
-          <AccountTable searchQuery={query} />
+    <div className="h-screen p-8">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
+        <div className="flex items-center space-x-2">
+          <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
+          <AddAccountModal buttonLabel="Tạo người dùng" />
         </div>
       </div>
-    </>
+
+      <div className="flex items-center space-x-4 mb-6">
+        <div className="relative flex-1">
+          <SearchField
+            className="w-full bg-green-50 border border-green-300 rounded-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-200"
+            placeholder="Tìm kiếm người dùng"
+          />
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center">
+            <span className="mr-2 text-gray-500">Lọc</span>
+            <FiFilter className="w-5 h-5 text-gray-500" />
+          </div>
+          <div className="flex items-center">
+            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
+          </div>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto mt-6 max-h-[400px]">
+        <AccountTable searchQuery={query} />
+      </div>
+    </div>
   );
 }

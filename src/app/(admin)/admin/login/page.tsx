@@ -36,6 +36,7 @@ export default function Login() {
       try {
         setIsLoading(true);
         const response = await adminLogin(genId, password);
+
         setTokens(response.data.access_token, response.data.refresh_token);
 
         localStorage.setItem("creator", response.data.user.name);

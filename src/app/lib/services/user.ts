@@ -11,11 +11,11 @@ export const getAllAccount = async (
   query: string,
   currentPage: number,
 ): Promise<AccountData> => {
-  const response = await axiosInstance.get("/user/clerk/get-list-user", {
+  const response = await axiosInstance.get("/user/list", {
     params: {
       page: currentPage,
       limit: 5,
-      role: "STUDENT",
+      role: "",
       filterNameOrGenId: query,
       classId: "",
     },
@@ -24,7 +24,7 @@ export const getAllAccount = async (
 };
 
 export const getAvailableTeacher = async (classId: string) => {
-  const response = await axiosInstance.get("/user/clerk/available-teachers", {
+  const response = await axiosInstance.get("/user/list-available-teachers", {
     params: {
       classId,
     },
