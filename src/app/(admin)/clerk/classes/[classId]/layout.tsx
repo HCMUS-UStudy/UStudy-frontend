@@ -26,8 +26,9 @@ export default function ClerkClassesLayout({
               "bg-[100%_0]":
                 paths === `/clerk/classes/${classId}/classManagement`,
             },
-            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`
-          )}>
+            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`,
+          )}
+        >
           Lớp học
           <FaChalkboardTeacher
             className={clsx(
@@ -35,7 +36,7 @@ export default function ClerkClassesLayout({
                 "bottom-1":
                   paths === `/clerk/classes/${classId}/classManagement`,
               },
-              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300"
+              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300",
             )}
           />
         </Link>
@@ -46,8 +47,9 @@ export default function ClerkClassesLayout({
               "bg-[100%_0]":
                 paths === `/clerk/classes/${classId}/userManagement`,
             },
-            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`
-          )}>
+            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`,
+          )}
+        >
           Thành viên
           <FaUser
             className={clsx(
@@ -55,7 +57,7 @@ export default function ClerkClassesLayout({
                 "bottom-2":
                   paths === `/clerk/classes/${classId}/userManagement`,
               },
-              "size-6 absolute right-5 -bottom-10 group-hover:bottom-2 transition-all duration-300"
+              "size-6 absolute right-5 -bottom-10 group-hover:bottom-2 transition-all duration-300",
             )}
           />
         </Link>
@@ -66,8 +68,9 @@ export default function ClerkClassesLayout({
               "bg-[100%_0]":
                 paths === `/clerk/classes/${classId}/coursesManagement`,
             },
-            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`
-          )}>
+            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`,
+          )}
+        >
           Tài liệu
           <IoFileTrayFull
             className={clsx(
@@ -75,7 +78,7 @@ export default function ClerkClassesLayout({
                 "bottom-1":
                   paths === `/clerk/classes/${classId}/coursesManagement`,
               },
-              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300"
+              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300",
             )}
           />
         </Link>
@@ -86,8 +89,9 @@ export default function ClerkClassesLayout({
               "bg-[100%_0]":
                 paths === `/clerk/classes/${classId}/gradeManagement`,
             },
-            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`
-          )}>
+            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`,
+          )}
+        >
           Điểm số
           <MdTextIncrease
             className={clsx(
@@ -95,7 +99,7 @@ export default function ClerkClassesLayout({
                 "bottom-1":
                   paths === `/clerk/classes/${classId}/gradeManagement`,
               },
-              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300"
+              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300",
             )}
           />
         </Link>
@@ -105,15 +109,16 @@ export default function ClerkClassesLayout({
             {
               "bg-[100%_0]": paths === `/clerk/classes/${classId}/forum`,
             },
-            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`
-          )}>
+            `w-[13vw] relative group bg-gradient-to-tr from-indigo-800 via-blue-600 to-indigo-800 bg-[length:100%_300%] bg-[100%_100%] hover:bg-[100%_0] transition-all duration-300 hover:cursor-pointer hover:scale-105 text-background font-bold text-center text-base tracking-wider py-5 rounded-lg`,
+          )}
+        >
           Trao đổi
           <IoChatboxEllipses
             className={clsx(
               {
                 "bottom-1": paths === `/clerk/classes/${classId}/forum`,
               },
-              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300"
+              "size-8 absolute right-5 -bottom-10 group-hover:bottom-1 transition-all duration-300",
             )}
           />
         </Link>
