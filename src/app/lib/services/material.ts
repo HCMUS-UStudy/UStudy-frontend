@@ -5,15 +5,12 @@ export const getMaterialsByChapterId = async (
   currentPage: number,
   chapterId: string,
 ) => {
-  const response = await axiosInstance.get(
-    `/material/all/get-materials/${chapterId}`,
-    {
-      params: {
-        page: currentPage,
-        limit: 5,
-        filter: query,
-      },
+  const response = await axiosInstance.get(`/material/list/${chapterId}`, {
+    params: {
+      page: currentPage,
+      limit: 5,
+      filter: query,
     },
-  );
+  });
   return response.data.data;
 };

@@ -6,7 +6,7 @@ export const getAllClasses = async (
   currentPage: number,
   limit: number,
 ): Promise<ClassData> => {
-  const response = await axiosInstance.get("/class/all/get-list-class", {
+  const response = await axiosInstance.get("/class/list", {
     params: {
       page: currentPage,
       limit: limit,
@@ -17,18 +17,18 @@ export const getAllClasses = async (
 };
 
 export const createNewClass = async (data: ClassSchema) => {
-  const response = await axiosInstance.post("/class/clerk/add", data);
+  const response = await axiosInstance.post("/class/create", data);
   // console.log(response);
   return response.data;
 };
 
 export const getClassById = async (classId: string) => {
-  const response = await axiosInstance.get(`/class/all/get-one/${classId}`);
+  const response = await axiosInstance.get(`/class/details/${classId}`);
   return response.data;
 };
 
 export const getClassesForTeacher = async () => {
-  const response = await axiosInstance.get("/class/all/get-list-class", {
+  const response = await axiosInstance.get("/class/list", {
     params: {
       page: 0,
       limit: 10,
@@ -40,7 +40,7 @@ export const getClassesForTeacher = async () => {
 
 export const addTeacherToClass = async (classId: string, teacherId: string) => {
   const response = await axiosInstance.post(
-    `/class/clerk/${classId}/add-teacher`,
+    `/class/assign-teacher/${classId}`,
     {},
     {
       params: {

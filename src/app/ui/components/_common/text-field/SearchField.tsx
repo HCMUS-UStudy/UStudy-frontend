@@ -50,7 +50,7 @@ const SearchField = ({
   return (
     <div
       className={cn(
-        "flex items-center w-full rounded-md focus-within:bg-white focus-within:outline-none focus-within:ring-2 focus-within:ring-control-ring focus-within:shadow-sm border-input border-gray-400 border",
+        "flex items-center w-full rounded-x1 focus-within:bg-white focus-within:outline-none focus-within:ring-2 focus-within:ring-control-ring focus-within:shadow-sm border-input border-gray-400 border",
         className,
       )}
     >
@@ -62,7 +62,7 @@ const SearchField = ({
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        className="w-full rounded-md px-3 py-2 text-sm text-ellipsis outline-none placeholder-gray-600 bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-x1 px-3 py-2 text-sm text-ellipsis outline-none placeholder-gray-600 bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
         {...props}
       />
     </div>
