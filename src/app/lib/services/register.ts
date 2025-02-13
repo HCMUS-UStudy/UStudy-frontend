@@ -5,7 +5,7 @@ export const getRegister = async (
   role: string,
   currentPage: number,
 ): Promise<RegisterAccountData> => {
-  const response = await axiosInstance.get("/register/clerk/waiting-register", {
+  const response = await axiosInstance.get("/register/list-waiting", {
     params: {
       page: currentPage,
       limit: 5,
@@ -17,7 +17,7 @@ export const getRegister = async (
 
 export const confirmRegister = async (userId: string) => {
   const response = await axiosInstance.put(
-    `/register/admin/confirm?registerId=${userId}`,
+    `/register/update/accept?registerId=${userId}`,
     {},
   );
   return response.data;
@@ -25,7 +25,7 @@ export const confirmRegister = async (userId: string) => {
 
 export const rejectRegister = async (userId: string) => {
   const response = await axiosInstance.put(
-    `/register/admin/reject?registerId=${userId}`,
+    `/register/update/reject?registerId=${userId}`,
     {},
   );
   return response.data;

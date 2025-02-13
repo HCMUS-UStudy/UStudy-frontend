@@ -13,7 +13,7 @@ export const getAvailableRooms = async (
     startDate: startDate,
     endDate: endDate,
   };
-  const response = await axiosInstance.post("/room/clerk/available", body, {
+  const response = await axiosInstance.post("/room/list-available", body, {
     params: {
       branchId: branchId,
       page: 0,
