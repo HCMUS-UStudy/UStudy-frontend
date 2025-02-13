@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
-import classNames from "classnames";
+// import classNames from "classnames";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import BranchSelector from "./BranchSelector";
 import "../../styles/header.css";
 import { User } from "@/app/types/type";
-import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
+// import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +17,7 @@ import {
 
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -52,14 +52,14 @@ const Header: React.FC = () => {
     window.location.href = "/admin/login";
   };
 
-  const renderTitle = (): React.ReactNode => {
-    if (pathname.startsWith("/clerk")) {
-      if (pathname.includes("classes-management")) {
-        return <div>Quản lý lớp học</div>;
-      }
-      return <div>Trang chủ lớp học</div>;
-    }
-  };
+  // const renderTitle = (): React.ReactNode => {
+  //   if (pathname.startsWith("/clerk")) {
+  //     if (pathname.includes("classes-management")) {
+  //       return <div>Quản lý lớp học</div>;
+  //     }
+  //     return <div>Trang chủ lớp học</div>;
+  //   }
+  // };
 
   return (
     // <div className="flex">
@@ -108,28 +108,33 @@ const Header: React.FC = () => {
     //     </div>
     //   </div>
     // </div>
-    <div className="flex ml-[230px] px-12 pt-8 pb-6 justify-between items-center bg-foreground">
-      <div className="text-xl">
+    <div className="h-header-height flex ml-from-sidebar px-14 justify-between items-center bg-foreground">
+      <div className="text-2xl font-bold">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.path === pathname)?.title}
       </div>
       <BranchSelector />
-      <div className="flex gap-8">
-        <div className="p-3 rounded-3xl bg-primary">
-          <IoNotificationsOutline size={22} />
+      <div className="flex gap-6 items-center">
+        <div className="p-3 rounded-3xl bg-primary cursor-pointer">
+          <IoNotificationsOutline size={24} />
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2">
+          <DropdownMenuTrigger className="flex items-center gap-3">
             {/* <FaUserCircle size={18} /> */}
             {userInfo?.avatar ? (
-              <img
+              <Image
                 src={userInfo.avatar}
                 alt="User Avatar"
-                className="w-11 h-11 rounded-full"
+                width={48}
+                height={60}
+                className="rounded-full w-12 h-12"
               />
             ) : (
-              <FaUserCircle size={35} />
+              <FaUserCircle size={40} className="rounded-full" />
             )}
-            <div> {userInfo?.name?.split(" ").slice(-2).join(" ")}</div>
+            <div className="text-[15px]">
+              {" "}
+              {userInfo?.name?.split(" ").slice(-2).join(" ")}
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={handleProfileClick}>

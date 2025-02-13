@@ -11,7 +11,7 @@ import { CustomError } from "@/app/types/type";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { userLogin } from "@/app/lib/services/auth";
+import { login } from "@/app/lib/services/auth";
 
 export default function Login() {
   const router = useRouter();
@@ -35,11 +35,14 @@ export default function Login() {
     const handleLogin = async () => {
       try {
         setIsLoading(true);
-        const response = await userLogin(genId, password);
+        const response = await login(genId, password, true);
+        if (response.data.user.role.defaultRoute === "ADMIN") {
+          throw new Error("Đăng nhập không hợp lệ");
+        }
         setTokens(response.data.access_token, response.data.refresh_token);
         setUserInfo(JSON.stringify(response.data.user));
 
-        const role = response.data.user.role;
+        const role = response.data.user.role.defaultRoute;
         toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
           position: "bottom-right",
           autoClose: 5000,
@@ -47,15 +50,15 @@ export default function Login() {
           pauseOnHover: false,
         });
         switch (role) {
-          case "CLERK":
-            router.push("/clerk/dashboard");
-            break;
           case "TEACHER":
             router.push("/teacher/classes");
             break;
           case "STUDENT":
             router.push("/student/home");
             break;
+          // case "PARENT":
+          //   router.push("/parent/home");
+          //   break;
           default:
             break;
         }

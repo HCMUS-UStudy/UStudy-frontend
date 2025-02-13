@@ -55,9 +55,6 @@ const BranchPage: React.FC = () => {
   // const [shifts, setShifts] = useState<Shift[]>([]);
   // const [editShift, setEditShift] = useState<Shift | null>({ id: "", name: "", day: "", time: "" });
 
-  const [message, setMessage] = useState<string | null>(null);
-  const [isError, setIsError] = useState(false);
-
   useEffect(() => {
     const fetchBranches = async () => {
       try {
@@ -262,17 +259,17 @@ const BranchPage: React.FC = () => {
         { ...response.data, rooms: parseInt(newBranch.rooms, 10) },
       ]);
 
-      setIsError(false);
-      setMessage("Thêm chi nhánh thành công!");
+      // setIsError(false);
+      // setMessage("Thêm chi nhánh thành công!");
 
       setTimeout(() => {
         window.location.href = "/admin/branches";
       }, 3000);
     } catch (error) {
       console.error("Failed to create branch:", error);
-      setIsError(true);
-      setMessage("Thêm chi nhánh thất bại. Vui lòng thử lại!");
-      setTimeout(() => setMessage(null), 3000);
+      // setIsError(true);
+      // setMessage("Thêm chi nhánh thất bại. Vui lòng thử lại!");
+      // setTimeout(() => setMessage(null), 3000);
     }
 
     setNewBranch({
@@ -297,32 +294,12 @@ const BranchPage: React.FC = () => {
   };
 
   return (
-    <>
-      {message && (
-        <div
-          style={{
-            position: "fixed",
-            top: "10px",
-            right: "10px",
-            backgroundColor: isError ? "#f44336" : "#4caf50", // Màu thay đổi tùy trạng thái
-            color: "white",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-            zIndex: 1000,
-            fontSize: "16px",
-            fontWeight: "bold",
-          }}
-        >
-          {message}
-        </div>
-      )}
+    <div className="px-2">
+      <div className="text-2xl font-semibold mb-4">
+        Tổng số chi nhánh ({filteredBranches.length})
+      </div>
 
-      {/* <h2 className="text-3xl font-bold tracking-tight mt-4 mb-1">
-        Quản lý chi nhánh
-      </h2> */}
-
-      <div className="flex items-center justify-between mt-8">
+      <div className="flex items-center justify-between">
         {/*<form className="flex items-center w-full lg:w-[20rem]">
           <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
             <input
@@ -465,7 +442,7 @@ const BranchPage: React.FC = () => {
             <h3 className="text-3xl font-semibold mb-6 text-center text-gray-800">
               Thêm chi nhánh mới
             </h3>
-            <form onSubmit={handleSubmitModal} className="space-y-6">
+            <form onSubmit={handleSubmitModal} className="flex flex-col gap-4">
               <Input
                 name="name"
                 placeholder="Tên chi nhánh"
@@ -501,17 +478,15 @@ const BranchPage: React.FC = () => {
                 onChange={handleModalInputChange}
                 required
               /> */}
-              <div className="flex justify-between mt-8">
+              <div className="flex justify-between mt-2">
                 <Button
                   type="button"
+                  className="bg-gray-200 hover:bg-gray-300"
                   onClick={handleCloseModal}
-                  className="bg-gray-300"
                 >
                   Hủy
                 </Button>
-                <Button type="submit" className="bg-indigo-600">
-                  Thêm
-                </Button>
+                <Button type="submit">Thêm</Button>
               </div>
             </form>
           </div>
@@ -659,7 +634,7 @@ const BranchPage: React.FC = () => {
           </tbody>
         </table>
       </div> */}
-    </>
+    </div>
   );
 };
 

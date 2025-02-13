@@ -85,7 +85,7 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="fixed transition-all duration-300 w-[230px] bg-foreground h-full">
+    <div className="fixed transition-all duration-300 w-sidebar-width bg-foreground h-full">
       <div className="flex items-center justify-center pt-12 pb-12">
         <Image src="/logo.png" alt="Logo" width={150} height={150} />
       </div>
@@ -102,7 +102,7 @@ const Sidebar = () => {
             onClick={() => router.push(item.path)}
           >
             <div className="w-6 h-6">{item.icon}</div>
-            <div className="text-[14px] font-[500]">{item.title}</div>
+            <div className="text-sm font-[500]">{item.title}</div>
           </div>
         ))}
       </div>
