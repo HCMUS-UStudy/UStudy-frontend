@@ -8,10 +8,10 @@ import { Button } from "@/app/ui/components/_common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
 import { CustomError } from "@/app/types/type";
-import { setTokens, setUserInfo } from "@/app/lib/storage";
+import { setTokens } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { adminLogin } from "@/app/lib/services/auth";
+import { login } from "@/app/lib/services/auth";
 
 export default function Login() {
   const router = useRouter();
@@ -35,8 +35,10 @@ export default function Login() {
     const handleLogin = async () => {
       try {
         setIsLoading(true);
-        const response = await adminLogin(genId, password);
-
+        const response = await login(genId, password, false);
+        if (response.data.user.role.defaultRoute !== "ADMIN") {
+          throw new Error("Đăng nhập không hợp lệ");
+        }
         setTokens(response.data.access_token, response.data.refresh_token);
 
         localStorage.setItem("creator", response.data.user.name);
@@ -83,7 +85,7 @@ export default function Login() {
       <div className="flex items-center justify-center h-screen overflow-hidden">
         <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <Image src="/logo.png" alt="Logo" width={280} height={280} />
-          <h1 className="text-2xl font-bold text-[#273526]">
+          <h1 className="text-2xl font-semibold text-[#273526]">
             Chào mừng đến với trang quản lý hệ thống
           </h1>
         </div>
@@ -174,14 +176,12 @@ export default function Login() {
             <div className="flex w-full justify-between mt-4 px-1">
               <div className="flex items-center justify-center">
                 <input type="checkbox" id="rememberMe" className="mr-1" />
-                <div className="text-[13px] text-gray-600">
-                  Ghi nhớ đăng nhập
-                </div>
+                <div className="text-sm text-gray-600">Ghi nhớ đăng nhập</div>
               </div>
               <div className="flex">
                 <Link
                   href="/forgot-password"
-                  className="text-[13px] text-gray-600 hover:underline"
+                  className="text-sm text-gray-600 hover:underline"
                 >
                   Quên mật khẩu?
                 </Link>
