@@ -28,6 +28,8 @@ const config: Config = {
         "button-primary": "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
         "button-primary-dark": "#1e40af", // blue-800: #1e40af
 
+        "hover-primary": "#9ED0B6",
+
         "highlight-text": "#1e40af", // sky-800: #1e40af, blue-800: #1e40af
         "primary-text": "var(--color-text-primary)",
         "secondary-text": "#808080",
@@ -98,6 +100,15 @@ const config: Config = {
         fall_3: "fall 2.5s linear 2s infinite",
         fall_4: "fall 3s linear 1.5s infinite",
         fall_5: "fall 3s linear 2.5s infinite",
+      },
+      height: {
+        "header-height": "90px",
+      },
+      width: {
+        "sidebar-width": "230px",
+      },
+      margin: {
+        "from-sidebar": "230px",
       },
     },
   },

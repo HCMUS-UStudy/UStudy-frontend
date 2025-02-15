@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { BranchRootState } from "@/app/store/store";
 import { setBranch, setBranches } from "../../../store/branch-slice";
 import { getAllBranches } from "@/app/lib/services/branch";
+import { TiArrowSortedDown } from "react-icons/ti";
 
 interface Branch {
   id: string;
@@ -69,26 +70,28 @@ const BranchSelector: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-[200px]" ref={dropdownRef}>
+    <div className="relative w-fit" ref={dropdownRef}>
       {branches.length > 0 ? (
         <div
           className="relative cursor-pointer rounded-[20px]"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div
-            className="p-2 border border-[#ccc] rounded-[12px] bg-[#f9f9f9]
-                         flex justify-between items-center relative"
-          >
+          <div className="px-4 py-3 rounded-[12px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-[15px] items-center">
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
-            <span className="absolute right-2 top-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-800 transform -translate-y-1/2"></span>
+            <TiArrowSortedDown className="text-black" />
           </div>
           {isOpen && (
-            <div className="absolute top-full left-0 w-full border border-gray-300 rounded-[4px] bg-white z-[1000] shadow-lg">
+            <div
+              className="absolute top-full mt-[2px] max-h-52 overflow-y-auto left-0 w-full
+                  border border-gray-300 rounded-[10px] bg-white z-[1000] shadow-xl"
+            >
               {branches.map((branch) => (
                 <div
                   key={branch.id}
-                  className="p-2 cursor-pointer hover:bg-[#f1f1f1]"
+                  className={`px-4 py-2 cursor-pointer hover:bg-primary-light ${
+                    branch.id === selectedBranchId ? "bg-primary-light" : ""
+                  }`}
                   onClick={() => handleBranchChange(branch.id)}
                 >
                   {branch.name}

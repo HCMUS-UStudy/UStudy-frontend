@@ -7,7 +7,7 @@ export const getListChapter = async (
   limit: number,
   filter: string = "",
 ) => {
-  const response = await axiosInstance.get("/chapter/clerk/get-list-chapter", {
+  const response = await axiosInstance.get("/chapter/list-chapter", {
     params: {
       courseId,
       gradeId,
@@ -25,7 +25,7 @@ export const getChapterByCourse_GradeId = async (
   courseId: string,
   gradeId: string,
 ) => {
-  const response = await axiosInstance.get("/chapter/clerk/get-list-chapter", {
+  const response = await axiosInstance.get("/chapter/list-chapter", {
     params: {
       page: currentPage,
       limit: 5,
@@ -38,7 +38,7 @@ export const getChapterByCourse_GradeId = async (
 };
 
 export const getChapterById = async (chapterId: string) => {
-  const response = await axiosInstance.get(`/chapter/clerk/get-chapter-by-id`, {
+  const response = await axiosInstance.get(`/chapter/details`, {
     params: {
       id: chapterId,
     },

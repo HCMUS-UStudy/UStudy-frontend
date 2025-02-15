@@ -60,7 +60,7 @@ const Button: React.FC<ButtonProps> = ({
         {
           "cursor-progress": isPending,
           "cursor-pointer": !isPending,
-          "relative group bg-primary hover:bg-primary-dark transition-all duration-200 text-black disabled:from-disabled-dark disabled:to-disabled-dark disabled:text-disabled-light":
+          "relative group bg-primary hover:bg-hover-primary transition-all duration-200 text-black disabled:from-disabled-dark disabled:to-disabled-dark disabled:text-disabled-light":
             variant === "primary",
           // "flex items-center justify-center transition duration-200 ease-in-out text-gray-400 hover:text-gray-600":
           "transition duration-200 ease-in-out text-button-primary hover:bg-button-primary/10 disabled:text-disabled-dark disabled:hover:bg-transparent":

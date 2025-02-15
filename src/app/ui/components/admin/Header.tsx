@@ -1,15 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
-import classNames from "classnames";
+// import classNames from "classnames";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import { usePathname } from "next/navigation";
 import BranchSelector from "./BranchSelector";
 import "../../styles/header.css";
-import { getUserInfo } from "@/app/lib/storage";
 import { User } from "@/app/types/type";
-import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
+// import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +15,17 @@ import {
   DropdownMenuTrigger,
 } from "@/app/ui/components/_common/DropdownMenu";
 
+import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+
 const Header: React.FC = () => {
-  const { toggleCollapse } = useSideBarToggle();
   const pathname = usePathname();
   const [userInfo, setUserInfo] = useState<User | null>(null);
   // const { specificName } = useBreadcrumbContext();
 
   useEffect(() => {
-    setUserInfo(getUserInfo());
+    setUserInfo(JSON.parse(localStorage.getItem("userData") || "{}"));
   }, []);
 
   const handleProfileClick = () => {
@@ -52,65 +52,104 @@ const Header: React.FC = () => {
     window.location.href = "/admin/login";
   };
 
-  const headerStyle = classNames({
-    ["header isWide"]: !toggleCollapse,
-    ["header isNarrow"]: toggleCollapse,
-  });
-
-  const renderTitle = (): React.ReactNode => {
-    if (pathname.startsWith("/clerk")) {
-      if (pathname.includes("classes-management")) {
-        return <div>Quản lý lớp học</div>;
-      }
-      return <div>Trang chủ lớp học</div>;
-    }
-  };
+  // const renderTitle = (): React.ReactNode => {
+  //   if (pathname.startsWith("/clerk")) {
+  //     if (pathname.includes("classes-management")) {
+  //       return <div>Quản lý lớp học</div>;
+  //     }
+  //     return <div>Trang chủ lớp học</div>;
+  //   }
+  // };
 
   return (
-    <div className={headerStyle}>
-      <div className="gap-6 justify-between items-center">
-        <div className="first-line text-xl font-bold tracking-wide mb-4">
-          {renderTitle()}
-          {/* Xin chào{" "}
-          <span className="font-bold bg-gradient-to-r from-blue-800 to-blue-400 inline-block text-transparent bg-clip-text">
-            {userInfo?.name}!
-          </span>{" "} */}
-          {/* {<PiHandWavingThin className="icon" size={25} />} */}
-        </div>
-        {/*<Breadcrumb specificName={specificName ? specificName : ""} />*/}
-        <Breadcrumb />
-        {pathname.includes("/admin") && (
-          <div className="second-line">Chào mừng đến với trang Admin!</div>
-        )}
+    // <div className="flex">
+    //   <div className="gap-6 justify-between items-center">
+    //     <div className="first-line text-xl font-bold tracking-wide mb-4">
+    //       {renderTitle()}
+    //       {/* Xin chào{" "}
+    //       <span className="font-bold bg-gradient-to-r from-blue-800 to-blue-400 inline-block text-transparent bg-clip-text">
+    //         {userInfo?.name}!
+    //       </span>{" "} */}
+    //       {/* {<PiHandWavingThin className="icon" size={25} />} */}
+    //     </div>
+    //     {/*<Breadcrumb specificName={specificName ? specificName : ""} />*/}
+    //     {/* <Breadcrumb /> */}
+    //     {pathname.includes("/admin") && (
+    //       <div className="second-line">Chào mừng đến với trang Admin!</div>
+    //     )}
+    //   </div>
+
+    //   <div className="right-items">
+    //     {pathname !== "/admin/branches" && <BranchSelector />}
+
+    //     <div className="notification">
+    //       <IoNotificationsOutline size={20} />
+    //     </div>
+
+    //     <div className="user-setting">
+    //       <DropdownMenu>
+    //         <DropdownMenuTrigger>
+    //           <FaUserCircle size={35} />
+    //         </DropdownMenuTrigger>
+    //         <DropdownMenuContent>
+    //           <DropdownMenuItem onClick={handleProfileClick}>
+    //             <div className="flex gap-3 items-center">
+    //               <FaUserCircle size={18} className="" /> Profile
+    //             </div>
+    //           </DropdownMenuItem>
+    //           <DropdownMenuSeparator />
+    //           <DropdownMenuItem onClick={handleLogout}>
+    //             <div className="flex gap-3 items-center">
+    //               <FaSignOutAlt size={18} className="" /> Logout
+    //             </div>
+    //           </DropdownMenuItem>
+    //         </DropdownMenuContent>
+    //       </DropdownMenu>
+    //     </div>
+    //   </div>
+    // </div>
+    <div className="h-header-height flex ml-from-sidebar px-14 justify-between items-center bg-foreground">
+      <div className="text-2xl font-bold">
+        {SIDENAV_ITEMS_ADMIN.find((item) => item.path === pathname)?.title}
       </div>
-
-      <div className="right-items">
-        {pathname !== "/admin/branches" && <BranchSelector />}
-
-        <div className="notification">
-          <IoNotificationsOutline size={20} />
+      <BranchSelector />
+      <div className="flex gap-6 items-center">
+        <div className="p-3 rounded-3xl bg-primary cursor-pointer">
+          <IoNotificationsOutline size={24} />
         </div>
-
-        <div className="user-setting">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <FaUserCircle size={35} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={handleProfileClick}>
-                <div className="flex gap-3 items-center">
-                  <FaUserCircle size={18} className="" /> Profile
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <div className="flex gap-3 items-center">
-                  <FaSignOutAlt size={18} className="" /> Logout
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-3">
+            {/* <FaUserCircle size={18} /> */}
+            {userInfo?.avatar ? (
+              <Image
+                src={userInfo.avatar}
+                alt="User Avatar"
+                width={48}
+                height={60}
+                className="rounded-full w-12 h-12"
+              />
+            ) : (
+              <FaUserCircle size={40} className="rounded-full" />
+            )}
+            <div className="text-[15px]">
+              {" "}
+              {userInfo?.name?.split(" ").slice(-2).join(" ")}
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleProfileClick}>
+              <div className="flex gap-3 items-center">
+                <FaUserCircle size={18} className="" /> Profile
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <div className="flex gap-3 items-center">
+                <FaSignOutAlt size={18} className="" /> Logout
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
