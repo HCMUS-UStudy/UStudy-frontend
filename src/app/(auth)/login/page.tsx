@@ -36,6 +36,7 @@ export default function Login() {
       try {
         setIsLoading(true);
         const response = await userLogin(genId, password);
+        console.log(response);
         setTokens(response.data.access_token, response.data.refresh_token);
         setUserInfo(JSON.stringify(response.data.user));
 

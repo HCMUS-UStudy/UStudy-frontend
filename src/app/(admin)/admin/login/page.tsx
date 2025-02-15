@@ -8,7 +8,7 @@ import { Button } from "@/app/ui/components/_common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
 import { CustomError } from "@/app/types/type";
-import { setTokens, setUserInfo } from "@/app/lib/storage";
+import { setTokens } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { adminLogin } from "@/app/lib/services/auth";
@@ -36,10 +36,23 @@ export default function Login() {
       try {
         setIsLoading(true);
         const response = await adminLogin(genId, password);
-        setTokens(response.data.access_token, response.data.refresh_token);
+        console.log(response);
+        if (response) {
+          setTokens(
+            response.data.data.access_token,
+            response.data.data.refresh_token,
+          );
 
-        localStorage.setItem("creator", response.data.user.name);
-        localStorage.setItem("userData", JSON.stringify(response.data.user));
+          localStorage.setItem("creator", response.data.data.user.name);
+          localStorage.setItem(
+            "userData",
+            JSON.stringify(response.data.data.user),
+          );
+          localStorage.setItem(
+            "defaultRoute",
+            response.data.data.user.role.defaultRoute,
+          );
+        }
 
         toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
           position: "bottom-right",
@@ -51,6 +64,7 @@ export default function Login() {
         router.push("/admin/dashboard");
       } catch (error: unknown) {
         const CustomError = error as CustomError;
+        console.log(error);
         if (CustomError.status === 400) {
           setLoginError(
             typeof CustomError.data === "string" ? CustomError.data : "",

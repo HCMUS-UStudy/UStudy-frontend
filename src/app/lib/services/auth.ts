@@ -10,12 +10,16 @@ export const userLogin = async (genId: string, password: string) => {
 };
 
 export const adminLogin = async (genId: string, password: string) => {
-  const response = await axiosInstance.post("/auth/login", {
-    genId: genId,
-    password: password,
-    isUser: false,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.post("/auth/login", {
+      genId: genId,
+      password: password,
+      isUser: false,
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const handleRefreshToken = async (refreshToken: string | null) => {
