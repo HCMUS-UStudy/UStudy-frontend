@@ -25,6 +25,18 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
+  const getRoleDisplayName = (roleName: string) => {
+    const roleMapping: Record<string, string> = {
+      Admin: "Admin",
+      Teacher: "Giáo viên",
+      Parent: "Phụ huynh",
+      Clerk: "Nhân viên",
+      Student: "Học sinh",
+    };
+
+    return roleMapping[roleName] || roleName;
+  };
+
   const fetchUsers = async () => {
     let filteredData: AccountItem[] = [];
     setLoading(true);
@@ -32,12 +44,17 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
     try {
       const response = await getAllAccount(searchQuery, currentPage - 1);
 
+      console.log(response);
+
       filteredData = response.content.map((item) => ({
         id: item.id,
         name: item.name,
         email: item.email,
         genId: item.genId,
-        role: item.role,
+        role: {
+          id: item.role.id,
+          name: getRoleDisplayName(item.role.name),
+        },
         isActive: item.isActive,
         createdAt: item.createdAt,
       }));
@@ -58,23 +75,13 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
 
   return (
     <div>
-      <div className="mb-4 flex justify-between">
-        {/* <input
-          type="text"
-          placeholder="Search..."
-          value={searchQueryState} // Use searchQueryState here
-          onChange={(e) => setSearchQuery(e.target.value)} // Use setSearchQuery to update the state
-          className="border p-2 rounded"
-        /> */}
-      </div>
-
       <Table>
         <TableHeader
           columns={[
+            "Mã số",
             "Họ tên",
             "Email",
-            "Mã số",
-            "Chức vụ",
+            "Vai trò",
             "Trạng thái",
             "Ngày tạo",
             "Hành động",
@@ -90,11 +97,11 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
             </TableRow>
           ) : users.length > 0 ? (
             users.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow key={user.id} className="hover:bg-green-100">
+                <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.genId}</TableCell>
-                <TableCell>{user.role}</TableCell>
+                <TableCell>{user.role.name}</TableCell>
                 <TableCell>
                   <span
                     className={

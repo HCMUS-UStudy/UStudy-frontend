@@ -16,7 +16,7 @@ export type AccountItem = {
   name: string;
   email: string;
   genId: string;
-  role: string;
+  role: { id: string; name: string };
   isActive: boolean;
   createdAt: string;
 };
@@ -374,4 +374,9 @@ export type ClassTeacher = {
   students: UserForTeacher[];
   classTimes: ClassTime[];
   status: string | null; // Status can be null
+};
+
+export type RoleItem = {
+  id: string;
+  name: string;
 };
