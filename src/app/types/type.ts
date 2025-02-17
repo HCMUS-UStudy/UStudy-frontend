@@ -376,6 +376,17 @@ export type ClassTeacher = {
   status: string | null; // Status can be null
 };
 
+export type TeacherRegister = {
+  name: string;
+  email: string;
+  birthday: string;
+  phone: string;
+  address: string;
+  courses: string[];
+  grades: string[];
+  gender: "MALE" | "FEMALE";
+};
+
 export type RoleItem = {
   id: string;
   name: string;

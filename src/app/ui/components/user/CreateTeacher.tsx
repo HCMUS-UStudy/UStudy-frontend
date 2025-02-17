@@ -1,41 +1,314 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FaCheck } from "react-icons/fa6";
+import SelectorLoading from "../ClassManagement/CreateClass/SelectorLoading";
+import { CourseItem, GradeItem } from "@/app/types/type";
+import { getGradesByCourseId } from "@/app/lib/services/grade";
+import { getAllCourses } from "@/app/lib/services/course";
+import { teacherRegister } from "@/app/lib/services/register";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
+
+const TeacherRegisterSchema = z.object({
+  name: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  email: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .email("Email không hợp lệ"),
+  birthday: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc")
+    .refine((data) => !isNaN(Date.parse(data)), {
+      message: "Ngày sinh không hợp lệ",
+    }),
+  gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
+  phone: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
+    .length(10, "Số điện thoại ít nhất 10 ký tự"),
+  address: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  courses: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  grades: z.array(z.string()).min(1, "Chọn tối thiểu một khối học"),
+});
+
+type TeacherRegisterInputs = z.infer<typeof TeacherRegisterSchema>;
 
 export default function CreateTeacher() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    reset,
+  } = useForm<TeacherRegisterInputs>({
+    resolver: zodResolver(TeacherRegisterSchema),
+    defaultValues: {
+      gender: "MALE",
+      grades: [],
+    },
+  });
+  const onSubmit = async (data: TeacherRegisterInputs) => {
+    console.log(data);
+    // call api
+    try {
+      setLoadingRegister(true);
+      const response = await teacherRegister({
+        name: data.name,
+        email: data.email,
+        birthday: data.birthday,
+        phone: data.phone,
+        address: data.address,
+        courses: [data.courses],
+        grades: data.grades,
+        gender: data.gender,
+      });
+      if (response.status === 200) {
+        toast.success("Đăng ký dạy thành công!", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+        reset();
+      } else {
+        toast.error("Đăng ký dạy thất bại!", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingRegister(false);
+    }
+  };
+
+  const selectedCourse = watch("courses");
+
+  const [grades, setGrades] = useState<GradeItem[]>([]);
+  const [courses, setCourses] = useState<CourseItem[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
+  const [loadingGrades, setLoadingGrades] = useState<boolean>(false);
+  const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoadingCourses(true);
+        const response = await getAllCourses("", 0);
+        setCourses(response.content);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingCourses(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchGrades = async () => {
+      try {
+        setLoadingGrades(true);
+        const response = await getGradesByCourseId("", 0, selectedCourse);
+        setGrades(response.content);
+        setValue("grades", []);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingGrades(false);
+      }
+    };
+    fetchGrades();
+  }, [selectedCourse, setValue]);
+
   return (
     <div>
       <div className="font-bold text-[30px] md:text-[50px] tracking-tighter md:tracking-normal text-center">
         Trở thành<span className="text-highlight-text"> Giáo Viên</span>
       </div>
-      <div className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5">
-        <Input
-          className="w-full h-11 text-base text-gray-700 bg-white"
-          placeholder="Họ tên"
-        />
-        <Input
-          className="w-full h-11 text-base text-gray-700 bg-white"
-          placeholder="Email"
-        />
-        <Input
-          className="w-full h-11 text-base text-gray-700 bg-white"
-          placeholder="Giới tính"
-        />
-        <Input
-          className="w-full h-11 text-base text-gray-700 bg-white"
-          placeholder="Ngày sinh"
-        />
-        <Input
-          className="w-full h-11 text-base text-gray-700 bg-white"
-          placeholder="Số điện thoại"
-        />
-        <Input
-          className="w-full h-11 text-base text-gray-700 bg-white"
-          placeholder="Địa chỉ"
-        />
-        <Button className="mt-5 w-full">Đăng ký</Button>
-      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5"
+      >
+        <div>
+          <Input
+            className="w-full h-11 text-base"
+            placeholder="Họ tên"
+            {...register("name")}
+          />
+          <div className="text-error mt-1">{errors.name?.message}</div>
+        </div>
+        <div>
+          <Input
+            className="w-full h-11 text-base"
+            placeholder="Email"
+            {...register("email")}
+          />
+          <div className="text-error mt-1">{errors.email?.message}</div>
+        </div>
+        <div className="flex items-center gap-4">
+          <h1 className="text-gray-700">Giới tính:{"  "}</h1>
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="MALE"
+              className="cursor-pointer h-8 w-8 bg-background border-2  rounded-full flex justify-center items-center relative"
+            >
+              <input
+                type="radio"
+                id="MALE"
+                className="hidden peer"
+                value={"MALE"}
+                {...register("gender")}
+              />
+              <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
+              <div className="w-4 h-4 bg-primary-darkest scale-0  peer-checked:scale-100 transition-transform rounded-full"></div>
+            </label>
+            <span>Nam</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="FEMALE"
+              className="cursor-pointer h-8 w-8 bg-background border-2  rounded-full flex justify-center items-center relative"
+            >
+              <input
+                type="radio"
+                id="FEMALE"
+                className="hidden peer"
+                value={"FEMALE"}
+                {...register("gender")}
+              />
+              <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
+              <div className="w-4 h-4 bg-primary-darkest scale-0  peer-checked:scale-100 transition-transform rounded-full"></div>
+            </label>
+            <span>Nữ</span>
+          </div>
+        </div>
+        <div>
+          <div className="flex gap-2 items-center w-full">
+            <label htmlFor="birthday" className="text-gray-700">
+              Ngày sinh:
+            </label>
+            <input
+              id="birthday"
+              className="px-3 py-2 text-base flex-1 rounded-md focus-within:ring-2 focus-within:ring-control-ring bg-transparent border-control-border border placeholder-control-placeholder outline-none"
+              placeholder="Ngày sinh"
+              type="date"
+              {...register("birthday")}
+            />
+          </div>
+          <div className="text-error mt-1">{errors.birthday?.message}</div>
+        </div>
+        <div>
+          <Input
+            type="text"
+            className="w-full h-11 text-base"
+            placeholder="Số điện thoại"
+            {...register("phone")}
+            // onChange={(e) => {
+            //   e.target.value = e.target.value.replace(/\D/g, "");
+            // }}
+          />
+          <div className="text-error mt-1">{errors.phone?.message}</div>
+        </div>
+        <div>
+          <Input
+            className="w-full h-11 text-base"
+            placeholder="Địa chỉ"
+            {...register("address")}
+          />
+          <div className="text-error mt-1">{errors.address?.message}</div>
+        </div>
+        {loadingCourses ? (
+          <SelectorLoading size="sm"></SelectorLoading>
+        ) : (
+          <>
+            <div>
+              <div className="text-gray-700 font-bold">
+                Bạn mong muốn dạy môn học nào ?
+              </div>
+              <div className="flex flex-wrap gap-3 mt-3">
+                {courses.map((course) => (
+                  <label
+                    key={course.id}
+                    className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
+                  >
+                    <input
+                      type="radio"
+                      className="hidden peer"
+                      value={course.id}
+                      {...register("courses")}
+                    />
+                    <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
+                      {course.name}
+                    </span>
+                    <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
+                  </label>
+                ))}
+              </div>
+              <div className="text-error mt-1">{errors.courses?.message}</div>
+            </div>
+          </>
+        )}
+
+        {selectedCourse !== null && selectedCourse !== undefined && (
+          <div>
+            <div className="text-gray-700 font-bold">
+              Bạn mong muốn dạy khối nào ?
+            </div>
+            <div className="mt-3">
+              {loadingGrades ? (
+                <SelectorLoading size="sm" numberOfItems={12}></SelectorLoading>
+              ) : grades.length !== 0 ? (
+                <>
+                  <div className="flex flex-wrap gap-3">
+                    {grades.map((grade) => (
+                      <label
+                        key={grade.id}
+                        className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
+                      >
+                        <input
+                          type="checkbox"
+                          className="hidden peer"
+                          value={grade.id}
+                          {...register("grades")}
+                        />
+                        <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
+                          {grade.name}
+                        </span>
+                        <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
+                      </label>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="text-gray-700">
+                  Chưa có khối cho môn học này
+                </div>
+              )}
+            </div>
+            <div className="text-error mt-1">{errors.grades?.message}</div>
+          </div>
+        )}
+
+        <Button
+          isPending={loadingRegister}
+          type="submit"
+          className="mt-5 w-full"
+        >
+          Đăng ký
+        </Button>
+      </form>
+      <ToastContainer />
     </div>
   );
 }
