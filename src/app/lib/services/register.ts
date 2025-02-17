@@ -1,4 +1,4 @@
-import { RegisterAccountData } from "@/app/types/type";
+import { RegisterAccountData, RegisterClassData } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getRegister = async (
@@ -12,6 +12,22 @@ export const getRegister = async (
       role,
     },
   });
+  return response.data.data;
+};
+
+export const getClassRegister = async (
+  classId: string,
+  currentPage: number,
+): Promise<RegisterClassData> => {
+  const response = await axiosInstance.get(
+    `/register/list-student-waiting/${classId}`,
+    {
+      params: {
+        page: currentPage,
+        limit: 5,
+      },
+    },
+  );
   return response.data.data;
 };
 

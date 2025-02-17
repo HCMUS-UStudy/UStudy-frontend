@@ -9,13 +9,14 @@ export const createNewAccount = async (data: AccountSchema) => {
 
 export const getAllAccount = async (
   query: string,
+  roleQuery: string,
   currentPage: number,
 ): Promise<AccountData> => {
   const response = await axiosInstance.get("/user/list", {
     params: {
       page: currentPage,
       limit: 5,
-      role: "",
+      role: roleQuery,
       filterNameOrGenId: query,
       classId: "",
     },

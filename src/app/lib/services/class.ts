@@ -1,4 +1,4 @@
-import { ClassData, ClassSchema, ClassTeacher } from "@/app/types/type";
+import { ClassData, ClassSchema, StudentData } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAllClasses = async (
@@ -49,6 +49,22 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
     },
   );
   return response.data;
+};
+
+export const getListStudent = async (
+  classId: string,
+  query: string,
+  currentPage: number,
+  limit: number,
+): Promise<StudentData> => {
+  const response = await axiosInstance.get(`/class/list-students/${classId}`, {
+    params: {
+      page: currentPage,
+      limit: limit,
+      filter: query,
+    },
+  });
+  return response.data.data;
 };
 
 // export const getOneClass = async (classId: string): Promise<ClassTeacher> => {

@@ -11,7 +11,7 @@ const roles = {
   Admin: "Admin",
   Teacher: "Giáo viên",
   Parent: "Phụ huynh",
-  Clerk: "Nhân viên",
+  Clerk: "Giáo vụ",
   Student: "Học sinh",
 };
 
@@ -36,14 +36,12 @@ export default async function AccountPage(props: {
         </div>
       </div>
 
-      <div className="flex items-center space-x-4 mb-6">
-        <div className="relative flex-1">
-          <SearchField
-            className="w-full bg-green-50 border border-green-300 rounded-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-200"
-            placeholder="Tìm kiếm người dùng"
-          />
-        </div>
-        <div className="flex items-center space-x-4">
+      <div className="flex items-center justify-between mt-2 gap-14">
+        <SearchField
+          className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+          placeholder="Tìm kiếm người dùng..."
+        />
+        <div className="flex items-center gap-6 px-4">
           <div className="flex items-center">
             <Dropdown
               label="Lọc"
@@ -61,7 +59,7 @@ export default async function AccountPage(props: {
       </div>
 
       <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <AccountTable searchQuery={query} />
+        <AccountTable searchQuery={query} roleQuery={role} />
       </div>
     </div>
   );
