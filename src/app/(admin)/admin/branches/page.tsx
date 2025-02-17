@@ -7,6 +7,9 @@ import { Button } from "@/app/ui/components/_common/Button";
 // import axios from "axios";
 import { addBranch, getAllBranches } from "@/app/lib/services/branch";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { FiFilter } from "react-icons/fi";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import Pagination from "@/app/ui/components/_common/Pagination";
 
 interface Branch {
   id: string;
@@ -191,7 +194,7 @@ const BranchPage: React.FC = () => {
   // };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const branchesPerPage = 5;
+  const branchesPerPage = 6;
 
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
@@ -205,22 +208,22 @@ const BranchPage: React.FC = () => {
     );
   }, [filteredBranches, currentPage]);
 
-  const handlePreviousPage = () =>
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  // const handlePreviousPage = () =>
+  //   setCurrentPage((prev) => Math.max(prev - 1, 1));
+  // const handleNextPage = () =>
+  //   setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxPages = Math.min(3, totalPages);
+  // const getPageNumbers = () => {
+  //   const pages = [];
+  //   const maxPages = Math.min(3, totalPages);
 
-    const start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
-    for (let i = start; i < start + maxPages; i++) {
-      pages.push(i);
-    }
+  //   const start = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+  //   for (let i = start; i < start + maxPages; i++) {
+  //     pages.push(i);
+  //   }
 
-    return pages;
-  };
+  //   return pages;
+  // };
 
   // const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   console.log("Search query:", event.target.value);
@@ -228,7 +231,6 @@ const BranchPage: React.FC = () => {
   // };
 
   const handleSearch = (term: string) => {
-    console.log("Search query:", term);
     setSearchQuery(term);
   };
 
@@ -295,42 +297,40 @@ const BranchPage: React.FC = () => {
 
   return (
     <div className="px-2">
-      <div className="text-2xl font-semibold mb-4">
-        Tổng số chi nhánh ({filteredBranches.length})
-      </div>
-
       <div className="flex items-center justify-between">
-        {/*<form className="flex items-center w-full lg:w-[20rem]">
-          <div className="flex items-center w-full border-2 border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all">
-            <input
-              type="text"
-              placeholder="Tìm kiếm chi nhánh..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full px-4 py-2 rounded-l-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition ease-in-out"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-r-full bg-white text-black hover:bg-slate-100 focus:ring-2 focus:ring-blue-300"
-            >
-              <FaSearch className="h-5 w-5" />
-            </button>
-          </div>
-        </form>*/}
-        <SearchField
-          className="w-[200px]"
-          placeholder="Tìm kiếm chi nhánh..."
-          onSearch={handleSearch}
-        />
-        <Button onClick={onCreateBranch} className="px-6 py-2">
+        <div className="text-xl font-semibold mb-4">
+          Tổng số chi nhánh ({filteredBranches.length})
+        </div>
+
+        <Button
+          onClick={onCreateBranch}
+          className="px-6 py-3 rounded-2xl text-[15px]"
+        >
           Thêm chi nhánh
         </Button>
       </div>
 
+      <div className="flex items-center justify-between mt-2 gap-14">
+        <SearchField
+          className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+          placeholder="Tìm kiếm chi nhánh..."
+          onSearch={handleSearch}
+        />
+        <div className="flex items-center gap-6 px-4">
+          <div className="flex items-center gap-3 cursor-pointer">
+            Lọc
+            <FiFilter className="w-5 h-5" />
+          </div>
+          <div className="flex items-center cursor-pointer">
+            <HiAdjustmentsHorizontal className="w-6 h-6" />
+          </div>
+        </div>
+      </div>
+
       {/* Branch List */}
-      <div className="overflow-x-auto mt-6">
-        <table className="min-w-full table-auto border-collapse">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto mt-4 rounded-lg">
+        <table className="min-w-full table-auto border-collapse rounded-lg">
+          <thead className="bg-slate-100">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Tên chi nhánh
@@ -382,57 +382,18 @@ const BranchPage: React.FC = () => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-end mt-6 space-x-2">
-        <Button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === 1
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
-          Trước
-        </Button>
-        {totalPages === 1 ? (
-          <Button
-            key={1}
-            onClick={() => setCurrentPage(1)}
-            className={`px-4 py-2 rounded-md font-semibold transition-all ${
-              currentPage === 1
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            1
-          </Button>
-        ) : (
-          getPageNumbers().map((page) => (
-            <Button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-md font-semibold transition-all ${
-                currentPage === page
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {page}
-            </Button>
-          ))
-        )}
-        <Button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-all duration-200 ${
-            currentPage === totalPages
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
-          Sau
-        </Button>
+      <div className="mt-4">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        />
       </div>
 
       {/* Modal for Adding Branch */}

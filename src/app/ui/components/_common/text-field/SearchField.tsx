@@ -50,7 +50,7 @@ const SearchField = ({
   return (
     <div
       className={cn(
-        "flex items-center w-full rounded-x1 focus-within:bg-white focus-within:outline-none focus-within:ring-2 focus-within:ring-control-ring focus-within:shadow-sm border-input border-gray-400 border",
+        "flex items-center w-full rounded-xl focus-within:outline-none focus-within:ring-2 focus-within:ring-control-ring focus-within:shadow-sm border-input",
         className,
       )}
     >
