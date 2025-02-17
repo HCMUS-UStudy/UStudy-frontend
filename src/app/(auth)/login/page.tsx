@@ -7,17 +7,17 @@ import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
 import { logIn, LoginFormState } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
-import { CustomError } from "@/app/types/type";
+// import { CustomError } from "@/app/types/type";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { login } from "@/app/lib/services/auth";
 
-export default function Login() {
+export default function Login({ isUser = true }: { isUser?: boolean }) {
   const router = useRouter();
   const [genId, setGenId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [loginError, setLoginError] = useState<string | null>(null);
+  // const [loginError, setLoginError] = useState<string | null>(null);
   const [showError, setShowError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const initialState: LoginFormState = {
@@ -35,41 +35,51 @@ export default function Login() {
     const handleLogin = async () => {
       try {
         setIsLoading(true);
-        const response = await login(genId, password, true);
-        if (response.data.user.role.defaultRoute === "ADMIN") {
+        const response = await login(genId, password, isUser);
+        const defaultRoute = response.data.user.role.defaultRoute;
+        if (
+          (isUser && (defaultRoute === "ADMIN" || defaultRoute === "CLERK")) ||
+          (!isUser && defaultRoute !== "ADMIN" && defaultRoute !== "CLERK")
+        ) {
           throw new Error("Đăng nhập không hợp lệ");
         }
         setTokens(response.data.access_token, response.data.refresh_token);
-        setUserInfo(JSON.stringify(response.data.user));
 
-        const role = response.data.user.role.defaultRoute;
+        if (isUser) {
+          setUserInfo(JSON.stringify(response.data.user));
+        } else {
+          localStorage.setItem("creator", response.data.user.name);
+          localStorage.setItem("userData", JSON.stringify(response.data.user));
+        }
+
         toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
           position: "bottom-right",
           autoClose: 5000,
           closeOnClick: false,
           pauseOnHover: false,
         });
-        switch (role) {
+        switch (defaultRoute) {
           case "TEACHER":
             router.push("/teacher/classes");
             break;
           case "STUDENT":
             router.push("/student/home");
             break;
-          // case "PARENT":
-          //   router.push("/parent/home");
-          //   break;
+          case "ADMIN":
+          case "CLERK":
+            router.push("/admin/dashboard");
+            break;
           default:
             break;
         }
-      } catch (error: unknown) {
-        const CustomError = error as CustomError;
-        if (CustomError.status === 400) {
-          setLoginError(
-            typeof CustomError.data === "string" ? CustomError.data : "",
-          );
-          setShowError(true);
-        }
+      } catch {
+        // const CustomError = error as CustomError;
+        // if (CustomError.status === 400) {
+        //   setLoginError(
+        //     typeof CustomError.data === "string" ? CustomError.data : "",
+        //   );
+        //   setShowError(true);
+        // }
         toast.error("Đăng nhập thất bại", {
           position: "bottom-right",
           autoClose: 3000,
@@ -95,9 +105,16 @@ export default function Login() {
       <div className="flex items-center justify-center h-screen overflow-hidden">
         <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <Image src="/logo.png" alt="Logo" width={280} height={280} />
-          <h1 className="text-2xl font-bold text-[#273526]">
-            Học tập toàn diện, Vươn tầm tri thức
-          </h1>
+          {isUser && (
+            <h1 className="text-2xl font-semibold text-[#273526]">
+              Học tập toàn diện, Vươn tầm tri thức
+            </h1>
+          )}
+          {!isUser && (
+            <h1 className="text-2xl font-semibold text-[#273526]">
+              Chào mừng đến với trang quản lý hệ thống
+            </h1>
+          )}
         </div>
         <div className="flex relative items-center h-full justify-center w-full bg-background">
           <Image
@@ -138,13 +155,12 @@ export default function Login() {
 
           <form
             action={action}
-            className="bg-white py-18 px-16 rounded-3xl shadow-lg z-[100]"
+            className="bg-foreground py-20 px-16 rounded-3xl shadow-lg z-[100]"
           >
             <div className="text-[#F48C06] text-3xl font-bold flex justify-center">
               Đăng nhập
             </div>
             <div className="mt-6 mb-4 w-[350px]">
-              {/* <Label className="text-[13px] ml-2" htmlFor="username">Mã người dùng</Label> */}
               <Input
                 className="text-[14px]"
                 name="genID"
@@ -157,14 +173,10 @@ export default function Login() {
                   setGenId(e.target.value);
                 }}
                 isError={showError}
-                errorMsg={
-                  (state?.errors?.genID && state?.errors?.genID[0]) ||
-                  loginError
-                }
+                errorMsg={state?.errors?.genID && state?.errors?.genID[0]}
               />
             </div>
             <div>
-              {/* <Label className="text-[13px] ml-2" htmlFor="password">Mật khẩu</Label> */}
               <Input
                 className="text-[14px]"
                 type="password"
@@ -177,31 +189,24 @@ export default function Login() {
                 placeholder="Nhập mật khẩu"
                 label="Mật khẩu"
                 isError={showError}
-                errorMsg={
-                  (state?.errors?.password && state?.errors?.password[0]) ||
-                  loginError
-                }
+                errorMsg={state?.errors?.password && state?.errors?.password[0]}
               />
             </div>
             <div className="flex w-full justify-between mt-4 px-1">
               <div className="flex items-center justify-center">
                 <input type="checkbox" id="rememberMe" className="mr-1" />
-                <div className="text-[13px] text-gray-600">
-                  Ghi nhớ đăng nhập
-                </div>
+                <div className="text-sm text-gray-600">Ghi nhớ đăng nhập</div>
               </div>
               <div className="flex">
                 <Link
                   href="/forgot-password"
-                  className="text-[13px] text-gray-600 hover:underline"
+                  className="text-sm text-gray-600 hover:underline"
                 >
                   Quên mật khẩu?
                 </Link>
               </div>
             </div>
             <Button
-              // className="flex w-full justify-center bg-[#AEDDCE] text-sm text-black font-semibold py-[12px]
-              //           rounded-lg shadow-md mt-6 hover:bg-[#9ad7c3] transition duration-200 ease-in-out"
               className="mt-6 w-full"
               isPending={isPending || isLoading}
               disabled={isPending || isLoading}
@@ -209,10 +214,6 @@ export default function Login() {
             >
               Đăng nhập
             </Button>
-
-            {/* <div className="flex w-full justify-center mt-5">
-              <p className="text-[13px] text-gray-600">Bạn chưa có tài khoản? <Link href="/register" className="hover:underline">Đăng ký</Link></p>
-            </div> */}
           </form>
         </div>
       </div>
