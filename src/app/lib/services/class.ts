@@ -67,6 +67,22 @@ export const getListStudent = async (
   return response.data.data;
 };
 
+export const getListAvailableTea = async (
+  classId: string,
+  query: string,
+  currentPage: number,
+  limit: number,
+): Promise<StudentData> => {
+  const response = await axiosInstance.get(`/class/list-students/${classId}`, {
+    params: {
+      page: currentPage,
+      limit: limit,
+      filter: query,
+    },
+  });
+  return response.data.data;
+};
+
 // export const getOneClass = async (classId: string): Promise<ClassTeacher> => {
 //   const response = await axiosInstance.get(`/classes/all/get-one/${classId}`);
 //   return response.data.data;

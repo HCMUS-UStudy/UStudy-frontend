@@ -1,4 +1,8 @@
-import { RegisterAccountData, RegisterClassData } from "@/app/types/type";
+import {
+  RegisterAccountData,
+  RegisterClassData,
+  TeacherRegister,
+} from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getRegister = async (
@@ -45,4 +49,13 @@ export const rejectRegister = async (userIds: string[]) => {
     userIds, // Đưa registerId vào body
   );
   return response.data;
+};
+
+export const teacherRegister = async (data: TeacherRegister) => {
+  try {
+    const response = await axiosInstance.post("/register/create/teacher", data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

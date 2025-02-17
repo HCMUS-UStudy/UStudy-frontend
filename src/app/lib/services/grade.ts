@@ -4,7 +4,7 @@ export const getAllGrades = async () => {
   const response = await axiosInstance.get("/grade/list", {
     params: {
       page: 0,
-      limit: 10,
+      limit: 15,
     },
   });
   return response;
@@ -15,12 +15,11 @@ export const getGradesByCourseId = async (
   currentPage: number,
   courseId: string,
 ) => {
-  const response = await axiosInstance.get("/grade/list", {
+  const response = await axiosInstance.get(`/grade/list/${courseId}`, {
     params: {
       page: currentPage,
-      limit: 5,
+      limit: 15,
       filter: query,
-      courseId: courseId,
     },
   });
   return response.data.data;

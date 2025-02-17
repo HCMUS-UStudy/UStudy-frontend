@@ -93,6 +93,13 @@ export type TeacherItem = {
   name: string;
 };
 
+export type TeacherAvalItem = {
+  email: string;
+  genId: string;
+  id: string;
+  name: string;
+};
+
 export type ClassSchema = {
   name: string;
   courseId: string;
@@ -201,6 +208,11 @@ export type ClassData = {
 
 export type StudentData = {
   content: StudentItem[];
+  totalPages: number;
+};
+
+export type TeacherData = {
+  content: TeacherAvalItem[];
   totalPages: number;
 };
 
@@ -399,6 +411,17 @@ export type ClassTeacher = {
   students: UserForTeacher[];
   classTimes: ClassTime[];
   status: string | null; // Status can be null
+};
+
+export type TeacherRegister = {
+  name: string;
+  email: string;
+  birthday: string;
+  phone: string;
+  address: string;
+  courses: string[];
+  grades: string[];
+  gender: "MALE" | "FEMALE";
 };
 
 export type RoleItem = {

@@ -8,16 +8,17 @@ import {
 
 export default function Footer() {
   return (
-    <div className="h-fit md:px-0 px-7 py-12 bg-sky-950 text-white tracking-wider flex flex-col md:gap-0 gap-10 md:flex-row justify-evenly">
+    <div className="h-fit md:px-0 px-7 py-12 bg-footer text-white tracking-wider flex flex-col md:gap-0 gap-10 md:flex-row justify-evenly">
       <div className=" max-w-[445px]">
         <div id="introduce" className="text-[50px] md:text-[62px] font-bold">
           UStudy
         </div>
         <div className="text-sm text-slate-300 leading-6">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry&apos;s standard dummy text
-          ever since the 1500s, when an unknown printer took a galley of type
-          and scrambled it to make a type specimen book.
+          UStudy giúp giáo viên, học viên và phụ huynh kết nối dễ dàng trong môi
+          trường học tập hiện đại. Với các công cụ hỗ trợ tạo lớp học, giao bài
+          tập, chấm điểm, theo dõi tiến độ và điểm danh, UStudy mang đến trải
+          nghiệm học tập hiệu quả và tiện lợi. Hãy bắt đầu hành trình chinh phục
+          tri thức của bạn ngay hôm nay!
         </div>
         <div className="flex w-full mt-5 gap-7 justify-items-start">
           <FaFacebook className="w-10 h-10" />
