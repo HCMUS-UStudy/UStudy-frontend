@@ -44,14 +44,11 @@ export default function Login() {
         }
         setTokens(response.data.access_token, response.data.refresh_token);
 
-        localStorage.setItem("creator", response.data.data.user.name);
-        localStorage.setItem(
-          "userData",
-          JSON.stringify(response.data.data.user),
-        );
+        localStorage.setItem("creator", response.data.user.name);
+        localStorage.setItem("userData", JSON.stringify(response.data.user));
         localStorage.setItem(
           "defaultRoute",
-          response.data.data.user.role.defaultRoute,
+          response.data.user.role.defaultRoute,
         );
 
         toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
@@ -64,7 +61,7 @@ export default function Login() {
         router.push("/admin/dashboard");
       } catch (error: unknown) {
         const CustomError = error as CustomError;
-        console.log(error);
+        // console.error(error);
         if (CustomError.status === 400) {
           setLoginError(
             typeof CustomError.data === "string" ? CustomError.data : "",
