@@ -1,7 +1,7 @@
-import CreateClass from "@/app/ui/components/admin/classes/CreateClass";
 import React from "react";
 import ClassesTable from "@/app/ui/components/admin/classes/ClassesTable";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import CreateClassButton from "@/app/ui/components/admin/classes/CreateClassButton";
 
 export default async function Classes(props: {
   searchParams?: Promise<{
@@ -20,7 +20,7 @@ export default async function Classes(props: {
           className="w-[200px] outline-none placeholder:text-gray-500 focus:ring-1 focus:ring-blue-800 rounded"
           placeholder="Tìm theo tên lớp..."
         />
-        <CreateClass />
+        <CreateClassButton />
       </div>
       <ClassesTable query={query} currentPage={currentPage} />
     </div>

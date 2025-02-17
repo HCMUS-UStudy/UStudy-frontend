@@ -198,7 +198,7 @@ export const TableRow: React.FC<TableRowProps> = ({
   return (
     <tr
       className={cn(
-        "hover:bg-blue-50 transition-all duration-200 border-b-2 border-slate-100",
+        "hover:bg-primary-light transition-all duration-200 border-b-2 border-slate-100",
         className,
       )}
     >
