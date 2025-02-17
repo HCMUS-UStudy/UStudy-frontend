@@ -15,18 +15,18 @@ export const getRegister = async (
   return response.data.data;
 };
 
-export const confirmRegister = async (userId: string) => {
+export const confirmRegister = async (userIds: string[], roleId: string) => {
   const response = await axiosInstance.put(
-    `/register/update/accept?registerId=${userId}`,
-    {},
+    `/register/update/accept?roleId=${roleId}`,
+    userIds,
   );
   return response.data;
 };
 
-export const rejectRegister = async (userId: string) => {
+export const rejectRegister = async (userIds: string[]) => {
   const response = await axiosInstance.put(
-    `/register/update/reject?registerId=${userId}`,
-    {},
+    `/register/update/reject`,
+    userIds, // Đưa registerId vào body
   );
   return response.data;
 };

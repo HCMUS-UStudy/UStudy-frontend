@@ -108,13 +108,13 @@ const Header: React.FC = () => {
     //     </div>
     //   </div>
     // </div>
-    <div className="h-header-height flex ml-from-sidebar px-14 justify-between items-center bg-foreground">
+    <div className="h-header-height flex ml-from-sidebar px-12 justify-between items-center bg-foreground">
       <div className="text-2xl font-bold">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.path === pathname)?.title}
       </div>
-      <BranchSelector />
+      {!pathname.includes("/admin/branches") && <BranchSelector />}
       <div className="flex gap-6 items-center">
-        <div className="p-3 rounded-3xl bg-primary cursor-pointer">
+        <div className="p-2 rounded-3xl bg-primary cursor-pointer">
           <IoNotificationsOutline size={24} />
         </div>
         <DropdownMenu>
@@ -124,9 +124,9 @@ const Header: React.FC = () => {
               <Image
                 src={userInfo.avatar}
                 alt="User Avatar"
-                width={48}
+                width={40}
                 height={60}
-                className="rounded-full w-12 h-12"
+                className="rounded-full w-10 h-10"
               />
             ) : (
               <FaUserCircle size={40} className="rounded-full" />

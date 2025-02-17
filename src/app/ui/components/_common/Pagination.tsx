@@ -82,7 +82,7 @@ const Pagination = ({
 
       {totalPages > MAX_DISPLAY_PAGES + 1 &&
         currentPage > Math.floor(MAX_DISPLAY_PAGES / 2) + 2 && (
-          <span className="py-2 text-button-primary tracking-wider">...</span>
+          <span className="py-2 tracking-wider">...</span>
         )}
 
       {getPageNumbers().map((page) => (
@@ -90,10 +90,8 @@ const Pagination = ({
           key={page}
           variant="basic"
           onClick={() => handlePageClick(page)}
-          className={`px-4 py-2 rounded-md font-semibold transition-all ${
-            currentPage === page
-              ? "bg-button-primary text-white hover:bg-button-primary"
-              : ""
+          className={`px-4 py-2 rounded-md transition-all ${
+            currentPage === page ? "bg-primary hover:bg-hover-primary" : ""
           }`}
         >
           {page}
@@ -102,7 +100,7 @@ const Pagination = ({
 
       {totalPages > MAX_DISPLAY_PAGES + 1 &&
         currentPage < totalPages - Math.floor(MAX_DISPLAY_PAGES / 2) - 1 && (
-          <span className="py-2 text-button-primary tracking-wider">...</span>
+          <span className="py-2 tracking-wider">...</span>
         )}
 
       {totalPages > MAX_DISPLAY_PAGES &&

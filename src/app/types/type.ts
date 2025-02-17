@@ -16,7 +16,7 @@ export type AccountItem = {
   name: string;
   email: string;
   genId: string;
-  role: string;
+  role: { id: string; name: string };
   isActive: boolean;
   createdAt: string;
 };
@@ -385,4 +385,9 @@ export type TeacherRegister = {
   courses: string[];
   grades: string[];
   gender: "MALE" | "FEMALE";
+};
+
+export type RoleItem = {
+  id: string;
+  name: string;
 };

@@ -36,7 +36,10 @@ export default function Login() {
       try {
         setIsLoading(true);
         const response = await login(genId, password, false);
-        if (response.data.user.role.defaultRoute !== "ADMIN") {
+        if (
+          response.data.user.role.defaultRoute !== "ADMIN" &&
+          response.data.user.role.defaultRoute !== "CLERK"
+        ) {
           throw new Error("Đăng nhập không hợp lệ");
         }
         setTokens(response.data.access_token, response.data.refresh_token);

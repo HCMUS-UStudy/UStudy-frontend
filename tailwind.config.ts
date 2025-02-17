@@ -12,6 +12,7 @@ const config: Config = {
         // primary: "#2563eb", // blue-600
         primary: "#BEE5D1",
         "primary-light": "#d5e9e1",
+        "primary-lighter": "#EBF8F4",
         // "primary-dark": "#1e40af", // blue-800
         "primary-dark": "#95BFA9",
         "primary-darker": "#3AA97A",
@@ -31,7 +32,7 @@ const config: Config = {
         "button-primary": "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
         "button-primary-dark": "#1e40af", // blue-800: #1e40af
 
-        "hover-primary": "#9ED0B6",
+        "hover-primary": "#ADD7C1",
 
         "highlight-text": "#F48C06", // sky-800: #1e40af, blue-800: #1e40af
         "primary-text": "var(--color-text-primary)",
@@ -108,10 +109,10 @@ const config: Config = {
         "header-height": "90px",
       },
       width: {
-        "sidebar-width": "230px",
+        "sidebar-width": "215px",
       },
       margin: {
-        "from-sidebar": "230px",
+        "from-sidebar": "215px",
       },
     },
   },
