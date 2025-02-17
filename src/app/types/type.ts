@@ -153,10 +153,12 @@ export const Schedule: ScheduleItem[] = [
 ];
 
 export type Branch = {
+  id: string;
   name: string;
   address: string;
   contactNumber: string;
   rooms: string;
+  sessions: [string];
 };
 
 export type Duration = {
@@ -379,4 +381,11 @@ export type ClassTeacher = {
 export type RoleItem = {
   id: string;
   name: string;
+};
+
+export type Session = {
+  id: string;
+  name: string;
+  start_time: string;
+  end_time: string;
 };
