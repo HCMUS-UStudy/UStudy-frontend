@@ -19,7 +19,7 @@ export const getRegister = async (
   return response.data.data;
 };
 
-export const getClassRegister = async (
+export const getStuClassRegister = async (
   classId: string,
   currentPage: number,
 ): Promise<RegisterClassData> => {

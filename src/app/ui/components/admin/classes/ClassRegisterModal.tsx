@@ -13,12 +13,12 @@ import {
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
 import {
   confirmRegister,
-  getClassRegister,
+  getStuClassRegister,
   rejectRegister,
 } from "@/app/lib/services/register";
 import { getAllRolesByDefault } from "@/app/lib/services/role";
 import ClassTable from "./ClassTable";
-import { getListStudent } from "@/app/lib/services/class";
+import { getListAvailableTea, getListStudent } from "@/app/lib/services/class";
 
 interface ClassRegisterModalProps {
   buttonLabel: string;
@@ -34,7 +34,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   const [teachers, setTeachers] = useState<RegisterClassItem[]>([]);
 
   const [studentsClass, setStudentsClass] = useState<StudentItem[]>([]);
-  //const [teachers, setTeachers] = useState<RegisterClassItem[]>([]);
+  const [teachersClass, setTeachersClass] = useState<StudentItem[]>([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -44,9 +44,9 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   const [totalPagesTea, setTotalPagesTea] = useState(0);
 
   const [currentPageStuCl, setCurrentPageStuCl] = useState(1);
-  //const [currentPageTea, setCurrentPageTea] = useState(1);
+  const [currentPageTeaCl, setCurrentPageTeaCl] = useState(1);
   const [totalPagesStuCl, setTotalPagesStuCl] = useState(0);
-  //const [totalPagesTea, setTotalPagesTea] = useState(0);
+  const [totalPagesTeaCl, setTotalPagesTeaCl] = useState(0);
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
@@ -107,11 +107,11 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
         setSelectedUsersCl(studentsClass.map((s) => s.id)); // Chọn tất cả
       }
     } else {
-      // if (selectedUsersCl.length === teachers.length) {
-      //   setSelectedUsers([]); // Bỏ chọn tất cả
-      // } else {
-      //   setSelectedUsers(teachers.map((s) => s.id)); // Chọn tất cả
-      // }
+      if (selectedUsersCl.length === teachersClass.length) {
+        setSelectedUsersCl([]); // Bỏ chọn tất cả
+      } else {
+        setSelectedUsersCl(teachersClass.map((s) => s.id)); // Chọn tất cả
+      }
     }
   };
 
@@ -169,7 +169,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getClassRegister(
+      const response = await getStuClassRegister(
         "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
         currentPageStu - 1,
       );
@@ -226,9 +226,11 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getClassRegister(
+      const response = await getListAvailableTea(
         "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        "",
         currentPageTea - 1,
+        5,
       );
 
       TeacherData = response.content.map((item) => ({
@@ -248,13 +250,49 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     }
   };
 
+  const fetchTeachersInClass = async () => {
+    let TeacherClassData: StudentItem[] = [];
+    setLoading(true);
+
+    try {
+      const response = await getListStudent(
+        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        "",
+        currentPageStuCl - 1,
+        5,
+      );
+
+      TeacherClassData = response.content.map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        gender: getGenderDisplayName(item.gender),
+      }));
+
+      // Set total pages for students based on API response
+      setTotalPagesTeaCl(response.totalPages || 0);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTeachersClass(TeacherClassData);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (showModalRe) {
       fetchStudents();
       fetchTeachers();
       fetchStudentsInClass();
+      fetchTeachersInClass();
     }
-  }, [currentPageStu, currentPageTea, currentPageStuCl, showModalRe]); // Trigger fetch when page changes
+  }, [
+    currentPageStu,
+    currentPageTea,
+    currentPageStuCl,
+    currentPageTeaCl,
+    showModalRe,
+  ]); // Trigger fetch when page changes
 
   const handleApprove = async (userId: string) => {
     setLoading(true);
@@ -329,6 +367,15 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
   const handleNextPageTea = () => {
     if (currentPageTea < totalPagesTea) setCurrentPageTea(currentPageTea + 1);
+  };
+
+  const handlePreviousPageTeaCl = () => {
+    if (currentPageTeaCl > 1) setCurrentPageTeaCl(currentPageTeaCl - 1);
+  };
+
+  const handleNextPageTeaCl = () => {
+    if (currentPageTeaCl < totalPagesTeaCl)
+      setCurrentPageTeaCl(currentPageTeaCl + 1);
   };
 
   return (
@@ -505,7 +552,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
                 <ClassTable
                   title="Đã xác nhận"
-                  users={studentsClass}
+                  users={teachersClass}
                   isSelecting={isSelectingCl}
                   selectedUsers={selectedUsersCl}
                   toggleSelection={toggleSelectionCl}
@@ -514,11 +561,11 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                   handleBulkAction={handleBulkAction}
                   handleApprove={handleApprove}
                   handleReject={handleReject}
-                  currentPage={currentPageStuCl}
-                  totalPages={totalPagesStuCl}
-                  setCurrentPage={setCurrentPageStuCl}
-                  handlePreviousPage={handlePreviousPageStuCl}
-                  handleNextPage={handleNextPageStuCl}
+                  currentPage={currentPageTeaCl}
+                  totalPages={totalPagesTeaCl}
+                  setCurrentPage={setCurrentPageTeaCl}
+                  handlePreviousPage={handlePreviousPageTeaCl}
+                  handleNextPage={handleNextPageTeaCl}
                 />
               </div>
             </TabPanel>

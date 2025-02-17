@@ -98,6 +98,7 @@ export type TeacherAvalItem = {
   genId: string;
   id: string;
   name: string;
+  gender: string;
 };
 
 export type ClassSchema = {
