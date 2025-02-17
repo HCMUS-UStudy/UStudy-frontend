@@ -142,7 +142,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7}>No users found.</TableCell>
+              <TableCell colSpan={7}>Không có dữ liệu.</TableCell>
             </TableRow>
           )}
         </TableBody>
