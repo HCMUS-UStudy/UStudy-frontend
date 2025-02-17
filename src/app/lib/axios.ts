@@ -3,7 +3,7 @@ import { getTokens, handleLogout, setTokens } from "./storage";
 import { CustomError } from "../types/type";
 import { handleRefreshToken } from "@/app/lib/services/auth";
 
-const requestUrl = ["/auth/user/login", "/auth/admin/login"];
+const requestUrl = ["/auth/login"];
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8080/api",
