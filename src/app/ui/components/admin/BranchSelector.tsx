@@ -76,7 +76,7 @@ const BranchSelector: React.FC = () => {
           className="relative cursor-pointer rounded-[20px]"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className="px-4 py-3 rounded-[12px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-[15px] items-center">
+          <div className="px-4 py-[10px] rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-[15px] items-center">
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
             <TiArrowSortedDown className="text-black" />
