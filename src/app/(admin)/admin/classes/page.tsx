@@ -2,7 +2,7 @@ import React from "react";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import CreateClassButton from "@/app/ui/components/admin/classes/CreateClassButton";
 import ClassesTable from "@/app/ui/components/admin/classes/ClassesTable";
-import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
+import ClassRegisterModal from "@/app/ui/components/admin/classes/ClassRegisterModal";
 
 export default async function Classes(props: {
   searchParams?: Promise<{
@@ -22,7 +22,7 @@ export default async function Classes(props: {
           placeholder="Tìm theo tên lớp..."
         />
         <div className="flex">
-          <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
+          <ClassRegisterModal buttonLabel="Duyệt đăng ký" />
           <CreateClassButton />
         </div>
       </div>
