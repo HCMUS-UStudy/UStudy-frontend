@@ -1,4 +1,4 @@
-import { ClassData, ClassSchema, ClassTeacher } from "@/app/types/type";
+import { ClassData, ClassSchema } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAllClasses = async (

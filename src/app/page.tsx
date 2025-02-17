@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
-import { FaBook, FaUserGraduate } from "react-icons/fa6";
+import { FaUserGraduate } from "react-icons/fa6";
 import Footer from "@/app/ui/components/_common/Footer";
 import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/user/CreateTeacher";
@@ -12,34 +12,34 @@ export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
     const contents = [
       {
-        FeatureName: "Easy Class Management",
+        FeatureName: "Quản lý lớp học",
         Description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.....",
+          "Ứng dụng hỗ trợ giáo viên và giáo vụ quản lý lớp học một cách dễ dàng và hiệu quả. Bạn có thể tạo lớp học, phân công giảng viên, và theo dõi tiến độ học tập của học viên chỉ trong vài bước đơn giản.",
       },
       {
-        FeatureName: "Easy Class Management",
+        FeatureName: "Quản lý học sinh",
         Description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.....",
+          "Giúp giáo viên và giáo vụ theo dõi sự tiến bộ của từng học viên trong lớp học. Dễ dàng chấm điểm, điểm danh, và ghi nhận kết quả học tập của học viên để đánh giá sự tiến bộ trong suốt khóa học.",
       },
       {
-        FeatureName: "Easy Class Management",
+        FeatureName: "Tính năng bài tập đa dạng",
         Description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.....",
+          "Ứng dụng hỗ trợ giáo viên tạo và giao bài tập cho học sinh, từ bài tập trắc nghiệm đến bài viết tự luận. Học sinh có thể làm bài tập trực tuyến và nhận kết quả ngay lập tức.",
       },
       {
-        FeatureName: "Easy Class Management",
+        FeatureName: "Chấm điểm tự động và thống kê chi tiết",
         Description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.....",
+          "Hệ thống chấm điểm tự động giúp tiết kiệm thời gian cho giáo viên. Đồng thời, ứng dụng cung cấp các báo cáo thống kê chi tiết về điểm số và kết quả học tập của học sinh theo từng lớp và môn học.",
       },
       {
-        FeatureName: "Easy Class Management",
+        FeatureName: "Điểm danh và quản lý thời gian học",
         Description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.....",
+          "Giáo viên có thể điểm danh học sinh một cách nhanh chóng và chính xác, đồng thời theo dõi thời gian học của học sinh. Các báo cáo điểm danh được lưu trữ và có thể tra cứu dễ dàng.",
       },
       {
-        FeatureName: "Easy Class Management",
+        FeatureName: "Hỗ trợ phụ huynh theo dõi học tập",
         Description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.....",
+          "Phụ huynh có thể theo dõi kết quả học tập và sự tiến bộ của con em mình thông qua báo cáo định kỳ. Ứng dụng giúp phụ huynh luôn nắm bắt được tình hình học tập của học sinh mọi lúc, mọi nơi.",
       },
     ];
     return (
@@ -48,9 +48,9 @@ export default async function Home() {
           return (
             <div
               key={i}
-              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col gap-1 md:gap-3 items-center bg-white border border-slate-300 rounded-xl"
+              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col justify-center items-center gap-1 md:gap-3 items-center bg-white border border-slate-300 rounded-xl"
             >
-              <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" />
+              {/* <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" /> */}
               <div className="text-lg md:text-2xl font-bold">
                 {c.FeatureName}
               </div>
@@ -69,7 +69,7 @@ export default async function Home() {
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
-          <div className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
+          {/* <div className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
             <Link
               href="#"
               className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
@@ -94,7 +94,7 @@ export default async function Home() {
             >
               Classroom
             </Link>
-          </div>
+          </div> */}
           <Button
             className="px-8 text-lg min-[320px]:hidden md:flex hover:scale-110"
             type="submit"
@@ -119,10 +119,11 @@ export default async function Home() {
                 tiêu
               </div>
               <div className="text-secondary-text font-light text-sm md:text-base mt-2">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam,
-                vero maiores minima magni vel reprehenderit impedit culpa, in
-                asperiores voluptatum ut, non quis provident earum deserunt
-                quaerat nemo laborum. Reprehenderit.
+                UStudy giúp giáo viên, học viên và phụ huynh kết nối dễ dàng
+                trong môi trường học tập hiện đại. Với các công cụ hỗ trợ tạo
+                lớp học, giao bài tập, chấm điểm, theo dõi tiến độ và điểm danh,
+                UStudy mang đến trải nghiệm học tập hiệu quả và tiện lợi. Hãy
+                bắt đầu hành trình chinh phục tri thức của bạn ngay hôm nay!
               </div>
             </div>
             <Button
@@ -139,7 +140,7 @@ export default async function Home() {
             </Button>
           </div>
           <Image
-            className="object-cover border-4 border-sky-600 rounded-[24px] aspect-auto md:flex hidden"
+            className="object-cover border-4 border-primary-darker rounded-[24px] aspect-auto md:flex hidden"
             src="/tutorSystem3.webp"
             width={500}
             height={450}
@@ -151,41 +152,41 @@ export default async function Home() {
       <div className="md:px-24 mx-auto flex flex-col justify-center">
         <div className="mt-12 mx-9 md:mx-44 text-center">
           <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[52px]">
-            <span className="text-highlight-text">Why we are</span> best from
-            others?
+            <span className="text-highlight-text">Vì sao</span> nên chọn UStudy?
           </div>
-          <div className="text-secondary-text text-sm md:text-lg font-thin mt-3">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry&apos;s standard dummy
-            text ever since the 1500s.....
+          <div className="text-gray-700 text-sm md:text-lg font-thin mt-3">
+            UStudy mang đến giải pháp quản lý học tập toàn diện, giúp giáo viên,
+            học sinh, và phụ huynh kết nối dễ dàng và hiệu quả. Chúng tôi cung
+            cấp các công cụ giúp bạn theo dõi tiến độ học tập, đánh giá và cải
+            thiện chất lượng giảng dạy nhanh chóng và chính xác.
           </div>
         </div>
         <div className="mx-12 mt-10 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10">
           <RenderMainFeatures />
         </div>
-        <div className="relative max-w-[1120px] h-max-[220px]  px-5 md:px-36 py-10 mt-10 md:mt-32 rounded-3xl text-blue-50 text-center mx-8 md:mx-auto text-sm md:text-2xl  bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900">
-          “Làm thế nào anh biết nhiều về mọi thứ? đã hỏi một người rất khôn
-          ngoan và thông minh; và câu trả lời là. Bằng cách không bao giờ sợ hãi
-          hoặc xấu hổ khi đặt câu hỏi về bất cứ điều gì mà tôi không biết”
+        <div className="relative max-w-[1120px] h-max-[220px]  px-5 md:px-36 py-10 mt-10 md:mt-32 rounded-3xl text-white text-center mx-8 md:mx-auto text-sm md:text-2xl  bg-gradient-to-r from-primary-darkest via-primary-darker to-primary-darkest">
+          “Học tập không chỉ là thu nhận kiến thức, mà còn là rèn luyện tư duy,
+          phát triển nhân cách và mở rộng tầm nhìn. Kiến thức có thể giúp ta
+          thành công, nhưng chính sự hiểu biết và trí tuệ mới giúp ta thay đổi
+          thế giới.”
           <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-3 flex flex-col items-center">
             <Image
-              className="rounded-3xl object-none object-top w-[108px] h-[108px]"
-              src="/JohnAbbott.webp"
+              className="rounded-3xl object-none object-top w-[108px] h-[108px] border border-black"
+              src="/einstein.jpg"
               width={108}
               height={108}
               alt="JohnAbbott"
               loading="lazy"
             />
             <div className="text-black text-center mt-3">
-              <div className="font-bold text-2xl">John Abbott</div>
-              <div className="text-base mt-1">CANADA</div>
+              <div className="font-bold text-2xl">Albert Einstein</div>
             </div>
           </div>
         </div>
       </div>
       <div className="bg-hero rounded-tl-[150px] mt-[200px] py-8 flex justify-evenly">
         <Image
-          className="md:flex hidden"
+          className="md:flex hidden object-contain"
           src="/TeacherRegister.png"
           width={500}
           height={500}

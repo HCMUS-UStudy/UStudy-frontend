@@ -41,16 +41,15 @@ export default function Login() {
         }
         setTokens(response.data.access_token, response.data.refresh_token);
 
-          localStorage.setItem("creator", response.data.data.user.name);
-          localStorage.setItem(
-            "userData",
-            JSON.stringify(response.data.data.user),
-          );
-          localStorage.setItem(
-            "defaultRoute",
-            response.data.data.user.role.defaultRoute,
-          );
-        }
+        localStorage.setItem("creator", response.data.data.user.name);
+        localStorage.setItem(
+          "userData",
+          JSON.stringify(response.data.data.user),
+        );
+        localStorage.setItem(
+          "defaultRoute",
+          response.data.data.user.role.defaultRoute,
+        );
 
         toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
           position: "bottom-right",

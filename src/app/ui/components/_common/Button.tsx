@@ -77,7 +77,7 @@ const Button: React.FC<ButtonProps> = ({
         <Loading
           className="mr-2"
           customStyle={{
-            spinner: "w-4 h-4 text-disabled-light",
+            spinner: "w-4 h-4 text-primary-darkest",
           }}
         />
       )}
