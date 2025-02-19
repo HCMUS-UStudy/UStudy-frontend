@@ -21,7 +21,7 @@ export type AccountItem = {
   createdAt: string;
 };
 
-export type StudentItem = {
+export type MemberItem = {
   id: string;
   name: string;
   email: string;
@@ -209,8 +209,8 @@ export type ClassData = {
   totalPages: number;
 };
 
-export type StudentData = {
-  content: StudentItem[];
+export type MemberData = {
+  content: MemberItem[];
   totalPages: number;
 };
 
