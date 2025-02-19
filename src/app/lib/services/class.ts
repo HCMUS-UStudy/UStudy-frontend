@@ -2,7 +2,7 @@ import {
   ClassData,
   ClassSchema,
   RegisterClassData,
-  StudentData,
+  MemberData,
 } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
@@ -56,16 +56,18 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
   return response.data;
 };
 
-export const getListStudent = async (
+export const getListMembers = async (
   classId: string,
   query: string,
   currentPage: number,
   limit: number,
-): Promise<StudentData> => {
-  const response = await axiosInstance.get(`/class/list-students/${classId}`, {
+  role: string,
+): Promise<MemberData> => {
+  const response = await axiosInstance.get(`/class/list-members/${classId}`, {
     params: {
       page: currentPage,
       limit: limit,
+      role: role,
       filter: query,
     },
   });
@@ -89,6 +91,24 @@ export const getListAvailableTea = async (
     },
   );
   return response.data.data;
+};
+
+export const addMembers = async (
+  userIds: string[],
+  classId: string,
+  role: string,
+) => {
+  const response = await axiosInstance.post(
+    `/class/add-members/${classId}`,
+    userIds,
+    {
+      params: {
+        role: role,
+      },
+    },
+  );
+  console.log(response.data);
+  return response.data;
 };
 
 // export const getOneClass = async (classId: string): Promise<ClassTeacher> => {

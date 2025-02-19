@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
-import { RegisterClassItem, StudentItem } from "@/app/types/type";
+import { RegisterClassItem, MemberItem } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import {
@@ -11,14 +11,13 @@ import {
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
-import {
-  confirmRegister,
-  getStuClassRegister,
-  rejectRegister,
-} from "@/app/lib/services/register";
-import { getAllRolesByDefault } from "@/app/lib/services/role";
+import { getStuClassRegister } from "@/app/lib/services/register";
 import ClassTable from "./ClassTable";
-import { getListAvailableTea, getListStudent } from "@/app/lib/services/class";
+import {
+  addMembers,
+  getListAvailableTea,
+  getListMembers,
+} from "@/app/lib/services/class";
 
 interface ClassRegisterModalProps {
   buttonLabel: string;
@@ -33,8 +32,8 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   const [students, setStudents] = useState<RegisterClassItem[]>([]);
   const [teachers, setTeachers] = useState<RegisterClassItem[]>([]);
 
-  const [studentsClass, setStudentsClass] = useState<StudentItem[]>([]);
-  const [teachersClass, setTeachersClass] = useState<StudentItem[]>([]);
+  const [studentsClass, setStudentsClass] = useState<MemberItem[]>([]);
+  const [teachersClass, setTeachersClass] = useState<MemberItem[]>([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -48,21 +47,22 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   const [totalPagesStuCl, setTotalPagesStuCl] = useState(0);
   const [totalPagesTeaCl, setTotalPagesTeaCl] = useState(0);
 
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectedStus, setSelectedStus] = useState<string[]>([]);
+  const [isSelectingStu, setIsSelectingStu] = useState(false);
 
-  const [selectedUsersCl, setSelectedUsersCl] = useState<string[]>([]);
-  const [isSelectingCl, setIsSelectingCl] = useState(false);
+  const [selectedTeas, setSelectedTeas] = useState<string[]>([]);
+  const [isSelectingTea, setIsSelectingTea] = useState(false);
 
   const [currentTab, setCurrentTab] = useState("students");
 
-  const toggleSelectMode = () => {
-    setIsSelecting(!isSelecting);
-    if (isSelecting) setSelectedUsers([]); // Reset khi tắt chọn nhiều
+  const toggleSelectModeForStu = () => {
+    console.log(loading);
+    setIsSelectingStu(!isSelectingStu);
+    if (isSelectingStu) setSelectedStus([]); // Reset khi tắt chọn nhiều
   };
 
-  const toggleSelection = (id: string) => {
-    setSelectedUsers((prevSelected) =>
+  const toggleSelectionForStu = (id: string) => {
+    setSelectedStus((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((userId) => userId !== id)
         : [...prevSelected, id],
@@ -71,82 +71,77 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
   const toggleSelectAll = () => {
     if (currentTab == "students") {
-      if (selectedUsers.length === students.length) {
-        setSelectedUsers([]); // Bỏ chọn tất cả
+      if (selectedStus.length === students.length) {
+        setSelectedStus([]); // Bỏ chọn tất cả
       } else {
-        setSelectedUsers(students.map((s) => s.id)); // Chọn tất cả
+        setSelectedStus(students.map((s) => s.id)); // Chọn tất cả
       }
     } else {
-      if (selectedUsers.length === teachers.length) {
-        setSelectedUsers([]); // Bỏ chọn tất cả
+      if (selectedTeas.length === teachers.length) {
+        setSelectedTeas([]); // Bỏ chọn tất cả
       } else {
-        setSelectedUsers(teachers.map((s) => s.id)); // Chọn tất cả
+        setSelectedTeas(teachers.map((s) => s.id)); // Chọn tất cả
       }
     }
   };
 
-  const toggleSelectModeCl = () => {
-    setIsSelectingCl(!isSelectingCl);
-    if (isSelectingCl) setSelectedUsersCl([]); // Reset khi tắt chọn nhiều
+  const toggleSelectModeForTea = () => {
+    console.log(loading);
+    setIsSelectingTea(!isSelectingTea);
+    if (isSelectingTea) setSelectedTeas([]); // Reset khi tắt chọn nhiều
   };
 
-  const toggleSelectionCl = (id: string) => {
-    setSelectedUsersCl((prevSelected) =>
+  const toggleSelectionForTea = (id: string) => {
+    setSelectedTeas((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((userId) => userId !== id)
         : [...prevSelected, id],
     );
   };
 
-  const toggleSelectAllCl = () => {
-    console.log(loading);
-    if (currentTab == "students") {
-      if (selectedUsersCl.length === studentsClass.length) {
-        setSelectedUsersCl([]); // Bỏ chọn tất cả
-      } else {
-        setSelectedUsersCl(studentsClass.map((s) => s.id)); // Chọn tất cả
-      }
-    } else {
-      if (selectedUsersCl.length === teachersClass.length) {
-        setSelectedUsersCl([]); // Bỏ chọn tất cả
-      } else {
-        setSelectedUsersCl(teachersClass.map((s) => s.id)); // Chọn tất cả
-      }
-    }
-  };
-
-  const handleBulkAction = async (action: "approve" | "reject") => {
-    if (selectedUsers.length === 0) {
+  const handleBulkAction = async () => {
+    if (selectedStus.length === 0) {
       toast.error("Vui lòng chọn ít nhất một người dùng.");
       return;
     }
     setLoading(true);
     try {
       const defaultRole = currentTab === "students" ? "STUDENT" : "TEACHER";
-      const roleResponse = await getAllRolesByDefault(defaultRole);
-      console.log(roleResponse);
-      const roleId = roleResponse[0]?.id; // Lấy ID đầu tiên trong mảng
+      // const roleResponse = await getAllRolesByDefault(defaultRole);
+      // console.log(roleResponse);
+      // const roleId = roleResponse[0]?.id; // Lấy ID đầu tiên trong mảng
 
-      if (!roleId) {
-        throw new Error("Không tìm thấy roleId.");
-      }
-      if (action === "approve") {
-        console.log(selectedUsers);
-        await confirmRegister(selectedUsers, roleId);
-        toast.success("Phê duyệt thành công! Đang chuyển hướng...", {
+      // if (!roleId) {
+      //   throw new Error("Không tìm thấy roleId.");
+      // }
+      if (defaultRole == "STUDENT") {
+        await addMembers(
+          selectedStus,
+          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+          defaultRole,
+        );
+        toast.success("Thêm học viên thành công", {
           position: "bottom-right",
           autoClose: 3000,
         });
+        setSelectedStus([]);
       } else {
-        await rejectRegister(selectedUsers);
-        toast.success("Từ chối thành công! Đang chuyển hướng...", {
+        await addMembers(
+          selectedTeas,
+          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+          defaultRole,
+        );
+        toast.success("Thêm giáo viên thành công", {
           position: "bottom-right",
           autoClose: 3000,
         });
+        setSelectedTeas([]);
       }
-      setSelectedUsers([]);
+
       fetchStudents();
       fetchTeachers();
+      fetchStudentsInClass();
+      fetchTeachersInClass();
     } catch (error) {
       console.log(error);
       toast.error("Đã xảy ra lỗi.");
@@ -193,15 +188,16 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchStudentsInClass = async () => {
-    let StudentClassData: StudentItem[] = [];
+    let StudentClassData: MemberItem[] = [];
     setLoading(true);
 
     try {
-      const response = await getListStudent(
+      const response = await getListMembers(
         "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
         "",
         currentPageStuCl - 1,
         5,
+        "STUDENT",
       );
 
       StudentClassData = response.content.map((item) => ({
@@ -251,15 +247,16 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchTeachersInClass = async () => {
-    let TeacherClassData: StudentItem[] = [];
+    let TeacherClassData: MemberItem[] = [];
     setLoading(true);
 
     try {
-      const response = await getListStudent(
+      const response = await getListMembers(
         "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
         "",
-        currentPageStuCl - 1,
+        currentPageTeaCl - 1,
         5,
+        "TEACHER",
       );
 
       TeacherClassData = response.content.map((item) => ({
@@ -294,48 +291,39 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     showModalRe,
   ]); // Trigger fetch when page changes
 
-  const handleApprove = async (userId: string) => {
+  const handleAdd = async (userId: string) => {
     setLoading(true);
 
     try {
       const defaultRole = currentTab === "students" ? "STUDENT" : "TEACHER";
-      const roleResponse = await getAllRolesByDefault(defaultRole);
-
-      const roleId = roleResponse[0]?.id; // Lấy ID đầu tiên trong mảng
-
-      if (!roleId) {
-        throw new Error("Không tìm thấy roleId.");
+      if (defaultRole == "STUDENT") {
+        await addMembers(
+          [userId],
+          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+          defaultRole,
+        );
+        toast.success("Thêm học viên thành công", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+        setSelectedStus([]);
+      } else {
+        await addMembers(
+          [userId],
+          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+          defaultRole,
+        );
+        toast.success("Thêm giáo viên thành công", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+        setSelectedTeas([]);
       }
 
-      await confirmRegister([userId], roleId);
-
-      toast.success("Phê duyệt thành công! Đang chuyển hướng...", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
-
       fetchStudents();
       fetchTeachers();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleReject = async (userId: string) => {
-    setLoading(true);
-
-    try {
-      await rejectRegister([userId]);
-
-      toast.success("Từ chối thành công! Đang chuyển hướng...", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
-
-      fetchStudents();
-      fetchTeachers();
+      fetchStudentsInClass();
+      fetchTeachersInClass();
     } catch (error) {
       console.log(error);
     } finally {
@@ -400,16 +388,15 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
             <TabPanel value="students">
               <div className="grid grid-cols-2 gap-4">
                 <ClassTable
-                  title="Cần xác nhận"
+                  title="Danh sách chờ"
                   users={students}
-                  isSelecting={isSelecting}
-                  selectedUsers={selectedUsers}
-                  toggleSelection={toggleSelection}
-                  toggleSelectMode={toggleSelectMode}
+                  isSelecting={isSelectingStu}
+                  selectedUsers={selectedStus}
+                  toggleSelection={toggleSelectionForStu}
+                  toggleSelectMode={toggleSelectModeForStu}
                   toggleSelectAll={toggleSelectAll}
                   handleBulkAction={handleBulkAction}
-                  handleApprove={handleApprove}
-                  handleReject={handleReject}
+                  handleAdd={handleAdd}
                   currentPage={currentPageStu}
                   totalPages={totalPagesStu}
                   setCurrentPage={setCurrentPageStu}
@@ -418,16 +405,8 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                 />
 
                 <ClassTable
-                  title="Đã xác nhận"
+                  title="Danh sách lớp"
                   users={studentsClass}
-                  isSelecting={isSelectingCl}
-                  selectedUsers={selectedUsersCl}
-                  toggleSelection={toggleSelectionCl}
-                  toggleSelectMode={toggleSelectModeCl}
-                  toggleSelectAll={toggleSelectAllCl}
-                  handleBulkAction={handleBulkAction}
-                  handleApprove={handleApprove}
-                  handleReject={handleReject}
                   currentPage={currentPageStuCl}
                   totalPages={totalPagesStuCl}
                   setCurrentPage={setCurrentPageStuCl}
@@ -438,111 +417,17 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
             </TabPanel>
 
             <TabPanel value="teachers">
-              {/* <div className="mb-4 flex gap-2">
-                <Button onClick={toggleSelectMode} className="mr-2">
-                  {isSelecting ? "Hủy bỏ" : "Chọn nhiều"}
-                </Button>
-
-                {isSelecting && (
-                  <>
-                    <Button
-                      onClick={() => toggleSelectAll()}
-                      className="bg-blue-500 text-white p-2"
-                    >
-                      <FaList className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      onClick={() => handleBulkAction("approve")}
-                      className="bg-green-500 text-white p-2"
-                    >
-                      <FaCheck className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      onClick={() => handleBulkAction("reject")}
-                      className="bg-red-500 text-white p-2"
-                    >
-                      <FaTimes className="h-5 w-5" />
-                    </Button>
-                  </>
-                )}
-              </div>
-              <Table>
-                <TableHeader
-                  columns={[
-                    ...(isSelecting ? ["✔ Chọn"] : []),
-                    "Tên",
-                    "Email",
-                    "Địa chỉ",
-                    "Ngày sinh",
-                    "Số điện thoại",
-                    "Giới tính",
-                    ...(!isSelecting ? ["Hành động"] : []),
-                  ]}
-                />
-                <TableBody isLoading={loading}>
-                  {teachers.map((teacher) => (
-                    <TableRow
-                      key={teacher.id}
-                      className={`hover:bg-green-100 ${
-                        selectedUsers.includes(teacher.id) ? "bg-green-100" : ""
-                      }`}
-                    >
-                      {isSelecting && (
-                        <TableCell>
-                          <input
-                            type="checkbox"
-                            checked={selectedUsers.includes(teacher.id)}
-                            onChange={() => toggleSelection(teacher.id)}
-                          />
-                        </TableCell>
-                      )}
-                      <TableCell>{teacher.name}</TableCell>
-                      <TableCell>{teacher.email}</TableCell>
-                      <TableCell>{teacher.genId}</TableCell>
-                      <TableCell>{teacher.gender}</TableCell>
-                      {!isSelecting && (
-                        <TableCell>
-                          <div className="flex items-center justify-center">
-                            <Button
-                              variant="basic"
-                              onClick={() => handleApprove(teacher.id)}
-                              className="bg-success text-white hover:bg-success/80"
-                            >
-                              <FaCheck />
-                            </Button>
-                            <Button
-                              variant="basic"
-                              onClick={() => handleReject(teacher.id)}
-                              className="bg-error text-white hover:bg-error/80 ml-4"
-                            >
-                              <FaTimes />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <Pagination
-                currentPage={currentPageTea}
-                totalPages={totalPagesTea}
-                handlePageClick={(page) => setCurrentPageTea(page)}
-                handlePreviousPage={handlePreviousPageTea}
-                handleNextPage={handleNextPageTea}
-              /> */}
               <div className="grid grid-cols-2 gap-4">
                 <ClassTable
-                  title="Cần xác nhận"
+                  title="Danh sách chờ"
                   users={teachers}
-                  isSelecting={isSelecting}
-                  selectedUsers={selectedUsers}
-                  toggleSelection={toggleSelection}
-                  toggleSelectMode={toggleSelectMode}
+                  isSelecting={isSelectingTea}
+                  selectedUsers={selectedTeas}
+                  toggleSelection={toggleSelectionForTea}
+                  toggleSelectMode={toggleSelectModeForTea}
                   toggleSelectAll={toggleSelectAll}
                   handleBulkAction={handleBulkAction}
-                  handleApprove={handleApprove}
-                  handleReject={handleReject}
+                  handleAdd={handleAdd}
                   currentPage={currentPageTea}
                   totalPages={totalPagesTea}
                   setCurrentPage={setCurrentPageTea}
@@ -551,16 +436,8 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                 />
 
                 <ClassTable
-                  title="Đã xác nhận"
+                  title="Danh sách lớp"
                   users={teachersClass}
-                  isSelecting={isSelectingCl}
-                  selectedUsers={selectedUsersCl}
-                  toggleSelection={toggleSelectionCl}
-                  toggleSelectMode={toggleSelectModeCl}
-                  toggleSelectAll={toggleSelectAllCl}
-                  handleBulkAction={handleBulkAction}
-                  handleApprove={handleApprove}
-                  handleReject={handleReject}
                   currentPage={currentPageTeaCl}
                   totalPages={totalPagesTeaCl}
                   setCurrentPage={setCurrentPageTeaCl}
