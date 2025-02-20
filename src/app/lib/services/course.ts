@@ -16,11 +16,11 @@ export const getAllCourses = async (
 };
 
 export const getCoursesByGradeId = async (gradeId: string) => {
-  const response = await axiosInstance.get("/course/list", {
+  const response = await axiosInstance.get(`/course/list/${gradeId}`, {
     params: {
       page: 0,
       limit: 10,
-      gradeId: gradeId,
+      filter: "",
     },
   });
   return response;

@@ -24,17 +24,6 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [role, setRole] = useState<string>("");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  if (typeof window !== "undefined") {
-    // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    //   const token = localStorage.getItem("accessToken");
-    //   setRole("");
-    //   return token !== null;1
-    // });
-    const accessToken = localStorage.getItem("accessToken");
-    const role = localStorage.getItem("role");
-    setIsAuthenticated(accessToken !== null ? true : false);
-    setRole(role === null ? "" : role);
-  }
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -42,6 +31,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } else {
       console.log(localStorage.getItem("accessToken"));
       console.log("client");
+    }
+    if (typeof window !== "undefined") {
+      const accessToken = localStorage.getItem("accessToken");
+      const role = localStorage.getItem("role");
+      setIsAuthenticated(accessToken !== null ? true : false);
+      setRole(role === null ? "" : role);
     }
   }, []);
 
