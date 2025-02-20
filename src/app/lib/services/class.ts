@@ -1,4 +1,9 @@
-import { ClassData, ClassSchema } from "@/app/types/type";
+import {
+  ClassData,
+  ClassSchema,
+  RegisterClassData,
+  MemberData,
+} from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAllClasses = async (
@@ -45,6 +50,60 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
     {
       params: {
         teacherId,
+      },
+    },
+  );
+  return response.data;
+};
+
+export const getListMembers = async (
+  classId: string,
+  query: string,
+  currentPage: number,
+  limit: number,
+  role: string,
+): Promise<MemberData> => {
+  const response = await axiosInstance.get(`/class/list-members/${classId}`, {
+    params: {
+      page: currentPage,
+      limit: limit,
+      role: role,
+      filter: query,
+    },
+  });
+  return response.data.data;
+};
+
+export const getListAvailableTea = async (
+  classId: string,
+  query: string,
+  currentPage: number,
+  limit: number,
+): Promise<RegisterClassData> => {
+  const response = await axiosInstance.get(
+    `/class/list-available-teachers/${classId}`,
+    {
+      params: {
+        page: currentPage,
+        limit: limit,
+        filter: query,
+      },
+    },
+  );
+  return response.data.data;
+};
+
+export const addMembers = async (
+  userIds: string[],
+  classId: string,
+  role: string,
+) => {
+  const response = await axiosInstance.post(
+    `/class/add-members/${classId}`,
+    userIds,
+    {
+      params: {
+        role: role,
       },
     },
   );

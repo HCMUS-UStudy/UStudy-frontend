@@ -21,6 +21,13 @@ export type AccountItem = {
   createdAt: string;
 };
 
+export type MemberItem = {
+  id: string;
+  name: string;
+  email: string;
+  gender: string;
+};
+
 export type RegisterItem = {
   id: string;
   name: string;
@@ -28,6 +35,14 @@ export type RegisterItem = {
   address: string;
   birthday: string;
   phone: string;
+  gender: string;
+};
+
+export type RegisterClassItem = {
+  id: string;
+  name: string;
+  email: string;
+  genId: string;
   gender: string;
 };
 
@@ -95,6 +110,14 @@ export type TeacherItem = {
   genId: string;
   id: string;
   name: string;
+};
+
+export type TeacherAvalItem = {
+  email: string;
+  genId: string;
+  id: string;
+  name: string;
+  gender: string;
 };
 
 export type ClassSchema = {
@@ -205,6 +228,16 @@ export type ClassData = {
   totalPages: number;
 };
 
+export type MemberData = {
+  content: MemberItem[];
+  totalPages: number;
+};
+
+export type TeacherData = {
+  content: TeacherAvalItem[];
+  totalPages: number;
+};
+
 export type DurationUnit = "Tuần" | "Tháng" | "Năm";
 
 export type ScheduleType = "Giờ cố định" | "Giờ linh hoạt";
@@ -310,6 +343,11 @@ export type AccountData = {
 
 export type RegisterAccountData = {
   content: RegisterItem[];
+  totalPages: number;
+};
+
+export type RegisterClassData = {
+  content: RegisterClassItem[];
   totalPages: number;
 };
 

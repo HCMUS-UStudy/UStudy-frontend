@@ -258,7 +258,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
   return (
     <>
       <ToastContainer />
-      <Button onClick={handleOpenModal} className="pl-6 pr-6 mr-4">
+      <Button onClick={handleOpenModal} className="pl-6 pr-6 mr-4 rounded-2xl">
         {buttonLabel}
       </Button>
       <Dialog

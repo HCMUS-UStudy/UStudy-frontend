@@ -189,7 +189,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   return (
     <>
       <ToastContainer />
-      <Button onClick={handleOpenModal} className="pl-6 pr-6">
+      <Button onClick={handleOpenModal} className="pl-6 pr-6 rounded-2xl">
         {buttonLabel}
       </Button>
 
