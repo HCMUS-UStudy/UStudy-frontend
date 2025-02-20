@@ -51,12 +51,15 @@ const ClassTable: React.FC<ClassTableProps> = ({
     return (student as RegisterClassItem).genId !== undefined;
   };
 
-  const isRegisterClassList = users.some(isRegisterClassItem);
+  const hasData = users.length > 0;
+  const isRegisterClassList = hasData && users.some(isRegisterClassItem);
+  const showSelectColumn = hasData && isSelecting;
 
   return (
     <div className="border p-4">
       <h3 className="text-lg font-bold mb-4">{title}</h3>
-      {isRegisterClassList && toggleSelectMode && (
+
+      {hasData && isRegisterClassList && toggleSelectMode && (
         <div className="mb-4 flex gap-2">
           <Button onClick={toggleSelectMode} className="mr-2">
             {isSelecting ? "Hủy bỏ" : "Chọn nhiều"}
@@ -83,21 +86,19 @@ const ClassTable: React.FC<ClassTableProps> = ({
       <Table>
         <TableHeader
           columns={[
-            ...(isSelecting ? ["✔ Chọn"] : []),
-            ...(users.some(isRegisterClassItem) ? ["ID"] : []),
+            ...(showSelectColumn ? ["✔ Chọn"] : []),
+            ...(isRegisterClassList ? ["ID"] : []),
             "Tên",
             "Email",
             "Giới tính",
-            ...(!isSelecting && users.some(isRegisterClassItem)
-              ? ["Hành động"]
-              : []),
+            ...(!isSelecting && isRegisterClassList ? ["Hành động"] : []),
           ]}
         />
         <TableBody>
-          {users.length === 0 ? (
+          {!hasData ? (
             <TableRow>
               <TableCell
-                colSpan={users.some(isRegisterClassItem) ? 5 : 3}
+                colSpan={isRegisterClassList ? 4 : 3}
                 className="text-center"
               >
                 Không có dữ liệu
@@ -113,7 +114,7 @@ const ClassTable: React.FC<ClassTableProps> = ({
                     : "hover:bg-green-100"
                 }
               >
-                {isSelecting && isRegisterClassList && toggleSelection && (
+                {showSelectColumn && toggleSelection && (
                   <TableCell>
                     <input
                       type="checkbox"
@@ -147,13 +148,15 @@ const ClassTable: React.FC<ClassTableProps> = ({
         </TableBody>
       </Table>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handlePageClick={setCurrentPage}
-        handlePreviousPage={handlePreviousPage}
-        handleNextPage={handleNextPage}
-      />
+      {hasData && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={setCurrentPage}
+          handlePreviousPage={handlePreviousPage}
+          handleNextPage={handleNextPage}
+        />
+      )}
     </div>
   );
 };

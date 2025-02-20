@@ -23,6 +23,11 @@ interface ClassRegisterModalProps {
   buttonLabel: string;
 }
 
+interface FailedMember {
+  genId: string;
+  name: string;
+}
+
 const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   buttonLabel,
 }) => {
@@ -100,51 +105,60 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const handleBulkAction = async () => {
-    if (selectedStus.length === 0) {
+    const isStudentTab = currentTab === "students";
+    const defaultRole = isStudentTab ? "STUDENT" : "TEACHER";
+    const selectedUsers = isStudentTab ? selectedStus : selectedTeas;
+
+    if (selectedUsers.length === 0) {
       toast.error("Vui lòng chọn ít nhất một người dùng.");
       return;
     }
+
     setLoading(true);
     try {
-      const defaultRole = currentTab === "students" ? "STUDENT" : "TEACHER";
-      // const roleResponse = await getAllRolesByDefault(defaultRole);
-      // console.log(roleResponse);
-      // const roleId = roleResponse[0]?.id; // Lấy ID đầu tiên trong mảng
+      const response = await addMembers(
+        selectedUsers,
+        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        defaultRole,
+      );
 
-      // if (!roleId) {
-      //   throw new Error("Không tìm thấy roleId.");
-      // }
-      if (defaultRole == "STUDENT") {
-        await addMembers(
-          selectedStus,
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
-          defaultRole,
-        );
-        toast.success("Thêm học viên thành công", {
+      // Kiểm tra nếu có thành viên không thể thêm
+      if (response.data?.failedCount > 0) {
+        const failedList = response.data.failedMembers
+          .map(
+            (member: { genId: string; name: string }) =>
+              `${member.name} (ID: ${member.genId})`,
+          )
+          .join(", ");
+
+        toast.error(`Không thể thêm: ${failedList}`, {
           position: "bottom-right",
-          autoClose: 3000,
+          autoClose: 5000,
         });
+      } else {
+        toast.success(
+          `Thêm ${defaultRole === "STUDENT" ? "học viên" : "giáo viên"} thành công!`,
+          {
+            position: "bottom-right",
+            autoClose: 3000,
+          },
+        );
+      }
+
+      if (defaultRole === "STUDENT") {
         setSelectedStus([]);
       } else {
-        await addMembers(
-          selectedTeas,
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
-          defaultRole,
-        );
-        toast.success("Thêm giáo viên thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
         setSelectedTeas([]);
       }
 
+      // Cập nhật dữ liệu
       fetchStudents();
       fetchTeachers();
       fetchStudentsInClass();
       fetchTeachersInClass();
     } catch (error) {
-      console.log(error);
-      toast.error("Đã xảy ra lỗi.");
+      console.error("Lỗi khi thêm thành viên:", error);
+      toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -296,28 +310,37 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
     try {
       const defaultRole = currentTab === "students" ? "STUDENT" : "TEACHER";
-      if (defaultRole == "STUDENT") {
-        await addMembers(
-          [userId],
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
-          defaultRole,
-        );
-        toast.success("Thêm học viên thành công", {
+      const response = await addMembers(
+        [userId],
+        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        defaultRole,
+      );
+
+      if (response.data?.failedCount > 0) {
+        const failedUsers = response.data.failedMembers
+          .map(
+            (member: FailedMember) =>
+              `ID: ${member.genId}, Name: ${member.name}`,
+          )
+          .join("\n");
+
+        toast.error(`Thêm không thành công:\n${failedUsers}`, {
           position: "bottom-right",
-          autoClose: 3000,
+          autoClose: 5000,
         });
-        setSelectedStus([]);
       } else {
-        await addMembers(
-          [userId],
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
-          defaultRole,
+        toast.success(
+          defaultRole === "STUDENT"
+            ? "Thêm học viên thành công"
+            : "Thêm giáo viên thành công",
+          { position: "bottom-right", autoClose: 3000 },
         );
-        toast.success("Thêm giáo viên thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-        setSelectedTeas([]);
+
+        if (defaultRole === "STUDENT") {
+          setSelectedStus([]);
+        } else {
+          setSelectedTeas([]);
+        }
       }
 
       fetchStudents();
@@ -326,6 +349,10 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       fetchTeachersInClass();
     } catch (error) {
       console.log(error);
+      toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }
