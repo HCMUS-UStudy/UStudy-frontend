@@ -81,6 +81,25 @@ export type TimeItem = {
   endTime: string;
 };
 
+export type SessionTimeItem = {
+  day:
+    | "MONDAY"
+    | "TUESDAY"
+    | "WEDNESDAY"
+    | "THURSDAY"
+    | "FRIDAY"
+    | "SATURDAY"
+    | "SUNDAY";
+  branchSessionId: string;
+};
+
+export type SessionItem = {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+};
+
 export type RoomItem = {
   id: string;
   name: string;

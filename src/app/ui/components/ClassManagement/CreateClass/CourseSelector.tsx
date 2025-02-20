@@ -1,23 +1,33 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { useSlider } from "../../slider";
+import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
-import { useCreateClassContext } from "./createClassContent";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
 import { CourseItem } from "@/app/types/type";
 import SelectorLoading from "./SelectorLoading";
+import { useFormContext } from "react-hook-form";
+import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
 
 export default function CourseSelector() {
-  const context = useSlider();
-  const { newClass, setNewClass } = useCreateClassContext();
+  const {
+    register,
+    formState: { errors },
+    watch,
+    setError,
+  } = useFormContext<CreateClassInputs>();
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const selectedGrade = watch("gradeId");
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await getCoursesByGradeId(newClass.gradeId);
+        const response = await getCoursesByGradeId(selectedGrade);
         setCourses(response.data.data.content);
-        console.log(response);
+        console.log(response.data);
+        if (response.data.data.totalElements === 0) {
+          setError("courseId", { message: "Chưa có môn học cho khối này" });
+        } else {
+          setError("courseId", { message: "" });
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -25,64 +35,43 @@ export default function CourseSelector() {
       }
     };
     fetchData();
-  }, [newClass.gradeId]);
-  const handleSelectCourse = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("here");
-    setNewClass((currentClass) => ({
-      ...currentClass,
-      courseId: e.target.value,
-    }));
-    context.nextStep();
-  };
-  return (
-    <div className="flex flex-col mb-3">
-      <h1 className="text-center font-medium text-lg">Chọn môn cho lớp học</h1>
-      <div className="grid grid-cols-3 divide-x-2 divide-slate-200 mt-4">
-        <div className="col-span-2 flex flex-wrap gap-4 px-10">
+  }, [selectedGrade, setError]);
+
+  if (selectedGrade === "") {
+    return <></>;
+  } else {
+    return (
+      <div>
+        <h1 className="font-bold">Chọn môn cho lớp học</h1>
+        <div className="flex flex-wrap gap-4 w-2/3 mt-2">
           {loading ? (
-            <SelectorLoading />
+            <SelectorLoading size="sm" numberOfItems={5} />
           ) : (
             <>
               {courses.map((course) => (
                 <label
                   htmlFor={course.id}
                   key={course.id}
-                  className="relative px-4 py-6 shrink-0 grow-0 has-[:checked]:border-blue-400 flex items-center justify-center h-24 w-24 border-2 border-slate-200 text-md rounded hover:border-blue-400 hover:text-blue-600 hover:bg-blue-100 cursor-pointer transition-all"
+                  className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-slate-200 text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
                 >
                   <input
                     type="radio"
-                    name="selectCourse"
                     id={course.id}
                     className="hidden peer"
                     value={course.id}
-                    onChange={handleSelectCourse}
+                    {...register("courseId")}
                   />
-                  <span className="peer-checked:text-blue-600 text-black transition-colors">
+                  <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all">
                     {course.name}
                   </span>
-                  <FaCheck className="size-20 absolute text-blue-600 opacity-0 peer-checked:opacity-10 transition-all" />
+                  <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
                 </label>
               ))}
             </>
           )}
         </div>
-        <div className="flex flex-col gap-2 px-3">
-          <button
-            onClick={context.nextStep}
-            type="button"
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-800 transition-colors text-white text-sm rounded"
-          >
-            Tiếp theo
-          </button>
-          <button
-            onClick={context.prevStep}
-            type="button"
-            className="px-6 py-3 bg-slate-400 hover:bg-slate-500 transition-colors text-white text-sm rounded"
-          >
-            Trở lại
-          </button>
-        </div>
+        <div className="text-error mt-2">{errors.courseId?.message}</div>
       </div>
-    </div>
-  );
+    );
+  }
 }
