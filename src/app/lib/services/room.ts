@@ -1,24 +1,30 @@
-import { TimeItem } from "@/app/types/type";
+import { SessionTimeItem } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAvailableRooms = async (
   branchId: string,
-  times: TimeItem[],
+  times: SessionTimeItem[],
   startDate: string,
   endDate: string,
 ) => {
   const body = {
-    branchId: branchId,
     times: times,
     startDate: startDate,
     endDate: endDate,
   };
-  const response = await axiosInstance.post("/room/list-available", body, {
-    params: {
-      branchId: branchId,
-      page: 0,
-      limit: 10,
-    },
-  });
-  return response;
+  try {
+    const response = await axiosInstance.post(
+      `/room/list-available/${branchId}`,
+      body,
+      {
+        params: {
+          page: 0,
+          limit: 10,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

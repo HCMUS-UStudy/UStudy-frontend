@@ -73,6 +73,7 @@ export default function SessionSelector() {
         setLoading(true);
         const response = await getSessionByBranchId(selectedBranchId);
         setSessions(response.data.data);
+        // console.log(response.data.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -94,7 +95,7 @@ export default function SessionSelector() {
         message: "Vui lòng chọn đầy đủ thứ và ca học",
       });
     }
-  }, [selectedDays]);
+  }, [selectedDays, sessions.length, setError, setValue, clearErrors]);
   useEffect(() => {
     if (sessions.length === 0) {
       setError("classTimes", {
@@ -104,7 +105,7 @@ export default function SessionSelector() {
     } else {
       clearErrors("classTimes");
     }
-  }, [sessions]);
+  }, [sessions, setError, clearErrors]);
   return (
     <div>
       <div className="flex flex-col">
