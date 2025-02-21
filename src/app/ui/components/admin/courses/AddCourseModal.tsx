@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { CourseSchema } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { createNewCourse } from "@/app/lib/services/course";
@@ -15,29 +14,35 @@ import {
 } from "@/app/ui/components/_common/Dialog";
 import TextArea from "@/app/ui/components/_common/text-field/TextArea";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const CreateGradeSchema = z.object({
+  creator: z.string(),
+  name: z
+    .string({ message: "(*) Đây là trường bắt buộc" })
+    .min(1, "(*) Đây là trường bắt buộc"),
+  description: z
+    .string({ message: "(*) Đây là trường bắt buộc" })
+    .min(1, "(*) Đây là trường bắt buộc"),
+});
 
 interface ModalCourseWrapperProps {
   buttonLabel: string;
 }
 
-interface CreateCourseError {
-  name?: string | null;
-  description?: string | null;
-  creator?: string | null;
-}
+type CreateGradeInputs = z.infer<typeof CreateGradeSchema>;
 
 const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    creator: localStorage.getItem("creator") || "",
-  });
-
-  const [errors, setErrors] = useState<CreateCourseError>({
-    name: null,
-    description: null,
-    creator: null,
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<CreateGradeInputs>({
+    resolver: zodResolver(CreateGradeSchema),
+    defaultValues: { creator: localStorage.getItem("creator") ?? undefined },
   });
 
   const router = useRouter();
@@ -45,61 +50,13 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const isValidForm = (data: CourseSchema): boolean => {
-    let isValid = true;
-    const msg = "Trường bắt buộc";
-    const newErrors: CreateCourseError = {};
-
-    if (!data.name) {
-      newErrors.name = msg;
-      isValid = false;
-    }
-
-    if (!data.description) {
-      newErrors.description = msg;
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const handleSubmitModal = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const payload: CourseSchema = { ...formData };
-
-    if (!isValidForm(payload)) {
-      toast.error("Vui lòng kiểm tra lại các thông tin đã nhập!", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
-      console.log(errors);
-      return; // Stop further processing if validation fails
-    }
-
+  const onSubmit = async (data: CreateGradeInputs) => {
     try {
-      const response = await createNewCourse(payload);
+      const response = await createNewCourse(data);
       console.log(response);
 
       if (response.statusCode === "OK") {
-        setFormData({
-          name: "",
-          description: "",
-          creator: localStorage.getItem("creator") || "",
-        });
-
-        toast.success("Tạo môn học thành công! Đang chuyển hướng...", {
+        toast.success("Tạo môn học thành công!", {
           position: "bottom-right",
           autoClose: 3000,
         });
@@ -131,39 +88,40 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
         <DialogHeader>Tạo môn học mới</DialogHeader>
         <DialogContent>
           <form
-            onSubmit={handleSubmitModal}
+            onSubmit={handleSubmit(onSubmit)}
             className="space-y-6"
             id="add-course-admin-form"
           >
             {/*Creator*/}
             <Input
               type="text"
-              name="creator"
-              value={formData.creator}
               readOnly
               placeholder="Người tạo"
-              label="Người tạo"
+              label="Người tạo *"
+              {...register("creator")}
             />
             {/*Name*/}
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Nhập tên môn"
-              label="Tên môn *"
-              required
-            />
+            <div className="relative mb-4">
+              <Input
+                type="text"
+                placeholder="Nhập tên khối"
+                label="Tên khối *"
+                {...register("name")}
+              />
+              <span className="text-error text-sm">{errors.name?.message}</span>
+            </div>
 
             {/*Description*/}
-            <TextArea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Nhập mô tả môn học"
-              label="Mô tả môn học *"
-            />
+            <div className="relative mb-4">
+              <TextArea
+                placeholder="Nhập mô tả môn học"
+                label="Mô tả môn học *"
+                {...register("description")}
+              />
+              <span className="text-error text-sm">
+                {errors.description?.message}
+              </span>
+            </div>
           </form>
         </DialogContent>
         <DialogFooter>
@@ -181,7 +139,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
               type="submit"
               className="w-[15%]"
             >
-              Lưu
+              Tạo
             </Button>
           </div>
         </DialogFooter>

@@ -141,8 +141,7 @@ export type AccountSchema = {
   address: string;
   birthday: string;
   gender: "MALE" | "FEMALE";
-  role: "STUDENT" | "TEACHER" | "STAFF";
-  permissions: Array<string>;
+  roleId: string;
 };
 
 export type ScheduleItem = {
