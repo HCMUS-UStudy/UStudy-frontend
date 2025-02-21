@@ -1,29 +1,27 @@
 import React from "react";
-import AddAccountModal from "@/app/ui/components/admin/accounts/AddAccountModal";
-import AccountTable from "@/app/ui/components/admin/accounts/AccountTable";
-import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { HiAdjustments } from "react-icons/hi";
 import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
+import GradeTable from "@/app/ui/components/admin/grades/GradeTable";
+import AddGradeModal from "@/app/ui/components/admin/grades/AddGradeModal";
 
 export default async function GradePage(props: {
   searchParams?: Promise<{
     query?: string;
     page?: string;
-    role?: string;
+    grade?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
-  const role = searchParams?.role || "All";
+  const grade = searchParams?.grade || "All";
 
   return (
     <div className="px-2">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Tổng số khối học (11)</h2>
         <div className="flex items-center space-x-2">
-          <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
-          <AddAccountModal buttonLabel="Tạo khối học" />
+          <AddGradeModal buttonLabel="Tạo khối học" />
         </div>
       </div>
 
@@ -42,8 +40,8 @@ export default async function GradePage(props: {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <AccountTable searchQuery={query} roleQuery={role} />
+      <div className="relative mt-6 max-h-[400px]">
+        <GradeTable searchQuery={query} gradeQuery={grade} />
       </div>
     </div>
   );

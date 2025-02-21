@@ -3,40 +3,36 @@
 import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { CourseSchema } from "@/app/types/type";
+import { GradeSchema } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { createNewCourse } from "@/app/lib/services/course";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
-import TextArea from "@/app/ui/components/_common/text-field/TextArea";
+import { createNewGrade } from "@/app/lib/services/grade";
 import { useRouter } from "next/navigation";
 
-interface ModalCourseWrapperProps {
+interface ModalGradeWrapperProps {
   buttonLabel: string;
 }
 
-interface CreateCourseError {
+interface CreateGradeError {
   name?: string | null;
-  description?: string | null;
   creator?: string | null;
 }
 
-const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
+const AddGradeModal: React.FC<ModalGradeWrapperProps> = ({ buttonLabel }) => {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
     creator: localStorage.getItem("creator") || "",
   });
 
-  const [errors, setErrors] = useState<CreateCourseError>({
+  const [errors, setErrors] = useState<CreateGradeError>({
     name: null,
-    description: null,
     creator: null,
   });
 
@@ -55,18 +51,13 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     }));
   };
 
-  const isValidForm = (data: CourseSchema): boolean => {
+  const isValidForm = (data: GradeSchema): boolean => {
     let isValid = true;
     const msg = "Trường bắt buộc";
-    const newErrors: CreateCourseError = {};
+    const newErrors: CreateGradeError = {};
 
     if (!data.name) {
       newErrors.name = msg;
-      isValid = false;
-    }
-
-    if (!data.description) {
-      newErrors.description = msg;
       isValid = false;
     }
 
@@ -77,7 +68,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload: CourseSchema = { ...formData };
+    const payload: GradeSchema = { ...formData };
 
     if (!isValidForm(payload)) {
       toast.error("Vui lòng kiểm tra lại các thông tin đã nhập!", {
@@ -89,23 +80,22 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     }
 
     try {
-      const response = await createNewCourse(payload);
+      const response = await createNewGrade(payload);
       console.log(response);
 
       if (response.statusCode === "OK") {
         setFormData({
           name: "",
-          description: "",
           creator: localStorage.getItem("creator") || "",
         });
 
-        toast.success("Tạo môn học thành công! Đang chuyển hướng...", {
+        toast.success("Tạo khối học thành công! Đang chuyển hướng...", {
           position: "bottom-right",
           autoClose: 3000,
         });
 
         setShowModal(false);
-        router.push("/admin/courses");
+        router.push("/admin/grades");
       }
     } catch (err) {
       console.error("Error fetching courses:", err);
@@ -128,7 +118,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
         onClose={() => setShowModal(false)}
         className="w-[50vw]"
       >
-        <DialogHeader>Tạo môn học mới</DialogHeader>
+        <DialogHeader>Tạo khối học mới</DialogHeader>
         <DialogContent>
           <form
             onSubmit={handleSubmitModal}
@@ -151,18 +141,9 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Nhập tên môn"
-              label="Tên môn *"
+              placeholder="Nhập tên khối"
+              label="Tên khối *"
               required
-            />
-
-            {/*Description*/}
-            <TextArea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Nhập mô tả môn học"
-              label="Mô tả môn học *"
             />
           </form>
         </DialogContent>
@@ -190,4 +171,4 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   );
 };
 
-export default AddCourseModal;
+export default AddGradeModal;
