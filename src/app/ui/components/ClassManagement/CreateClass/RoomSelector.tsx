@@ -24,10 +24,6 @@ export default function RoomSelector() {
   const classTimes = watch("classTimes");
   useEffect(() => {
     const fetchData = async () => {
-      console.log(selectedBranchId);
-      console.log(classTimes);
-      console.log(startDate);
-      console.log(endDate);
       if (
         selectedBranchId === null ||
         classTimes.length === 0 ||
@@ -44,7 +40,6 @@ export default function RoomSelector() {
           startDate,
           endDate,
         );
-        console.log(response);
         setRooms(response.data.data.content);
       } catch (error) {
         console.error(error);
@@ -66,7 +61,7 @@ export default function RoomSelector() {
       {selectedBranchId && classTimes.length !== 0 && startDate && endDate && (
         <>
           <h1 className="font-bold">Chọn phòng học</h1>
-          <div className="col-span-2 flex flex-wrap gap-4 px-10">
+          <div className="flex flex-wrap gap-4 mt-2">
             {loading ? (
               <SelectorLoading size="sm" numberOfItems={5} />
             ) : (

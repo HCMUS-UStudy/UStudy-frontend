@@ -1,10 +1,6 @@
-import {
-  ClassData,
-  ClassSchema,
-  RegisterClassData,
-  MemberData,
-} from "@/app/types/type";
+import { ClassData, RegisterClassData, MemberData } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
+import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 
 export const getAllClasses = async (
   query: string,
@@ -21,10 +17,13 @@ export const getAllClasses = async (
   return response.data.data;
 };
 
-export const createNewClass = async (data: ClassSchema) => {
-  const response = await axiosInstance.post("/class/create", data);
-  // console.log(response);
-  return response.data;
+export const createNewClass = async (data: CreateClassInputs) => {
+  try {
+    const response = await axiosInstance.post("/class/create", data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getClassById = async (classId: string) => {

@@ -95,9 +95,21 @@ export type SessionTimeItem = {
 
 export type SessionItem = {
   id: string;
-  name: string;
-  startTime: string;
-  endTime: string;
+  branch: {
+    id: string;
+    name: string;
+    address: string;
+    contactNumber: string;
+    status: "ACTIVE" | "INACTIVE" | "DELETED";
+    rooms: number;
+    sessions: null;
+  };
+  session: {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+  };
 };
 
 export type RoomItem = {

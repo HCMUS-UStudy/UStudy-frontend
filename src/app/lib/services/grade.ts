@@ -5,6 +5,7 @@ export const getAllGrades = async () => {
     params: {
       page: 0,
       limit: 15,
+      filter: "",
     },
   });
   return response;

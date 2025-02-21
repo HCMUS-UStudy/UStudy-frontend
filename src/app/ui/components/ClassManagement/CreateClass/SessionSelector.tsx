@@ -157,8 +157,8 @@ export default function SessionSelector() {
                       onChange={() => handleSelectSession(session.id)}
                     />
                     <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all text-center">
-                      <div>{session.name.split(" ")[0]}</div>
-                      <div>{session.name.split(" ")[1]}</div>
+                      <div>{session.session.name.split(" ")[0]}</div>
+                      <div>{session.session.name.split(" ")[1]}</div>
                     </span>
                     <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
                   </label>
