@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,6 +15,9 @@ import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createNewAccount } from "@/app/lib/services/user";
+import { useRouter } from "next/navigation";
+import { getAllRoles } from "@/app/lib/services/role";
 
 interface AddAccountModalProps {
   buttonLabel: string;
@@ -22,28 +25,30 @@ interface AddAccountModalProps {
 
 const CreateUserSchema = z.object({
   email: z
-    .string({ message: "Đây là trường bắt buộc" })
+    .string({ message: "(*) Đây là trường bắt buộc" })
     .email("Email không hợp lệ"),
   name: z
-    .string({ message: "Đây là trường bắt buộc" })
+    .string({ message: "(*) Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
   phone: z
-    .string({ message: "Đây là trường bắt buộc" })
+    .string({ message: "(*) Đây là trường bắt buộc" })
     .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
     .min(9, "Số điện thoại từ 9 - 12 ký tự số")
     .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
   address: z
-    .string({ message: "Đây là trường bắt buộc" })
+    .string({ message: "(*) Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
   birthday: z
-    .string({ message: "Đây là trường bắt buộc" })
+    .string({ message: "(*) Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc")
     .refine((data) => !isNaN(Date.parse(data)), {
-      message: "Ngày sinh không hợp lệ",
+      message: "(*) Ngày sinh không hợp lệ",
     }),
-  gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
-  role: z
-    .string({ message: "Đây là trường bắt buộc" })
+  gender: z.enum(["MALE", "FEMALE"], {
+    message: "(*) Vui lòng chọn giới tính",
+  }),
+  roleId: z
+    .string({ message: "(*) Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
 });
 
@@ -59,9 +64,56 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   } = useForm<CreateUserInputs>({
     resolver: zodResolver(CreateUserSchema),
   });
-  const onSubmit = (data: CreateUserInputs) => {
-    console.log(data);
-    // call api
+
+  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
+
+  const router = useRouter();
+
+  // Gọi API để lấy danh sách roles khi component render
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await getAllRoles();
+        if (response.statusCode === "OK") {
+          setRoles(response.data); // Lưu danh sách roles
+        } else {
+          toast.error("Lỗi khi tải danh sách quyền");
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy roles:", error);
+        toast.error("Không thể lấy danh sách quyền");
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  const onSubmit = async (data: CreateUserInputs) => {
+    try {
+      console.log(data);
+      const response = await createNewAccount(data);
+      console.log(response);
+
+      if (response.statusCode === "OK") {
+        toast.success("Tạo tài khoản thành công!", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+        setShowModal(false);
+        router.push("/admin/accounts");
+      } else {
+        toast.error("Đã xảy ra lỗi khi tạo tài khoản.", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("API error:", error);
+      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
   };
   const [showModal, setShowModal] = useState(false);
 
@@ -162,19 +214,32 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 id="role"
                 name="role"
                 label="Chức vụ"
-                defaultValue={"STUDENT"}
-                defaultLabel="Học viên"
                 onValueChange={(value) => {
-                  setValue("role", value as string);
-                  clearErrors("role");
+                  setValue("roleId", String(value)); // Lưu ID của roleId
+                  clearErrors("roleId");
                 }}
               >
-                <SelectItem value="STUDENT">Học viên</SelectItem>
-                <SelectItem value="TEACHER">Giáo viên</SelectItem>
-                <SelectItem value="STAFF">Giáo vụ</SelectItem>
+                {roles.map((role) => (
+                  <SelectItem key={role.id} value={role.id}>
+                    {role.name === "Teacher"
+                      ? "Giáo Viên"
+                      : role.name === "Admin"
+                        ? "Quản Trị Viên"
+                        : role.name === "Clerk"
+                          ? "Giáo Vụ"
+                          : role.name === "Parent"
+                            ? "Phụ Huynh"
+                            : role.name === "Student"
+                              ? "Học Viên"
+                              : role.name}
+                  </SelectItem>
+                ))}
               </Select>
-              <span className="text-error text-sm">{errors.role?.message}</span>
+              <span className="text-error text-sm">
+                {errors.roleId?.message}
+              </span>
             </div>
+
             {/*birthday*/}
             <div className="relative mb-4">
               <Input
