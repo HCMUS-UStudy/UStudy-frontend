@@ -32,9 +32,9 @@ export default function DurationSelector() {
   const [endDate, setEndDate] = useState<string>("");
   useEffect(() => {
     if (isNaN(parseInt(duration)) || startDate === "") {
-      setError("startDate", {
-        message: "Vui lòng chọn đầy đủ thời gian học và ngày bắt đầu",
-      });
+      // setError("startDate", {
+      //   message: "Vui lòng chọn đầy đủ thời gian học và ngày bắt đầu",
+      // });
       return;
     }
     const startDateObj = new Date(startDate);
@@ -57,7 +57,7 @@ export default function DurationSelector() {
     setValue("startDate", startDate);
     setValue("endDate", endDateObj.toISOString().split("T")[0]);
     clearErrors("startDate");
-  }, [startDate, unit, duration, setValue]);
+  }, [startDate, unit, duration, setValue, clearErrors, setError]);
   return (
     <div className="flex flex-col mt-2">
       <h1 className="font-bold">Chọn thời gian học cho lớp</h1>

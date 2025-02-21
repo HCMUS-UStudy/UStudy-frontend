@@ -1,5 +1,5 @@
 import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
-import React, { useState } from "react";
+import React from "react";
 import { useFormContext } from "react-hook-form";
 
 export default function ClassDescription() {

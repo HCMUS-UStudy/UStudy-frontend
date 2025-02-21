@@ -5,6 +5,7 @@ import CourseSelector from "@/app/ui/components/ClassManagement/CreateClass/Cour
 import DurationSelector from "@/app/ui/components/ClassManagement/CreateClass/DurationSelector";
 import GradeSelector from "@/app/ui/components/ClassManagement/CreateClass/GradeSelector";
 import NameSelector from "@/app/ui/components/ClassManagement/CreateClass/NameSelector";
+import RoomSelector from "@/app/ui/components/ClassManagement/CreateClass/RoomSelector";
 import SessionSelector from "@/app/ui/components/ClassManagement/CreateClass/SessionSelector";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -55,9 +56,6 @@ const CreateClassSchema = z.object({
   roomId: z
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
-  fee: z
-    .number({ message: "Đây là trường bắt buộc" })
-    .min(0, "Đây là trường bắt buộc"),
   description: z.optional(z.string()),
 });
 
@@ -69,6 +67,8 @@ export default function CreateClass() {
     defaultValues: {
       classTimes: [],
       gradeId: "",
+      startDate: "",
+      endDate: "",
     },
   });
   const onSubmit = (data: CreateClassInputs) => {
@@ -86,16 +86,8 @@ export default function CreateClass() {
           <GradeSelector />
           <CourseSelector />
           <SessionSelector />
-          {/* <ScheduleTypeSelector
-            isFixedSchedule={isFixedSchedule}
-            setFixedSchedule={setFixedSchedule}
-          />
-          {isFixedSchedule === true ? (
-            <FixedScheduleSelector />
-          ) : (
-            <FlexibleScheduleSelector />
-          )} */}
           <DurationSelector />
+          <RoomSelector />
           <ClassDescription />
           <Button type="submit" className="w-full">
             Tạo lớp học mới

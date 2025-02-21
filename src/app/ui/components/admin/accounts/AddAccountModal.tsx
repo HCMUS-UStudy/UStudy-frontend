@@ -5,7 +5,6 @@ import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { AccountSchema } from "@/app/types/type";
 import {
   Dialog,
   DialogContent,
@@ -13,178 +12,61 @@ import {
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
-import { createNewAccount } from "@/app/lib/services/user";
-
-interface AddAccountError {
-  email?: string | null;
-  name?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  birthday?: string | null;
-  gender?: string | null;
-  role?: string | null;
-}
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface AddAccountModalProps {
   buttonLabel: string;
 }
 
+const CreateUserSchema = z.object({
+  email: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .email("Email không hợp lệ"),
+  name: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  phone: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
+    .min(9, "Số điện thoại từ 9 - 12 ký tự số")
+    .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
+  address: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  birthday: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc")
+    .refine((data) => !isNaN(Date.parse(data)), {
+      message: "Ngày sinh không hợp lệ",
+    }),
+  gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
+  role: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+});
+
+type CreateUserInputs = z.infer<typeof CreateUserSchema>;
+
 const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+    clearErrors,
+  } = useForm<CreateUserInputs>({
+    resolver: zodResolver(CreateUserSchema),
+  });
+  const onSubmit = (data: CreateUserInputs) => {
+    console.log(data);
+    // call api
+  };
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
-
-  const [newUser, setNewUser] = useState<AccountSchema>({
-    email: "",
-    name: "",
-    phone: "",
-    address: "",
-    birthday: "",
-    gender: "MALE",
-    role: "STUDENT",
-    permissions: ["TEST"],
-  });
-
-  const [errors, setErrors] = useState<AddAccountError>({
-    email: null,
-    name: null,
-    phone: null,
-    address: null,
-    birthday: null,
-    gender: null,
-    role: null,
-  });
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-
-    // Convert date to standard format if necessary
-    const formattedValue =
-      name === "birthday" && value
-        ? new Date(value).toISOString().split("T")[0]
-        : value;
-
-    setNewUser((prevUser) => ({
-      ...prevUser,
-      [name]: formattedValue,
-    }));
-  };
-
-  const isValidForm = (data: AccountSchema): boolean => {
-    let isValid = true;
-    const msg = "Trường bắt buộc";
-    const newErrors: AddAccountError = {};
-
-    if (!data.email) {
-      newErrors.email = msg;
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      newErrors.email = "Email không hợp lệ";
-      isValid = false;
-    }
-
-    if (!data.name) {
-      newErrors.name = msg;
-      isValid = false;
-    }
-
-    if (!data.phone) {
-      newErrors.phone = msg;
-      isValid = false;
-    } else if (!/^\d+$/.test(data.phone)) {
-      newErrors.phone = "Số điện thoại chỉ được chứa số";
-      isValid = false;
-    }
-
-    if (!data.address) {
-      newErrors.address = msg;
-      isValid = false;
-    }
-
-    if (!data.birthday) {
-      newErrors.birthday = msg;
-      isValid = false;
-    } else {
-      // Optionally validate the date is not in the future
-      const today = new Date().toISOString().split("T")[0];
-      if (data.birthday > today) {
-        newErrors.birthday = "Ngày sinh không được là ngày trong tương lai";
-        isValid = false;
-      }
-    }
-
-    const validGenders = ["MALE", "FEMALE"];
-    if (!validGenders.includes(data.gender)) {
-      newErrors.gender = "Giới tính không hợp lệ";
-      isValid = false;
-    }
-
-    const validRoles = ["STUDENT", "TEACHER", "STAFF"];
-    if (!validRoles.includes(data.role)) {
-      newErrors.role = "Chức vụ không hợp lệ";
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const handleSubmitModal = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const payload: AccountSchema = { ...newUser };
-
-    if (!isValidForm(payload)) {
-      toast.error("Vui lòng kiểm tra lại các thông tin đã nhập!", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
-      console.log(errors);
-      return; // Stop further processing if validation fails
-    }
-
-    try {
-      console.log(payload);
-      const response = await createNewAccount(payload);
-      console.log(response);
-
-      if (response.statusCode === "OK") {
-        setNewUser({
-          email: "",
-          name: "",
-          phone: "",
-          address: "",
-          birthday: "",
-          gender: "MALE",
-          role: "STUDENT",
-          permissions: ["TEST"],
-        });
-
-        toast.success("Tạo tài khoản thành công! Đang chuyển hướng...", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-
-        setTimeout(() => {
-          window.location.href = "/admin/accounts";
-        }, 3000);
-      } else {
-        toast.error("Đã xảy ra lỗi khi tạo tài khoản.", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-      }
-    } catch (error) {
-      console.error("API error:", error);
-      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
-    }
-  };
 
   return (
     <>
@@ -202,160 +84,107 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
         <DialogContent>
           <form
             id="add-account-admin-form"
-            onSubmit={handleSubmitModal}
-            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit)}
+            // className="space-y-4"
           >
             {/*Email*/}
-            <div className="relative mb-6">
+            <div className="relative mb-4">
               <Input
                 type="email"
-                name="email"
-                value={newUser.email}
-                onChange={handleInputChange}
                 placeholder="Nhập địa chỉ email"
                 label="Email *"
                 alwaysShowLabel={true}
-                required
+                {...register("email")}
               />
+              <span className="text-error text-sm">
+                {errors.email?.message}
+              </span>
             </div>
             {/*Name*/}
-            <div className="relative mb-6">
+            <div className="relative mb-4">
               <Input
                 type="text"
-                name="name"
-                value={newUser.name}
-                onChange={handleInputChange}
                 placeholder="Nhập tên người dùng"
                 label="Tên người dùng *"
                 alwaysShowLabel={true}
-                required
+                {...register("name")}
               />
+              <span className="text-error text-sm">{errors.name?.message}</span>
             </div>
             {/*Phone*/}
-            <div className="relative mb-6">
+            <div className="relative mb-4">
               <Input
                 type="tel"
-                name="phone"
-                value={newUser.phone}
-                onChange={handleInputChange}
                 placeholder="Nhập số điện thoại"
                 label="Số điện thoại *"
                 alwaysShowLabel={true}
-                required
+                {...register("phone")}
               />
+              <span className="text-error text-sm">
+                {errors.phone?.message}
+              </span>
             </div>
             {/*Address*/}
-            <div className="relative mb-6">
+            <div className="relative mb-4">
               <Input
                 type="text"
-                name="address"
-                value={newUser.address}
-                onChange={handleInputChange}
                 placeholder="Nhập địa chỉ"
                 label="Địa chỉ *"
                 alwaysShowLabel={true}
-                required
+                {...register("address")}
               />
+              <span className="text-error text-sm">
+                {errors.address?.message}
+              </span>
             </div>
             {/*Gender*/}
-            <div className="relative mb-6">
-              {/*<select
-                id="gender"
-                name="gender"
-                value={newUser.gender === "MALE" ? "male" : "female"} // Chuyển giá trị lưu trữ thành chữ thường
-                onChange={(e) =>
-                  setNewUser((prev) => ({
-                    ...prev,
-                    gender: e.target.value === "male" ? "MALE" : "FEMALE", // Chuyển giá trị nhập thành chữ hoa
-                  }))
-                }
-                className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200"
-              >
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
-              </select>*/}
+            <div className="relative mb-4">
               <Select
                 id="gender"
                 name="gender"
                 label="Giới tính"
-                defaultValue={newUser.gender}
+                defaultValue={"MALE"}
                 defaultLabel="Nam"
                 onValueChange={(value) => {
-                  setNewUser((prev) => ({
-                    ...prev,
-                    gender: value as "MALE" | "FEMALE",
-                  }));
+                  setValue("gender", value as "MALE" | "FEMALE");
                 }}
               >
                 <SelectItem value="MALE">Nam</SelectItem>
                 <SelectItem value="FEMALE">Nữ</SelectItem>
               </Select>
+              <span className="text-error text-sm">
+                {errors.gender?.message}
+              </span>
             </div>
             {/*Role*/}
-            <div className="relative mb-6">
-              {/*<select
-                id="role"
-                name="role"
-                value={
-                  newUser.role === "STUDENT"
-                    ? "student"
-                    : newUser.role === "TEACHER"
-                      ? "teacher"
-                      : "staff" // Chuyển giá trị lưu trữ thành chữ thường
-                }
-                onChange={(e) =>
-                  setNewUser((prev) => ({
-                    ...prev,
-                    role:
-                      e.target.value === "student"
-                        ? "STUDENT"
-                        : e.target.value === "teacher"
-                          ? "TEACHER"
-                          : "STAFF", // Chuyển giá trị nhập thành chữ hoa
-                  }))
-                }
-                className="w-full p-3 pl-4 bg-transparent rounded-xl text-gray-800 border border-gray-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all duration-200"
-                required
-              >
-                <option value="">Chọn chức vụ</option>
-                <option value="student">Học viên</option>
-                <option value="teacher">Giáo viên</option>
-                <option value="staff">Giáo vụ</option>
-              </select>
-              <label
-                htmlFor="role"
-                className="absolute left-4 text-xs text-indigo-600 bg-white px-1 transition-all duration-200 -top-3.5"
-              >
-                Chức vụ
-              </label>*/}
+            <div className="relative mb-4">
               <Select
                 id="role"
                 name="role"
                 label="Chức vụ"
-                defaultValue={newUser.role}
+                defaultValue={"STUDENT"}
                 defaultLabel="Học viên"
-                onValueChange={(value) =>
-                  setNewUser((prev) => ({
-                    ...prev,
-                    role: value as "STUDENT" | "TEACHER" | "STAFF",
-                  }))
-                }
+                onValueChange={(value) => {
+                  setValue("role", value as string);
+                  clearErrors("role");
+                }}
               >
                 <SelectItem value="STUDENT">Học viên</SelectItem>
                 <SelectItem value="TEACHER">Giáo viên</SelectItem>
                 <SelectItem value="STAFF">Giáo vụ</SelectItem>
               </Select>
+              <span className="text-error text-sm">{errors.role?.message}</span>
             </div>
             {/*birthday*/}
-            <div className="relative mb-6">
+            <div className="relative mb-4">
               <Input
                 type="date"
                 label="Ngày sinh *"
-                name="birthday"
-                value={newUser.birthday}
-                onChange={handleInputChange}
-                required
+                {...register("birthday")}
               />
+              <span className="text-error text-sm">
+                {errors.birthday?.message}
+              </span>
             </div>
           </form>
         </DialogContent>
