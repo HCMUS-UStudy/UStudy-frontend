@@ -17,9 +17,13 @@ import {
 
 interface CourseTableProps {
   searchQuery: string;
+  subjectQuery: string;
 }
 
-const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
+const CourseTable: React.FC<CourseTableProps> = ({
+  searchQuery,
+  subjectQuery,
+}) => {
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -29,41 +33,45 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
 
   const router = useRouter();
 
+  const defaultSubject = subjectQuery === "All" ? "" : subjectQuery;
+
   const fetchCourses = async () => {
-    let filteredData: CourseItem[] = [];
     setLoading(true);
+    setError("");
 
     try {
-      const response = await getAllCourses(searchQuery, currentPage - 1);
+      const searchParam =
+        searchQuery && defaultSubject
+          ? `${defaultSubject} ${searchQuery}`
+          : defaultSubject || searchQuery || "";
 
-      filteredData = response.content.map((item) => ({
+      const response = await getAllCourses(searchParam, 5, currentPage - 1);
+
+      const filteredData: CourseItem[] = response.content.map((item) => ({
         id: item.id,
         name: item.name,
         description: item.description,
         createdBy: {
-          // name: item.createdBy.name,
-          name: "",
+          name: "", // Để trống hoặc cập nhật nếu cần
         },
-
         createdAt: item.createdAt,
         status: item.status,
         totalGrades: item.totalGrades,
       }));
 
-      // setCourses(response.content || []);
+      setCourses(filteredData);
       setTotalPages(response.totalPages || 1);
     } catch (err) {
       console.error("Error fetching courses:", err);
       setError("Error fetching courses.");
     } finally {
-      setCourses(filteredData);
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchCourses();
-  }, [currentPage, searchQuery]);
+  }, [currentPage, searchQuery, defaultSubject]);
 
   // useEffect(() => {
   //     const fetchCourseData = async () => {

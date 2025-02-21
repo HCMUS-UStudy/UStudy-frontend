@@ -87,6 +87,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
 
     try {
       const response = await createNewCourse(payload);
+      console.log(response);
 
       if (response.statusCode === "OK") {
         setFormData({

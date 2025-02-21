@@ -4,8 +4,8 @@ import {
   BsCalendar,
   BsCardChecklist,
   BsCreditCard,
-  // BsGear,
   BsHouseDoor,
+  BsLayers,
   BsPerson,
   BsPersonWorkspace,
   // BsFillPeopleFill,
@@ -38,6 +38,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý môn học",
     path: "/admin/courses",
     icon: <BsBook size={20} />,
+  },
+  {
+    title: "Quản lý khối học",
+    path: "/admin/grades",
+    icon: <BsLayers size={20} />,
   },
   {
     title: "Quản lý lớp học",
