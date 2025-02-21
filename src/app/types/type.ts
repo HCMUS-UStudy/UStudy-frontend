@@ -134,7 +134,6 @@ export type ScheduleItem = {
 export type CourseSchema = {
   name: string;
   description: string;
-  creator: string;
 };
 
 export const Schedule: ScheduleItem[] = [
