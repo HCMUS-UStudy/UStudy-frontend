@@ -1,14 +1,7 @@
+"use client";
 import React, { createContext, useContext, useState } from "react";
-import { Slider, SliderPage } from "../../slider";
 import { TimeItem } from "@/app/types/type";
 import GradeSelector from "./GradeSelector";
-import CourseSelector from "./CourseSelector";
-import DurationSelector from "./DurationSelector";
-import FixedScheduleSelector from "./FixedScheduleSelector";
-import FlexibleScheduleSelector from "./FlexibleScheduleSelector";
-import RoomSelector from "./RoomSelector";
-import ClassDescription from "./ClassDescription";
-import ClassConfirmation from "./ClassConfirmation";
 
 type CreateClassType = {
   name: string;
@@ -56,33 +49,40 @@ export default function CreateClassContent() {
     <CreateClassContext.Provider
       value={{ isFixedSchedule, setFixedSchedule, newClass, setNewClass }}
     >
-      <Slider>
-        <SliderPage>
-          <GradeSelector />
-        </SliderPage>
-        <SliderPage>
-          <CourseSelector />
-        </SliderPage>
-        <SliderPage>
-          <DurationSelector />
-        </SliderPage>
-        <SliderPage>
-          {isFixedSchedule ? (
-            <FixedScheduleSelector />
-          ) : (
-            <FlexibleScheduleSelector />
-          )}
-        </SliderPage>
-        <SliderPage>
-          <RoomSelector />
-        </SliderPage>
-        <SliderPage>
-          <ClassDescription />
-        </SliderPage>
-        <SliderPage>
-          <ClassConfirmation />
-        </SliderPage>
-      </Slider>
+      <GradeSelector />
     </CreateClassContext.Provider>
   );
+  // return (
+  //   <CreateClassContext.Provider
+  //     value={{ isFixedSchedule, setFixedSchedule, newClass, setNewClass }}
+  //   >
+  //     <Slider>
+  //       <SliderPage>
+  //         <GradeSelector />
+  //       </SliderPage>
+  //       <SliderPage>
+  //         <CourseSelector />
+  //       </SliderPage>
+  //       <SliderPage>
+  //         <DurationSelector />
+  //       </SliderPage>
+  //       <SliderPage>
+  //         {isFixedSchedule ? (
+  //           <FixedScheduleSelector />
+  //         ) : (
+  //           <FlexibleScheduleSelector />
+  //         )}
+  //       </SliderPage>
+  //       <SliderPage>
+  //         <RoomSelector />
+  //       </SliderPage>
+  //       <SliderPage>
+  //         <ClassDescription />
+  //       </SliderPage>
+  //       <SliderPage>
+  //         <ClassConfirmation />
+  //       </SliderPage>
+  //     </Slider>
+  //   </CreateClassContext.Provider>
+  // );
 }

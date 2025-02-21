@@ -31,7 +31,8 @@ const TeacherRegisterSchema = z.object({
   phone: z
     .string({ message: "Đây là trường bắt buộc" })
     .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
-    .length(10, "Số điện thoại ít nhất 10 ký tự"),
+    .min(9, "Số điện thoại từ 9 - 12 ký tự số")
+    .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
   address: z
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
