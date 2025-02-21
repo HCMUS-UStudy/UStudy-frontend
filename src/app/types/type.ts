@@ -49,6 +49,7 @@ export type RegisterClassItem = {
 export type GradeItem = {
   id: string;
   name: string;
+  description: string;
 };
 
 export type ChapterItem = {
@@ -152,8 +153,7 @@ export type AccountSchema = {
   address: string;
   birthday: string;
   gender: "MALE" | "FEMALE";
-  role: "STUDENT" | "TEACHER" | "STAFF";
-  permissions: Array<string>;
+  roleId: string;
 };
 
 export type ScheduleItem = {
@@ -165,6 +165,10 @@ export type ScheduleItem = {
 export type CourseSchema = {
   name: string;
   description: string;
+};
+
+export type GradeSchema = {
+  name: string;
 };
 
 export const Schedule: ScheduleItem[] = [

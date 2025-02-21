@@ -2,7 +2,7 @@ import { AccountData, AccountSchema } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const createNewAccount = async (data: AccountSchema) => {
-  const response = await axiosInstance.post("/user/admin/add", data);
+  const response = await axiosInstance.post("/user/create", data);
   // console.log(response);
   return response.data;
 };

@@ -1,14 +1,19 @@
 import axiosInstance from "@/app/lib/axios";
+import { GradeData, GradeSchema } from "@/app/types/type";
 
-export const getAllGrades = async () => {
+export const getAllGrades = async (
+  query: string,
+  limit: number,
+  currentPage: number,
+): Promise<GradeData> => {
   const response = await axiosInstance.get("/grade/list", {
     params: {
-      page: 0,
-      limit: 15,
-      filter: "",
+      page: currentPage,
+      limit: limit,
+      filter: query,
     },
   });
-  return response;
+  return response.data.data;
 };
 
 export const getGradesByCourseId = async (
@@ -29,4 +34,9 @@ export const getGradesByCourseId = async (
 export const getGradeById = async (gradeId: string) => {
   const response = await axiosInstance.get(`/grade/details/${gradeId}`);
   return response.data.data;
+};
+
+export const createNewGrade = async (data: GradeSchema) => {
+  const response = await axiosInstance.post("/grade/create", data);
+  return response.data;
 };
