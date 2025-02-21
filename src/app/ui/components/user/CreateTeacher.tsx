@@ -105,7 +105,7 @@ export default function CreateTeacher() {
     const fetchCourses = async () => {
       try {
         setLoadingCourses(true);
-        const response = await getAllCourses("", 0);
+        const response = await getAllCourses("", 15, 0);
         setCourses(response.content);
       } catch (error) {
         console.error(error);

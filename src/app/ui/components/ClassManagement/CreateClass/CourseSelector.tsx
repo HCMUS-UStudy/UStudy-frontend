@@ -22,7 +22,6 @@ export default function CourseSelector() {
         setLoading(true);
         const response = await getCoursesByGradeId(selectedGrade);
         setCourses(response.data.data.content);
-        console.log(response.data);
         if (response.data.data.totalElements === 0) {
           setError("courseId", { message: "Chưa có môn học cho khối này" });
         } else {

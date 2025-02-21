@@ -9,7 +9,7 @@ export default function CreateClassButton() {
   return (
     <Button
       onClick={() => {
-        router.push("/clerk/classes/create");
+        router.push("/admin/classes/create");
       }}
       type="button"
       className="relative group w-[180px] bg-primary transition-all duration-200"
