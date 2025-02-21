@@ -4,15 +4,19 @@ import CourseTable from "@/app/ui/components/admin/courses/CourseTable";
 import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
 
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { HiAdjustments } from "react-icons/hi";
+import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
 
 export default async function CoursePage(props: {
   searchParams?: Promise<{
     query?: string;
     page?: string;
+    subject?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
+  const subject = searchParams?.subject || "All";
 
   //const [selectedName, setSelectedName] = useState("");
 
@@ -69,30 +73,32 @@ export default async function CoursePage(props: {
 
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight my-4">
-        Quản lý tài liệu môn học
-      </h2>
-      <h2 className="text-xl tracking-tight mb-6">
-        Tìm tất cả tài liệu của nền tảng tại đây
-      </h2>
-
-      <div className="flex items-center justify-between mt-8 mr-6">
-        <h2 className="text-2xl font-bold">Tổng số môn học ({11})</h2>
-      </div>
-
-      <div className="flex justify-between items-center space-x-4 mb-2 mt-6">
-        <SearchField
-          className="w-[200px]"
-          placeholder="Tìm theo tên môn học..."
-        />
-        <div className="flex items-center">
-          <AddCourseModal buttonLabel="Tạo môn học" />
+      <div className="px-2">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Tổng số môn học ({11})</h2>
+          <div className="flex items-center space-x-2">
+            <AddCourseModal buttonLabel="Tạo môn học" />
+          </div>
         </div>
-      </div>
 
-      {/* Table Section */}
-      <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <CourseTable searchQuery={query} />
+        <div className="flex items-center justify-between mt-2 gap-14">
+          <SearchField
+            className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+            placeholder="Tìm kiếm môn học..."
+          />
+          <div className="flex items-center gap-6 px-4">
+            <div className="flex items-center">
+              <DropdownCourse label="Lọc" />
+            </div>
+            <div className="flex items-center">
+              <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto mt-6 max-h-[400px]">
+          <CourseTable searchQuery={query} subjectQuery={subject} />
+        </div>
       </div>
     </>
   );
