@@ -4,7 +4,7 @@ import React from "react";
 type SIZE_TYPE = "sm" | "md" | "lg";
 
 export default function SelectorLoading({
-  size,
+  size = "md",
   numberOfItems = 5,
 }: {
   size?: SIZE_TYPE;

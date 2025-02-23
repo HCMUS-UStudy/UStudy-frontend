@@ -1,5 +1,6 @@
-import { ClassData, ClassSchema } from "@/app/types/type";
+import { ClassData, RegisterClassData, MemberData } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
+import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 
 export const getAllClasses = async (
   query: string,
@@ -16,10 +17,13 @@ export const getAllClasses = async (
   return response.data.data;
 };
 
-export const createNewClass = async (data: ClassSchema) => {
-  const response = await axiosInstance.post("/class/create", data);
-  // console.log(response);
-  return response.data;
+export const createNewClass = async (data: CreateClassInputs) => {
+  try {
+    const response = await axiosInstance.post("/class/create", data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getClassById = async (classId: string) => {
@@ -45,6 +49,60 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
     {
       params: {
         teacherId,
+      },
+    },
+  );
+  return response.data;
+};
+
+export const getListMembers = async (
+  classId: string,
+  query: string,
+  currentPage: number,
+  limit: number,
+  role: string,
+): Promise<MemberData> => {
+  const response = await axiosInstance.get(`/class/list-members/${classId}`, {
+    params: {
+      page: currentPage,
+      limit: limit,
+      role: role,
+      filter: query,
+    },
+  });
+  return response.data.data;
+};
+
+export const getListAvailableTea = async (
+  classId: string,
+  query: string,
+  currentPage: number,
+  limit: number,
+): Promise<RegisterClassData> => {
+  const response = await axiosInstance.get(
+    `/class/list-available-teachers/${classId}`,
+    {
+      params: {
+        page: currentPage,
+        limit: limit,
+        filter: query,
+      },
+    },
+  );
+  return response.data.data;
+};
+
+export const addMembers = async (
+  userIds: string[],
+  classId: string,
+  role: string,
+) => {
+  const response = await axiosInstance.post(
+    `/class/add-members/${classId}`,
+    userIds,
+    {
+      params: {
+        role: role,
       },
     },
   );

@@ -5,14 +5,13 @@ import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { createNewCourse } from "@/app/lib/services/course";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
-import TextArea from "@/app/ui/components/_common/text-field/TextArea";
+import { createNewGrade } from "@/app/lib/services/grade";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -23,18 +22,15 @@ const CreateGradeSchema = z.object({
   name: z
     .string({ message: "(*) Đây là trường bắt buộc" })
     .min(1, "(*) Đây là trường bắt buộc"),
-  description: z
-    .string({ message: "(*) Đây là trường bắt buộc" })
-    .min(1, "(*) Đây là trường bắt buộc"),
 });
-
-interface ModalCourseWrapperProps {
-  buttonLabel: string;
-}
 
 type CreateGradeInputs = z.infer<typeof CreateGradeSchema>;
 
-const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
+interface ModalGradeWrapperProps {
+  buttonLabel: string;
+}
+
+const AddGradeModal: React.FC<ModalGradeWrapperProps> = ({ buttonLabel }) => {
   const [showModal, setShowModal] = useState(false);
   const {
     register,
@@ -44,25 +40,19 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     resolver: zodResolver(CreateGradeSchema),
     defaultValues: { creator: localStorage.getItem("creator") ?? undefined },
   });
-
-  const router = useRouter();
-
-  const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
   const onSubmit = async (data: CreateGradeInputs) => {
     try {
-      const response = await createNewCourse(data);
+      const response = await createNewGrade(data);
       console.log(response);
 
       if (response.statusCode === "OK") {
-        toast.success("Tạo môn học thành công!", {
+        toast.success("Tạo khối học thành công!", {
           position: "bottom-right",
           autoClose: 3000,
         });
 
         setShowModal(false);
-        router.push("/admin/courses");
+        router.push("/admin/grades");
       }
     } catch (err) {
       console.error("Error fetching courses:", err);
@@ -72,6 +62,11 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
       });
     }
   };
+
+  const router = useRouter();
+
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   return (
     <>
@@ -85,7 +80,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
         onClose={() => setShowModal(false)}
         className="w-[50vw]"
       >
-        <DialogHeader>Tạo môn học mới</DialogHeader>
+        <DialogHeader>Tạo khối học mới</DialogHeader>
         <DialogContent>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -109,18 +104,6 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
                 {...register("name")}
               />
               <span className="text-error text-sm">{errors.name?.message}</span>
-            </div>
-
-            {/*Description*/}
-            <div className="relative mb-4">
-              <TextArea
-                placeholder="Nhập mô tả môn học"
-                label="Mô tả môn học *"
-                {...register("description")}
-              />
-              <span className="text-error text-sm">
-                {errors.description?.message}
-              </span>
             </div>
           </form>
         </DialogContent>
@@ -148,4 +131,4 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   );
 };
 
-export default AddCourseModal;
+export default AddGradeModal;

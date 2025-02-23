@@ -21,6 +21,13 @@ export type AccountItem = {
   createdAt: string;
 };
 
+export type MemberItem = {
+  id: string;
+  name: string;
+  email: string;
+  gender: string;
+};
+
 export type RegisterItem = {
   id: string;
   name: string;
@@ -31,9 +38,18 @@ export type RegisterItem = {
   gender: string;
 };
 
+export type RegisterClassItem = {
+  id: string;
+  name: string;
+  email: string;
+  genId: string;
+  gender: string;
+};
+
 export type GradeItem = {
   id: string;
   name: string;
+  description: string;
 };
 
 export type ChapterItem = {
@@ -66,6 +82,37 @@ export type TimeItem = {
   endTime: string;
 };
 
+export type SessionTimeItem = {
+  day:
+    | "MONDAY"
+    | "TUESDAY"
+    | "WEDNESDAY"
+    | "THURSDAY"
+    | "FRIDAY"
+    | "SATURDAY"
+    | "SUNDAY";
+  branchSessionId: string;
+};
+
+export type SessionItem = {
+  id: string;
+  branch: {
+    id: string;
+    name: string;
+    address: string;
+    contactNumber: string;
+    status: "ACTIVE" | "INACTIVE" | "DELETED";
+    rooms: number;
+    sessions: null;
+  };
+  session: {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+  };
+};
+
 export type RoomItem = {
   id: string;
   name: string;
@@ -76,6 +123,14 @@ export type TeacherItem = {
   genId: string;
   id: string;
   name: string;
+};
+
+export type TeacherAvalItem = {
+  email: string;
+  genId: string;
+  id: string;
+  name: string;
+  gender: string;
 };
 
 export type ClassSchema = {
@@ -98,8 +153,7 @@ export type AccountSchema = {
   address: string;
   birthday: string;
   gender: "MALE" | "FEMALE";
-  role: "STUDENT" | "TEACHER" | "STAFF";
-  permissions: Array<string>;
+  roleId: string;
 };
 
 export type ScheduleItem = {
@@ -111,7 +165,10 @@ export type ScheduleItem = {
 export type CourseSchema = {
   name: string;
   description: string;
-  creator: string;
+};
+
+export type GradeSchema = {
+  name: string;
 };
 
 export const Schedule: ScheduleItem[] = [
@@ -183,6 +240,16 @@ export type ClassItem = {
 
 export type ClassData = {
   content: ClassItem[];
+  totalPages: number;
+};
+
+export type MemberData = {
+  content: MemberItem[];
+  totalPages: number;
+};
+
+export type TeacherData = {
+  content: TeacherAvalItem[];
   totalPages: number;
 };
 
@@ -291,6 +358,11 @@ export type AccountData = {
 
 export type RegisterAccountData = {
   content: RegisterItem[];
+  totalPages: number;
+};
+
+export type RegisterClassData = {
+  content: RegisterClassItem[];
   totalPages: number;
 };
 

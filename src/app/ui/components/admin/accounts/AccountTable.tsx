@@ -16,9 +16,13 @@ import { getAllAccount } from "@/app/lib/services/user";
 
 interface AccountTableProps {
   searchQuery: string;
+  roleQuery: string;
 }
 
-const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
+const AccountTable: React.FC<AccountTableProps> = ({
+  searchQuery,
+  roleQuery,
+}) => {
   const [users, setUsers] = useState<AccountItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -30,7 +34,7 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
       Admin: "Admin",
       Teacher: "Giáo viên",
       Parent: "Phụ huynh",
-      Clerk: "Nhân viên",
+      Clerk: "Giáo vụ",
       Student: "Học sinh",
     };
 
@@ -42,7 +46,14 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
     setLoading(true);
 
     try {
-      const response = await getAllAccount(searchQuery, currentPage - 1);
+      const roleQueryUp = (roleQuery || "All").toUpperCase();
+      const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
+
+      const response = await getAllAccount(
+        searchQuery,
+        defaultRole,
+        currentPage - 1,
+      );
 
       console.log(response);
 
@@ -71,7 +82,7 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, searchQuery]); // Use searchQueryState in the dependency array
+  }, [currentPage, searchQuery, roleQuery]); // Use searchQueryState in the dependency array
 
   return (
     <div>
@@ -97,7 +108,7 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
             </TableRow>
           ) : users.length > 0 ? (
             users.map((user) => (
-              <TableRow key={user.id} className="hover:bg-green-100">
+              <TableRow key={user.id} className="hover:bg-primary-lighter">
                 <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -131,7 +142,7 @@ const AccountTable: React.FC<AccountTableProps> = ({ searchQuery }) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7}>No users found.</TableCell>
+              <TableCell colSpan={7}>Không có dữ liệu.</TableCell>
             </TableRow>
           )}
         </TableBody>

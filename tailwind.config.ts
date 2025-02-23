@@ -83,13 +83,13 @@ const config: Config = {
         },
         color_change: {
           "0%": {
-            color: "#BFDBFE", // blue 200
+            color: "#d5e9e1", // blue 200
           },
           "50%": {
-            color: "#3B82F6", // blue 500
+            color: "#95BFA9", // blue 500
           },
           "100%": {
-            color: "#BFDBFE",
+            color: "#d5e9e1",
           },
         },
       },

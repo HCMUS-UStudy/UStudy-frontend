@@ -2,6 +2,9 @@ import { NextResponse, NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/clerk/classes/create")) {
+    return NextResponse.next();
+  }
   if (pathname.startsWith("/clerk/classes/")) {
     const paths = pathname.split("/").filter((path) => path);
     if (

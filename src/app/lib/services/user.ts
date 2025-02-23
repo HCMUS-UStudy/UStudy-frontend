@@ -2,20 +2,21 @@ import { AccountData, AccountSchema } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const createNewAccount = async (data: AccountSchema) => {
-  const response = await axiosInstance.post("/user/admin/add", data);
+  const response = await axiosInstance.post("/user/create", data);
   // console.log(response);
   return response.data;
 };
 
 export const getAllAccount = async (
   query: string,
+  roleQuery: string,
   currentPage: number,
 ): Promise<AccountData> => {
   const response = await axiosInstance.get("/user/list", {
     params: {
       page: currentPage,
       limit: 5,
-      role: "",
+      role: roleQuery,
       filterNameOrGenId: query,
       classId: "",
     },

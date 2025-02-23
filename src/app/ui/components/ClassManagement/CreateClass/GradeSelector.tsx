@@ -1,14 +1,16 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { useSlider } from "../../slider";
+import React, { useEffect, useState } from "react";
 import { getAllGrades } from "@/app/lib/services/grade";
 import { GradeItem } from "@/app/types/type";
 import { FaCheck } from "react-icons/fa6";
-import { useCreateClassContext } from "./createClassContent";
 import SelectorLoading from "./SelectorLoading";
+import { useFormContext } from "react-hook-form";
+import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
 
 export default function GradeSelector() {
-  const context = useSlider();
-  const { setNewClass } = useCreateClassContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<CreateClassInputs>();
   const [grades, setGrades] = useState<GradeItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
@@ -25,62 +27,37 @@ export default function GradeSelector() {
     };
     fetchData();
   }, []);
-  const handleSelectGrade = (e: ChangeEvent<HTMLInputElement>) => {
-    setNewClass((currentClass) => ({
-      ...currentClass,
-      gradeId: e.target.value,
-      courseId: "",
-    }));
-    context.nextStep();
-  };
   return (
-    <div className="flex flex-col mb-3">
-      <h1 className="text-center font-medium text-lg">Chọn khối cho lớp học</h1>
-      <div className="grid grid-cols-3 divide-x-2 divide-slate-200 mt-4">
-        <div className="col-span-2 flex flex-wrap gap-4 px-10">
-          {loading ? (
-            <SelectorLoading />
-          ) : (
-            <>
-              {grades.map((grade) => (
-                <label
-                  htmlFor={grade.id}
-                  key={grade.id}
-                  className="relative px-4 py-6 shrink-0 grow-0 has-[:checked]:border-blue-400 flex items-center justify-center h-24 w-24 border-2 border-slate-200 text-md rounded hover:border-blue-400 hover:text-blue-600 hover:bg-blue-100 cursor-pointer transition-all"
-                >
-                  <input
-                    type="radio"
-                    name="selectGrade"
-                    id={grade.id}
-                    className="hidden peer"
-                    value={grade.id}
-                    onChange={handleSelectGrade}
-                  />
-                  <span className="peer-checked:text-blue-600 text-black transition-colors">
-                    {grade.name}
-                  </span>
-                  <FaCheck className="size-20 absolute text-blue-600 opacity-0 peer-checked:opacity-10 transition-all" />
-                </label>
-              ))}
-            </>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 px-3">
-          <button
-            onClick={context.nextStep}
-            type="button"
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-800 transition-colors text-white text-sm rounded"
-          >
-            Tiếp theo
-          </button>
-          <button
-            type="button"
-            className="px-6 py-3 bg-slate-500 transition-colors text-white text-sm rounded cursor-default"
-          >
-            Trở lại
-          </button>
-        </div>
+    <div>
+      <h1 className="font-bold">Chọn khối cho lớp học</h1>
+      <div className="flex flex-wrap gap-4 w-2/3 mt-2">
+        {loading ? (
+          <SelectorLoading size="sm" numberOfItems={12} />
+        ) : (
+          <>
+            {grades.map((grade) => (
+              <label
+                htmlFor={grade.id}
+                key={grade.id}
+                className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-slate-200 text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
+              >
+                <input
+                  type="radio"
+                  id={grade.id}
+                  className="hidden peer"
+                  value={grade.id}
+                  {...register("gradeId")}
+                />
+                <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all">
+                  {grade.name}
+                </span>
+                <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
+              </label>
+            ))}
+          </>
+        )}
       </div>
+      <div className="text-error mt-2">{errors.gradeId?.message}</div>
     </div>
   );
 }

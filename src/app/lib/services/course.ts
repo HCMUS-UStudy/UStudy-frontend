@@ -3,12 +3,13 @@ import axiosInstance from "@/app/lib/axios";
 
 export const getAllCourses = async (
   query: string,
+  limit: number,
   currentPage: number,
 ): Promise<CourseData> => {
   const response = await axiosInstance.get("/course/list", {
     params: {
       page: currentPage,
-      limit: 5,
+      limit: limit,
       filter: query,
     },
   });
@@ -16,11 +17,11 @@ export const getAllCourses = async (
 };
 
 export const getCoursesByGradeId = async (gradeId: string) => {
-  const response = await axiosInstance.get("/course/list", {
+  const response = await axiosInstance.get(`/course/list/${gradeId}`, {
     params: {
       page: 0,
       limit: 10,
-      gradeId: gradeId,
+      filter: "",
     },
   });
   return response;
