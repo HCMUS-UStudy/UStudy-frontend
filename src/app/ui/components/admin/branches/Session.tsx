@@ -1,0 +1,74 @@
+import React from "react";
+import { useEffect, useState } from "react";
+import { getSession } from "@/app/lib/services/session";
+import { Session } from "@/app/types/type";
+import { Button } from "@/app/ui/components/_common/Button";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+
+const SessionManagement = () => {
+  const [sessions, setSessions] = useState<Session[]>([]);
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await getSession(0, 100);
+        response.data.sort((a: Session, b: Session) =>
+          a.startTime.localeCompare(b.startTime),
+        );
+        setSessions(response.data);
+      } catch (error) {
+        console.error("Failed to fetch time:", error);
+      }
+    };
+    fetchSessions();
+  }, []);
+  return (
+    <div className="p-2">
+      <div className="flex items-center justify-between mt-20 mb-6">
+        <h3 className="text-xl font-semibold mb-4">Ca học</h3>
+        <Button className="px-8 py-3 rounded-2xl text-[15px]">
+          Thêm ca học
+        </Button>
+      </div>
+      <div className="overflow-x-auto rounded-lg">
+        <table className="min-w-full table-auto border-collapse rounded-lg">
+          <thead className="bg-slate-100">
+            <tr>
+              <th className="px-8 py-3 text-left text-sm font-semibold text-gray-600">
+                Tên ca học
+              </th>
+              <th className="px-8 py-3 text-left text-sm font-semibold text-gray-600">
+                Thời gian
+              </th>
+              <th className="px-8 py-3 text-center text-sm font-semibold text-gray-600">
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {sessions.map((session) => (
+              <tr key={session.id} className="border-b border-gray-200">
+                <td className="px-8 py-4 text-sm text-gray-700">
+                  {session.name}
+                </td>
+                <td className="px-8 py-4 text-sm text-gray-700">
+                  {session.startTime.slice(0, 5)} -{" "}
+                  {session.endTime.slice(0, 5)}
+                </td>
+                <td className="px-8 py-4 flex justify-center items-center space-x-3">
+                  <button className="text-blue-600 hover:text-blue-800">
+                    <FaEdit className="h-5 w-5" />
+                  </button>
+                  <button className="text-red-600 hover:text-red-800">
+                    <FaTrashAlt className="h-5 w-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default SessionManagement;
