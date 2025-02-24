@@ -238,8 +238,19 @@ export type ClassItem = {
   };
 };
 
+export type ClassChooseItem = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 export type ClassData = {
   content: ClassItem[];
+  totalPages: number;
+};
+
+export type ClassChooseData = {
+  content: ClassChooseItem[];
   totalPages: number;
 };
 
