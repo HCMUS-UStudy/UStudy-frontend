@@ -1,5 +1,5 @@
 import { getSessionByBranchId } from "@/app/lib/services/session";
-import { BranchRootState } from "@/app/store/store";
+import { RootState } from "@/app/store/store";
 import { SessionItem, SessionTimeItem } from "@/app/types/type";
 import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
@@ -33,9 +33,7 @@ export default function SessionSelector() {
     ["SATURDAY", "Thứ bảy"],
     ["SUNDAY", "Chủ nhật"],
   ]);
-  const { selectedBranchId } = useSelector(
-    (state: BranchRootState) => state.branch,
-  );
+  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
   const [selectedDays, setSelectedDays] = useState<SessionTimeItem[]>([]);
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const handleSelectDaysInWeek = (key: DAYS_IN_WEEK) => {

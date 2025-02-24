@@ -1,24 +1,51 @@
 import { NextResponse, NextRequest } from "next/server";
+import { getTokensFromCookies, getUserDataFromCookies } from "./app/lib/action";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/clerk/classes/create")) {
+  const { accessToken } = await getTokensFromCookies();
+  const userData = await getUserDataFromCookies();
+  if (accessToken) {
+    // if(!userData) {
+    //   // cập nhật userData
+    // }
+    if (pathname === "/login" || pathname === "/admin/login") {
+      switch (userData?.role.defaultRoute) {
+        case "ADMIN":
+          return NextResponse.redirect(
+            new URL("/admin/dashboard", request.url),
+          );
+        default:
+          break;
+      }
+    }
     return NextResponse.next();
-  }
-  if (pathname.startsWith("/clerk/classes/")) {
-    const paths = pathname.split("/").filter((path) => path);
+  } else {
     if (
-      paths[paths.indexOf("classes") + 1] !== undefined &&
-      paths[paths.indexOf("classes") + 2] === undefined
+      pathname === "/login" ||
+      pathname === "/admin/login" ||
+      pathname === "/"
     ) {
-      const classId = paths[paths.indexOf("classes") + 1];
-      return NextResponse.redirect(
-        new URL(`/clerk/classes/${classId}/classManagement`, request.url),
-      );
+      return NextResponse.next();
+    }
+    let response;
+    switch (userData?.role.defaultRoute) {
+      case "ADMIN":
+        response = NextResponse.redirect(new URL("/admin/login", request.url));
+        response.cookies.delete("accessToken");
+        response.cookies.delete("refreshToken");
+        response.cookies.delete("userData");
+        return response;
+      default:
+        response = NextResponse.redirect(new URL("/admin/login", request.url));
+        response.cookies.delete("accessToken");
+        response.cookies.delete("refreshToken");
+        response.cookies.delete("userData");
+        return response;
     }
   }
 }
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/", "/admin/login", "/login", "/admin/:path*"],
 };

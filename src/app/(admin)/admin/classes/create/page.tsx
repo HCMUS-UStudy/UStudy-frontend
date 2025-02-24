@@ -1,6 +1,6 @@
 "use client";
 import { createNewClass } from "@/app/lib/services/class";
-import { BranchRootState } from "@/app/store/store";
+import { RootState } from "@/app/store/store";
 import { Button } from "@/app/ui/components/_common/Button";
 import ClassDescription from "@/app/ui/components/ClassManagement/CreateClass/ClassDescription";
 import CourseSelector from "@/app/ui/components/ClassManagement/CreateClass/CourseSelector";
@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import "react-toastify/ReactToastify.min.css";
 import { z } from "zod";
 
 const today = new Date().toISOString().split("T")[0];
@@ -71,9 +71,7 @@ const CreateClassSchema = z.object({
 export type CreateClassInputs = z.infer<typeof CreateClassSchema>;
 
 export default function CreateClass() {
-  const { selectedBranchId } = useSelector(
-    (state: BranchRootState) => state.branch,
-  );
+  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
   const methods = useForm<CreateClassInputs>({
     resolver: zodResolver(CreateClassSchema),
     defaultValues: {
@@ -87,7 +85,6 @@ export default function CreateClass() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const onSubmit = async (data: CreateClassInputs) => {
-    console.log(data);
     try {
       setLoading(true);
       const response = await createNewClass(data);
