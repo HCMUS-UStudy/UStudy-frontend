@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { nunito } from "@/app/ui/fonts";
 import Providers from "./store/Provider";
+import "react-toastify/ReactToastify.min.css";
+import ToastProvider from "./ui/components/toast-provider";
 
 export const metadata: Metadata = {
   title: "UStudy",
@@ -19,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunito.className} antialiased bg-background`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <ToastProvider>{children}</ToastProvider>
+        </Providers>
       </body>
     </html>
   );
