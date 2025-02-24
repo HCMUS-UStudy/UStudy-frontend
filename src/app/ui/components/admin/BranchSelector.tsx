@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { BranchRootState } from "@/app/store/store";
+import { RootState } from "@/app/store/store";
 import { setBranch, setBranches } from "../../../store/branch-slice";
 import { getAllBranches } from "@/app/lib/services/branch";
 import { TiArrowSortedDown } from "react-icons/ti";
@@ -17,7 +17,7 @@ interface Branch {
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
   const { branches, selectedBranchId } = useSelector(
-    (state: BranchRootState) => state.branch,
+    (state: RootState) => state.branch,
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

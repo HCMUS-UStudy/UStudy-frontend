@@ -11,7 +11,7 @@ import { CourseItem, GradeItem } from "@/app/types/type";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
 import { getAllCourses } from "@/app/lib/services/course";
 import { teacherRegister } from "@/app/lib/services/register";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 
 const TeacherRegisterSchema = z.object({
@@ -292,8 +292,8 @@ export default function CreateTeacher() {
                   </div>
                 </>
               ) : (
-                <div className="text-gray-700">
-                  Chưa có khối cho môn học này
+                <div className="text-error">
+                  Chưa có khối cho môn học này, vui lòng chọn môn học khác
                 </div>
               )}
             </div>
@@ -309,7 +309,6 @@ export default function CreateTeacher() {
           Đăng ký
         </Button>
       </form>
-      <ToastContainer />
     </div>
   );
 }

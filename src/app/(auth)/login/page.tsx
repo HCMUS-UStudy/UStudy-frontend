@@ -5,12 +5,16 @@ import React, { useActionState, useEffect, useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
-import { logIn, LoginFormState } from "@/app/lib/action";
+import {
+  logIn,
+  LoginFormState,
+  setTokensAndUserDataCookies,
+} from "@/app/lib/action";
 import { useRouter } from "next/navigation";
 // import { CustomError } from "@/app/types/type";
 import { setTokens, setUserInfo } from "@/app/lib/storage";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import "react-toastify/ReactToastify.min.css";
 import { login } from "@/app/lib/services/auth";
 
 export default function Login({ isUser = true }: { isUser?: boolean }) {
@@ -44,6 +48,11 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
           throw new Error("Đăng nhập không hợp lệ");
         }
         setTokens(response.data.access_token, response.data.refresh_token);
+        setTokensAndUserDataCookies(
+          response.data.access_token,
+          response.data.refresh_token,
+          JSON.stringify(response.data.user),
+        );
 
         if (isUser) {
           setUserInfo(JSON.stringify(response.data.user));

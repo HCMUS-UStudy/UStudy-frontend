@@ -1,4 +1,7 @@
+"use server";
+import { cookies } from "next/headers";
 import { z } from "zod";
+import { UserData } from "../types/type";
 
 const LogInFormSchema = z.object({
   genID: z.string().min(1, { message: "(*) Vui lòng nhập ID" }),
@@ -111,4 +114,54 @@ export async function createClass(
     message: "Success",
     errors: {},
   };
+}
+
+export async function setUserDataCookies(userData: string) {
+  console.log("set user data");
+  const cookieStore = await cookies();
+  cookieStore.set("userData", userData, {
+    httpOnly: true,
+  });
+}
+
+export async function setTokensAndUserDataCookies(
+  accessToken?: string,
+  refreshToken?: string,
+  userData?: string,
+) {
+  const cookieStore = await cookies();
+  if (accessToken) {
+    cookieStore.set("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+  }
+  if (refreshToken) {
+    cookieStore.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+  }
+  if (userData) {
+    cookieStore.set("userData", userData, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+  }
+}
+
+export async function getTokensFromCookies(): Promise<{
+  accessToken: string | null;
+  refreshToken: string | null;
+}> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value ?? null;
+  const refreshToken = cookieStore.get("refreshToken")?.value ?? null;
+  return { accessToken, refreshToken };
+}
+
+export async function getUserDataFromCookies(): Promise<UserData | null> {
+  const cookieStore = await cookies();
+  const userData = cookieStore.get("userData")?.value ?? null;
+  return userData !== null ? JSON.parse(userData) : null;
 }
