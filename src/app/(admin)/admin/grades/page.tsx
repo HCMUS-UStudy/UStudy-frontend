@@ -1,9 +1,9 @@
 import React from "react";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { HiAdjustments } from "react-icons/hi";
-import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
 import GradeTable from "@/app/ui/components/admin/grades/GradeTable";
 import AddGradeModal from "@/app/ui/components/admin/grades/AddGradeModal";
+import DropdownGrade from "@/app/ui/components/admin/grades/DropdownGrade";
 
 export default async function GradePage(props: {
   searchParams?: Promise<{
@@ -32,7 +32,7 @@ export default async function GradePage(props: {
         />
         <div className="flex items-center gap-6 px-4">
           <div className="flex items-center">
-            <DropdownCourse label="Lọc" />
+            <DropdownGrade label="Lọc" />
           </div>
           <div className="flex items-center">
             <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />

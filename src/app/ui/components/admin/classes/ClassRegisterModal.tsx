@@ -15,9 +15,11 @@ import { getStuClassRegister } from "@/app/lib/services/register";
 import ClassTable from "./ClassTable";
 import {
   addMembers,
+  getAllChooseClasses,
   getListAvailableTea,
   getListMembers,
 } from "@/app/lib/services/class";
+import { ChevronDown } from "lucide-react";
 
 interface ClassRegisterModalProps {
   buttonLabel: string;
@@ -59,6 +61,11 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   const [isSelectingTea, setIsSelectingTea] = useState(false);
 
   const [currentTab, setCurrentTab] = useState("students");
+
+  const [classes, setClasses] = useState<
+    { id: string; name: string; description: string }[]
+  >([]);
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
 
   const toggleSelectModeForStu = () => {
     console.log(loading);
@@ -114,11 +121,16 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       return;
     }
 
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn một lớp.");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await addMembers(
         selectedUsers,
-        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        selectedClassId,
         defaultRole,
       );
 
@@ -173,13 +185,32 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     return genderMapping[genderName] || genderName;
   };
 
+  const fetchClasses = async () => {
+    try {
+      const data = await getAllChooseClasses("", 0, 100); // Lấy tối đa 100 lớp
+      setClasses(
+        data.content.map(({ id, name, description }) => ({
+          id,
+          name,
+          description,
+        })),
+      );
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách lớp:", error);
+    }
+  };
+
   const fetchStudents = async () => {
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn một lớp.");
+      return;
+    }
     let StudentData: RegisterClassItem[] = [];
     setLoading(true);
 
     try {
       const response = await getStuClassRegister(
-        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        selectedClassId,
         currentPageStu - 1,
       );
 
@@ -202,12 +233,16 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchStudentsInClass = async () => {
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn một lớp.");
+      return;
+    }
     let StudentClassData: MemberItem[] = [];
     setLoading(true);
 
     try {
       const response = await getListMembers(
-        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        selectedClassId,
         "",
         currentPageStuCl - 1,
         5,
@@ -232,12 +267,16 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchTeachers = async () => {
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn một lớp.");
+      return;
+    }
     let TeacherData: RegisterClassItem[] = [];
     setLoading(true);
 
     try {
       const response = await getListAvailableTea(
-        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        selectedClassId,
         "",
         currentPageTea - 1,
         5,
@@ -261,12 +300,16 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchTeachersInClass = async () => {
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn một lớp.");
+      return;
+    }
     let TeacherClassData: MemberItem[] = [];
     setLoading(true);
 
     try {
       const response = await getListMembers(
-        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+        selectedClassId,
         "",
         currentPageTeaCl - 1,
         5,
@@ -291,7 +334,11 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   useEffect(() => {
-    if (showModalRe) {
+    fetchClasses();
+  }, []);
+
+  useEffect(() => {
+    if (showModalRe && selectedClassId) {
       fetchStudents();
       fetchTeachers();
       fetchStudentsInClass();
@@ -303,18 +350,20 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     currentPageStuCl,
     currentPageTeaCl,
     showModalRe,
+    selectedClassId,
   ]); // Trigger fetch when page changes
 
   const handleAdd = async (userId: string) => {
     setLoading(true);
 
+    if (!selectedClassId) {
+      toast.error("Vui lòng chọn một lớp.");
+      return;
+    }
+
     try {
       const defaultRole = currentTab === "students" ? "STUDENT" : "TEACHER";
-      const response = await addMembers(
-        [userId],
-        "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
-        defaultRole,
-      );
+      const response = await addMembers([userId], selectedClassId, defaultRole);
 
       if (response.data?.failedCount > 0) {
         const failedUsers = response.data.failedMembers
@@ -405,76 +454,112 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
         onClose={() => setShowModalRe(false)}
       >
         <DialogHeader>Thông tin người dùng cần xác nhận</DialogHeader>
-        <DialogContent>
-          <Tabs value="students" onTabChange={(value) => setCurrentTab(value)}>
-            <TabList>
-              <Tab label="Học viên" value="students" />
-              <Tab label="Giáo viên" value="teachers" />
-            </TabList>
+        <div className="mt-4 mb-2 flex items-center">
+          <label className="ml-6 block text-lg font-semibold mb-1 text-center mr-4">
+            Chọn lớp
+          </label>
+          <div className="relative w-full max-w-md">
+            <select
+              className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white text-gray-900 appearance-none max-h-20 overflow-y-auto"
+              value={selectedClassId || ""}
+              onChange={(e) => setSelectedClassId(e.target.value)}
+            >
+              <option value="" disabled>
+                -- Chọn lớp --
+              </option>
+              {classes.map((cls) => (
+                <option key={cls.id} value={cls.id}>
+                  {cls.name} - {cls.description}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            </div>
+          </div>
+        </div>
 
-            <TabPanel value="students">
-              <div className="grid grid-cols-2 gap-4">
-                <ClassTable
-                  title="Danh sách chờ"
-                  users={students}
-                  isSelecting={isSelectingStu}
-                  selectedUsers={selectedStus}
-                  toggleSelection={toggleSelectionForStu}
-                  toggleSelectMode={toggleSelectModeForStu}
-                  toggleSelectAll={toggleSelectAll}
-                  handleBulkAction={handleBulkAction}
-                  handleAdd={handleAdd}
-                  currentPage={currentPageStu}
-                  totalPages={totalPagesStu}
-                  setCurrentPage={setCurrentPageStu}
-                  handlePreviousPage={handlePreviousPageStu}
-                  handleNextPage={handleNextPageStu}
-                />
+        {selectedClassId ? (
+          <>
+            <DialogContent>
+              <Tabs
+                value="students"
+                onTabChange={(value) => setCurrentTab(value)}
+              >
+                <TabList>
+                  <Tab label="Học viên" value="students" />
+                  <Tab label="Giáo viên" value="teachers" />
+                </TabList>
 
-                <ClassTable
-                  title="Danh sách lớp"
-                  users={studentsClass}
-                  currentPage={currentPageStuCl}
-                  totalPages={totalPagesStuCl}
-                  setCurrentPage={setCurrentPageStuCl}
-                  handlePreviousPage={handlePreviousPageStuCl}
-                  handleNextPage={handleNextPageStuCl}
-                />
-              </div>
-            </TabPanel>
+                <TabPanel value="students">
+                  <div className="grid grid-cols-2 gap-4">
+                    <ClassTable
+                      title="Danh sách chờ"
+                      users={students}
+                      isSelecting={isSelectingStu}
+                      selectedUsers={selectedStus}
+                      toggleSelection={toggleSelectionForStu}
+                      toggleSelectMode={toggleSelectModeForStu}
+                      toggleSelectAll={toggleSelectAll}
+                      handleBulkAction={handleBulkAction}
+                      handleAdd={handleAdd}
+                      currentPage={currentPageStu}
+                      totalPages={totalPagesStu}
+                      setCurrentPage={setCurrentPageStu}
+                      handlePreviousPage={handlePreviousPageStu}
+                      handleNextPage={handleNextPageStu}
+                    />
 
-            <TabPanel value="teachers">
-              <div className="grid grid-cols-2 gap-4">
-                <ClassTable
-                  title="Danh sách chờ"
-                  users={teachers}
-                  isSelecting={isSelectingTea}
-                  selectedUsers={selectedTeas}
-                  toggleSelection={toggleSelectionForTea}
-                  toggleSelectMode={toggleSelectModeForTea}
-                  toggleSelectAll={toggleSelectAll}
-                  handleBulkAction={handleBulkAction}
-                  handleAdd={handleAdd}
-                  currentPage={currentPageTea}
-                  totalPages={totalPagesTea}
-                  setCurrentPage={setCurrentPageTea}
-                  handlePreviousPage={handlePreviousPageTea}
-                  handleNextPage={handleNextPageTea}
-                />
+                    <ClassTable
+                      title="Danh sách lớp"
+                      users={studentsClass}
+                      currentPage={currentPageStuCl}
+                      totalPages={totalPagesStuCl}
+                      setCurrentPage={setCurrentPageStuCl}
+                      handlePreviousPage={handlePreviousPageStuCl}
+                      handleNextPage={handleNextPageStuCl}
+                    />
+                  </div>
+                </TabPanel>
 
-                <ClassTable
-                  title="Danh sách lớp"
-                  users={teachersClass}
-                  currentPage={currentPageTeaCl}
-                  totalPages={totalPagesTeaCl}
-                  setCurrentPage={setCurrentPageTeaCl}
-                  handlePreviousPage={handlePreviousPageTeaCl}
-                  handleNextPage={handleNextPageTeaCl}
-                />
-              </div>
-            </TabPanel>
-          </Tabs>
-        </DialogContent>
+                <TabPanel value="teachers">
+                  <div className="grid grid-cols-2 gap-4">
+                    <ClassTable
+                      title="Danh sách chờ"
+                      users={teachers}
+                      isSelecting={isSelectingTea}
+                      selectedUsers={selectedTeas}
+                      toggleSelection={toggleSelectionForTea}
+                      toggleSelectMode={toggleSelectModeForTea}
+                      toggleSelectAll={toggleSelectAll}
+                      handleBulkAction={handleBulkAction}
+                      handleAdd={handleAdd}
+                      currentPage={currentPageTea}
+                      totalPages={totalPagesTea}
+                      setCurrentPage={setCurrentPageTea}
+                      handlePreviousPage={handlePreviousPageTea}
+                      handleNextPage={handleNextPageTea}
+                    />
+
+                    <ClassTable
+                      title="Danh sách lớp"
+                      users={teachersClass}
+                      currentPage={currentPageTeaCl}
+                      totalPages={totalPagesTeaCl}
+                      setCurrentPage={setCurrentPageTeaCl}
+                      handlePreviousPage={handlePreviousPageTeaCl}
+                      handleNextPage={handleNextPageTeaCl}
+                    />
+                  </div>
+                </TabPanel>
+              </Tabs>
+            </DialogContent>
+          </>
+        ) : (
+          <p className="text-center text-gray-600 font-semibold mt-10">
+            Vui lòng chọn lớp trước khi tiếp tục.
+          </p>
+        )}
       </Dialog>
     </>
   );
