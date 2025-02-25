@@ -3,16 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BranchRootState } from "@/app/store/store";
-import { setBranch, setBranches } from "../../../store/branch-slice";
+import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
 import { getAllBranches } from "@/app/lib/services/branch";
 import { TiArrowSortedDown } from "react-icons/ti";
-
-interface Branch {
-  id: string;
-  name: string;
-  adress: string;
-  contact_number: string;
-}
+import { Branch } from "@/app/types/type";
 
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
@@ -26,19 +20,17 @@ const BranchSelector: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await getAllBranches(0, 20);
-        const branchData = response.data.content
-          .map((branch: Branch) => ({
-            id: branch.id,
-            name: branch.name,
-          }))
-          .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
+        console.log("response", response);
+        const branchData = response.data.content.sort((a: Branch, b: Branch) =>
+          a.name.localeCompare(b.name),
+        );
 
         // Lưu vào Redux
         dispatch(setBranches(branchData));
 
         // Chọn chi nhánh đầu tiên nếu có dữ liệu
         if (branchData.length > 0) {
-          dispatch(setBranch(branchData[0].id));
+          dispatch(setSelectedBranch(branchData[0].id));
         }
       } catch (error) {
         console.error("Failed to fetch branches:", error);
@@ -49,7 +41,7 @@ const BranchSelector: React.FC = () => {
   }, [dispatch]);
 
   const handleBranchChange = (branchId: string) => {
-    dispatch(setBranch(branchId));
+    dispatch(setSelectedBranch(branchId));
     setIsOpen(false);
   };
 

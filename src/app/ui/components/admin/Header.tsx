@@ -16,11 +16,12 @@ import {
 } from "@/app/ui/components/_common/DropdownMenu";
 
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [userInfo, setUserInfo] = useState<User | null>(null);
   // const { specificName } = useBreadcrumbContext();
 
@@ -29,7 +30,7 @@ const Header: React.FC = () => {
   }, []);
 
   const handleProfileClick = () => {
-    window.location.href = "/admin/profile"; // Chuyển hướng tới trang profile
+    router.push("/admin/profile");
   };
 
   const handleLogout = () => {
@@ -49,7 +50,7 @@ const Header: React.FC = () => {
     // });
 
     // Chuyển hướng người dùng về trang đăng nhập
-    window.location.href = "/admin/login";
+    router.push("/login");
   };
 
   // const renderTitle = (): React.ReactNode => {
@@ -110,7 +111,10 @@ const Header: React.FC = () => {
     // </div>
     <div className="h-header-height flex ml-from-sidebar px-12 justify-between items-center bg-foreground">
       <div className="text-2xl font-bold">
-        {SIDENAV_ITEMS_ADMIN.find((item) => item.path === pathname)?.title}
+        {
+          SIDENAV_ITEMS_ADMIN.find((item) => pathname.includes(item.path))
+            ?.title
+        }
       </div>
       {!pathname.includes("/admin/branches") && <BranchSelector />}
       <div className="flex gap-6 items-center">

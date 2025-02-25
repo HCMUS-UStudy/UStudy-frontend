@@ -1,5 +1,10 @@
 import axiosInstance from "@/app/lib/axios";
-import { Session } from "@/app/types/type";
+
+type SessionRequest = {
+  name: string;
+  startTime: string;
+  endTime: string;
+};
 
 export const getSession = async (page: number, limit: number) => {
   const response = await axiosInstance.get("/session/list", {
@@ -11,7 +16,7 @@ export const getSession = async (page: number, limit: number) => {
   return response.data;
 };
 
-export const createSession = async (session: Session) => {
+export const createSession = async (session: SessionRequest) => {
   const response = await axiosInstance.post("/session/create", session);
   return response.data;
 };

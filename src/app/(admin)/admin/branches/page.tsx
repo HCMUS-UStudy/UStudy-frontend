@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { Input } from "@/app/ui/components/_common/text-field/Input";
+// import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 import SessionManagement from "@/app/ui/components/admin/branches/Session";
 import { addBranch, getAllBranches } from "@/app/lib/services/branch";
@@ -12,23 +12,35 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 import { Branch, Session } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
-import { BsTags } from "react-icons/bs";
+import { useSelector, useDispatch } from "react-redux";
+import { BranchRootState } from "@/app/store/store";
+import { useRouter } from "next/navigation";
+import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
+import Modal from "@/app/ui/components/admin/branches/AddBranchModal";
 
 const BranchPage: React.FC = () => {
-  const [branches, setBranches] = useState<Branch[]>([]);
+  const { branches } = useSelector((state: BranchRootState) => state.branch);
+  const [branches_, setBranches_] = useState<Branch[]>(branches);
+
   const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchBranches = async () => {
+      if (branches.length > 0) return;
       try {
         const response = await getAllBranches(0, 100);
-        const modifiedData = response.data.content
-          .map((item: Branch) => ({
-            ...item,
-          }))
-          .sort((a: Branch, b: Branch) => a.name.localeCompare(b.name));
-        setBranches(modifiedData);
+        const modifiedData = response.data.content.sort(
+          (a: Branch, b: Branch) => a.name.localeCompare(b.name),
+        );
+        setBranches_(modifiedData);
+        dispatch(setBranches(modifiedData));
         setFilteredBranches(modifiedData);
+
+        if (modifiedData.length > 0) {
+          dispatch(setSelectedBranch(modifiedData[0].id));
+        }
       } catch (error) {
         console.error("Failed to fetch branches:", error);
       }
@@ -39,8 +51,6 @@ const BranchPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  const [activeBranchId, setActiveBranchId] = useState<string | null>(null);
-
   const [newSession] = useState<Session>({
     id: "",
     name: "",
@@ -48,7 +58,6 @@ const BranchPage: React.FC = () => {
     endTime: "",
   });
   const [newBranch, setNewBranch] = useState({
-    id: "",
     name: "",
     address: "",
     contactNumber: "",
@@ -57,14 +66,14 @@ const BranchPage: React.FC = () => {
   });
 
   useEffect(() => {
-    const filtered = branches.filter(
+    const filtered = branches_.filter(
       (branch) =>
         branch.name &&
         branch.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredBranches(filtered);
     setCurrentPage(1); // Reset to page 1 after filtering
-  }, [searchQuery, branches]);
+  }, [searchQuery, branches_]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const branchesPerPage = 5;
@@ -98,9 +107,10 @@ const BranchPage: React.FC = () => {
 
   const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("newBranch", newBranch);
     try {
       const response = await addBranch(newBranch);
-      setBranches((prevBranches) => [...prevBranches, response.data]);
+      setBranches_((prevBranches) => [...prevBranches, response.data.branch]);
       setFilteredBranches((prevBranches) => [...prevBranches, response.data]);
       toast.success("Thêm chi nhánh thành công", {
         position: "top-right",
@@ -109,7 +119,7 @@ const BranchPage: React.FC = () => {
         closeOnClick: true,
       });
       setTimeout(() => {
-        window.location.href = "/admin/branches";
+        router.push(`/admin/branches`);
       }, 3000);
     } catch (error) {
       console.error("Failed to create branch:", error);
@@ -122,7 +132,6 @@ const BranchPage: React.FC = () => {
     }
 
     setNewBranch({
-      id: "",
       name: "",
       address: "",
       contactNumber: "",
@@ -134,7 +143,6 @@ const BranchPage: React.FC = () => {
 
   const handleCloseModal = () => {
     setNewBranch({
-      id: "",
       name: "",
       address: "",
       contactNumber: "",
@@ -144,8 +152,8 @@ const BranchPage: React.FC = () => {
     setShowModal(false);
   };
 
-  const toggleSessionsPopup = (branchId: string) => {
-    setActiveBranchId((prev) => (prev === branchId ? null : branchId));
+  const handleDetail = (branch: Branch) => {
+    router.push(`/admin/branches/${branch.id}`);
   };
 
   return (
@@ -199,14 +207,11 @@ const BranchPage: React.FC = () => {
                 <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
                   Số phòng học
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">
-                  Các ca học
-                </th>
-                <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
-                  Giáo vụ
-                </th>
                 <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
                   Hành động
+                </th>
+                <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
+                  <div></div>
                 </th>
               </tr>
             </thead>
@@ -228,40 +233,7 @@ const BranchPage: React.FC = () => {
                   <td className="px-3 py-4 text-sm text-center text-gray-700">
                     {branch.rooms}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    {/* {branch.sessions.map((session) => session.name).join(", ")} */}
-                    <div className="relative flex justify-center">
-                      <div
-                        className="px-2 py-1 cursor-pointer rounded-lg"
-                        onMouseEnter={() => toggleSessionsPopup(branch.id)}
-                        onMouseLeave={() => toggleSessionsPopup(branch.id)}
-                      >
-                        <BsTags className="w-5 h-5 text-primary-darker font-bold hover:text-primary-darkest" />
-                      </div>
-                    </div>
-                    {activeBranchId === branch.id && (
-                      <div
-                        className="bg-white border border-gray-100 rounded-lg 
-                              shadow-lg absolute max-h-[150px] overflow-y-auto w-[180px] z-10"
-                      >
-                        <ul>
-                          {branch.sessions.length > 0 ? (
-                            branch.sessions.map((session) => (
-                              <li
-                                key={session.id}
-                                className="px-4 py-2 hover:bg-slate-50"
-                              >
-                                {session.name}: {session.startTime.slice(0, 5)}{" "}
-                                - {session.endTime.slice(0, 5)}
-                              </li>
-                            ))
-                          ) : (
-                            <li className="px-4 py-2">Không có ca học nào</li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                  </td>
+
                   <td className="px-3 py-4">
                     <div className="flex justify-center items-center space-x-3">
                       <button className="text-blue-600 hover:text-blue-800">
@@ -271,6 +243,9 @@ const BranchPage: React.FC = () => {
                         <FaTrashAlt className="h-5 w-5" />
                       </button>
                     </div>
+                  </td>
+                  <td className="pl-3 py-4 text-sm underline cursor-pointer text-primary-darker">
+                    <div onClick={() => handleDetail(branch)}>Xem chi tiết</div>
                   </td>
                 </tr>
               ))}
@@ -294,70 +269,13 @@ const BranchPage: React.FC = () => {
 
         {/* Modal for Adding Branch */}
         {showModal && (
-          <div
-            onClick={handleCloseModal}
-            className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50"
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white p-8 rounded-xl shadow-lg w-96 max-w-lg"
-            >
-              <h3 className="text-xl font-semibold mb-6 text-center text-gray-800">
-                Thêm chi nhánh mới
-              </h3>
-              <form
-                onSubmit={handleSubmitModal}
-                className="flex flex-col gap-4"
-              >
-                <Input
-                  name="name"
-                  placeholder="Tên chi nhánh"
-                  value={newBranch.name}
-                  onChange={handleModalInputChange}
-                  required
-                />
-                <Input
-                  name="address"
-                  placeholder="Địa chỉ"
-                  value={newBranch.address}
-                  onChange={handleModalInputChange}
-                  required
-                />
-                <Input
-                  name="contactNumber"
-                  placeholder="Số điện thoại"
-                  value={newBranch.contactNumber}
-                  onChange={handleModalInputChange}
-                  required
-                />
-                <Input
-                  name="rooms"
-                  placeholder="Số phòng học"
-                  value={newBranch.rooms}
-                  onChange={handleModalInputChange}
-                  required
-                />
-                <Input
-                  name="sessions"
-                  placeholder="Các ca học (vd: Ca 1, Ca 2)"
-                  value={newBranch.sessions[0].name}
-                  onChange={handleModalInputChange}
-                />
-                <div className="flex justify-end mt-2 gap-4">
-                  <Button
-                    type="button"
-                    className="bg-gray-200 hover:bg-gray-300 text-sm"
-                    onClick={handleCloseModal}
-                  >
-                    Hủy
-                  </Button>
-                  <Button type="submit" className="text-sm">
-                    Thêm
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <Modal
+            handleCloseModal={handleCloseModal}
+            handleSubmitModal={handleSubmitModal}
+            handleModalInputChange={handleModalInputChange}
+            newBranch={newBranch}
+            setNewBranch={setNewBranch}
+          />
         )}
       </div>
       <SessionManagement />
