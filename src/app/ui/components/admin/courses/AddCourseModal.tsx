@@ -98,14 +98,15 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
               readOnly
               placeholder="Người tạo"
               label="Người tạo *"
+              disabled
               {...register("creator")}
             />
             {/*Name*/}
             <div className="relative mb-4">
               <Input
                 type="text"
-                placeholder="Nhập tên khối"
-                label="Tên khối *"
+                placeholder="Nhập tên môn học"
+                label="Tên môn *"
                 {...register("name")}
               />
               <span className="text-error text-sm">{errors.name?.message}</span>
