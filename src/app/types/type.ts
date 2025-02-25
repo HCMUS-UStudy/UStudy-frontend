@@ -232,7 +232,7 @@ export type Branch = {
   address: string;
   contactNumber: string;
   rooms: string;
-  sessions: [string];
+  sessions: Session[];
 };
 
 export type Duration = {
@@ -255,8 +255,19 @@ export type ClassItem = {
   };
 };
 
+export type ClassChooseItem = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 export type ClassData = {
   content: ClassItem[];
+  totalPages: number;
+};
+
+export type ClassChooseData = {
+  content: ClassChooseItem[];
   totalPages: number;
 };
 
@@ -486,6 +497,6 @@ export type RoleItem = {
 export type Session = {
   id: string;
   name: string;
-  start_time: string;
-  end_time: string;
+  startTime: string;
+  endTime: string;
 };

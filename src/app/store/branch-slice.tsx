@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface Branch {
-  id: string;
-  name: string;
-}
+import { Branch } from "../types/type";
 
 interface BranchState {
   selectedBranchId: string | null;
@@ -19,7 +15,7 @@ const branchSlice = createSlice({
   name: "branch",
   initialState,
   reducers: {
-    setBranch: (state, action: PayloadAction<string>) => {
+    setSelectedBranch: (state, action: PayloadAction<string>) => {
       state.selectedBranchId = action.payload;
     },
     setBranches: (state, action: PayloadAction<Branch[]>) => {
@@ -28,6 +24,6 @@ const branchSlice = createSlice({
   },
 });
 
-export const { setBranch, setBranches } = branchSlice.actions;
+export const { setSelectedBranch, setBranches } = branchSlice.actions;
 
 export default branchSlice.reducer;

@@ -55,9 +55,9 @@ const config: Config = {
           "100%": { transform: "scale(1)" },
         },
         fall: {
-          "0%": { transform: "translateY(0vh)" },
+          "0%": { transform: "translateY(-100px)" },
           "50%": { transform: "translateY(50vh)" },
-          "100%": { transform: "translateY(100vh)" },
+          "100%": { transform: "translateY(calc(100vh + 100px))" },
         },
         wiggle: {
           "0%": {

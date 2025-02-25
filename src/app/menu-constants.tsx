@@ -8,6 +8,7 @@ import {
   BsLayers,
   BsPerson,
   BsPersonWorkspace,
+  BsShieldLock,
   // BsFillPeopleFill,
   // BsQuestionCircle,
   BsWallet2,
@@ -33,6 +34,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý tài khoản",
     path: "/admin/accounts",
     icon: <BsPerson size={20} />,
+  },
+  {
+    title: "Quản lý chức vụ",
+    path: "/admin/roles",
+    icon: <BsShieldLock size={20} />,
   },
   {
     title: "Quản lý môn học",

@@ -1,4 +1,9 @@
-import { ClassData, RegisterClassData, MemberData } from "@/app/types/type";
+import {
+  ClassData,
+  RegisterClassData,
+  MemberData,
+  ClassChooseData,
+} from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 
@@ -7,6 +12,21 @@ export const getAllClasses = async (
   currentPage: number,
   limit: number,
 ): Promise<ClassData> => {
+  const response = await axiosInstance.get("/class/list", {
+    params: {
+      page: currentPage,
+      limit: limit,
+      filter: query,
+    },
+  });
+  return response.data.data;
+};
+
+export const getAllChooseClasses = async (
+  query: string,
+  currentPage: number,
+  limit: number,
+): Promise<ClassChooseData> => {
   const response = await axiosInstance.get("/class/list", {
     params: {
       page: currentPage,
