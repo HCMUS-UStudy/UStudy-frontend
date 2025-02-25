@@ -232,7 +232,7 @@ export type Branch = {
   address: string;
   contactNumber: string;
   rooms: string;
-  sessions: [string];
+  sessions: Session[];
 };
 
 export type Duration = {
@@ -497,6 +497,6 @@ export type RoleItem = {
 export type Session = {
   id: string;
   name: string;
-  start_time: string;
-  end_time: string;
+  startTime: string;
+  endTime: string;
 };
