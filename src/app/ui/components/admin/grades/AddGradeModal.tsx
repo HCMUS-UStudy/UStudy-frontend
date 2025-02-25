@@ -93,6 +93,7 @@ const AddGradeModal: React.FC<ModalGradeWrapperProps> = ({ buttonLabel }) => {
               readOnly
               placeholder="Người tạo"
               label="Người tạo *"
+              disabled
               {...register("creator")}
             />
             {/*Name*/}

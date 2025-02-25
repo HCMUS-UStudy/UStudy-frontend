@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Button } from "@/app/ui/components/_common/Button";
 import { RegisterClassItem, MemberItem } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
@@ -15,14 +14,16 @@ import { getStuClassRegister } from "@/app/lib/services/register";
 import ClassTable from "./ClassTable";
 import {
   addMembers,
-  getAllChooseClasses,
+  getClassById,
   getListAvailableTea,
   getListMembers,
 } from "@/app/lib/services/class";
-import { ChevronDown } from "lucide-react";
+import { ArrowRightCircle } from "lucide-react";
 
 interface ClassRegisterModalProps {
-  buttonLabel: string;
+  isOpen: boolean;
+  onClose: () => void;
+  classId: string | null;
 }
 
 interface FailedMember {
@@ -31,11 +32,10 @@ interface FailedMember {
 }
 
 const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
-  buttonLabel,
+  isOpen,
+  onClose,
+  classId,
 }) => {
-  const [showModalRe, setShowModalRe] = useState(false);
-  const handleOpenModal = () => setShowModalRe(true);
-
   const [students, setStudents] = useState<RegisterClassItem[]>([]);
   const [teachers, setTeachers] = useState<RegisterClassItem[]>([]);
 
@@ -62,10 +62,10 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
   const [currentTab, setCurrentTab] = useState("students");
 
-  const [classes, setClasses] = useState<
-    { id: string; name: string; description: string }[]
-  >([]);
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [classDetail, setClassDetail] = useState<{
+    name: string;
+    description: string;
+  } | null>(null);
 
   const toggleSelectModeForStu = () => {
     console.log(loading);
@@ -121,18 +121,14 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       return;
     }
 
-    if (!selectedClassId) {
+    if (!classId) {
       toast.error("Vui lòng chọn một lớp.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await addMembers(
-        selectedUsers,
-        selectedClassId,
-        defaultRole,
-      );
+      const response = await addMembers(selectedUsers, classId, defaultRole);
 
       // Kiểm tra nếu có thành viên không thể thêm
       if (response.data?.failedCount > 0) {
@@ -185,23 +181,21 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     return genderMapping[genderName] || genderName;
   };
 
-  const fetchClasses = async () => {
+  const fetchDetailClasses = async (classId: string) => {
     try {
-      const data = await getAllChooseClasses("", 0, 100); // Lấy tối đa 100 lớp
-      setClasses(
-        data.content.map(({ id, name, description }) => ({
-          id,
-          name,
-          description,
-        })),
-      );
+      const response = await getClassById(classId); // Lấy tối đa 100 lớp
+      console.log(response);
+      setClassDetail({
+        name: response.data.name,
+        description: response.data.description,
+      });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách lớp:", error);
     }
   };
 
   const fetchStudents = async () => {
-    if (!selectedClassId) {
+    if (!classId) {
       toast.error("Vui lòng chọn một lớp.");
       return;
     }
@@ -209,10 +203,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getStuClassRegister(
-        selectedClassId,
-        currentPageStu - 1,
-      );
+      const response = await getStuClassRegister(classId, currentPageStu - 1);
 
       StudentData = response.content.map((item) => ({
         id: item.id,
@@ -233,7 +224,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchStudentsInClass = async () => {
-    if (!selectedClassId) {
+    if (!classId) {
       toast.error("Vui lòng chọn một lớp.");
       return;
     }
@@ -242,7 +233,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
     try {
       const response = await getListMembers(
-        selectedClassId,
+        classId,
         "",
         currentPageStuCl - 1,
         5,
@@ -267,7 +258,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchTeachers = async () => {
-    if (!selectedClassId) {
+    if (!classId) {
       toast.error("Vui lòng chọn một lớp.");
       return;
     }
@@ -276,7 +267,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
     try {
       const response = await getListAvailableTea(
-        selectedClassId,
+        classId,
         "",
         currentPageTea - 1,
         5,
@@ -300,7 +291,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   const fetchTeachersInClass = async () => {
-    if (!selectedClassId) {
+    if (!classId) {
       toast.error("Vui lòng chọn một lớp.");
       return;
     }
@@ -309,7 +300,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
     try {
       const response = await getListMembers(
-        selectedClassId,
+        classId,
         "",
         currentPageTeaCl - 1,
         5,
@@ -334,11 +325,13 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   };
 
   useEffect(() => {
-    fetchClasses();
-  }, []);
+    if (isOpen && classId) {
+      fetchDetailClasses(classId);
+    }
+  }, [isOpen, classId]);
 
   useEffect(() => {
-    if (showModalRe && selectedClassId) {
+    if (isOpen && classId) {
       fetchStudents();
       fetchTeachers();
       fetchStudentsInClass();
@@ -349,21 +342,20 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     currentPageTea,
     currentPageStuCl,
     currentPageTeaCl,
-    showModalRe,
-    selectedClassId,
+    classId,
   ]); // Trigger fetch when page changes
 
   const handleAdd = async (userId: string) => {
     setLoading(true);
 
-    if (!selectedClassId) {
+    if (!classId) {
       toast.error("Vui lòng chọn một lớp.");
       return;
     }
 
     try {
       const defaultRole = currentTab === "students" ? "STUDENT" : "TEACHER";
-      const response = await addMembers([userId], selectedClassId, defaultRole);
+      const response = await addMembers([userId], classId, defaultRole);
 
       if (response.data?.failedCount > 0) {
         const failedUsers = response.data.failedMembers
@@ -445,41 +437,25 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
   return (
     <>
       <ToastContainer />
-      <Button onClick={handleOpenModal} className="pl-6 pr-6 mr-4">
-        {buttonLabel}
-      </Button>
       <Dialog
         className="min-h-[90vh] min-w-[80vw] m-4"
-        isOpen={showModalRe}
-        onClose={() => setShowModalRe(false)}
+        isOpen={isOpen}
+        onClose={onClose}
       >
-        <DialogHeader>Thông tin người dùng cần xác nhận</DialogHeader>
-        <div className="mt-4 mb-2 flex items-center">
-          <label className="ml-6 block text-lg font-semibold mb-1 text-center mr-4">
-            Chọn lớp
-          </label>
-          <div className="relative w-full max-w-md">
-            <select
-              className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white text-gray-900 appearance-none max-h-20 overflow-y-auto"
-              value={selectedClassId || ""}
-              onChange={(e) => setSelectedClassId(e.target.value)}
-            >
-              <option value="" disabled>
-                -- Chọn lớp --
-              </option>
-              {classes.map((cls) => (
-                <option key={cls.id} value={cls.id}>
-                  {cls.name} - {cls.description}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <ChevronDown className="w-5 h-5 text-gray-500" />
-            </div>
+        <DialogHeader>Thông tin học viên, giáo viên cần duyệt</DialogHeader>
+        <div className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+          <div className="flex-shrink-0">
+            <ArrowRightCircle size={32} className="text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">
+              {classDetail?.name || "Không có dữ liệu"} -{" "}
+              {classDetail?.description || "Không có dữ liệu"}
+            </h2>
           </div>
         </div>
 
-        {selectedClassId ? (
+        {classId ? (
           <>
             <DialogContent>
               <Tabs
