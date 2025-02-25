@@ -11,6 +11,23 @@ export type SideNavItemGroup = {
   menuList: SideNavItem[];
 };
 
+export type UserData = {
+  avatar: string;
+  email: string;
+  genId: string;
+  gender: "MALE" | "FEMALE";
+  name: string;
+  role: {
+    createdAt: string;
+    defaultRoute: "ADMIN" | "STUDENT" | "TEACHER" | "PARENT";
+    description: string;
+    id: string;
+    isDeleted: boolean;
+    name: string;
+    updatedAt: string;
+  };
+};
+
 export type AccountItem = {
   id: string;
   name: string;
@@ -238,8 +255,19 @@ export type ClassItem = {
   };
 };
 
+export type ClassChooseItem = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 export type ClassData = {
   content: ClassItem[];
+  totalPages: number;
+};
+
+export type ClassChooseData = {
+  content: ClassChooseItem[];
   totalPages: number;
 };
 

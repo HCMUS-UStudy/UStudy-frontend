@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { BranchRootState } from "@/app/store/store";
-import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
+import { RootState } from "@/app/store/store";
+import { setSelectedBranch, setBranches } from "../../../store/branch-slice";
 import { getAllBranches } from "@/app/lib/services/branch";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Branch } from "@/app/types/type";
@@ -11,7 +11,7 @@ import { Branch } from "@/app/types/type";
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
   const { branches, selectedBranchId } = useSelector(
-    (state: BranchRootState) => state.branch,
+    (state: RootState) => state.branch,
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

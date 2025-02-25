@@ -17,8 +17,8 @@ export default function GradeSelector() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await getAllGrades();
-        setGrades(response.data.data.content);
+        const response = await getAllGrades("", 15, 0);
+        setGrades(response.content);
       } catch (error) {
         console.log(error);
       } finally {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { RoomItem } from "@/app/types/type";
 import { useSelector } from "react-redux";
-import { BranchRootState } from "@/app/store/store";
+import { RootState } from "@/app/store/store";
 import { getAvailableRooms } from "@/app/lib/services/room";
 import SelectorLoading from "./SelectorLoading";
 import { FaCheck } from "react-icons/fa6";
@@ -17,7 +17,7 @@ export default function RoomSelector() {
   const [rooms, setRooms] = useState<RoomItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const selectedBranchId = useSelector(
-    (state: BranchRootState) => state.branch.selectedBranchId,
+    (state: RootState) => state.branch.selectedBranchId,
   );
   const startDate = watch("startDate");
   const endDate = watch("endDate");
