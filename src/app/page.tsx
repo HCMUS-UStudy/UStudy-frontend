@@ -69,32 +69,6 @@ export default async function Home() {
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
-          {/* <div className="justify-between items-center font-bold text-xl gap-8 min-[320px]:hidden md:flex">
-            <Link
-              href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
-            >
-              Home
-            </Link>
-            <Link
-              href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
-            >
-              Teachers
-            </Link>
-            <Link
-              href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
-            >
-              Academic Staff
-            </Link>
-            <Link
-              href="#"
-              className=" text-slate-500 hover:text-black transition duration-200 ease-in-out"
-            >
-              Classroom
-            </Link>
-          </div> */}
           <Button
             className="px-8 text-lg min-[320px]:hidden md:flex hover:scale-110"
             type="submit"

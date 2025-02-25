@@ -308,6 +308,19 @@ export default function CreateTeacher() {
         >
           Đăng ký
         </Button>
+        {/* <Button
+          type="button"
+          className="mt-5 w-full"
+          onClick={() =>
+            toast.info("test", {
+              position: "bottom-right",
+              autoClose: 3000,
+              pauseOnHover: false,
+            })
+          }
+        >
+          test
+        </Button> */}
       </form>
     </div>
   );
