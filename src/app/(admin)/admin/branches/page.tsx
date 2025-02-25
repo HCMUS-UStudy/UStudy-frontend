@@ -13,13 +13,13 @@ import { Branch, Session } from "@/app/types/type";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { useSelector, useDispatch } from "react-redux";
-import { BranchRootState } from "@/app/store/store";
+import { RootState } from "@/app/store/store";
 import { useRouter } from "next/navigation";
 import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
 import Modal from "@/app/ui/components/admin/branches/AddBranchModal";
 
 const BranchPage: React.FC = () => {
-  const { branches } = useSelector((state: BranchRootState) => state.branch);
+  const { branches } = useSelector((state: RootState) => state.branch);
   const [branches_, setBranches_] = useState<Branch[]>(branches);
 
   const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);

@@ -8,7 +8,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Branch } from "@/app/types/type";
 import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
-import { BranchRootState } from "@/app/store/store";
+import { RootState } from "@/app/store/store";
 import {
   getAllBranches,
   getListClerk,
@@ -25,7 +25,7 @@ type Clerk = {
 };
 
 const BranchDetail = () => {
-  const { branches } = useSelector((state: BranchRootState) => state.branch);
+  const { branches } = useSelector((state: RootState) => state.branch);
   const [branches_, setBranches_] = useState<Branch[]>(branches);
   const { branchID } = useParams();
   const [branch, setBranch] = useState<Branch>();
