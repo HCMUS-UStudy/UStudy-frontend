@@ -56,7 +56,7 @@ export default function Dropdown({ label, items, selected }: DropdownProps) {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100 mr-4"
+        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100"
         onClick={() => setIsOpen(!isOpen)}
       >
         <FiFilter className="w-5 h-5 text-gray-600" />
@@ -64,7 +64,7 @@ export default function Dropdown({ label, items, selected }: DropdownProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10 mr-4">
+        <div className="absolute left-0 top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10">
           {items.map(({ key, label }) => (
             <button
               key={key}

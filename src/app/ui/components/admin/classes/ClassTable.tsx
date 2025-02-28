@@ -12,8 +12,25 @@ import {
 import Pagination from "../../_common/Pagination";
 import { RegisterClassItem, MemberItem } from "@/app/types/type";
 
+import Dropdown from "../../_common/Dropdown";
+import SearchField from "../../_common/text-field/SearchField";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 interface ClassTableProps {
   title: string;
+  fetchData: (
+    page: number,
+    searchQuery: string,
+  ) => Promise<{
+    content: {
+      id: string;
+      name: string;
+      email: string;
+      gender: string;
+    }[];
+    totalPages: number;
+  }>;
   users: RegisterClassItem[] | MemberItem[];
   isSelecting?: boolean;
   selectedUsers?: string[];
@@ -22,16 +39,13 @@ interface ClassTableProps {
   toggleSelectAll?: () => void;
   handleBulkAction?: () => void;
   handleAdd?: (id: string) => void;
-  currentPage: number;
-  totalPages: number;
-  setCurrentPage: (page: number) => void;
-  handlePreviousPage: () => void;
-  handleNextPage: () => void;
+  role?: string;
+  roles?: { [key: string]: string };
 }
 
 const ClassTable: React.FC<ClassTableProps> = ({
   title,
-  users,
+  fetchData,
   isSelecting,
   selectedUsers,
   toggleSelection,
@@ -39,12 +53,40 @@ const ClassTable: React.FC<ClassTableProps> = ({
   toggleSelectAll,
   handleBulkAction,
   handleAdd,
-  currentPage,
-  totalPages,
-  setCurrentPage,
-  handlePreviousPage,
-  handleNextPage,
+  role,
+  roles = {},
 }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [users, setUsers] = useState<
+    { id: string; name: string; email: string; gender: string }[]
+  >([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch dữ liệu khi searchQuery hoặc currentPage thay đổi
+  useEffect(() => {
+    console.log(loading);
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const { content, totalPages } = await fetchData(
+          currentPage - 1,
+          searchQuery,
+        );
+        setUsers(content);
+        setTotalPages(totalPages || 1);
+      } catch (error) {
+        console.error(error);
+        toast.error("Lỗi khi tải dữ liệu");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [currentPage, searchQuery]);
+
   const isRegisterClassItem = (
     student: RegisterClassItem | MemberItem,
   ): student is RegisterClassItem => {
@@ -55,9 +97,36 @@ const ClassTable: React.FC<ClassTableProps> = ({
   const isRegisterClassList = hasData && users.some(isRegisterClassItem);
   const showSelectColumn = hasData && isSelecting;
 
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
   return (
     <div className="border p-4">
       <h3 className="text-lg font-bold mb-4">{title}</h3>
+
+      <div className="flex items-center justify-between mt-2 mb-4 gap-14">
+        <SearchField
+          className="w-full bg-primary-lighter rounded-2xl"
+          placeholder="Tìm kiếm người dùng..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <div className="flex items-center">
+          <Dropdown
+            label="Lọc"
+            items={Object.entries(roles).map(([key, label]) => ({
+              key,
+              label,
+            }))}
+            selected={role}
+          />
+        </div>
+      </div>
 
       {hasData && isRegisterClassList && toggleSelectMode && (
         <div className="mb-4 flex gap-2">
@@ -91,14 +160,16 @@ const ClassTable: React.FC<ClassTableProps> = ({
             "Tên",
             "Email",
             "Giới tính",
-            ...(!isSelecting && isRegisterClassList ? ["Hành động"] : []),
+            ...(!isSelecting && isRegisterClassList && handleAdd
+              ? ["Hành động"]
+              : []),
           ]}
         />
         <TableBody>
-          {!hasData ? (
+          {!users.length ? (
             <TableRow>
               <TableCell
-                colSpan={isRegisterClassList ? 4 : 3}
+                colSpan={isRegisterClassList ? 5 : 4}
                 className="text-center"
               >
                 Không có dữ liệu
