@@ -44,13 +44,13 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
   const [loading, setLoading] = useState(false);
 
-  const [currentPageStu, setCurrentPageStu] = useState(1);
-  const [currentPageTea, setCurrentPageTea] = useState(1);
+  const [currentPageStu] = useState(1);
+  const [currentPageTea] = useState(1);
   const [totalPagesStu, setTotalPagesStu] = useState(0);
   const [totalPagesTea, setTotalPagesTea] = useState(0);
 
-  const [currentPageStuCl, setCurrentPageStuCl] = useState(1);
-  const [currentPageTeaCl, setCurrentPageTeaCl] = useState(1);
+  const [currentPageStuCl] = useState(1);
+  const [currentPageTeaCl] = useState(1);
   const [totalPagesStuCl, setTotalPagesStuCl] = useState(0);
   const [totalPagesTeaCl, setTotalPagesTeaCl] = useState(0);
 
@@ -214,6 +214,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       }));
 
       // Set total pages for students based on API response
+      console.log(totalPagesStu);
       setTotalPagesStu(response.totalPages || 0);
     } catch (error) {
       console.log(error);
@@ -236,7 +237,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
         classId,
         "",
         currentPageStuCl - 1,
-        5,
+        3,
         "STUDENT",
       );
 
@@ -248,6 +249,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       }));
 
       // Set total pages for students based on API response
+      console.log(totalPagesStuCl);
       setTotalPagesStuCl(response.totalPages || 0);
     } catch (error) {
       console.log(error);
@@ -281,6 +283,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
         gender: getGenderDisplayName(item.gender),
       }));
       // Set total pages for teachers based on API response
+      console.log(totalPagesTea);
       setTotalPagesTea(response.totalPages || 0);
     } catch (error) {
       console.log(error);
@@ -315,6 +318,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       }));
 
       // Set total pages for students based on API response
+      console.log(totalPagesTeaCl);
       setTotalPagesTeaCl(response.totalPages || 0);
     } catch (error) {
       console.log(error);
@@ -399,40 +403,23 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
     }
   };
 
-  // Handle previous and next page functions
-  const handlePreviousPageStu = () => {
-    if (currentPageStu > 1) setCurrentPageStu(currentPageStu - 1);
-  };
+  // // Handle previous and next page functions
+  // const handlePreviousPageStu = () => {
+  //   if (currentPageStu > 1) setCurrentPageStu(currentPageStu - 1);
+  // };
 
-  const handleNextPageStu = () => {
-    if (currentPageStu < totalPagesStu) setCurrentPageStu(currentPageStu + 1);
-  };
+  // const handleNextPageStu = () => {
+  //   if (currentPageStu < totalPagesStu) setCurrentPageStu(currentPageStu + 1);
+  // };
 
-  const handlePreviousPageStuCl = () => {
-    if (currentPageStuCl > 1) setCurrentPageStuCl(currentPageStuCl - 1);
-  };
+  // const handlePreviousPageStuCl = () => {
+  //   if (currentPageStuCl > 1) setCurrentPageStuCl(currentPageStuCl - 1);
+  // };
 
-  const handleNextPageStuCl = () => {
-    if (currentPageStuCl < totalPagesStuCl)
-      setCurrentPageStu(currentPageStuCl + 1);
-  };
-
-  const handlePreviousPageTea = () => {
-    if (currentPageTea > 1) setCurrentPageTea(currentPageTea - 1);
-  };
-
-  const handleNextPageTea = () => {
-    if (currentPageTea < totalPagesTea) setCurrentPageTea(currentPageTea + 1);
-  };
-
-  const handlePreviousPageTeaCl = () => {
-    if (currentPageTeaCl > 1) setCurrentPageTeaCl(currentPageTeaCl - 1);
-  };
-
-  const handleNextPageTeaCl = () => {
-    if (currentPageTeaCl < totalPagesTeaCl)
-      setCurrentPageTeaCl(currentPageTeaCl + 1);
-  };
+  // const handleNextPageStuCl = () => {
+  //   if (currentPageStuCl < totalPagesStuCl)
+  //     setCurrentPageStu(currentPageStuCl + 1);
+  // };
 
   return (
     <>
@@ -471,6 +458,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                   <div className="grid grid-cols-2 gap-4">
                     <ClassTable
                       title="Danh sách chờ"
+                      fetchData={(page) => getStuClassRegister(classId, page)}
                       users={students}
                       isSelecting={isSelectingStu}
                       selectedUsers={selectedStus}
@@ -479,21 +467,14 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                       toggleSelectAll={toggleSelectAll}
                       handleBulkAction={handleBulkAction}
                       handleAdd={handleAdd}
-                      currentPage={currentPageStu}
-                      totalPages={totalPagesStu}
-                      setCurrentPage={setCurrentPageStu}
-                      handlePreviousPage={handlePreviousPageStu}
-                      handleNextPage={handleNextPageStu}
                     />
 
                     <ClassTable
                       title="Danh sách lớp"
+                      fetchData={(page, searchQuery) =>
+                        getListMembers(classId, searchQuery, page, 3, "STUDENT")
+                      }
                       users={studentsClass}
-                      currentPage={currentPageStuCl}
-                      totalPages={totalPagesStuCl}
-                      setCurrentPage={setCurrentPageStuCl}
-                      handlePreviousPage={handlePreviousPageStuCl}
-                      handleNextPage={handleNextPageStuCl}
                     />
                   </div>
                 </TabPanel>
@@ -502,6 +483,9 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                   <div className="grid grid-cols-2 gap-4">
                     <ClassTable
                       title="Danh sách chờ"
+                      fetchData={(page) =>
+                        getListAvailableTea(classId, "", page, 5)
+                      }
                       users={teachers}
                       isSelecting={isSelectingTea}
                       selectedUsers={selectedTeas}
@@ -510,21 +494,14 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
                       toggleSelectAll={toggleSelectAll}
                       handleBulkAction={handleBulkAction}
                       handleAdd={handleAdd}
-                      currentPage={currentPageTea}
-                      totalPages={totalPagesTea}
-                      setCurrentPage={setCurrentPageTea}
-                      handlePreviousPage={handlePreviousPageTea}
-                      handleNextPage={handleNextPageTea}
                     />
 
                     <ClassTable
                       title="Danh sách lớp"
+                      fetchData={(page, searchQuery) =>
+                        getListMembers(classId, searchQuery, page, 1, "TEACHER")
+                      }
                       users={teachersClass}
-                      currentPage={currentPageTeaCl}
-                      totalPages={totalPagesTeaCl}
-                      setCurrentPage={setCurrentPageTeaCl}
-                      handlePreviousPage={handlePreviousPageTeaCl}
-                      handleNextPage={handleNextPageTeaCl}
                     />
                   </div>
                 </TabPanel>

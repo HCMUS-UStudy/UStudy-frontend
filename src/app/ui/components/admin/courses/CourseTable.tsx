@@ -52,7 +52,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
         name: item.name,
         description: item.description,
         createdBy: {
-          name: "", // Để trống hoặc cập nhật nếu cần
+          name: item.createdBy.name, // Để trống hoặc cập nhật nếu cần
         },
         createdAt: item.createdAt,
         status: item.status,
