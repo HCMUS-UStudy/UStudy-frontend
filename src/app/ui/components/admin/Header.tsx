@@ -18,6 +18,7 @@ import {
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { handleLogoutCookies } from "@/app/lib/action";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -33,25 +34,25 @@ const Header: React.FC = () => {
     router.push("/admin/profile");
   };
 
-  const handleLogout = () => {
-    // Xóa token và các thông tin khác trong localStorage
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("creator");
-    localStorage.removeItem("userData");
+  // const handleLogout = () => {
+  //   // Xóa token và các thông tin khác trong localStorage
+  //   localStorage.removeItem("accessToken");
+  //   localStorage.removeItem("refreshToken");
+  //   localStorage.removeItem("creator");
+  //   localStorage.removeItem("userData");
 
-    // Hiển thị thông báo thành công
-    // Swal.fire({
-    //   icon: "success",
-    //   title: "Logout Successful",
-    //   text: "You have been logged out successfully.",
-    //   timer: 8000,
-    //   showConfirmButton: false,
-    // });
+  //   // Hiển thị thông báo thành công
+  //   // Swal.fire({
+  //   //   icon: "success",
+  //   //   title: "Logout Successful",
+  //   //   text: "You have been logged out successfully.",
+  //   //   timer: 8000,
+  //   //   showConfirmButton: false,
+  //   // });
 
-    // Chuyển hướng người dùng về trang đăng nhập
-    router.push("/login");
-  };
+  //   // Chuyển hướng người dùng về trang đăng nhập
+  //   router.push("/login");
+  // };
 
   // const renderTitle = (): React.ReactNode => {
   //   if (pathname.startsWith("/clerk")) {
@@ -61,7 +62,6 @@ const Header: React.FC = () => {
   //     return <div>Trang chủ lớp học</div>;
   //   }
   // };
-
   return (
     // <div className="flex">
     //   <div className="gap-6 justify-between items-center">
@@ -143,13 +143,13 @@ const Header: React.FC = () => {
           <DropdownMenuContent>
             <DropdownMenuItem onClick={handleProfileClick}>
               <div className="flex gap-3 items-center">
-                <FaUserCircle size={18} className="" /> Profile
+                <FaUserCircle size={18} className="" /> Trang cá nhân
               </div>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogoutCookies}>
               <div className="flex gap-3 items-center">
-                <FaSignOutAlt size={18} className="" /> Logout
+                <FaSignOutAlt size={18} className="" /> Đăng xuất
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>

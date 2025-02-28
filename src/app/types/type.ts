@@ -28,6 +28,16 @@ export type UserData = {
   };
 };
 
+export type AuthResponse = {
+  message: string;
+  statusCode: string;
+  data: {
+    user: UserData;
+    refresh_token: string;
+    access_token: string;
+  };
+};
+
 export type AccountItem = {
   id: string;
   name: string;

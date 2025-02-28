@@ -1,7 +1,13 @@
 import axios, { AxiosError } from "axios";
-import { getTokens, handleLogout, setTokens } from "./storage";
 import { CustomError } from "../types/type";
 import { handleRefreshToken } from "@/app/lib/services/auth";
+import {
+  getTokensFromCookies,
+  getUserDataFromCookies,
+  handleLogoutCookies,
+  setTokensAndUserDataCookies,
+} from "./action";
+import { redirect } from "next/navigation";
 
 const requestUrl = ["/auth/login"];
 
@@ -16,22 +22,31 @@ const decodeToken = (token: string) => {
   return JSON.parse(atob(token.split(".")[1]));
 };
 
-const handleExpiredAccessToken = async (refreshToken: string | null) => {
+export const handleExpiredAccessToken = async (
+  refreshToken: string | null,
+): Promise<string | null> => {
   try {
     const response = await handleRefreshToken(refreshToken);
-    const newAT = response.access_token;
-    const newRT = response.refresh_token;
-    setTokens(newAT, newRT);
-    return newAT;
+    if (!response?.data) {
+      return null;
+    }
+    const newAT = response.data.access_token;
+    const newRT = response.data.refresh_token;
+    if (newAT && newRT) {
+      setTokensAndUserDataCookies(newAT, newRT);
+      return newAT;
+    }
+    return null;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 
 axiosInstance.interceptors.request.use(
   async function (request) {
     if (!requestUrl.includes(request.url ?? "")) {
-      const { accessToken, refreshToken } = getTokens();
+      const { accessToken, refreshToken } = await getTokensFromCookies();
       let _accessToken = accessToken;
       if (_accessToken) {
         const parsedData = decodeToken(_accessToken);
@@ -41,8 +56,17 @@ axiosInstance.interceptors.request.use(
         if (adjust > expiredTime) {
           _accessToken = await handleExpiredAccessToken(refreshToken);
           if (!_accessToken) {
-            handleLogout();
-            window.location.href = "/login";
+            // handleLogout();
+            const defaultRoute = (await getUserDataFromCookies())?.role
+              .defaultRoute;
+            handleLogoutCookies();
+            // window.location.href = "/login";
+            switch (defaultRoute) {
+              case "ADMIN":
+                redirect("/admin/login");
+              default:
+                redirect("/login");
+            }
           }
         }
       }
