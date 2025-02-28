@@ -48,6 +48,18 @@ export type AccountItem = {
   createdAt: string;
 };
 
+export type AccountDetailItem = {
+  id: string;
+  name: string;
+  email: string;
+  genId: string;
+  avatar: string;
+  gender: "MALE" | "FEMALE";
+  status: "ACTIVE" | "DELETED" | "LOCKED";
+  createdAt: string;
+  role: { id: string; name: string };
+};
+
 export type MemberItem = {
   id: string;
   name: string;
@@ -509,4 +521,23 @@ export type Session = {
   name: string;
   startTime: string;
   endTime: string;
+};
+
+export type ClassStudenItem = {
+  id: string;
+  name: string;
+  description: string;
+  course: {
+    id: string;
+    name: string;
+  };
+  grade: {
+    id: string;
+    name: string;
+  };
+};
+
+export type StudentClassData = {
+  content: ClassStudenItem[];
+  totalPages: number;
 };

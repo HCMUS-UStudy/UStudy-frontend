@@ -32,3 +32,8 @@ export const getAvailableTeacher = async (classId: string) => {
   });
   return response.data;
 };
+
+export const getListUserDetail = async (userId: string) => {
+  const response = await axiosInstance.get(`/user/details/${userId}`);
+  return response.data;
+};
