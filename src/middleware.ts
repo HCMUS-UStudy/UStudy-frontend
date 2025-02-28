@@ -1,16 +1,31 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getTokensFromCookies, getUserDataFromCookies } from "./app/lib/action";
+import {
+  getTokensFromCookies,
+  getUserDataFromCookies,
+  handleLogoutCookies,
+} from "./app/lib/action";
+import { handleRefreshToken } from "./app/lib/services/auth";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const { accessToken } = await getTokensFromCookies();
+  const { accessToken, refreshToken } = await getTokensFromCookies();
   const userData = await getUserDataFromCookies();
+  let response;
   if (accessToken) {
     // if(!userData) {
     //   // cập nhật userData
     // }
     if (pathname === "/login" || pathname === "/admin/login") {
       switch (userData?.role.defaultRoute) {
+        case "TEACHER":
+          return NextResponse.redirect(
+            new URL("/teacher/classes", request.url),
+          );
+        case "STUDENT":
+          return NextResponse.redirect(new URL("/student/home", request.url));
+        case "PARENT":
+          // return NextResponse.redirect(new URL("/student/home", request.url));
+          break;
         case "ADMIN":
           return NextResponse.redirect(
             new URL("/admin/dashboard", request.url),
@@ -28,20 +43,37 @@ export async function middleware(request: NextRequest) {
     ) {
       return NextResponse.next();
     }
-    let response;
-    switch (userData?.role.defaultRoute) {
-      case "ADMIN":
-        response = NextResponse.redirect(new URL("/admin/login", request.url));
-        response.cookies.delete("accessToken");
-        response.cookies.delete("refreshToken");
-        response.cookies.delete("userData");
+    if (refreshToken) {
+      const authResponse = await handleRefreshToken(refreshToken);
+      if (!authResponse) {
+        await handleLogoutCookies();
+      } else {
+        response = NextResponse.next();
+        response.cookies.set("accessToken", authResponse.data.access_token);
+        response.cookies.set("refreshToken", authResponse.data.refresh_token);
+        response.cookies.set(
+          "userData",
+          JSON.stringify(authResponse.data.user),
+        );
         return response;
-      default:
-        response = NextResponse.redirect(new URL("/admin/login", request.url));
-        response.cookies.delete("accessToken");
-        response.cookies.delete("refreshToken");
-        response.cookies.delete("userData");
-        return response;
+      }
+    } else {
+      switch (userData?.role.defaultRoute) {
+        case "ADMIN":
+          response = NextResponse.redirect(
+            new URL("/admin/login", request.url),
+          );
+          response.cookies.delete("accessToken");
+          response.cookies.delete("refreshToken");
+          response.cookies.delete("userData");
+          return response;
+        default:
+          response = NextResponse.redirect(new URL("/login", request.url));
+          response.cookies.delete("accessToken");
+          response.cookies.delete("refreshToken");
+          response.cookies.delete("userData");
+          return response;
+      }
     }
   }
 }
