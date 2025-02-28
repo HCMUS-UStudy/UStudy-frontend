@@ -43,6 +43,16 @@ const AccountTable: React.FC<AccountTableProps> = ({
     return roleMapping[roleName] || roleName;
   };
 
+  const getStatusDisplayName = (statusName: string) => {
+    const roleMapping: Record<string, string> = {
+      ACTIVE: "Đang hoạt động",
+      DELETED: "Đã xóa",
+      LOCKED: "Đã khóa",
+    };
+
+    return roleMapping[statusName] || statusName;
+  };
+
   const fetchUsers = async () => {
     let filteredData: AccountItem[] = [];
     setLoading(true);
@@ -68,7 +78,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
           id: item.role.id,
           name: getRoleDisplayName(item.role.name),
         },
-        isActive: item.isActive,
+        status: item.status,
         createdAt: item.createdAt,
       }));
 
@@ -126,12 +136,12 @@ const AccountTable: React.FC<AccountTableProps> = ({
                 <TableCell>
                   <span
                     className={
-                      user.isActive
+                      user.status
                         ? "text-green-600 font-semibold"
                         : "text-gray-500"
                     }
                   >
-                    {user.isActive ? "Đang hoạt động" : "Ngưng hoạt động"}
+                    {getStatusDisplayName(user.status)}
                   </span>
                 </TableCell>
                 <TableCell>
