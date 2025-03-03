@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaCheck } from "react-icons/fa6";
-import SelectorLoading from "../ClassManagement/CreateClass/SelectorLoading";
+import SelectorLoading from "../admin/classes/create/SelectorLoading";
 import { CourseItem, GradeItem } from "@/app/types/type";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
 import { getAllCourses } from "@/app/lib/services/course";
@@ -145,17 +145,19 @@ export default function CreateTeacher() {
           <Input
             className="w-full h-11 text-base"
             placeholder="Họ tên"
+            isError={errors.name?.message !== undefined}
+            errorMsg={errors.name?.message}
             {...register("name")}
           />
-          <div className="text-error mt-1">{errors.name?.message}</div>
         </div>
         <div>
           <Input
             className="w-full h-11 text-base"
             placeholder="Email"
+            isError={errors.email?.message !== undefined}
+            errorMsg={errors.email?.message}
             {...register("email")}
           />
-          <div className="text-error mt-1">{errors.email?.message}</div>
         </div>
         <div className="flex items-center gap-4">
           <h1 className="text-gray-700">Giới tính:{"  "}</h1>
@@ -207,27 +209,31 @@ export default function CreateTeacher() {
               {...register("birthday")}
             />
           </div>
-          <div className="text-error mt-1">{errors.birthday?.message}</div>
+          <div className="text-[13px] text-error mt-1">
+            {errors.birthday?.message}
+          </div>
         </div>
         <div>
           <Input
             type="text"
             className="w-full h-11 text-base"
             placeholder="Số điện thoại"
+            isError={errors.phone?.message !== undefined}
+            errorMsg={errors.phone?.message}
             {...register("phone")}
             // onChange={(e) => {
             //   e.target.value = e.target.value.replace(/\D/g, "");
             // }}
           />
-          <div className="text-error mt-1">{errors.phone?.message}</div>
         </div>
         <div>
           <Input
             className="w-full h-11 text-base"
             placeholder="Địa chỉ"
+            isError={errors.address?.message !== undefined}
+            errorMsg={errors.address?.message}
             {...register("address")}
           />
-          <div className="text-error mt-1">{errors.address?.message}</div>
         </div>
         {loadingCourses ? (
           <SelectorLoading size="sm"></SelectorLoading>
@@ -256,7 +262,9 @@ export default function CreateTeacher() {
                   </label>
                 ))}
               </div>
-              <div className="text-error mt-1">{errors.courses?.message}</div>
+              <div className="text-[13px] text-error mt-1">
+                {errors.courses?.message}
+              </div>
             </div>
           </>
         )}
@@ -297,7 +305,9 @@ export default function CreateTeacher() {
                 </div>
               )}
             </div>
-            <div className="text-error mt-1">{errors.grades?.message}</div>
+            <div className="text-[13px] text-error mt-1">
+              {errors.grades?.message}
+            </div>
           </div>
         )}
 
@@ -308,6 +318,19 @@ export default function CreateTeacher() {
         >
           Đăng ký
         </Button>
+        {/* <Button
+          type="button"
+          className="mt-5 w-full"
+          onClick={() =>
+            toast.info("test", {
+              position: "bottom-right",
+              autoClose: 3000,
+              pauseOnHover: false,
+            })
+          }
+        >
+          test
+        </Button> */}
       </form>
     </div>
   );

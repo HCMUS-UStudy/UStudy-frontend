@@ -28,14 +28,36 @@ export type UserData = {
   };
 };
 
+export type AuthResponse = {
+  message: string;
+  statusCode: string;
+  data: {
+    user: UserData;
+    refresh_token: string;
+    access_token: string;
+  };
+};
+
 export type AccountItem = {
   id: string;
   name: string;
   email: string;
   genId: string;
   role: { id: string; name: string };
-  isActive: boolean;
+  status: string;
   createdAt: string;
+};
+
+export type AccountDetailItem = {
+  id: string;
+  name: string;
+  email: string;
+  genId: string;
+  avatar: string;
+  gender: "MALE" | "FEMALE";
+  status: "ACTIVE" | "DELETED" | "LOCKED";
+  createdAt: string;
+  role: { id: string; name: string };
 };
 
 export type MemberItem = {
@@ -99,16 +121,29 @@ export type TimeItem = {
   endTime: string;
 };
 
+export type DaysInWeek =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY";
+
 export type SessionTimeItem = {
-  day:
-    | "MONDAY"
-    | "TUESDAY"
-    | "WEDNESDAY"
-    | "THURSDAY"
-    | "FRIDAY"
-    | "SATURDAY"
-    | "SUNDAY";
+  day: DaysInWeek;
   branchSessionId: string;
+};
+
+export type DayRoomSessionItem = {
+  day: DaysInWeek;
+  branchSessionId: string;
+  roomId: string;
+};
+
+export type SessionBranchItem = {
+  id: string;
+  name: string;
 };
 
 export type SessionItem = {
@@ -499,4 +534,23 @@ export type Session = {
   name: string;
   startTime: string;
   endTime: string;
+};
+
+export type ClassStudenItem = {
+  id: string;
+  name: string;
+  description: string;
+  course: {
+    id: string;
+    name: string;
+  };
+  grade: {
+    id: string;
+    name: string;
+  };
+};
+
+export type StudentClassData = {
+  content: ClassStudenItem[];
+  totalPages: number;
 };

@@ -1,22 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-// import classNames from "classnames";
 import { IoNotificationsOutline } from "react-icons/io5";
-// import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import BranchSelector from "./BranchSelector";
 import { User } from "@/app/types/type";
-// import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from "@/app/ui/components/_common/DropdownMenu";
-
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
 import { usePathname, useRouter } from "next/navigation";
 import DropdownProfile from "../_common/DropdownProfile";
+import { handleLogoutCookies } from "@/app/lib/action";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -36,15 +26,6 @@ const Header: React.FC = () => {
 
   const handleToggle = () => {
     setToggleCollapse(!toggleCollapse);
-  };
-
-  const handleLogout = () => {
-    // Xóa token và các thông tin khác trong localStorage
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("creator");
-    localStorage.removeItem("userData");
-    router.push("/admin/login");
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -84,7 +65,7 @@ const Header: React.FC = () => {
             handleToggle={handleToggle}
             toggleCollapse={toggleCollapse}
             handleProfileClick={handleProfileClick}
-            handleLogout={handleLogout}
+            handleLogout={handleLogoutCookies}
             dropdownRef={dropdownRef}
           />
         </div>

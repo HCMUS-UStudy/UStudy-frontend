@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import { getAllAccount } from "@/app/lib/services/user";
+import { useRouter } from "next/navigation";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -28,6 +29,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
   const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const router = useRouter();
 
   const getRoleDisplayName = (roleName: string) => {
     const roleMapping: Record<string, string> = {
@@ -39,6 +41,16 @@ const AccountTable: React.FC<AccountTableProps> = ({
     };
 
     return roleMapping[roleName] || roleName;
+  };
+
+  const getStatusDisplayName = (statusName: string) => {
+    const roleMapping: Record<string, string> = {
+      ACTIVE: "Đang hoạt động",
+      DELETED: "Đã xóa",
+      LOCKED: "Đã khóa",
+    };
+
+    return roleMapping[statusName] || statusName;
   };
 
   const fetchUsers = async () => {
@@ -66,7 +78,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
           id: item.role.id,
           name: getRoleDisplayName(item.role.name),
         },
-        isActive: item.isActive,
+        status: item.status,
         createdAt: item.createdAt,
       }));
 
@@ -83,6 +95,10 @@ const AccountTable: React.FC<AccountTableProps> = ({
   useEffect(() => {
     fetchUsers();
   }, [currentPage, searchQuery, roleQuery]); // Use searchQueryState in the dependency array
+
+  const handleDetail = (userId: string) => {
+    router.push(`/admin/accounts/${userId}`);
+  };
 
   return (
     <div>
@@ -108,7 +124,11 @@ const AccountTable: React.FC<AccountTableProps> = ({
             </TableRow>
           ) : users.length > 0 ? (
             users.map((user) => (
-              <TableRow key={user.id} className="hover:bg-primary-lighter">
+              <TableRow
+                key={user.id}
+                className="hover:bg-primary-lighter cursor-pointer"
+                onClick={() => handleDetail(user.id)}
+              >
                 <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -116,12 +136,12 @@ const AccountTable: React.FC<AccountTableProps> = ({
                 <TableCell>
                   <span
                     className={
-                      user.isActive
+                      user.status
                         ? "text-green-600 font-semibold"
                         : "text-gray-500"
                     }
                   >
-                    {user.isActive ? "Đang hoạt động" : "Ngưng hoạt động"}
+                    {getStatusDisplayName(user.status)}
                   </span>
                 </TableCell>
                 <TableCell>

@@ -13,6 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
+import { ArrowRightCircle, Eye } from "lucide-react";
+import ClassRegisterModal from "./ClassRegisterModal";
 
 export default function ClassesTable({
   query,
@@ -23,9 +25,11 @@ export default function ClassesTable({
 }) {
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
   // let displays: ClassItem[] = [];
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +90,11 @@ export default function ClassesTable({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+  const handleOpenModal = (id: string) => {
+    setSelectedClassId(id);
+    setIsModalOpen(true);
+  };
+
   return (
     <div>
       <Table>
@@ -102,15 +111,27 @@ export default function ClassesTable({
               <TableCell>{c.grade.name}</TableCell>
               <TableCell>{c.room.name}</TableCell>
               <TableCell>{c.fee} VNĐ</TableCell>
-              <TableCell className="p-0 w-32">
+              <TableCell className="p-0 w-5 flex items-center justify-center space-x-2 px-2 py-3">
+                {/* Nút xem lớp */}
                 <Button
                   onClick={() =>
                     router.push(`/clerk/classes/${c.id}/class-management`)
                   }
                   type="button"
                   variant="outlined"
+                  className="p-2 "
                 >
-                  Xem lớp
+                  <Eye size={20} />
+                </Button>
+
+                {/* Nút duyệt thẳng vào lớp */}
+                <Button
+                  onClick={() => handleOpenModal(c.id)}
+                  type="button"
+                  variant="outlined"
+                  className="p-2"
+                >
+                  <ArrowRightCircle size={20} />
                 </Button>
               </TableCell>
             </TableRow>
@@ -124,6 +145,13 @@ export default function ClassesTable({
         handlePreviousPage={handlePrevClick}
         handleNextPage={handleNextClick}
       />
+      {isModalOpen && (
+        <ClassRegisterModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          classId={selectedClassId}
+        />
+      )}
     </div>
   );
 }

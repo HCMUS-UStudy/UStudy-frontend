@@ -57,7 +57,9 @@ export default function GradeSelector() {
           </>
         )}
       </div>
-      <div className="text-error mt-2">{errors.gradeId?.message}</div>
+      <div className="text-[13px] text-error mt-2">
+        {errors.gradeId?.message}
+      </div>
     </div>
   );
 }

@@ -1,116 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import React, { useActionState, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
-import {
-  logIn,
-  LoginFormState,
-  setTokensAndUserDataCookies,
-} from "@/app/lib/action";
+import { setTokensAndUserDataCookies } from "@/app/lib/action";
 import { useRouter } from "next/navigation";
-// import { CustomError } from "@/app/types/type";
-import { setTokens, setUserInfo } from "@/app/lib/storage";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/ReactToastify.min.css";
 import { login } from "@/app/lib/services/auth";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CustomError } from "@/app/types/type";
+
+const LogInSchema = z.object({
+  genId: z
+    .string({ message: "(*) Vui lòng nhập ID" })
+    .min(1, { message: "(*) Vui lòng nhập ID" }),
+  password: z
+    .string({ message: "(*) Vui lòng nhập mật khẩu" })
+    .min(1, { message: "(*) Vui lòng nhập mật khẩu" }),
+});
+
+type LogInInputs = z.infer<typeof LogInSchema>;
 
 export default function Login({ isUser = true }: { isUser?: boolean }) {
   const router = useRouter();
-  const [genId, setGenId] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  // const [loginError, setLoginError] = useState<string | null>(null);
-  const [showError, setShowError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const initialState: LoginFormState = {
-    errors: {
-      genID: null,
-      password: null,
-    },
-    message: null,
-    accessToken: null,
-    refreshToken: null,
-  };
-  const [state, action, isPending] = useActionState(logIn, initialState);
 
-  useEffect(() => {
-    const handleLogin = async () => {
-      try {
-        setIsLoading(true);
-        const response = await login(genId, password, isUser);
-        const defaultRoute = response.data.user.role.defaultRoute;
-        if (
-          (isUser && (defaultRoute === "ADMIN" || defaultRoute === "CLERK")) ||
-          (!isUser && defaultRoute !== "ADMIN" && defaultRoute !== "CLERK")
-        ) {
-          throw new Error("Đăng nhập không hợp lệ");
-        }
-        setTokens(response.data.access_token, response.data.refresh_token);
-        setTokensAndUserDataCookies(
-          response.data.access_token,
-          response.data.refresh_token,
-          JSON.stringify(response.data.user),
-        );
-
-        if (isUser) {
-          setUserInfo(JSON.stringify(response.data.user));
-        } else {
-          localStorage.setItem("creator", response.data.user.name);
-          localStorage.setItem("userData", JSON.stringify(response.data.user));
-        }
-
-        toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
-          position: "bottom-right",
-          autoClose: 5000,
-          closeOnClick: false,
-          pauseOnHover: false,
-        });
-        switch (defaultRoute) {
-          case "TEACHER":
-            router.push("/teacher/classes");
-            break;
-          case "STUDENT":
-            router.push("/student/home");
-            break;
-          case "ADMIN":
-          case "CLERK":
-            router.push("/admin/dashboard");
-            break;
-          default:
-            break;
-        }
-      } catch {
-        // const CustomError = error as CustomError;
-        // if (CustomError.status === 400) {
-        //   setLoginError(
-        //     typeof CustomError.data === "string" ? CustomError.data : "",
-        //   );
-        //   setShowError(true);
-        // }
-        toast.error("Đăng nhập thất bại", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-          closeOnClick: true,
-        });
-      } finally {
-        setIsLoading(false);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setError,
+  } = useForm<LogInInputs>({ resolver: zodResolver(LogInSchema) });
+  const onSubmit = async (data: LogInInputs) => {
+    try {
+      setIsLoading(true);
+      const response = await login(data.genId, data.password, isUser);
+      const defaultRoute = response.data.user.role.defaultRoute;
+      if (
+        (isUser && defaultRoute === "ADMIN") ||
+        (!isUser && defaultRoute !== "ADMIN")
+      ) {
+        throw new Error("Đăng nhập không hợp lệ");
       }
-    };
-
-    if (state.message === "Successful") {
-      handleLogin();
-    } else if (state.message === "Invalid form") {
-      setShowError(true);
-      return;
+      // setTokens(response.data.access_token, response.data.refresh_token);
+      setTokensAndUserDataCookies(
+        response.data.access_token,
+        response.data.refresh_token,
+        JSON.stringify(response.data.user),
+      );
+      // if (isUser) {
+      //   setUserInfo(JSON.stringify(response.data.user));
+      // } else {
+      //   localStorage.setItem("creator", response.data.user.name);
+      //   localStorage.setItem("userData", JSON.stringify(response.data.user));
+      // }
+      toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
+        position: "bottom-right",
+        autoClose: 5000,
+        closeOnClick: false,
+        pauseOnHover: false,
+      });
+      switch (defaultRoute) {
+        case "TEACHER":
+          router.push("/teacher/classes");
+          break;
+        case "STUDENT":
+          router.push("/student/home");
+          break;
+        case "ADMIN":
+          router.push("/admin/dashboard");
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      const customError = error as CustomError;
+      setError("genId", { message: String(customError.data || "") });
+      setError("password", { message: String(customError.data || "") });
+    } finally {
+      setIsLoading(false);
     }
-  }, [state]);
+  };
 
   return (
     <>
-      <ToastContainer />
       <div className="flex items-center justify-center h-screen overflow-hidden">
         <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <Image src="/logo.png" alt="Logo" width={280} height={280} />
@@ -163,7 +141,7 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
           />
 
           <form
-            action={action}
+            onSubmit={handleSubmit(onSubmit)}
             className="bg-foreground py-20 px-16 rounded-3xl shadow-lg z-[100]"
           >
             <div className="text-[#F48C06] text-3xl font-bold flex justify-center">
@@ -172,33 +150,23 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
             <div className="mt-6 mb-4 w-[350px]">
               <Input
                 className="text-[14px]"
-                name="genID"
-                value={genId}
                 type="text"
                 placeholder="Nhập mã người dùng"
                 label="Mã người dùng"
-                onChange={(e) => {
-                  setShowError(false);
-                  setGenId(e.target.value);
-                }}
-                isError={showError}
-                errorMsg={state?.errors?.genID && state?.errors?.genID[0]}
+                isError={errors.genId?.message !== undefined}
+                errorMsg={errors.genId?.message}
+                {...register("genId")}
               />
             </div>
             <div>
               <Input
                 className="text-[14px]"
                 type="password"
-                value={password}
-                name="password"
-                onChange={(e) => {
-                  setShowError(false);
-                  setPassword(e.target.value);
-                }}
                 placeholder="Nhập mật khẩu"
                 label="Mật khẩu"
-                isError={showError}
-                errorMsg={state?.errors?.password && state?.errors?.password[0]}
+                isError={errors.password !== undefined}
+                errorMsg={errors.password?.message}
+                {...register("password")}
               />
             </div>
             <div className="flex w-full justify-between mt-4 px-1">
@@ -215,12 +183,7 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
                 </Link>
               </div>
             </div>
-            <Button
-              className="mt-6 w-full"
-              isPending={isPending || isLoading}
-              disabled={isPending || isLoading}
-              type="submit"
-            >
+            <Button isPending={isLoading} className="mt-6 w-full" type="submit">
               Đăng nhập
             </Button>
           </form>

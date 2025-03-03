@@ -172,7 +172,7 @@ export const TableBody: React.FC<TableBodyProps> = ({
   return <tbody>{children}</tbody>;
 };
 
-interface TableRowProps {
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   children: React.ReactNode;
   className?: string;
 }
@@ -194,6 +194,7 @@ interface TableRowProps {
 export const TableRow: React.FC<TableRowProps> = ({
   children,
   className,
+  ...props
 }: TableRowProps) => {
   return (
     <tr
@@ -201,6 +202,7 @@ export const TableRow: React.FC<TableRowProps> = ({
         "hover:bg-primary-light transition-all duration-200 border-b-2 border-slate-100",
         className,
       )}
+      {...props}
     >
       {children}
     </tr>
