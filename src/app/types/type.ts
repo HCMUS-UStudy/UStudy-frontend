@@ -44,7 +44,7 @@ export type AccountItem = {
   email: string;
   genId: string;
   role: { id: string; name: string };
-  isActive: boolean;
+  status: string;
   createdAt: string;
 };
 

@@ -57,6 +57,11 @@ const AccountDetail = () => {
       try {
         const response = await getListUserDetail(userId as string);
         setUser(response.data);
+
+        // Chỉ gọi API lấy danh sách lớp học nếu user là Student hoặc Teacher
+        if (["Student", "Teacher"].includes(response.data.role?.name)) {
+          fetchClasses(response.data.role?.name);
+        }
       } catch (error) {
         console.error("Failed to fetch user details:", error);
       }
@@ -64,23 +69,16 @@ const AccountDetail = () => {
     fetchUser();
   }, [userId]);
 
-  useEffect(() => {
-    if (!userId) return;
-    const fetchClasses = async () => {
-      try {
-        const response = await getListStudentClass(
-          userId as string,
-          "",
-          0,
-          100,
-        );
-        setClasses(response.content);
-      } catch (error) {
-        console.error("Failed to fetch user classes:", error);
-      }
-    };
-    fetchClasses();
-  }, [userId]);
+  const fetchClasses = async (role: string) => {
+    if (!["Student", "Teacher"].includes(role)) return; // Kiểm tra lại role
+
+    try {
+      const response = await getListStudentClass(userId as string, "", 0, 100);
+      setClasses(response.content);
+    } catch (error) {
+      console.error("Failed to fetch user classes:", error);
+    }
+  };
 
   const handleBack = () => {
     setIsExiting(true);
@@ -167,27 +165,29 @@ const AccountDetail = () => {
                     </td>
                   </tr>
                 ))}
-                <tr className="border-b border-white/30 hover:bg-white/20 transition duration-300">
-                  <td className="px-4 py-4 font-semibold">
-                    Danh sách lớp học:
-                  </td>
-                  <td className="px-4 py-4 flex justify-between items-center">
-                    {classes.length > 0 ? (
-                      <div className="max-h-40 overflow-y-auto rounded-lg p-2">
-                        <ul className="list-disc pl-4">
-                          {classes.map((classItem, index) => (
-                            <li key={index}>
-                              {`${classItem.name} (${classItem.course.name} - ${classItem.grade.name})`}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : (
-                      "Không có lớp học nào"
-                    )}
-                    <FaEdit className="text-primary-dark hover:text-primary-darker cursor-pointer" />
-                  </td>
-                </tr>
+                {["Student", "Teacher"].includes(user?.role?.name ?? "") && (
+                  <tr className="border-b border-white/30 hover:bg-white/20 transition duration-300">
+                    <td className="px-4 py-4 font-semibold">
+                      Danh sách lớp học:
+                    </td>
+                    <td className="px-4 py-4 flex justify-between items-center">
+                      {Array.isArray(classes) && classes.length > 0 ? (
+                        <div className="max-h-40 overflow-y-auto rounded-lg p-2">
+                          <ul className="list-disc pl-4">
+                            {classes.map((classItem, index) => (
+                              <li key={index}>
+                                {`${classItem.name} (${classItem.course.name} - ${classItem.grade.name})`}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        "Không có lớp học nào"
+                      )}
+                      <FaEdit className="text-primary-dark hover:text-primary-darker cursor-pointer" />
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

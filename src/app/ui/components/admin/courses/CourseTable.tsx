@@ -109,11 +109,10 @@ const CourseTable: React.FC<CourseTableProps> = ({
         <TableHeader
           columns={[
             "Môn học",
-            "Tệp đính kèm",
+            "Tài liệu",
             "Mô tả",
             "Người tạo",
             "Ngày tạo",
-            "Trạng thái",
             "Hành động",
           ]}
         />
@@ -146,15 +145,6 @@ const CourseTable: React.FC<CourseTableProps> = ({
                 <TableCell>{course.createdBy?.name || "Trống"}</TableCell>
                 <TableCell>
                   {new Date(course.createdAt).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 rounded-full text-white ${
-                      course.status ? "bg-green-500" : "bg-red-500"
-                    }`}
-                  >
-                    {course.status ? "Hoạt động" : "Tạm ngưng"}
-                  </span>
                 </TableCell>
                 <TableCell className="flex justify-center items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
