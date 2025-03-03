@@ -121,16 +121,29 @@ export type TimeItem = {
   endTime: string;
 };
 
+export type DaysInWeek =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY";
+
 export type SessionTimeItem = {
-  day:
-    | "MONDAY"
-    | "TUESDAY"
-    | "WEDNESDAY"
-    | "THURSDAY"
-    | "FRIDAY"
-    | "SATURDAY"
-    | "SUNDAY";
+  day: DaysInWeek;
   branchSessionId: string;
+};
+
+export type DayRoomSessionItem = {
+  day: DaysInWeek;
+  branchSessionId: string;
+  roomId: string;
+};
+
+export type SessionBranchItem = {
+  id: string;
+  name: string;
 };
 
 export type SessionItem = {

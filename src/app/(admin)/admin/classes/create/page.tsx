@@ -2,19 +2,19 @@
 import { createNewClass } from "@/app/lib/services/class";
 import { RootState } from "@/app/store/store";
 import { Button } from "@/app/ui/components/_common/Button";
-import ClassDescription from "@/app/ui/components/ClassManagement/CreateClass/ClassDescription";
-import CourseSelector from "@/app/ui/components/ClassManagement/CreateClass/CourseSelector";
-import DurationSelector from "@/app/ui/components/ClassManagement/CreateClass/DurationSelector";
-import GradeSelector from "@/app/ui/components/ClassManagement/CreateClass/GradeSelector";
-import NameSelector from "@/app/ui/components/ClassManagement/CreateClass/NameSelector";
-import RoomSelector from "@/app/ui/components/ClassManagement/CreateClass/RoomSelector";
-import SessionSelector from "@/app/ui/components/ClassManagement/CreateClass/SessionSelector";
+import ClassDescription from "@/app/ui/components/admin/classes/create/ClassDescription";
+import CourseSelector from "@/app/ui/components/admin/classes/create/CourseSelector";
+import DayRoomSessionSelector from "@/app/ui/components/admin/classes/create/DayRoomSessionSelector";
+// import DurationSelector from "@/app/ui/components/admin/classes/create/DurationSelector";
+import GradeSelector from "@/app/ui/components/admin/classes/create/GradeSelector";
+import NameSelector from "@/app/ui/components/admin/classes/create/NameSelector";
+// import RoomSelector from "@/app/ui/components/admin/classes/create/RoomSelector";
+// import SessionSelector from "@/app/ui/components/admin/classes/create/SessionSelector";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/ReactToastify.min.css";
 import { z } from "zod";
 
@@ -43,6 +43,9 @@ const CreateClassSchema = z.object({
           "SUNDAY",
         ]),
         branchSessionId: z
+          .string({ message: "Đây là trường bắt buộc" })
+          .min(1, "Đây là trường bắt buộc"),
+        roomId: z
           .string({ message: "Đây là trường bắt buộc" })
           .min(1, "Đây là trường bắt buộc"),
       }),
@@ -82,7 +85,6 @@ export default function CreateClass() {
       branchId: selectedBranchId ?? undefined,
     },
   });
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const onSubmit = async (data: CreateClassInputs) => {
     try {
@@ -92,8 +94,8 @@ export default function CreateClass() {
       if (response.status === 200) {
         toast.success("Tạo lớp học thành công ! Đang chuyển hướng...", {
           position: "bottom-right",
-          autoClose: 2000,
-          onClose: () => router.push("/admin/classes"),
+          autoClose: 3000,
+          // onClose: () => router.push("/admin/classes"),
         });
       }
     } catch (error) {
@@ -113,16 +115,17 @@ export default function CreateClass() {
           <NameSelector />
           <GradeSelector />
           <CourseSelector />
-          <SessionSelector />
+          {/* <SessionSelector />
           <DurationSelector />
-          <RoomSelector />
+          <RoomSelector /> */}
+          <DayRoomSessionSelector />
           <ClassDescription />
           <Button isPending={loading} type="submit" className="w-full">
             Tạo lớp học mới
           </Button>
         </form>
       </FormProvider>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </div>
   );
 }

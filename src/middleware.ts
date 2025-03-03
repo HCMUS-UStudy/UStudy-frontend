@@ -15,8 +15,9 @@ export async function middleware(request: NextRequest) {
     // if(!userData) {
     //   // cập nhật userData
     // }
+    const defaultRoute = userData?.role.defaultRoute;
     if (pathname === "/login" || pathname === "/admin/login") {
-      switch (userData?.role.defaultRoute) {
+      switch (defaultRoute) {
         case "TEACHER":
           return NextResponse.redirect(
             new URL("/teacher/classes", request.url),
@@ -33,6 +34,18 @@ export async function middleware(request: NextRequest) {
         default:
           break;
       }
+    }
+    if (pathname.startsWith("/teacher") && defaultRoute !== "TEACHER") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (pathname.startsWith("/student") && defaultRoute !== "STUDENT") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (pathname.startsWith("/parent") && defaultRoute !== "PARENT") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (pathname.startsWith("/admin") && defaultRoute !== "ADMIN") {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
     return NextResponse.next();
   } else {
@@ -79,5 +92,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/admin/login", "/login", "/admin/:path*"],
+  matcher: ["/", "/admin/login", "/login", "/admin/:path*", "/teacher/:path*"],
 };

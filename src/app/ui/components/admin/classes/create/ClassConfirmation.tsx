@@ -1,7 +1,7 @@
 import React from "react";
-import { useSlider } from "../../slider";
+import { useSlider } from "../../../slider";
 import { useCreateClassContext } from "./createClassContent";
-import { Button } from "../../_common/Button";
+import { Button } from "../../../_common/Button";
 
 export default function ClassConfirmation() {
   const context = useSlider();
