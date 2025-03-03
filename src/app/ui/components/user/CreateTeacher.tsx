@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaCheck } from "react-icons/fa6";
-import SelectorLoading from "../ClassManagement/CreateClass/SelectorLoading";
+import SelectorLoading from "../admin/classes/create/SelectorLoading";
 import { CourseItem, GradeItem } from "@/app/types/type";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
 import { getAllCourses } from "@/app/lib/services/course";
