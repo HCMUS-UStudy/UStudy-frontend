@@ -1,6 +1,13 @@
 import axiosInstance from "@/app/lib/axios";
 import { Session } from "@/app/types/type";
 
+type BranchUpdate = {
+  id: string;
+  name: string;
+  address: string;
+  contactNumber: string;
+};
+
 type BranchRequest = {
   name: string;
   address: string;
@@ -48,6 +55,36 @@ export const getListClerk = async (branchId: string) => {
 };
 
 export const getAvailableClerks = async () => {
-  const response = await axiosInstance.get(`/user/list-available-clerks`);
+  const response = await axiosInstance.get(`/user/list-clerks`);
+  return response.data;
+};
+
+export const updateBranch = async (branch: BranchUpdate) => {
+  const response = await axiosInstance.patch(`/branch/update/${branch.id}`, {
+    name: branch.name,
+    address: branch.address,
+    contactNumber: branch.contactNumber,
+  });
+  return response.data;
+};
+
+export const updateSessions = async (branchId: string, sessions: string[]) => {
+  const response = await axiosInstance.patch(
+    `/branch/update-sessions/${branchId}`,
+    {
+      sessions: sessions,
+    },
+  );
+  return response.data;
+};
+
+export const updateAdmins = async (branchId: string, clerkIds: string[]) => {
+  console.log(clerkIds);
+  const response = await axiosInstance.patch(
+    `/branch/update-admins/${branchId}`,
+    {
+      clerkIds: clerkIds,
+    },
+  );
   return response.data;
 };

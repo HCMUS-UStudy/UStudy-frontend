@@ -90,7 +90,7 @@ const Sidebar = () => {
         <Image src="/logo.png" alt="Logo" width={135} height={135} />
       </div>
       {/* menu */}
-      <div className="flex flex-col gap-[16px] px-4">
+      <div className="flex flex-col gap-[11px] px-4">
         {SIDENAV_ITEMS_ADMIN.map((item, idx) => (
           <div
             key={idx}

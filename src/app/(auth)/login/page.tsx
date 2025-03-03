@@ -151,6 +151,7 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
               <Input
                 className="text-[14px]"
                 type="text"
+                placeholder="Nhập mã người dùng"
                 label="Mã người dùng"
                 isError={errors.genId?.message !== undefined}
                 errorMsg={errors.genId?.message}

@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+// import { FaEdit, FaTrashAlt } from "react-icons/fa";
 // import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import SessionManagement from "@/app/ui/components/admin/branches/Session";
 import { addBranch, getAllBranches } from "@/app/lib/services/branch";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { FiFilter } from "react-icons/fi";
@@ -107,7 +106,6 @@ const BranchPage: React.FC = () => {
 
   const handleSubmitModal = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("newBranch", newBranch);
     try {
       const response = await addBranch(newBranch);
       setBranches_((prevBranches) => [...prevBranches, response.data.branch]);
@@ -167,7 +165,7 @@ const BranchPage: React.FC = () => {
 
           <Button
             onClick={onCreateBranch}
-            className="px-6 py-3 rounded-2xl text-[15px]"
+            className="px-6 py-3 rounded-2xl text-[15px] z-10"
           >
             Thêm chi nhánh
           </Button>
@@ -207,9 +205,9 @@ const BranchPage: React.FC = () => {
                 <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
                   Số phòng học
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
+                {/* <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
                   Hành động
-                </th>
+                </th> */}
                 <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
                   <div></div>
                 </th>
@@ -234,7 +232,7 @@ const BranchPage: React.FC = () => {
                     {branch.rooms}
                   </td>
 
-                  <td className="px-3 py-4">
+                  {/* <td className="px-3 py-4">
                     <div className="flex justify-center items-center space-x-3">
                       <button className="text-blue-600 hover:text-blue-800">
                         <FaEdit className="h-5 w-5" />
@@ -243,8 +241,8 @@ const BranchPage: React.FC = () => {
                         <FaTrashAlt className="h-5 w-5" />
                       </button>
                     </div>
-                  </td>
-                  <td className="pl-3 py-4 text-sm underline cursor-pointer text-primary-darker">
+                  </td> */}
+                  <td className="pl-3 py-4 text-sm underline text-center cursor-pointer text-primary-darker">
                     <div onClick={() => handleDetail(branch)}>Xem chi tiết</div>
                   </td>
                 </tr>
@@ -253,7 +251,7 @@ const BranchPage: React.FC = () => {
           </table>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -278,7 +276,6 @@ const BranchPage: React.FC = () => {
           />
         )}
       </div>
-      <SessionManagement />
     </>
   );
 };

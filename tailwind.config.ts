@@ -108,6 +108,9 @@ const config: Config = {
       height: {
         "header-height": "90px",
       },
+      top: {
+        "header-top": "90px",
+      },
       width: {
         "sidebar-width": "215px",
       },
