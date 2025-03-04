@@ -23,7 +23,10 @@ export default function CourseSelector() {
         const response = await getCoursesByGradeId(selectedGrade);
         setCourses(response.data.data.content);
         if (response.data.data.totalElements === 0) {
-          setError("courseId", { message: "Chưa có môn học cho khối này" });
+          setError("courseId", {
+            message:
+              "Chưa có môn học cho khối này, vui lòng chọn khối khác cho lớp học",
+          });
         } else {
           setError("courseId", { message: "" });
         }
@@ -69,7 +72,9 @@ export default function CourseSelector() {
             </>
           )}
         </div>
-        <div className="text-error mt-2">{errors.courseId?.message}</div>
+        <div className="text-[13px] text-error mt-2">
+          {errors.courseId?.message}
+        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Input } from "../../_common/text-field/Input";
+import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
 import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
 
@@ -79,7 +79,9 @@ export default function DurationSelector() {
                 onChange={handleInputDuration}
               />
             </div>
-            <div className="text-error mt-2">{errors.startDate?.message}</div>
+            <div className="text-[13px] text-error mt-2">
+              {errors.startDate?.message}
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <h1 className="after:content-['*'] after:text-red-500">
@@ -161,7 +163,9 @@ export default function DurationSelector() {
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
-              <div className="text-error mt-2">{errors.startDate?.message}</div>
+              <div className="text-[13px] text-error mt-2">
+                {errors.startDate?.message}
+              </div>
             </div>
             <div>
               <div className="flex gap-2 items-center">

@@ -380,7 +380,7 @@ const DropdownMenuItem = ({
     <div
       onClick={onClick}
       className={cn(
-        "px-3 py-2 text-sm text-gray-700 hover:bg-control-hover cursor-pointer",
+        "px-3 py-2 text-sm text-gray-700 hover:bg-primary-light cursor-pointer",
         className,
       )}
     >

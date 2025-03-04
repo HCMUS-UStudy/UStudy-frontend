@@ -18,6 +18,7 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { GiMoneyStack } from "react-icons/gi";
 import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation, GrSchedules } from "react-icons/gr";
+import { AiOutlineSchedule } from "react-icons/ai";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -29,6 +30,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý chi nhánh",
     path: "/admin/branches",
     icon: <GrMapLocation size={20} />,
+  },
+  {
+    title: "Quản lý ca học",
+    path: "/admin/sessions",
+    icon: <AiOutlineSchedule size={20} />,
   },
   {
     title: "Quản lý tài khoản",
