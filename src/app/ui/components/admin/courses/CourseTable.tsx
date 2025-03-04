@@ -47,19 +47,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
 
       const response = await getAllCourses(searchParam, 5, currentPage - 1);
 
-      const filteredData: CourseItem[] = response.content.map((item) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        createdBy: {
-          name: item.createdBy.name, // Để trống hoặc cập nhật nếu cần
-        },
-        createdAt: item.createdAt,
-        status: item.status,
-        totalGrades: item.totalGrades,
-      }));
-
-      setCourses(filteredData);
+      setCourses(response.content);
       setTotalPages(response.totalPages || 1);
     } catch (err) {
       console.error("Error fetching courses:", err);
@@ -107,14 +95,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
     <div className="overflow-x-auto max-h-[400px]">
       <Table>
         <TableHeader
-          columns={[
-            "Môn học",
-            "Tài liệu",
-            "Mô tả",
-            "Người tạo",
-            "Ngày tạo",
-            "Hành động",
-          ]}
+          columns={["Môn học", "Tài liệu", "Người tạo", "Hành động"]}
         />
         <TableBody isLoading={loading}>
           {error ? (
@@ -125,15 +106,15 @@ const CourseTable: React.FC<CourseTableProps> = ({
             </TableRow>
           ) : courses.length > 0 ? (
             courses.map((course) => (
-              <TableRow key={course.id}>
-                <TableCell>{course.name}</TableCell>
+              <TableRow key={course.courseDto.id}>
+                <TableCell>{course.courseDto.name}</TableCell>
                 <TableCell>
                   <button
                     onClick={() => {
                       router.push(
-                        `/admin/courses/course-documents/${course.id}`,
+                        `/admin/courses/course-documents/${course.courseDto.id}`,
                       );
-                      setCourseName(course.name);
+                      setCourseName(course.courseDto.name);
                     }}
                     className="flex justify-center items-center mx-auto"
                   >
@@ -141,10 +122,8 @@ const CourseTable: React.FC<CourseTableProps> = ({
                     <FaPaperclip className="ml-2 mt-1 text-green-500" />
                   </button>
                 </TableCell>
-                <TableCell>{course.description || "Trống"}</TableCell>
-                <TableCell>{course.createdBy?.name || "Trống"}</TableCell>
                 <TableCell>
-                  {new Date(course.createdAt).toLocaleDateString("vi-VN")}
+                  {course.courseDto.createdBy?.name || "Trống"}
                 </TableCell>
                 <TableCell className="flex justify-center items-center space-x-3">
                   <button className="text-blue-600 hover:text-blue-800">
