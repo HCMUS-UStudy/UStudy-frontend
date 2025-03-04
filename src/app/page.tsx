@@ -48,7 +48,7 @@ export default async function Home() {
           return (
             <div
               key={i}
-              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col justify-center items-center gap-1 md:gap-3 items-center bg-white border border-slate-300 rounded-xl"
+              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col justify-center items-center gap-1 md:gap-3 bg-white border border-slate-300 rounded-xl"
             >
               {/* <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" /> */}
               <div className="text-lg md:text-2xl font-bold">
@@ -65,12 +65,12 @@ export default async function Home() {
   };
   return (
     <div className=" bg-background">
-      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[550px] rounded-b-[50px] md:rounded-bl-[200px] md:rounded-br-none pt-10 min-[320px]:px-8 md:px-20">
+      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[550px] rounded-b-[50px] md:rounded-b-[180px] pt-10 min-[320px]:px-8 md:px-20">
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
           <Button
-            className="px-8 text-lg min-[320px]:hidden md:flex hover:scale-110"
+            className="px-10 py-3 rounded-3xl text-[17px] min-[320px]:hidden md:flex hover:scale-110"
             type="submit"
           >
             <Link
@@ -79,10 +79,10 @@ export default async function Home() {
             >
               Đăng nhập
             </Link>
-            <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
+            <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-250" />
           </Button>
         </div>
-        <div className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-8">
+        <div className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-10">
           <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
             <div className="leading-tight md:leading-normal">
               <div className=" tracking-tight md:tracking-normal">
@@ -101,7 +101,7 @@ export default async function Home() {
               </div>
             </div>
             <Button
-              className="w-full overflow-hidden md:w-[300px] text-xl py-4 hover:scale-110"
+              className="w-full rounded-3xl overflow-hidden md:w-[240px] text-xl py-4 hover:scale-110"
               type="submit"
             >
               Bắt đầu
@@ -158,7 +158,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-hero rounded-tl-[150px] mt-[200px] py-8 flex justify-evenly">
+      <div className="bg-hero rounded-t-[100px] mt-[200px] py-8 flex justify-evenly">
         <Image
           className="md:flex hidden object-contain"
           src="/TeacherRegister.png"
