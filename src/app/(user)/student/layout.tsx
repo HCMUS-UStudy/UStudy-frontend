@@ -1,8 +1,8 @@
-import { SIDENAV_ITEMS_STUDENT } from "@/app/menu-constants";
-import PageWrapper from "@/app/ui/components/_common/PageWrapper";
-import Sidebar from "@/app/ui/components/_common/sidebar/Sidebar";
 import React from "react";
 import HeaderStuTeach from "@/app/ui/components/user/Header";
+import { BreadcrumbProvider } from "@/app/context/BreadcrumbContext";
+import PageWrapperStu from "@/app/ui/components/user/PageWrapperStu";
+import SidebarStu from "@/app/ui/components/_common/sidebar/SidebarStu";
 
 export default function ClerkLayout({
   children,
@@ -11,11 +11,20 @@ export default function ClerkLayout({
 }) {
   return (
     <>
-      <Sidebar menuItems={SIDENAV_ITEMS_STUDENT} />
+      {/* <Sidebar menuItems={SIDENAV_ITEMS_STUDENT} />
       <div className="flex flex-col h-full w-full">
         <HeaderStuTeach />
         <PageWrapper>{children}</PageWrapper>
-      </div>
+      </div> */}
+      <BreadcrumbProvider>
+        <div>
+          <SidebarStu />
+          <div>
+            <HeaderStuTeach />
+            <PageWrapperStu>{children}</PageWrapperStu>
+          </div>
+        </div>
+      </BreadcrumbProvider>
     </>
   );
 }
