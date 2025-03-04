@@ -536,7 +536,7 @@ export type Session = {
   endTime: string;
 };
 
-export type ClassStudenItem = {
+export type ClassUserItem = {
   id: string;
   name: string;
   description: string;
@@ -550,7 +550,7 @@ export type ClassStudenItem = {
   };
 };
 
-export type StudentClassData = {
-  content: ClassStudenItem[];
+export type UserClassData = {
+  content: ClassUserItem[];
   totalPages: number;
 };

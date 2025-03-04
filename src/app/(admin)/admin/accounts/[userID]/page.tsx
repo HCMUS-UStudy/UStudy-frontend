@@ -6,8 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { getListUserDetail } from "@/app/lib/services/user";
-import { AccountDetailItem, ClassStudenItem } from "@/app/types/type";
-import { getListStudentClass } from "@/app/lib/services/class";
+import { AccountDetailItem, ClassUserItem } from "@/app/types/type";
+import { getListUserClass } from "@/app/lib/services/class";
 
 const AccountDetail = () => {
   const params = useParams();
@@ -15,7 +15,7 @@ const AccountDetail = () => {
     ? params.userID[0]
     : params.userID;
   const [user, setUser] = useState<AccountDetailItem>();
-  const [classes, setClasses] = useState<ClassStudenItem[]>([]);
+  const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const router = useRouter();
   const [isExiting, setIsExiting] = useState(false);
 
@@ -73,7 +73,7 @@ const AccountDetail = () => {
     if (!["Student", "Teacher"].includes(role)) return; // Kiểm tra lại role
 
     try {
-      const response = await getListStudentClass(userId as string, "", 0, 100);
+      const response = await getListUserClass(userId as string, "", 0, 100);
       setClasses(response.content);
     } catch (error) {
       console.error("Failed to fetch user classes:", error);
