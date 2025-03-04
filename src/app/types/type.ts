@@ -103,16 +103,20 @@ export type MaterialItem = {
   filePath: string;
 };
 
-export type CourseItem = {
+export type CourseDto = {
   id: string;
   name: string;
-  description: string;
   createdBy: {
+    id: string;
+    genId: string;
+    email: string;
     name: string;
   };
-  createdAt: string;
-  status: boolean;
-  totalGrades: string;
+};
+
+export type CourseItem = {
+  totalGrades: number;
+  courseDto: CourseDto;
 };
 
 export type TimeItem = {
