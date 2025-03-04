@@ -2,6 +2,7 @@
 
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import Image from "next/image";
+import { UserData } from "@/app/types/type";
 
 const DropdownProfile = ({
   userInfo,
@@ -11,12 +12,12 @@ const DropdownProfile = ({
   handleLogout,
   dropdownRef,
 }: {
-  userInfo: any;
+  userInfo: UserData | null;
   handleToggle: () => void;
   toggleCollapse: boolean;
   handleProfileClick: () => void;
   handleLogout: () => void;
-  dropdownRef: any;
+  dropdownRef: React.RefObject<HTMLDivElement>;
 }) => {
   return (
     <div className="flex items-center" ref={dropdownRef}>
