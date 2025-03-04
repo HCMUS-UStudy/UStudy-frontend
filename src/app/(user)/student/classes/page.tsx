@@ -1,132 +1,44 @@
-"use client";
+import React from "react";
+import ClassRow from "@/app/ui/components/user/student/classes/ClassRow";
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import DropdownGrade from "@/app/ui/components/admin/grades/DropdownGrade";
+import { HiAdjustments } from "react-icons/hi";
 
-import React, { useEffect, useState } from "react";
-import { getAllStudentClasses, getClassById } from "@/app/lib/services/class";
-import Loading from "@/app/ui/components/_common/Loading";
-import { ClassUserItem } from "@/app/types/type";
-
-export default function Classes() {
-  const [classes, setClasses] = useState<ClassUserItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [classDetails, setClassDetails] = useState<{
-    [key: string]: ClassUserItem;
-  }>({});
-
-  const fetchClasses = async () => {
-    setLoading(true);
-
-    try {
-      const response = await getAllStudentClasses("", 0, 100);
-      console.log(response);
-      setClasses(response.content);
-    } catch (err) {
-      console.error("Error fetching classes:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchClassDetails = async (classId: string) => {
-    if (classDetails[classId]) {
-      console.log(
-        `Class details for ${classId} already fetched:`,
-        classDetails[classId],
-      );
-      return; // Avoid fetching if details already exist
-    }
-
-    try {
-      const response = await getClassById(classId);
-
-      setClassDetails((prevDetails) => {
-        const updatedDetails = { ...prevDetails, [classId]: response.data };
-        console.log("Updated class details:", updatedDetails); // Log the updated state
-        return updatedDetails;
-      });
-    } catch (err) {
-      console.error("Error fetching class details:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchClasses();
-  }, []);
-
-  useEffect(() => {
-    if (classes.length > 0) {
-      classes.forEach((classItem) => fetchClassDetails(classItem.id));
-    }
-  }, [classes]);
-
-  useEffect(() => {
-    if (classes.length > 0) {
-      const fetchDetails = async () => {
-        await Promise.all(
-          classes.map((classItem) => fetchClassDetails(classItem.id)),
-        );
-      };
-      fetchDetails();
-    }
-  }, [classes]);
+export default async function Classes(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+    classQuery?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
+  const classQuery = searchParams?.classQuery || "All";
 
   return (
-    <div className="flex-grow pr-6 md:pr-5">
-      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">
-        <span className="bg-primary text-transparent bg-clip-text">
-          Danh sách lớp học
-        </span>
-      </h2>
-      <div className="flex flex-col space-y-6">
-        {loading ? (
-          <Loading />
-        ) : classes.length > 0 ? (
-          classes.map((classItem) => (
-            <div
-              key={classItem.id}
-              className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-transform transform hover:scale-105"
-            >
-              {/* Avatar */}
-              <div className="w-14 h-14 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center font-extrabold text-lg mr-6">
-                {classDetails[classItem.id]?.course?.name.charAt(0)}
-              </div>
-              {/* Class Details */}
-              <div className="flex-grow">
-                <h3 className="text-xl font-semibold text-gray-700 mb-1">
-                  {classDetails[classItem.id]?.course?.name
-                    ? `Lớp ${classItem.name} - ${classDetails[classItem.id]?.course?.name} ${classDetails[classItem.id]?.grade?.name}`
-                    : classItem.name}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  <strong>Giáo viên:</strong>{" "}
-                  {/* {classDetails[classItem.id]?.teacher?.name ||
-                    "Chưa có giáo viên"} */}
-                </p>
-                {/* <p className="text-sm text-gray-600">
-                  <strong>Phòng học:</strong> {classItem.room.name}
-                </p> */}
-              </div>
-              {/* Action */}
-              <button
-                className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-hover-primary"
-                onClick={() => {
-                  setLoading(true);
-                  fetchClassDetails(classItem.id).finally(() =>
-                    setLoading(false),
-                  );
-                }}
-              >
-                Xem chi tiết
-              </button>
-            </div>
-          ))
-        ) : (
-          <div className="text-center text-gray-500">Không có lớp học nào.</div>
-        )}
+    <div className="px-2">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">Danh sách lớp học</h2>
       </div>
 
-      {/* Pagination Section */}
+      <div className="flex items-center justify-between mt-2 gap-14">
+        <SearchField
+          className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+          placeholder="Tìm kiếm lớp học..."
+        />
+        <div className="flex items-center gap-6 px-4">
+          <div className="flex items-center">
+            <DropdownGrade label="Lọc" />
+          </div>
+          <div className="flex items-center">
+            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
+          </div>
+        </div>
+      </div>
+
+      <div className="relative mt-6 max-h-[400px]">
+        <ClassRow searchQuery={query} classQuery={classQuery} />
+      </div>
     </div>
   );
 }
