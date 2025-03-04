@@ -106,6 +106,7 @@ export default function CreateTeacher() {
       try {
         setLoadingCourses(true);
         const response = await getAllCourses("", 15, 0);
+        console.log(response.content);
         setCourses(response.content);
       } catch (error) {
         console.error(error);
@@ -246,17 +247,17 @@ export default function CreateTeacher() {
               <div className="flex flex-wrap gap-3 mt-3">
                 {courses.map((course) => (
                   <label
-                    key={course.id}
+                    key={course.courseDto.id}
                     className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
                   >
                     <input
                       type="radio"
                       className="hidden peer"
-                      value={course.id}
+                      value={course.courseDto.id}
                       {...register("courses")}
                     />
                     <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
-                      {course.name}
+                      {course.courseDto.name}
                     </span>
                     <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
                   </label>
