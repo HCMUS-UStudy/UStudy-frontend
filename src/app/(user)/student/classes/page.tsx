@@ -1,27 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getUserDataFromCookies } from "@/app/lib/action";
-import { getClassById, getListUserClass } from "@/app/lib/services/class";
+import { getAllStudentClasses, getClassById } from "@/app/lib/services/class";
 import Loading from "@/app/ui/components/_common/Loading";
 import { ClassUserItem } from "@/app/types/type";
 
 export default function Classes() {
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [classDetails, setClassDetails] = useState<{ [key: string]: any }>({});
+  const [classDetails, setClassDetails] = useState<{
+    [key: string]: ClassUserItem;
+  }>({});
 
   const fetchClasses = async () => {
     setLoading(true);
 
-    const user = await getUserDataFromCookies();
     try {
-      const response = await getListUserClass(
-        user?.genId as string,
-        "",
-        0,
-        100,
-      );
+      const response = await getAllStudentClasses("", 0, 100);
       console.log(response);
       setClasses(response.content);
     } catch (err) {
@@ -79,7 +74,7 @@ export default function Classes() {
   return (
     <div className="flex-grow pr-6 md:pr-5">
       <h2 className="text-4xl font-extrabold text-gray-800 mb-8">
-        <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-transparent bg-clip-text">
+        <span className="bg-primary text-transparent bg-clip-text">
           Danh sách lớp học
         </span>
       </h2>
@@ -90,10 +85,10 @@ export default function Classes() {
           classes.map((classItem) => (
             <div
               key={classItem.id}
-              className="flex items-center bg-gradient-to-r from-white to-blue-50 shadow-xl border border-gray-200 p-6 rounded-2xl hover:shadow-2xl transition-transform transform hover:scale-105"
+              className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-transform transform hover:scale-105"
             >
               {/* Avatar */}
-              <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-extrabold text-lg mr-6 shadow-inner">
+              <div className="w-14 h-14 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center font-extrabold text-lg mr-6">
                 {classDetails[classItem.id]?.course?.name.charAt(0)}
               </div>
               {/* Class Details */}
@@ -105,8 +100,8 @@ export default function Classes() {
                 </h3>
                 <p className="text-sm text-gray-600">
                   <strong>Giáo viên:</strong>{" "}
-                  {classDetails[classItem.id]?.teacher?.name ||
-                    "Chưa có giáo viên"}
+                  {/* {classDetails[classItem.id]?.teacher?.name ||
+                    "Chưa có giáo viên"} */}
                 </p>
                 {/* <p className="text-sm text-gray-600">
                   <strong>Phòng học:</strong> {classItem.room.name}
@@ -114,7 +109,7 @@ export default function Classes() {
               </div>
               {/* Action */}
               <button
-                className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full shadow-md hover:bg-blue-600 transition-all"
+                className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-hover-primary"
                 onClick={() => {
                   setLoading(true);
                   fetchClassDetails(classItem.id).finally(() =>

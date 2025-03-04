@@ -38,6 +38,21 @@ export const getAllChooseClasses = async (
   return response.data.data;
 };
 
+export const getAllStudentClasses = async (
+  query: string,
+  currentPage: number,
+  limit: number,
+): Promise<UserClassData> => {
+  const response = await axiosInstance.get("/class/list", {
+    params: {
+      page: currentPage,
+      limit: limit,
+      filter: query,
+    },
+  });
+  return response.data.data;
+};
+
 export const createNewClass = async (data: CreateClassInputs) => {
   try {
     const response = await axiosInstance.post("/class/create", data);
