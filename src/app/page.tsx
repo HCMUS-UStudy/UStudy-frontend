@@ -70,7 +70,7 @@ export default async function Home() {
           <Logo />
           <LandingPageSideBar />
           <Button
-            className="px-10 py-3 rounded-3xl text-[17px] min-[320px]:hidden md:flex hover:scale-110"
+            className="px-10 py-3 rounded-[20px] text-[17px] min-[320px]:hidden md:flex hover:scale-110"
             type="submit"
           >
             <Link
@@ -101,7 +101,7 @@ export default async function Home() {
               </div>
             </div>
             <Button
-              className="w-full rounded-3xl overflow-hidden md:w-[240px] text-xl py-4 hover:scale-110"
+              className="w-full rounded-[21px] overflow-hidden md:w-[240px] text-xl py-4 hover:scale-110"
               type="submit"
             >
               Bắt đầu
