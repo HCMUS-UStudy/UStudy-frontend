@@ -4,34 +4,18 @@ import { FiMail, FiCalendar } from "react-icons/fi";
 // import { AiOutlineEdit } from "react-icons/ai";
 // import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
-
-type Role = {
-  id: string;
-  name: string;
-  description: string;
-  isDeleted: boolean;
-  createdAt: string;
-  updatedAt: string;
-  defaultRoute: string;
-};
-
-type UserProfile = {
-  name: string;
-  email: string;
-  genId: string;
-  gender: string;
-  avatar: string;
-  role: Role;
-};
+import { getUserDataFromCookies } from "@/app/lib/action";
+import { UserData } from "@/app/types/type";
 
 const ProfilePage: React.FC = () => {
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const fetchData = async () => {
+      const userInfo = await getUserDataFromCookies();
+      setUser(userInfo);
+    };
+    fetchData();
   }, []);
 
   return (
