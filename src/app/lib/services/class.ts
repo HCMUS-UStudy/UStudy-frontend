@@ -3,7 +3,7 @@ import {
   RegisterClassData,
   MemberData,
   ClassChooseData,
-  StudentClassData,
+  UserClassData,
 } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
@@ -130,14 +130,14 @@ export const addMembers = async (
   return response.data;
 };
 
-export const getListStudentClass = async (
-  studentId: string,
+export const getListUserClass = async (
+  userId: string,
   query: string,
   currentPage: number,
   limit: number,
-): Promise<StudentClassData> => {
+): Promise<UserClassData> => {
   const response = await axiosInstance.get(
-    `/class/list-student-classes/${studentId}`,
+    `/class/list-user-classes/${userId}`,
     {
       params: {
         page: currentPage,

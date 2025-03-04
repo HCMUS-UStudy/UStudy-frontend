@@ -1,89 +1,85 @@
 "use client";
-import React, { useState } from "react";
-import { useSideBarToggle } from "@/app/hooks/use-sidebar-toggle";
-import classNames from "classnames";
-import { PiHandWavingThin } from "react-icons/pi";
-import { IoMailOutline, IoNotificationsOutline } from "react-icons/io5";
+import React, { useEffect, useState } from "react";
+// import classNames from "classnames";
+import { IoNotificationsOutline } from "react-icons/io5";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import "../../styles/header.css";
+import { User } from "@/app/types/type";
+// import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/app/ui/components/_common/DropdownMenu";
+
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { handleLogoutCookies } from "@/app/lib/action";
+import { SIDENAV_ITEMS_STUDENT } from "@/app/menu-constants";
 
 const Header: React.FC = () => {
-  const { toggleCollapse } = useSideBarToggle();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [hasNewNotification] = useState(false);
-  const [hasNewMessage] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  // const { specificName } = useBreadcrumbContext();
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  useEffect(() => {
+    setUserInfo(JSON.parse(localStorage.getItem("userData") || "{}"));
+  }, []);
 
   const handleProfileClick = () => {
-    window.location.href = "/student/profile"; // Chuyển hướng tới trang profile
+    router.push("/student/profile");
   };
-
-  const handleLogout = () => {
-    // Xóa token và các thông tin khác trong localStorage
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("creator");
-    localStorage.removeItem("userInfo");
-
-    // Hiển thị thông báo thành công
-    // Swal.fire({
-    //   icon: "success",
-    //   title: "Logout Successful",
-    //   text: "You have been logged out successfully.",
-    //   timer: 8000,
-    //   showConfirmButton: false,
-    // });
-
-    // Chuyển hướng người dùng về trang đăng nhập
-    window.location.href = "/login";
-  };
-
-  const headerStyle = classNames({
-    ["header isWide"]: !toggleCollapse,
-    ["header isNarrow"]: toggleCollapse,
-  });
 
   return (
-    <div className={headerStyle}>
-      <div className="hello">
-        <div className="first-line">
-          Hi!! {<PiHandWavingThin className="icon" size={25} />}
-        </div>
-        <div className="second-line">Chào mừng bạn quay trở lại!</div>
+    <div className="h-header-height flex ml-from-sidebar px-12 justify-between items-center bg-foreground">
+      <div className="text-2xl font-bold">
+        {
+          SIDENAV_ITEMS_STUDENT.find((item) =>
+            item.menuList.some((menu) => pathname.includes(menu.path)),
+          )?.title
+        }
       </div>
 
-      <div className="right-items">
-        <div className={`notification ${hasNewNotification ? "new" : ""}`}>
-          <IoNotificationsOutline size={20} />
-          {<span className="badge">1</span>} {/* Số lượng thông báo mới */}
+      <div className="flex gap-6 items-center">
+        <div className="p-2 rounded-3xl bg-primary cursor-pointer">
+          <IoNotificationsOutline size={24} />
         </div>
-
-        <div className={`message ${hasNewMessage ? "new" : ""}`}>
-          <IoMailOutline size={20} />
-          {hasNewMessage && <span className="badge">3</span>}{" "}
-          {/* Số lượng tin nhắn mới */}
-        </div>
-
-        <div className="user-setting">
-          <FaUserCircle
-            size={35}
-            className="user-icon"
-            onClick={toggleDropdown}
-          />
-          {dropdownOpen && (
-            <div className="dropdown-menu">
-              <div className="dropdown-item" onClick={handleProfileClick}>
-                <FaUserCircle className="dropdown-icon" /> Profile
-              </div>
-              <div className="dropdown-item" onClick={handleLogout}>
-                <FaSignOutAlt className="dropdown-icon" /> Logout
-              </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-3">
+            {/* <FaUserCircle size={18} /> */}
+            {userInfo?.avatar ? (
+              <Image
+                src={userInfo.avatar}
+                alt="User Avatar"
+                width={40}
+                height={60}
+                className="rounded-full w-10 h-10"
+              />
+            ) : (
+              <FaUserCircle size={40} className="rounded-full" />
+            )}
+            <div className="text-[15px]">
+              {" "}
+              {userInfo?.name?.split(" ").slice(-2).join(" ")}
             </div>
-          )}
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleProfileClick}>
+              <div className="flex gap-3 items-center">
+                <FaUserCircle size={18} className="" /> Trang cá nhân
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogoutCookies}>
+              <div className="flex gap-3 items-center">
+                <FaSignOutAlt size={18} className="" /> Đăng xuất
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
