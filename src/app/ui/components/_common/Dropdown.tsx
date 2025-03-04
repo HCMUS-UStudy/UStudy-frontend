@@ -56,6 +56,7 @@ export default function Dropdown({ label, items, selected }: DropdownProps) {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -67,6 +68,7 @@ export default function Dropdown({ label, items, selected }: DropdownProps) {
         <div className="absolute left-0 top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10">
           {items.map(({ key, label }) => (
             <button
+              type="button"
               key={key}
               className={`block w-full text-left px-4 py-2 hover:bg-green-100 ${
                 defaultSelected === key ? "bg-green-200" : ""

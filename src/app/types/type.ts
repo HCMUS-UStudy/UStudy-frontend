@@ -414,7 +414,7 @@ export type AllChapter = {
 };
 
 export type CourseData = {
-  content: CourseItem[];
+  content: CourseDto[];
   totalPages: number;
 };
 

@@ -12,7 +12,6 @@ import { getGradesByCourseId } from "@/app/lib/services/grade";
 import { getAllCourses } from "@/app/lib/services/course";
 import { teacherRegister } from "@/app/lib/services/register";
 import { toast } from "react-toastify";
-import "react-toastify/ReactToastify.css";
 
 const TeacherRegisterSchema = z.object({
   name: z
@@ -106,7 +105,7 @@ export default function CreateTeacher() {
       try {
         setLoadingCourses(true);
         const response = await getAllCourses("", 15, 0);
-        console.log(response.content);
+        // console.log(response.content);
         setCourses(response.content);
       } catch (error) {
         console.error(error);

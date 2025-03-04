@@ -16,15 +16,21 @@ export const getAllCourses = async (
   return response.data.data;
 };
 
-export const getCoursesByGradeId = async (gradeId: string) => {
-  const response = await axiosInstance.get(`/course/list/${gradeId}`, {
-    params: {
-      page: 0,
-      limit: 10,
-      filter: "",
-    },
-  });
-  return response;
+export const getCoursesByGradeId = async (
+  gradeId: string,
+): Promise<CourseData> => {
+  try {
+    const response = await axiosInstance.get(`/course/list/${gradeId}`, {
+      params: {
+        page: 0,
+        limit: 10,
+        filter: "",
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const createNewCourse = async (data: CourseSchema) => {

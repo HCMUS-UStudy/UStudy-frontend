@@ -17,13 +17,17 @@ type BranchRequest = {
 };
 
 export const getAllBranches = async (page: number, limit: number) => {
-  const response = await axiosInstance.get("/branch/list", {
-    params: {
-      page: page,
-      limit: limit,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.get("/branch/list", {
+      params: {
+        page: page,
+        limit: limit,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const addBranch = async (branch: BranchRequest) => {
