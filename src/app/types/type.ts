@@ -99,8 +99,15 @@ export type ChapterItem = {
 
 export type MaterialItem = {
   id: string;
-  fileName: string;
-  filePath: string;
+  name: string;
+  uploadedBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+  };
+  materialType: string;
+  type: string;
 };
 
 export type CourseDto = {
