@@ -4,7 +4,7 @@ import { getClassById } from "@/app/lib/services/class";
 import { getMaterialsByClassId } from "@/app/lib/services/material";
 import { ClassUserItem, MaterialItem } from "@/app/types/type";
 import Loading from "@/app/ui/components/_common/Loading";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import {
   FaBookOpen,
@@ -31,6 +31,8 @@ const ClassDetail = () => {
   const [allExpanded, setAllExpanded] = useState(false); // Theo dõi trạng thái mở rộng tất cả
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
+  const router = useRouter();
 
   const [subject] = useState({
     name: "Toán học nâng cao",
@@ -244,7 +246,15 @@ const ClassDetail = () => {
                     key={index}
                     className="bg-white p-4 rounded-lg shadow transition-all duration-200 hover:shadow-lg hover:bg-gray-50"
                   >
-                    <div className="flex justify-between items-center cursor-pointer">
+                    <div
+                      className={`flex justify-between items-center cursor-pointer ${
+                        item.type === "FOLDER"
+                      }`}
+                      onClick={() =>
+                        item.type === "FOLDER" &&
+                        router.push(`/student/classes/${classId}/${item.id}`)
+                      }
+                    >
                       <div className="flex items-center space-x-4 overflow-hidden">
                         {/* Icon dựa trên loại tài liệu */}
                         {item.type === "FOLDER" ? (
@@ -271,7 +281,11 @@ const ClassDetail = () => {
                         )}
 
                         <div className="overflow-hidden">
-                          <h3 className="text-lg font-medium text-gray-800 hover:text-primary transition-all truncate max-w-md">
+                          <h3
+                            className={`text-lg font-medium text-gray-800 transition-all truncate max-w-md ${
+                              item.type === "FOLDER" ? "hover:text-primary" : ""
+                            }`}
+                          >
                             {item.name}
                           </h3>
                           <p className="text-sm text-gray-600 mt-1 truncate max-w-md">
@@ -283,17 +297,26 @@ const ClassDetail = () => {
                         </div>
                       </div>
 
-                      {/* Nút tải về nếu là FILE */}
-                      {item.type === "FILE" && (
-                        <a
-                          href={`/download/${item.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-primary transition-all shadow-md flex-shrink-0"
-                        >
-                          Tải về
-                        </a>
-                      )}
+                      {/* Nút tải về hoặc xem trong folder */}
+                      <div className="flex items-center space-x-2 flex-shrink-0">
+                        {item.type === "FOLDER" ? (
+                          <a
+                            href={`/student/classes/${classId}/${item.id}`}
+                            className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-all shadow-md"
+                          >
+                            Xem
+                          </a>
+                        ) : (
+                          <a
+                            href={`/download/${item.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-primary transition-all shadow-md"
+                          >
+                            Tải về
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </li>
                 ))}
