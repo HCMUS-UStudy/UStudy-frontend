@@ -15,8 +15,8 @@ const requestUrl = ["/auth/login"];
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const instance = axios.create({
-  // baseURL: `${backendUrl}/api`,
-  baseURL: "http://localhost:8080/api",
+  baseURL: `${backendUrl}/api`,
+  // baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
   },
