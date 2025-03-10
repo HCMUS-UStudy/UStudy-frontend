@@ -4,6 +4,7 @@ import {
   TeacherRegister,
 } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
+import { StudentRegisterInputs } from "@/app/register/page";
 
 export const getRegister = async (
   role: string,
@@ -54,6 +55,28 @@ export const rejectRegister = async (userIds: string[]) => {
 export const teacherRegister = async (data: TeacherRegister) => {
   try {
     const response = await axiosInstance.post("/register/create/teacher", data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const studentRegister = async (data: StudentRegisterInputs) => {
+  try {
+    // console.log(data);
+    const response = await axiosInstance.post("/register/create/student", {
+      name: data.name,
+      email: data.email,
+      birthday: data.birthday,
+      phone: data.phone,
+      parentPhone: data.parentPhone,
+      address: data.address,
+      courses: data.courses,
+      grades: [data.grades],
+      branchId: data.branchId,
+      gender: data.gender,
+      classTimes: data.classTimes,
+    });
     return response;
   } catch (error) {
     throw error;

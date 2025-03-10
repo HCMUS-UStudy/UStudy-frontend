@@ -1,5 +1,6 @@
 import React from "react";
-import { FaSpinner } from "react-icons/fa";
+import { CgSpinner } from "react-icons/cg";
+
 import { cn } from "@/app/lib/utils";
 
 interface LoadingProps {
@@ -25,14 +26,13 @@ interface LoadingProps {
  */
 const Loading = ({ text, className, customStyle }: LoadingProps) => (
   <div className={cn("flex items-center justify-center gap-4", className)}>
-    <FaSpinner
-      className={cn("animate-spin text-primary h-8 w-8", customStyle?.spinner)}
+    <CgSpinner
+      className={cn(
+        "animate-spin text-primary-darkest h-8 w-8",
+        customStyle?.spinner,
+      )}
     />
-    {text && (
-      <span className={cn("text-lg text-primary", customStyle?.text)}>
-        {text}
-      </span>
-    )}
+    {text && <span className={cn("text-sm", customStyle?.text)}>{text}</span>}
   </div>
 );
 

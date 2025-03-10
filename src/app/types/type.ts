@@ -126,10 +126,11 @@ export type CourseItem = {
   courseDto: CourseDto;
 };
 
-export type TimeItem = {
-  day: number;
+export type ClassSessionItem = {
+  day: DaysInWeek;
   startTime: string;
   endTime: string;
+  branchSessionId: string;
 };
 
 export type DaysInWeek =
@@ -166,14 +167,9 @@ export type SessionItem = {
     contactNumber: string;
     status: "ACTIVE" | "INACTIVE" | "DELETED";
     rooms: number;
-    sessions: null;
+    sessions: Session[];
   };
-  session: {
-    id: string;
-    name: string;
-    startTime: string;
-    endTime: string;
-  };
+  session: Session;
 };
 
 export type RoomItem = {
@@ -205,7 +201,7 @@ export type ClassSchema = {
   description: string;
   fee: number;
   branchId: string;
-  classTimes: TimeItem[];
+  classTimes: ClassSessionItem[];
   roomId: string;
 };
 
@@ -278,7 +274,16 @@ export type Branch = {
   address: string;
   contactNumber: string;
   rooms: string;
+  status: "ACTIVE" | "INACTIVE";
   sessions: Session[];
+};
+
+export type BranchData = {
+  content: Branch[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
 };
 
 export type Duration = {
@@ -421,7 +426,7 @@ export type AllChapter = {
 };
 
 export type CourseData = {
-  content: CourseItem[];
+  content: CourseDto[];
   totalPages: number;
 };
 

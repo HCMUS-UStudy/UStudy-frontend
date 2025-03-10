@@ -158,6 +158,7 @@ const Select: React.FC<SelectProps> = ({
           required={required}
         />
         <button
+          type="button"
           className={cn(
             "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring",
             className,
@@ -186,7 +187,7 @@ const Select: React.FC<SelectProps> = ({
           </Label>
         )}
         {isOpen ? (
-          <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto">
+          <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-[300px]">
             {children}
           </div>
         ) : null}
@@ -231,9 +232,9 @@ const SelectItem: React.FC<SelectItemProps> = ({
   return (
     <div
       className={cn(
-        "px-3 py-2 cursor-pointer hover:bg-control-hover",
+        "px-3 py-2 cursor-pointer hover:bg-primary",
         {
-          "bg-control-hover": selectedValue === value,
+          "bg-primary": selectedValue === value,
         },
         className,
       )}
