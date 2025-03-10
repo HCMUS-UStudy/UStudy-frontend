@@ -2,7 +2,8 @@
 
 import { getClassById } from "@/app/lib/services/class";
 import { getMaterialsByClassId } from "@/app/lib/services/material";
-import { ClassUserItem, MaterialItem } from "@/app/types/type";
+import { getQuizByClassId } from "@/app/lib/services/quiz";
+import { ClassUserItem, MaterialItem, QuizItem } from "@/app/types/type";
 import Loading from "@/app/ui/components/_common/Loading";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -26,8 +27,11 @@ const ClassDetail = () => {
 
   const [classDetail, setClassDetail] = useState<ClassUserItem>();
   const [materialItem, setMaterialItem] = useState<MaterialItem[]>([]);
+  const [quizItem, setQuizItem] = useState<QuizItem[]>([]);
   const [isOverviewOpen, setIsOverviewOpen] = useState(false); // Track the state of the "Tổng quan" tab
   const [isRouteOpen, setIsRouteOpen] = useState(false);
+  const [isExerciseOpen, setIsExerciseOpen] = useState(false);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [allExpanded, setAllExpanded] = useState(false); // Theo dõi trạng thái mở rộng tất cả
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -89,6 +93,7 @@ const ClassDetail = () => {
     setLoading(true);
     setError("");
     try {
+      console.log(classId as string);
       const response = await getClassById(classId as string);
       setClassDetail(response.data);
     } catch (err) {
@@ -108,8 +113,24 @@ const ClassDetail = () => {
       const response = await getMaterialsByClassId("", 0, classId as string);
       setMaterialItem(response.content);
     } catch (err) {
-      console.error("Error fetching classes:", err);
-      setError("Không thể tải thông tin lớp học.");
+      console.error("Error fetching materials:", err);
+      setError("Không thể tải thông tin tài liệu lớp học.");
+    } finally {
+      console.log(loading);
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const fetchQuiz = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await getQuizByClassId(0, 10, classId as string);
+      setQuizItem(response.content);
+    } catch (err) {
+      console.error("Error fetching quiz:", err);
+      setError("Không thể tải thông tin quiz của lớp học.");
     } finally {
       console.log(loading);
       console.log(error);
@@ -121,6 +142,7 @@ const ClassDetail = () => {
     if (classId) {
       fetchClassDetail();
       fetchMaterial();
+      fetchQuiz();
     }
   }, [classId]);
 
@@ -132,15 +154,31 @@ const ClassDetail = () => {
     setIsRouteOpen(!isRouteOpen);
   };
 
+  const toggleExercise = () => {
+    setIsExerciseOpen(!isExerciseOpen);
+  };
+
+  const toggleQuiz = () => {
+    setIsQuizOpen(!isQuizOpen);
+  };
+
   const toggleAllSections = () => {
     if (allExpanded) {
       setIsOverviewOpen(false);
       setIsRouteOpen(false);
+      setIsExerciseOpen(false);
+      setIsQuizOpen(false);
     } else {
       setIsOverviewOpen(true);
       setIsRouteOpen(true);
+      setIsExerciseOpen(true);
+      setIsQuizOpen(true);
     }
     setAllExpanded(!allExpanded); // Đổi trạng thái
+  };
+
+  const handleStartQuiz = (quizId: string) => {
+    router.push(`/student/classes/${classId}/quiz/${quizId}`);
   };
 
   if (!subject) {
@@ -220,7 +258,7 @@ const ClassDetail = () => {
       </div>
 
       {/* Curriculum Section */}
-      <div className="mt-8">
+      <div className="mt-8 border-b border-gray-300 pb-6">
         <div
           className="flex items-center cursor-pointer mb-6"
           onClick={toggleRoute}
@@ -252,7 +290,9 @@ const ClassDetail = () => {
                       }`}
                       onClick={() =>
                         item.type === "FOLDER" &&
-                        router.push(`/student/classes/${classId}/${item.id}`)
+                        router.push(
+                          `/student/classes/${classId}/folder/${item.id}`,
+                        )
                       }
                     >
                       <div className="flex items-center space-x-4 overflow-hidden">
@@ -301,7 +341,7 @@ const ClassDetail = () => {
                       <div className="flex items-center space-x-2 flex-shrink-0">
                         {item.type === "FOLDER" ? (
                           <a
-                            href={`/student/classes/${classId}/${item.id}`}
+                            href={`/student/classes/${classId}/folder/${item.id}`}
                             className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-all shadow-md"
                           >
                             Xem
@@ -327,6 +367,99 @@ const ClassDetail = () => {
               </div>
             )}
           </div>
+        )}
+      </div>
+
+      {/* Quiz Section */}
+      <div className="mt-8 border-b border-gray-300 pb-6">
+        <div
+          className="flex items-center cursor-pointer mb-6"
+          onClick={toggleQuiz}
+        >
+          <span className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-primary-dark text-primary-dark mr-4 bg-primary-lighter hover:bg-primary-light transition-all">
+            {isQuizOpen ? (
+              <FaChevronUp size={20} />
+            ) : (
+              <FaChevronDown size={20} />
+            )}
+          </span>
+          <h2 className="text-2xl font-semibold text-highlight-text hover:text-[#FAB564] transition-all">
+            Trắc nghiệm
+          </h2>
+        </div>
+
+        {isQuizOpen && (
+          <div className="p-6 bg-white shadow-lg rounded-xl">
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary-dark"></div>
+                <span className="ml-2 text-primary-dark">Đang tải...</span>
+              </div>
+            ) : error ? (
+              <div className="text-red-500 text-center">{error}</div>
+            ) : quizItem.length > 0 ? (
+              <ul className="space-y-4">
+                {quizItem.map((quiz) => (
+                  <li
+                    key={quiz.id}
+                    className="border rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow grid grid-cols-12 items-center gap-4 bg-gray-50 hover:bg-gray-100"
+                  >
+                    <div className="col-span-9">
+                      <h3 className="text-lg font-semibold text-primary-dark mb-2">
+                        {quiz.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-1">
+                        📅 <strong>Bắt đầu:</strong>{" "}
+                        {new Date(quiz.startTime).toLocaleString("vi-VN")}
+                      </p>
+                      <p className="text-sm text-gray-600 mb-1">
+                        ⏰ <strong>Kết thúc:</strong>{" "}
+                        {new Date(quiz.endTime).toLocaleString("vi-VN")}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        👤 <strong>Người tạo:</strong> {quiz.createdBy.name}
+                      </p>
+                    </div>
+                    <div className="col-span-3 flex justify-end">
+                      <button
+                        className="bg-primary-dark text-white py-2 px-6 rounded-lg hover:bg-primary-light transition-all shadow-md"
+                        onClick={() => handleStartQuiz(quiz.id)}
+                      >
+                        Bắt đầu
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-center text-gray-500">
+                Chưa có bài trắc nghiệm nào.
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Exercise Section */}
+      <div className="mt-8">
+        <div
+          className="flex items-center cursor-pointer mb-6"
+          onClick={toggleExercise}
+        >
+          <span className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-primary-dark text-primary-dark mr-4 bg-primary-lighter hover:bg-primary-light transition-all">
+            {isExerciseOpen ? (
+              <FaChevronUp size={20} />
+            ) : (
+              <FaChevronDown size={20} />
+            )}
+          </span>
+          <h2 className="text-2xl font-semibold text-highlight-text hover:text-[#FAB564] transition-all">
+            Bài tập và kiểm tra
+          </h2>
+        </div>
+
+        {isExerciseOpen && (
+          <div className="p-6 bg-white shadow-md rounded-lg"></div>
         )}
       </div>
     </div>
