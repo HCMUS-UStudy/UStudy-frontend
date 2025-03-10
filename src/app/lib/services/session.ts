@@ -1,4 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
+import { ClassSessionItem } from "@/app/types/type";
 
 type SessionRequest = {
   name: string;
@@ -25,6 +26,32 @@ export const getSessionByBranchId = async (branchId: string) => {
   try {
     const response = await axiosInstance.get(`/session/list/${branchId}`);
     return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getClassSession = async (
+  branchId: string,
+  gradeId: string,
+  courseId: string,
+): Promise<ClassSessionItem[]> => {
+  try {
+    const response = await axiosInstance.post(
+      "/class-session/list-available",
+      {
+        branchId,
+        gradeId,
+        courseId,
+      },
+      {
+        cache: {
+          methods: ["post"],
+        },
+      },
+    );
+    console.log(response.cached);
+    return response.data.data;
   } catch (error) {
     throw error;
   }

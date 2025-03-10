@@ -11,7 +11,7 @@ export default function SelectorLoading({
   numberOfItems?: number;
 }) {
   return (
-    <div className="flex gap-3 flex-wrap">
+    <div className="flex gap-3 flex-wrap mt-2">
       {Array.from({ length: numberOfItems }).map((_, index) => (
         <div
           key={index}

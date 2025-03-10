@@ -2,7 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "../ui/components/_common/text-field/Input";
 import { Button } from "../ui/components/_common/Button";
-import { CourseDto, GradeItem } from "../types/type";
+import {
+  Branch,
+  ClassSessionItem,
+  CourseDto,
+  DaysInWeek,
+  GradeItem,
+} from "../types/type";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +18,8 @@ import { FaCheck } from "react-icons/fa6";
 import { getCoursesByGradeId } from "../lib/services/course";
 import { Select, SelectItem } from "../ui/components/_common/Select";
 import Loading from "../ui/components/_common/Loading";
+import { getAllBranches } from "../lib/services/branch";
+import { getClassSession } from "../lib/services/session";
 
 const StudentRegisterSchema = z.object({
   name: z
@@ -47,9 +55,30 @@ const StudentRegisterSchema = z.object({
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
   gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
+  classTimes: z
+    .array(
+      z.object({
+        day: z.enum([
+          "MONDAY",
+          "TUESDAY",
+          "WEDNESDAY",
+          "THURSDAY",
+          "FRIDAY",
+          "SATURDAY",
+          "SUNDAY",
+        ]),
+        startTime: z
+          .string({ message: "Đây là trường bắt buộc" })
+          .min(1, "Đây là trường bắt buộc"),
+        endTime: z
+          .string({ message: "Đây là trường bắt buộc" })
+          .min(1, "Đây là trường bắt buộc"),
+      }),
+    )
+    .min(1, "Chọn tối thiểu một ca học"),
 });
 
-type StudentRegisterInputs = z.infer<typeof StudentRegisterSchema>;
+export type StudentRegisterInputs = z.infer<typeof StudentRegisterSchema>;
 
 export default function StudentRegister() {
   const {
@@ -57,6 +86,7 @@ export default function StudentRegister() {
     formState: { errors },
     watch,
     handleSubmit,
+    clearErrors,
     setValue,
   } = useForm<StudentRegisterInputs>({
     resolver: zodResolver(StudentRegisterSchema),
@@ -64,14 +94,32 @@ export default function StudentRegister() {
       gender: "MALE",
       courses: [],
       grades: "",
+      branchId: "",
     },
   });
   const [grades, setGrades] = useState<GradeItem[]>([]);
   const [courses, setCourses] = useState<CourseDto[]>([]);
+  const [branches, setBranches] = useState<Branch[]>([]);
   const [loadingCourse, setLoadingCourses] = useState<boolean>(false);
   const [loadingGrades, setLoadingGrades] = useState<boolean>(false);
   const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
+  const [loadingClassSession, setLoadingClassSession] =
+    useState<boolean>(false);
   const selectedGrade = watch("grades");
+  const selectedBranch = watch("branchId");
+  const selectedCourses = watch("courses");
+
+  const [classSessions, setClassSessions] = useState<ClassSessionItem[]>([]);
+
+  const DayMapping: Record<DaysInWeek, string> = {
+    MONDAY: "Thứ Hai",
+    TUESDAY: "Thứ Ba",
+    WEDNESDAY: "Thứ Tư",
+    THURSDAY: "Thứ Năm",
+    FRIDAY: "Thứ Sáu",
+    SATURDAY: "Thứ Bảy",
+    SUNDAY: "Chủ Nhật",
+  };
 
   const onSubmit = (data: StudentRegisterInputs) => {
     console.log(data);
@@ -84,23 +132,107 @@ export default function StudentRegister() {
     }
   };
 
+  const handleSelectGrade = (gradeId: string) => {
+    setValue("grades", gradeId);
+    clearErrors("grades");
+    setValue("classTimes", []);
+  };
+
+  const handleSelectBranch = (branchId: string) => {
+    setValue("branchId", branchId);
+    clearErrors("branchId");
+    setValue("classTimes", []);
+  };
+
+  const handleSelectCourse = async (courseId: string) => {
+    const currentCourses = [...selectedCourses];
+    const updatedClassSessions = [...classSessions];
+    let isAdded = false;
+    if (!selectedCourses.includes(courseId)) {
+      setValue("courses", [...currentCourses, courseId]);
+      isAdded = true;
+    } else {
+      setValue(
+        "courses",
+        currentCourses.filter((item) => item !== courseId),
+      );
+    }
+    try {
+      setLoadingClassSession(true);
+      const response = await getClassSession(
+        selectedBranch,
+        selectedGrade,
+        courseId,
+      );
+      // console.log(response);
+      if (isAdded) {
+        setClassSessions((currentSession) => [...currentSession, ...response]);
+      } else {
+        response.map((item) => {
+          const index = updatedClassSessions.indexOf(item);
+          updatedClassSessions.splice(index, 1);
+        });
+        setClassSessions(updatedClassSessions);
+      }
+      clearErrors("classTimes");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingClassSession(false);
+    }
+  };
+  useEffect(() => console.log(classSessions), [classSessions]);
+
+  const handleSelectClassSession = (
+    day: DaysInWeek,
+    startTime: string,
+    endTime: string,
+  ) => {
+    const currentClassTimes = watch("classTimes");
+    const isSelected = currentClassTimes.some(
+      (item) =>
+        item.day === day &&
+        item.startTime === startTime &&
+        item.endTime === endTime,
+    );
+    const updatedData = isSelected
+      ? currentClassTimes.filter(
+          (item) =>
+            !(
+              item.day === day &&
+              item.startTime === startTime &&
+              item.endTime === endTime
+            ),
+        )
+      : [...currentClassTimes, { day, startTime, endTime }];
+    setValue("classTimes", updatedData);
+  };
+
   useEffect(() => {
-    const fetchGrades = async () => {
+    const fetchGradesAndBranches = async () => {
       try {
         setLoadingGrades(true);
-        const response = await getAllGrades("", 15, 0);
-        setGrades(response.content);
+        const [gradesRes, branchRes] = await Promise.all([
+          getAllGrades("", 15, 0),
+          getAllBranches(0, 20),
+        ]);
+        setGrades(gradesRes.content);
+        setBranches(branchRes.content);
       } catch (error) {
         console.log(error);
       } finally {
         setLoadingGrades(false);
       }
     };
-    fetchGrades();
+    fetchGradesAndBranches();
+    return;
   }, []);
 
   useEffect(() => {
     const fetchCourses = async () => {
+      if (selectedGrade === "") {
+        return;
+      }
       try {
         setLoadingCourses(true);
         const response = await getCoursesByGradeId(selectedGrade);
@@ -114,6 +246,7 @@ export default function StudentRegister() {
       }
     };
     fetchCourses();
+    return;
   }, [selectedGrade, setValue]);
 
   return (
@@ -233,7 +366,7 @@ export default function StudentRegister() {
                   </div>
                 </div>
               </div>
-              <div className="col-span-3 pl-10">
+              <div className="col-span-3 flex flex-col gap-4 pl-10">
                 {loadingGrades ? (
                   <div className="px-2 py-0.5 flex justify-start border-2 border-slate-300 rounded-md">
                     <Loading text="Chọn khối học của bạn" />
@@ -244,7 +377,7 @@ export default function StudentRegister() {
                       name="GradeSelector"
                       defaultLabel="Chọn khối học của bạn"
                       onValueChange={(gradeId) =>
-                        setValue("grades", gradeId as string)
+                        handleSelectGrade(gradeId as string)
                       }
                     >
                       {grades.map((grade) => (
@@ -258,21 +391,45 @@ export default function StudentRegister() {
                     </span>
                   </div>
                 )}
+                {loadingGrades ? (
+                  <div className="px-2 py-0.5 flex justify-start border-2 border-slate-300 rounded-md">
+                    <Loading text="Chọn chi nhánh" />
+                  </div>
+                ) : (
+                  <div>
+                    <Select
+                      name="BranchSelector"
+                      defaultLabel="Chọn chi nhánh"
+                      onValueChange={(branchId) =>
+                        handleSelectBranch(branchId as string)
+                      }
+                    >
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                    <span className="text-[13px] text-error">
+                      {errors.branchId?.message}
+                    </span>
+                  </div>
+                )}
 
                 {selectedGrade !== "" && (
                   <div>
-                    <div className="text-gray-700 font-bold mt-2">
+                    <div className="text-gray-700 font-bold">
                       Bạn mong muốn học môn nào ?
                     </div>
                     <div>
                       {loadingCourse ? (
                         <SelectorLoading
                           size="sm"
-                          numberOfItems={12}
+                          numberOfItems={5}
                         ></SelectorLoading>
                       ) : courses.length !== 0 ? (
                         <>
-                          <div className="flex flex-wrap gap-3 mt-3">
+                          <div className="flex gap-3 mt-2">
                             {courses.map((course) => (
                               <label
                                 key={course.id}
@@ -281,8 +438,10 @@ export default function StudentRegister() {
                                 <input
                                   type="checkbox"
                                   className="hidden peer"
-                                  value={course.id}
-                                  {...register("courses")}
+                                  // value={course.id}
+                                  // {...register("courses")}
+                                  checked={selectedCourses.includes(course.id)}
+                                  onChange={() => handleSelectCourse(course.id)}
                                 />
                                 <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
                                   {course.name}
@@ -303,6 +462,91 @@ export default function StudentRegister() {
                     </div>
                   </div>
                 )}
+                {selectedGrade !== "" &&
+                  selectedBranch !== "" &&
+                  selectedCourses.length !== 0 && (
+                    <div>
+                      <div className="text-gray-700 font-bold">Chọn ca học</div>
+                      <div>
+                        {loadingClassSession ? (
+                          <SelectorLoading
+                            size="sm"
+                            numberOfItems={5}
+                          ></SelectorLoading>
+                        ) : classSessions.length !== 0 ? (
+                          <>
+                            <div className="flex flex-col mt-3 overflow-auto h-52 divide-y">
+                              {/* {classSessions.map((cs, index) => (
+                                <label
+                                  key={index}
+                                  className="relative px-3 py-2 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-start border-control-border text-md hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary has-[:checked]:bg-primary-lighter cursor-pointer transition-all"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="hidden peer"
+                                    name="ClassSessionSelector"
+                                    onChange={() =>
+                                      handleSelectClassSession(
+                                        cs.day,
+                                        cs.startTime,
+                                        cs.endTime,
+                                      )
+                                    }
+                                  />
+                                  <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
+                                    {DayMapping[cs.day]} -{" "}
+                                    {cs.startTime.slice(0, -3)} -{" "}
+                                    {cs.endTime.slice(0, -3)}
+                                  </span>
+                                  <FaCheck className="size-6 absolute right-3 text-primary-darkest opacity-0 peer-checked:opacity-70 transition-all" />
+                                </label>
+                              ))} */}
+                              {[
+                                ...new Map(
+                                  classSessions.map((cs) => [
+                                    `${cs.day}-${cs.startTime}-${cs.endTime}`,
+                                    cs,
+                                  ]),
+                                ).values(),
+                              ].map((cs, index) => (
+                                <label
+                                  key={index}
+                                  className="relative px-3 py-2 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-start border-control-border text-md hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary has-[:checked]:bg-primary-lighter cursor-pointer transition-all"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="hidden peer"
+                                    name="ClassSessionSelector"
+                                    onChange={() =>
+                                      handleSelectClassSession(
+                                        cs.day,
+                                        cs.startTime,
+                                        cs.endTime,
+                                      )
+                                    }
+                                  />
+                                  <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
+                                    {DayMapping[cs.day]} -{" "}
+                                    {cs.startTime.slice(0, -3)} -{" "}
+                                    {cs.endTime.slice(0, -3)}
+                                  </span>
+                                  <FaCheck className="size-6 absolute right-3 text-primary-darkest opacity-0 peer-checked:opacity-70 transition-all" />
+                                </label>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <span className="text-[13px] text-error">
+                            Chưa có ca học cho môn học và khối này, vui lòng
+                            chọn môn học hoặc khối khác
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[13px] text-error mt-1">
+                        {errors.classTimes?.message}
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
 

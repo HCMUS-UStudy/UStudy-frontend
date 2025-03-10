@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { Session } from "@/app/types/type";
+import { BranchData, Session } from "@/app/types/type";
 
 type BranchUpdate = {
   id: string;
@@ -16,7 +16,10 @@ type BranchRequest = {
   sessions: Session[];
 };
 
-export const getAllBranches = async (page: number, limit: number) => {
+export const getAllBranches = async (
+  page: number,
+  limit: number,
+): Promise<BranchData> => {
   try {
     const response = await axiosInstance.get("/branch/list", {
       params: {
@@ -24,7 +27,7 @@ export const getAllBranches = async (page: number, limit: number) => {
         limit: limit,
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw error;
   }
