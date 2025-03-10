@@ -5,6 +5,8 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 import { ClassUserItem } from "@/app/types/type";
 import { getAllStudentClasses, getClassById } from "@/app/lib/services/class";
 import Loading from "../../../_common/Loading";
+import { Button } from "../../../_common/Button";
+import { useRouter } from "next/navigation";
 
 interface GradeTableProps {
   searchQuery: string;
@@ -13,6 +15,7 @@ interface GradeTableProps {
 
 const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
+  const router = useRouter();
   const [classDetails, setClassDetails] = useState<{
     [key: string]: ClassUserItem;
   }>({});
@@ -95,6 +98,12 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
     }
   }, [classes]);
 
+  const handleDetail = (id: string) => {
+    setLoading(true);
+    fetchClassDetails(id).finally(() => setLoading(false));
+    router.push(`/student/classes/${id}`);
+  };
+
   return (
     <div>
       <div className="flex flex-col space-y-6">
@@ -127,17 +136,14 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
                 </p> */}
               </div>
               {/* Action */}
-              <button
+              <Button
                 className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-hover-primary"
                 onClick={() => {
-                  setLoading(true);
-                  fetchClassDetails(classItem.id).finally(() =>
-                    setLoading(false),
-                  );
+                  handleDetail(classItem.id);
                 }}
               >
                 Xem chi tiết
-              </button>
+              </Button>
             </div>
           ))
         ) : (
