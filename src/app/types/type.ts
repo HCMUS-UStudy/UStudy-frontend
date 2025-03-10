@@ -123,6 +123,7 @@ export type ClassSessionItem = {
   day: DaysInWeek;
   startTime: string;
   endTime: string;
+  branchSessionId: string;
 };
 
 export type DaysInWeek =

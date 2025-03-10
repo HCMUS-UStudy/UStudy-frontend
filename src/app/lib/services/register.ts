@@ -64,7 +64,19 @@ export const teacherRegister = async (data: TeacherRegister) => {
 export const studentRegister = async (data: StudentRegisterInputs) => {
   try {
     // console.log(data);
-    const response = await axiosInstance.post("/register/create/student", data);
+    const response = await axiosInstance.post("/register/create/student", {
+      name: data.name,
+      email: data.email,
+      birthday: data.birthday,
+      phone: data.phone,
+      parentPhone: data.parentPhone,
+      address: data.address,
+      courses: data.courses,
+      grades: [data.grades],
+      branchId: data.branchId,
+      gender: data.gender,
+      classTimes: data.classTimes,
+    });
     return response;
   } catch (error) {
     throw error;
