@@ -177,6 +177,12 @@ export type RoomItem = {
   name: string;
 };
 
+export type RoomData = {
+  content: RoomItem[];
+  totalElements: number;
+  totalPages: number;
+};
+
 export type TeacherItem = {
   email: string;
   genId: string;
@@ -428,6 +434,7 @@ export type AllChapter = {
 export type CourseData = {
   content: CourseDto[];
   totalPages: number;
+  totalElements: number;
 };
 
 export type AccountData = {

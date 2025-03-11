@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { ClassSessionItem } from "@/app/types/type";
+import { ClassSessionItem, SessionItem } from "@/app/types/type";
 
 type SessionRequest = {
   name: string;
@@ -22,10 +22,12 @@ export const createSession = async (session: SessionRequest) => {
   return response.data;
 };
 
-export const getSessionByBranchId = async (branchId: string) => {
+export const getSessionByBranchId = async (
+  branchId: string,
+): Promise<SessionItem[]> => {
   try {
     const response = await axiosInstance.get(`/session/list/${branchId}`);
-    return response;
+    return response.data.data;
   } catch (error) {
     throw error;
   }
