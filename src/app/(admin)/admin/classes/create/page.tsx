@@ -5,12 +5,14 @@ import { Button } from "@/app/ui/components/_common/Button";
 import ClassDescription from "@/app/ui/components/admin/classes/create/ClassDescription";
 import CourseSelector from "@/app/ui/components/admin/classes/create/CourseSelector";
 import DayRoomSessionSelector from "@/app/ui/components/admin/classes/create/DayRoomSessionSelector";
+import DurationSelector from "@/app/ui/components/admin/classes/create/DurationSelector";
 // import DurationSelector from "@/app/ui/components/admin/classes/create/DurationSelector";
 import GradeSelector from "@/app/ui/components/admin/classes/create/GradeSelector";
 import NameSelector from "@/app/ui/components/admin/classes/create/NameSelector";
 // import RoomSelector from "@/app/ui/components/admin/classes/create/RoomSelector";
 // import SessionSelector from "@/app/ui/components/admin/classes/create/SessionSelector";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -24,10 +26,25 @@ const CreateClassSchema = z.object({
   name: z
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
-  gradeId: z
+  courseId: z
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
-  courseId: z
+  gradeId: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Vui lòng chọn khối cho lớp học"),
+  startDate: z
+    .string({
+      message: "Vui lòng chọn đầy đủ thời gian học và ngày bắt đầu học",
+    })
+    .min(1, "Vui lòng chọn ngày bắt đầu học")
+    .refine((date) => date >= today, {
+      message: "Ngày bắt đầu phải lớn hơn hoặc bằng hôm nay",
+    }),
+  numLessons: z
+    .number({ message: "Vui lòng nhập số buổi học" })
+    .gte(1, "Số buổi học phải lớn hơn hoặc bằng 1"),
+  description: z.optional(z.string()),
+  branchId: z
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
   classTimes: z
@@ -51,24 +68,6 @@ const CreateClassSchema = z.object({
       }),
     )
     .min(1, "Vui lòng chọn đầy đủ thứ và ca học"),
-  startDate: z
-    .string({
-      message: "Vui lòng chọn đầy đủ thời gian học và ngày bắt đầu học",
-    })
-    .min(1, "Vui lòng chọn đầy đủ thời gian học và ngày bắt đầu học")
-    .refine((date) => date >= today, {
-      message: "Ngày bắt đầu phải lớn hơn hoặc bằng hôm nay",
-    }),
-  endDate: z
-    .string({ message: "Đây là trường bắt buộc" })
-    .min(1, "Đây là trường bắt buộc"),
-  roomId: z
-    .string({ message: "Đây là trường bắt buộc" })
-    .min(1, "Đây là trường bắt buộc"),
-  description: z.optional(z.string()),
-  branchId: z
-    .string({ message: "Đây là trường bắt buộc" })
-    .min(1, "Đây là trường bắt buộc"),
 });
 
 export type CreateClassInputs = z.infer<typeof CreateClassSchema>;
@@ -81,11 +80,16 @@ export default function CreateClass() {
       classTimes: [],
       gradeId: "",
       startDate: "",
-      endDate: "",
+      numLessons: 0,
       branchId: selectedBranchId ?? undefined,
     },
   });
+  const router = useRouter();
+
   const [loading, setLoading] = useState<boolean>(false);
+  const numLessons = methods.watch("numLessons");
+  const startDate = methods.watch("startDate");
+
   const onSubmit = async (data: CreateClassInputs) => {
     try {
       setLoading(true);
@@ -95,11 +99,18 @@ export default function CreateClass() {
         toast.success("Tạo lớp học thành công ! Đang chuyển hướng...", {
           position: "bottom-right",
           autoClose: 3000,
+          pauseOnHover: false,
           // onClose: () => router.push("/admin/classes"),
         });
+        router.push("/admin/classes");
       }
     } catch (error) {
       console.log(error);
+      toast.error("Tạo lớp học thất bại", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
     } finally {
       setLoading(false);
     }
@@ -115,10 +126,12 @@ export default function CreateClass() {
           <NameSelector />
           <GradeSelector />
           <CourseSelector />
-          {/* <SessionSelector />
+          {/* <SessionSelector /> */}
           <DurationSelector />
-          <RoomSelector /> */}
-          <DayRoomSessionSelector />
+          {/* <RoomSelector /> */}
+          {numLessons !== 0 && !isNaN(numLessons) && startDate !== "" && (
+            <DayRoomSessionSelector />
+          )}
           <ClassDescription />
           <Button isPending={loading} type="submit" className="w-full">
             Tạo lớp học mới

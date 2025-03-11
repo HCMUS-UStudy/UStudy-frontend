@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
-import { CourseItem } from "@/app/types/type";
+import { CourseDto } from "@/app/types/type";
 import SelectorLoading from "./SelectorLoading";
 import { useFormContext } from "react-hook-form";
 import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
@@ -13,16 +13,19 @@ export default function CourseSelector() {
     watch,
     setError,
   } = useFormContext<CreateClassInputs>();
-  const [courses, setCourses] = useState<CourseItem[]>([]);
+  const [courses, setCourses] = useState<CourseDto[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const selectedGrade = watch("gradeId");
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!selectedGrade) {
+          return;
+        }
         setLoading(true);
         const response = await getCoursesByGradeId(selectedGrade);
-        setCourses(response.data.data.content);
-        if (response.data.data.totalElements === 0) {
+        setCourses(response.content);
+        if (response.totalElements === 0) {
           setError("courseId", {
             message:
               "Chưa có môn học cho khối này, vui lòng chọn khối khác cho lớp học",
