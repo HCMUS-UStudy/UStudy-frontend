@@ -4,19 +4,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiFilter } from "react-icons/fi";
 import { getAllCourses } from "@/app/lib/services/course";
+import { CourseItem } from "@/app/types/type";
 
 interface DropdownCourseProps {
   label: string;
-}
-
-interface CourseItem {
-  key: string;
-  label: string;
-}
-
-interface FilteredItem {
-  id: string;
-  name: string;
 }
 
 export default function DropdownCourse({ label }: DropdownCourseProps) {
@@ -33,13 +24,39 @@ export default function DropdownCourse({ label }: DropdownCourseProps) {
       try {
         const response = await getAllCourses("", 100, 0);
 
-        const filteredData = response.content.map((item: FilteredItem) => ({
-          key: item.id,
-          label: item.name,
+        const filteredData = response.content.map((item: CourseItem) => ({
+          key: item.courseDto.id,
+          label: item.courseDto.name,
         }));
 
-        // Thêm "All" vào đầu danh sách
-        const updatedItems = [{ key: "0", label: "All" }, ...filteredData];
+        const updatedItems: CourseItem[] = [
+          {
+            totalGrades: 0, // Giá trị mặc định
+            courseDto: {
+              id: "0",
+              name: "All",
+              createdBy: {
+                id: "",
+                genId: "",
+                email: "",
+                name: "",
+              },
+            },
+          },
+          ...filteredData.map((item) => ({
+            totalGrades: 0, // Hoặc giá trị phù hợp
+            courseDto: {
+              id: item.key,
+              name: item.label,
+              createdBy: {
+                id: "",
+                genId: "",
+                email: "",
+                name: "",
+              },
+            },
+          })),
+        ];
 
         setItems(updatedItems);
       } catch (error) {
@@ -83,20 +100,23 @@ export default function DropdownCourse({ label }: DropdownCourseProps) {
         onClick={() => setIsOpen(!isOpen)}
       >
         <FiFilter className="w-5 h-5 text-gray-600" />
-        <span>{items.find((c) => c.key === selected)?.label || label}</span>
+        <span>
+          {items.find((c) => c.courseDto.id === selected)?.courseDto.name ||
+            label}
+        </span>
       </button>
 
       {isOpen && items.length > 0 && (
         <div className="absolute left-0 top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10 max-h-60 overflow-y-auto">
-          {items.map(({ key, label }) => (
+          {items.map(({ courseDto }) => (
             <button
-              key={key}
+              key={courseDto.id}
               className={`block w-full text-left px-4 py-2 hover:bg-green-100 ${
-                selected === key ? "bg-green-200" : ""
+                selected === courseDto.id ? "bg-green-200" : ""
               }`}
-              onClick={() => handleSelect(key, label)}
+              onClick={() => handleSelect(courseDto.id, courseDto.name)}
             >
-              {label}
+              {courseDto.name}
             </button>
           ))}
         </div>
