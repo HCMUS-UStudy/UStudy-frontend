@@ -8,6 +8,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { getListUserDetail } from "@/app/lib/services/user";
 import { AccountDetailItem, ClassUserItem } from "@/app/types/type";
 import { getListUserClass } from "@/app/lib/services/class";
+import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
 
 const AccountDetail = () => {
   const params = useParams();
@@ -18,6 +19,8 @@ const AccountDetail = () => {
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const router = useRouter();
   const [isExiting, setIsExiting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectUserId, setSelectUserId] = useState<string | null>(null);
 
   const getStatusDisplayName = (status: string) => {
     const statusMapping: Record<string, string> = {
@@ -85,6 +88,15 @@ const AccountDetail = () => {
     setTimeout(() => {
       router.push("/admin/accounts");
     }, 500);
+  };
+
+  const handleEditClick = (id?: string) => {
+    if (!id) {
+      console.warn("ID không hợp lệ!");
+      return;
+    }
+    setSelectUserId(id);
+    setIsModalOpen(true);
   };
 
   return (
@@ -184,7 +196,10 @@ const AccountDetail = () => {
                       ) : (
                         "Không có lớp học nào"
                       )}
-                      <FaEdit className="text-primary-dark hover:text-primary-darker cursor-pointer" />
+                      <FaEdit
+                        className="text-primary-dark hover:text-primary-darker cursor-pointer"
+                        onClick={() => handleEditClick(user?.id)} // Truyền ID vào
+                      />
                     </td>
                   </tr>
                 )}
@@ -192,6 +207,13 @@ const AccountDetail = () => {
             </table>
           </div>
         </motion.div>
+      )}
+      {isModalOpen && (
+        <ApproveClassStudentModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          userId={selectUserId}
+        />
       )}
     </AnimatePresence>
   );

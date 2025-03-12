@@ -67,9 +67,9 @@ export default function DropdownGrade({ label }: DropdownGradeProps) {
   const handleSelect = (key: string, label: string) => {
     const params = new URLSearchParams(searchParams);
     if (key !== "0") {
-      params.set("subject", label); // Thay vì key (id), dùng label (tên môn học)
+      params.set("grade", label); // Thay vì key (id), dùng label (tên môn học)
     } else {
-      params.delete("subject");
+      params.delete("grade");
     }
     replace(`${pathname}?${params.toString()}`);
     setSelected(key);
@@ -79,11 +79,13 @@ export default function DropdownGrade({ label }: DropdownGradeProps) {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100 mr-4"
+        className="flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100 mr-4 whitespace-nowrap"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <FiFilter className="w-5 h-5 text-gray-600" />
-        <span>{items.find((c) => c.key === selected)?.label || label}</span>
+        <FiFilter className="w-5 h-5 text-gray-600 shrink-0" />
+        <span className="truncate">
+          {items.find((c) => c.key === selected)?.label || label}
+        </span>
       </button>
 
       {isOpen && items.length > 0 && (
