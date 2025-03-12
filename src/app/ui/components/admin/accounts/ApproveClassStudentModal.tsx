@@ -176,22 +176,25 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
     try {
       // Dùng Promise.all để chạy nhiều request cùng lúc
-      const responses = await Promise.all(
-        selectedClasses.map((classId) =>
-          addMembers([userId], classId, "STUDENT"),
-        ),
-      );
+      const responses: Array<{ data: { failedCount: number } }> =
+        await Promise.all(
+          selectedClasses.map((classId: string) =>
+            addMembers([userId], classId, "STUDENT"),
+          ),
+        );
 
       let failedCount = 0;
-      responses.forEach((response, index) => {
-        if (response.data?.failedCount > 0) {
-          failedCount++;
-          toast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`, {
-            position: "bottom-right",
-            autoClose: 5000,
-          });
-        }
-      });
+      responses.forEach(
+        (response: { data: { failedCount: number } }, index: number) => {
+          if (response.data.failedCount > 0) {
+            failedCount++;
+            toast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`, {
+              position: "bottom-right",
+              autoClose: 5000,
+            });
+          }
+        },
+      );
 
       if (failedCount === 0) {
         toast.success("Thêm học viên vào tất cả lớp thành công!", {
