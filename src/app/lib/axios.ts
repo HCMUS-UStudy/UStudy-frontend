@@ -8,16 +8,23 @@ import {
   setTokensAndUserDataCookies,
 } from "./action";
 import { redirect } from "next/navigation";
+import { setupCache } from "axios-cache-interceptor";
 
 const requestUrl = ["/auth/login"];
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const axiosInstance = axios.create({
+const instance = axios.create({
   baseURL: `${backendUrl}/api`,
+  // baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
   },
+});
+
+const axiosInstance = setupCache(instance, {
+  debug: console.log,
+  interpretHeader: false,
 });
 
 const decodeToken = (token: string) => {
