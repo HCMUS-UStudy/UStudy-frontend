@@ -20,6 +20,11 @@ export const getDetailQuiz = async (quizId: string) => {
   return response.data.data;
 };
 
+export const getReviewQuiz = async (quizId: string) => {
+  const response = await axiosInstance.get(`/quiz/details/review/${quizId}`);
+  return response.data.data;
+};
+
 export const submitQuiz = async (body: {
   quizId: string;
   duration: number;

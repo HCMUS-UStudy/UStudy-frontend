@@ -36,7 +36,7 @@ export default function ClassesTable({
       let filteredData: ClassItem[] = [];
       setIsLoading(true);
       try {
-        const response = await getAllClasses(query, currentPage - 1, 5);
+        const response = await getAllClasses(query, "", "", currentPage - 1, 5);
         filteredData = response.content.map((item) => ({
           id: item.id,
           name: item.name,

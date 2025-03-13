@@ -672,3 +672,25 @@ export type QnA = {
     createdAt: string;
   }[];
 };
+
+export type QuizReview = {
+  quizId: string;
+  title: string;
+  score: number;
+  questions: QuestionReview[];
+};
+
+export type QuestionReview = {
+  questionId: string;
+  description: string;
+  selectedOption: Option;
+  correctOption: Option;
+  allOptions: Option[];
+  correct: boolean;
+};
+
+export type Option = {
+  optionId: string;
+  description: string;
+  correct: boolean;
+};

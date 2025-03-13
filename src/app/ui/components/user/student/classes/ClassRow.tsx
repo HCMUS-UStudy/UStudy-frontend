@@ -38,6 +38,8 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
 
       const response = await getAllStudentClasses(
         searchParam,
+        "",
+        "",
         currentPage - 1,
         5,
       );

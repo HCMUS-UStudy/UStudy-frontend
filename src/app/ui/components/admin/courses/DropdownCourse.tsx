@@ -8,9 +8,13 @@ import { CourseItem } from "@/app/types/type";
 
 interface DropdownCourseProps {
   label: string;
+  onSelectCourse: (courseId: string | null) => void;
 }
 
-export default function DropdownCourse({ label }: DropdownCourseProps) {
+export default function DropdownCourse({
+  label,
+  onSelectCourse,
+}: DropdownCourseProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<CourseItem[]>([]);
   const [selected, setSelected] = useState<string>("0"); // Mặc định chọn "All"
@@ -80,17 +84,30 @@ export default function DropdownCourse({ label }: DropdownCourseProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🟡 Chọn môn học và cập nhật URL query params
+  const removeVietnameseAccents = (str: string) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D");
+  };
+
   const handleSelect = (key: string, label: string) => {
     const params = new URLSearchParams(searchParams);
+    const normalizedLabel = removeVietnameseAccents(label); // Xóa dấu tiếng Việt
+
     if (key !== "0") {
-      params.set("subject", label); // Thay vì key (id), dùng label (tên môn học)
+      params.set("subject", normalizedLabel);
+      onSelectCourse(normalizedLabel);
     } else {
       params.delete("subject");
+      onSelectCourse("");
     }
+
     replace(`${pathname}?${params.toString()}`);
     setSelected(key);
     setIsOpen(false);
+    onSelectCourse(key !== "0" ? normalizedLabel : null);
   };
 
   return (
