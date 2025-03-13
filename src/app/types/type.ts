@@ -432,7 +432,7 @@ export type AllChapter = {
 };
 
 export type CourseData = {
-  content: CourseDto[];
+  content: CourseItem[];
   totalPages: number;
   totalElements: number;
 };
