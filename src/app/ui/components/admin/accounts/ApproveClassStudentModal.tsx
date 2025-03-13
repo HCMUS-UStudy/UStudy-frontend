@@ -83,7 +83,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getAllClasses("", currentPageCl - 1, 5);
+      const response = await getAllClasses("", "", "", currentPageCl - 1, 5);
 
       ClassData = response.content.map((item) => ({
         id: item.id,
@@ -206,8 +206,10 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       setSelectedClasses([]);
 
       // Cập nhật dữ liệu sau khi thêm
-      await fetchClasses();
-      await fetchClassStudentsIn();
+      setTimeout(() => {
+        fetchClasses();
+        fetchClassStudentsIn();
+      }, 500);
     } catch (error) {
       console.error("Lỗi khi thêm thành viên:", error);
       toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
@@ -240,8 +242,10 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       }
 
       // Cập nhật dữ liệu
-      await fetchClasses();
-      await fetchClassStudentsIn();
+      setTimeout(() => {
+        fetchClassStudentsIn();
+        fetchClasses();
+      }, 500);
     } catch (error) {
       console.log(error);
       toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
@@ -280,8 +284,8 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <ApproveAccountTable
                   title="Danh sách lớp"
-                  fetchData={(page, searchQuery) =>
-                    getAllClasses(searchQuery, page, 5)
+                  fetchData={(page, searchQuery, courseQuery) =>
+                    getAllClasses(searchQuery, courseQuery, "", page, 5)
                   }
                   classes={classes}
                   isSelecting={isSelectingClass}

@@ -9,7 +9,9 @@ import axiosInstance from "@/app/lib/axios";
 import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 
 export const getAllClasses = async (
-  query: string,
+  nameQuery: string,
+  courseQuery: string,
+  gradeQuery: string,
   currentPage: number,
   limit: number,
 ): Promise<ClassData> => {
@@ -17,7 +19,9 @@ export const getAllClasses = async (
     params: {
       page: currentPage,
       limit: limit,
-      filter: query,
+      name: nameQuery,
+      course: courseQuery,
+      grade: gradeQuery,
     },
   });
   return response.data.data;
@@ -39,7 +43,9 @@ export const getAllChooseClasses = async (
 };
 
 export const getAllStudentClasses = async (
-  query: string,
+  nameQuery: string,
+  courseQuery: string,
+  gradeQuery: string,
   currentPage: number,
   limit: number,
 ): Promise<UserClassData> => {
@@ -47,7 +53,9 @@ export const getAllStudentClasses = async (
     params: {
       page: currentPage,
       limit: limit,
-      filter: query,
+      name: nameQuery,
+      course: courseQuery,
+      grade: gradeQuery,
     },
   });
   return response.data.data;

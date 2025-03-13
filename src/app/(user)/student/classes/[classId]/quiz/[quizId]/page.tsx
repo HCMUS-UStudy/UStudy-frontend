@@ -232,6 +232,7 @@ const QuizPage = () => {
   if (isModalOpen) {
     return (
       <ScoreModal
+        quizId={quizId as string}
         isOpen={isModalOpen}
         score={finalScore}
         onClose={closeModal}
