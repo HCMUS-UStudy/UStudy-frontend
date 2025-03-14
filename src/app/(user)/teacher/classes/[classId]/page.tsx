@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getClassById } from "@/app/lib/services/class";
 import { MdArrowForwardIos } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
+import ClassMaterial from "@/app/ui/components/user/teacher/ClassMaterial";
 
 const ComponentDetails = ({
   title,
@@ -117,8 +118,8 @@ export default function ClassDetail() {
           setShowDetail={setNotiDetail}
         />
 
-        <ComponentDetails
-          title="📂 Tài liệu"
+        <ClassMaterial
+          classId={classId}
           showDetail={resourcesDetail}
           setShowDetail={setResourcesDetail}
         />
