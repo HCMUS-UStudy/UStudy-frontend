@@ -33,8 +33,11 @@ const ClassDetail = () => {
 
   const [classDetail, setClassDetail] = useState<ClassUserItem>();
   const [materialItem, setMaterialItem] = useState<MaterialItem[]>([]);
+
   const [quizItem, setQuizItem] = useState<QuizItem[]>([]);
   const [reviewQuiz, setReviewQuiz] = useState<QuizReview>();
+
+  const [exerciseItem, setExerciseItem] = useState<QuizItem[]>([]);
 
   const [isReviewing, setIsReviewing] = useState(false);
   const [isOverviewOpen, setIsOverviewOpen] = useState(false); // Track the state of the "Tổng quan" tab
@@ -148,11 +151,28 @@ const ClassDetail = () => {
     }
   };
 
+  const fetchExercise = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await getQuizByClassId(0, 10, classId as string);
+      setExerciseItem(response.content);
+    } catch (err) {
+      console.error("Error fetching quiz:", err);
+      setError("Không thể tải thông tin quiz của lớp học.");
+    } finally {
+      console.log(loading);
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (classId) {
       fetchClassDetail();
       fetchMaterial();
       fetchQuiz();
+      fetchExercise();
     }
   }, [classId]);
 
@@ -206,6 +226,14 @@ const ClassDetail = () => {
     } catch (error) {
       console.error("Error fetching review quiz:", error);
     }
+  };
+
+  const handleStartExercise = (exerciseId: string) => {
+    router.push(`/student/classes/${classId}/exercise/${exerciseId}`);
+  };
+
+  const handleReviewExercise = async (exerciseId: string) => {
+    console.error("Error fetching review quiz:", exerciseId);
   };
 
   if (!subject) {
@@ -512,7 +540,63 @@ const ClassDetail = () => {
             </div>
 
             {isExerciseOpen && (
-              <div className="p-6 bg-white shadow-md rounded-lg"></div>
+              <div className="p-6 bg-white shadow-md rounded-lg">
+                {loading ? (
+                  <div className="flex justify-center items-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary-dark"></div>
+                    <span className="ml-2 text-primary-dark">Đang tải...</span>
+                  </div>
+                ) : error ? (
+                  <div className="text-red-500 text-center">{error}</div>
+                ) : exerciseItem.length > 0 ? (
+                  <ul className="space-y-4">
+                    {exerciseItem.map((exercise) => (
+                      <li
+                        key={exercise.id}
+                        className="border rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow grid grid-cols-12 items-center gap-4 bg-gray-50 hover:bg-gray-100"
+                      >
+                        <div className="col-span-9">
+                          <h3 className="text-lg font-semibold text-primary-dark mb-2">
+                            {exercise.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-1">
+                            📅 <strong>Bắt đầu:</strong>{" "}
+                            {new Date(exercise.startTime).toLocaleString(
+                              "vi-VN",
+                            )}
+                          </p>
+                          <p className="text-sm text-gray-600 mb-1">
+                            ⏰ <strong>Kết thúc:</strong>{" "}
+                            {new Date(exercise.endTime).toLocaleString("vi-VN")}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            👤 <strong>Người tạo:</strong>{" "}
+                            {exercise.createdBy.name}
+                          </p>
+                        </div>
+                        <div className="col-span-3 flex justify-end space-x-4">
+                          <button
+                            className="bg-primary-dark text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-primary-light transition-all shadow-md"
+                            onClick={() => handleStartExercise(exercise.id)}
+                          >
+                            Bắt đầu
+                          </button>
+                          <button
+                            className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
+                            onClick={() => handleReviewExercise(exercise.id)}
+                          >
+                            Review
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-center text-gray-500">
+                    Chưa có bài trắc nghiệm nào.
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

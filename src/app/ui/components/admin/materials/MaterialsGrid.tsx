@@ -10,13 +10,13 @@ import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
 import Loading from "@/app/ui/components/_common/Loading";
 
-interface GradeGridProps {
+interface MaterialsGridProps {
   courseId: string;
   // subject: string;
   searchQuery: string;
 }
 
-const GradeGrid: React.FC<GradeGridProps> = ({
+const MaterialsGrid: React.FC<MaterialsGridProps> = ({
   searchQuery,
   courseId,
   // subject,
@@ -46,8 +46,8 @@ const GradeGrid: React.FC<GradeGridProps> = ({
       );
 
       filteredData = response.content.map((item: CourseItem) => ({
-        id: item.id,
-        name: item.name,
+        id: item.courseDto.id,
+        name: item.courseDto.name,
       }));
 
       //setGrades(response.data?.content || []);
@@ -176,4 +176,4 @@ const GradeGrid: React.FC<GradeGridProps> = ({
   );
 };
 
-export default GradeGrid;
+export default MaterialsGrid;
