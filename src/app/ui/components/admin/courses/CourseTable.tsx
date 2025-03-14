@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
 import Pagination from "@/app/ui/components/_common/Pagination"; // Import Pagination
-import { useRouter } from "next/navigation";
 import { CourseItem } from "@/app/types/type";
-import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { getAllCourses } from "@/app/lib/services/course";
 import {
   Table,
@@ -14,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
+import SearchField from "../../_common/text-field/SearchField";
+import { HiAdjustments } from "react-icons/hi";
 
 interface CourseTableProps {
   searchQuery: string;
@@ -29,9 +29,6 @@ const CourseTable: React.FC<CourseTableProps> = ({
   const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const { setCourseName } = useCourseAdminContext();
-
-  const router = useRouter();
 
   const defaultSubject = subjectQuery === "All" ? "" : subjectQuery;
 
@@ -92,70 +89,81 @@ const CourseTable: React.FC<CourseTableProps> = ({
   // }, [courses]); // Chạy lại khi danh sách khóa học thay đổi
 
   return (
-    <div className="overflow-x-auto max-h-[400px]">
-      <Table>
-        <TableHeader
-          columns={["Môn học", "Tài liệu", "Người tạo", "Hành động"]}
+    <div>
+      <div className="flex items-center justify-between mt-2 gap-14">
+        <SearchField
+          className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+          placeholder="Tìm kiếm môn học..."
         />
-        <TableBody isLoading={loading}>
-          {error ? (
-            <TableRow>
-              <TableCell colSpan={8} className="text-center py-4 text-red-500">
-                {error}
-              </TableCell>
-            </TableRow>
-          ) : courses.length > 0 ? (
-            courses.map((course) => (
-              <TableRow key={course.courseDto.id}>
-                <TableCell>{course.courseDto.name}</TableCell>
-                <TableCell>
-                  <button
-                    onClick={() => {
-                      router.push(
-                        `/admin/courses/course-documents/${course.courseDto.id}`,
-                      );
-                      setCourseName(course.courseDto.name);
-                    }}
-                    className="flex justify-center items-center mx-auto"
-                  >
-                    {course.totalGrades}
-                    <FaPaperclip className="ml-2 mt-1 text-green-500" />
-                  </button>
-                </TableCell>
-                <TableCell>
-                  {course.courseDto.createdBy?.name || "Trống"}
-                </TableCell>
-                <TableCell className="flex justify-center items-center space-x-3">
-                  <button className="text-blue-600 hover:text-blue-800">
-                    <FaEdit className="h-5 w-5" />
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    <FaTrashAlt className="h-4 w-4" />
-                  </button>
+        <div className="flex items-center gap-6 px-4">
+          <div className="flex items-center">
+            {/* <DropdownCourse label="Lọc" onSelectCourse={setSelectedCourse} /> */}
+          </div>
+          <div className="flex items-center">
+            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
+          </div>
+        </div>
+      </div>
+      <div className="overflow-x-auto mt-6 max-h-[400px]">
+        <Table>
+          <TableHeader
+            columns={["Môn học", "Tài liệu", "Người tạo", "Hành động"]}
+          />
+          <TableBody isLoading={loading}>
+            {error ? (
+              <TableRow>
+                <TableCell
+                  colSpan={8}
+                  className="text-center py-4 text-red-500"
+                >
+                  {error}
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={8} className="text-center py-4">
-                Không tìm thấy khóa học.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ) : courses.length > 0 ? (
+              courses.map((course) => (
+                <TableRow key={course.courseDto.id}>
+                  <TableCell>{course.courseDto.name}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-center items-center mx-auto">
+                      {course.totalGrades}
+                      <FaPaperclip className="ml-2 mt-1 text-green-500" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {course.courseDto.createdBy?.name || "Trống"}
+                  </TableCell>
+                  <TableCell className="flex justify-center items-center space-x-3">
+                    <button className="text-blue-600 hover:text-blue-800">
+                      <FaEdit className="h-5 w-5" />
+                    </button>
+                    <button className="text-red-600 hover:text-red-800">
+                      <FaTrashAlt className="h-4 w-4" />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-4">
+                  Không tìm thấy khóa học.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handlePageClick={(page) => setCurrentPage(page)}
-        handlePreviousPage={() =>
-          setCurrentPage((prev) => Math.max(prev - 1, 1))
-        }
-        handleNextPage={() =>
-          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-        }
-      />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        />
+      </div>
     </div>
   );
 };

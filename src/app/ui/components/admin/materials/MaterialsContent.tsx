@@ -2,22 +2,22 @@
 
 import { useEffect } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
-import GradeGrid from "@/app/ui/components/admin/courses/GradeGrid";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { useCourseAdminContext } from "@/app/context/CourseAdminContext";
 import { getCourseById } from "@/app/lib/services/course";
+import MaterialsGrid from "./MaterialsGrid";
 
-interface CourseDocumentsContentProps {
+interface MaterialsContentProps {
   courseId: string;
   query: string;
 }
 
-export default function CourseDocumentsContent({
+export default function MaterialsContent({
   courseId,
   query,
-}: CourseDocumentsContentProps) {
+}: MaterialsContentProps) {
   const { setDynamicBreadcrumbs } = useBreadcrumbContext();
   const { courseName, setCourseName } = useCourseAdminContext();
 
@@ -66,7 +66,7 @@ export default function CourseDocumentsContent({
           </Button>
         </div>
 
-        <GradeGrid searchQuery={query} courseId={courseId} />
+        <MaterialsGrid searchQuery={query} courseId={courseId} />
       </div>
     </>
   );
