@@ -1,4 +1,4 @@
-import { CourseData, CourseSchema } from "@/app/types/type";
+import { CourseData, CourseDto, CourseSchema } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAllCourses = async (
@@ -18,7 +18,11 @@ export const getAllCourses = async (
 
 export const getCoursesByGradeId = async (
   gradeId: string,
-): Promise<CourseData> => {
+): Promise<{
+  content: CourseDto[];
+  totalPages: number;
+  totalElements: number;
+}> => {
   try {
     const response = await axiosInstance.get(`/course/list/${gradeId}`, {
       params: {

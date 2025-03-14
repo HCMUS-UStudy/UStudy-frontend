@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 // import { FaEdit, FaTrashAlt } from "react-icons/fa";
 // import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -9,8 +9,7 @@ import { FiFilter } from "react-icons/fi";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { Branch, Session } from "@/app/types/type";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store/store";
 import { useRouter } from "next/navigation";
@@ -108,7 +107,7 @@ const BranchPage: React.FC = () => {
     e.preventDefault();
     try {
       const response = await addBranch(newBranch);
-      setBranches_((prevBranches) => [...prevBranches, response.data.branch]);
+      // setBranches_((prevBranches) => [...prevBranches, response.data.branch]);
       setFilteredBranches((prevBranches) => [...prevBranches, response.data]);
       toast.success("Thêm chi nhánh thành công", {
         position: "top-right",
@@ -156,7 +155,6 @@ const BranchPage: React.FC = () => {
 
   return (
     <>
-      <ToastContainer />
       <div className="px-2">
         <div className="flex items-center justify-between">
           <div className="text-xl font-semibold mb-4">
@@ -172,11 +170,13 @@ const BranchPage: React.FC = () => {
         </div>
 
         <div className="flex items-center justify-between mt-2 gap-14">
-          <SearchField
-            className="w-full bg-primary-lighter py-[2px] rounded-2xl"
-            placeholder="Tìm kiếm chi nhánh..."
-            onSearch={handleSearch}
-          />
+          <Suspense>
+            <SearchField
+              className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+              placeholder="Tìm kiếm chi nhánh..."
+              onSearch={handleSearch}
+            />
+          </Suspense>
           <div className="flex items-center gap-6 px-4">
             <div className="flex items-center gap-3 cursor-pointer">
               Lọc

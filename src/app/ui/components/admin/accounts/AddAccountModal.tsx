@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -122,7 +121,6 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
 
   return (
     <>
-      <ToastContainer />
       <Button onClick={handleOpenModal} className="pl-6 pr-6 rounded-2xl">
         {buttonLabel}
       </Button>
