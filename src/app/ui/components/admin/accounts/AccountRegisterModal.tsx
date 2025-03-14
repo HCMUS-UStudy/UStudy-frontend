@@ -5,8 +5,7 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { RegisterItem } from "@/app/types/type";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -257,7 +256,6 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
 
   return (
     <>
-      <ToastContainer />
       <Button onClick={handleOpenModal} className="pl-6 pr-6 mr-4 rounded-2xl">
         {buttonLabel}
       </Button>

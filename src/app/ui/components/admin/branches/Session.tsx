@@ -4,8 +4,7 @@ import { Session } from "@/app/types/type";
 import { Button } from "@/app/ui/components/_common/Button";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { createSession } from "@/app/lib/services/session";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import SessionModal from "./SessionModal";
 
 const SessionManagement = () => {
@@ -73,7 +72,6 @@ const SessionManagement = () => {
   };
   return (
     <>
-      <ToastContainer />
       <div className="p-2">
         <div className="flex items-center justify-between mt-20 mb-6">
           <h3 className="text-xl font-semibold mb-4">Ca học</h3>

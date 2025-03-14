@@ -28,6 +28,10 @@ export type UserData = {
   };
 };
 
+export type Permission = {
+  [key: string]: string[];
+};
+
 export type AuthResponse = {
   message: string;
   statusCode: string;
@@ -35,6 +39,7 @@ export type AuthResponse = {
     user: UserData;
     refresh_token: string;
     access_token: string;
+    permissions: Permission;
   };
 };
 

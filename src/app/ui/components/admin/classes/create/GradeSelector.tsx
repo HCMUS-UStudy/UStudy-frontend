@@ -4,7 +4,7 @@ import { GradeItem } from "@/app/types/type";
 import { FaCheck } from "react-icons/fa6";
 import SelectorLoading from "./SelectorLoading";
 import { useFormContext } from "react-hook-form";
-import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
+import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 
 export default function GradeSelector() {
   const {

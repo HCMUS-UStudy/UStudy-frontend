@@ -1,13 +1,11 @@
 "use client";
 import React, { createContext, useContext, useState } from "react";
-import { TimeItem } from "@/app/types/type";
 import GradeSelector from "./GradeSelector";
 
 type CreateClassType = {
   name: string;
   gradeId: string;
   courseId: string;
-  classTimes: TimeItem[];
   startDate: string;
   endDate: string;
   roomId: string;
@@ -39,7 +37,6 @@ export default function CreateClassContent() {
     name: "",
     gradeId: "",
     courseId: "",
-    classTimes: [],
     startDate: "",
     endDate: "",
     roomId: "",

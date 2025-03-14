@@ -28,11 +28,7 @@ interface SearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
  * />
  * ```
  */
-const SearchField = ({
-  className,
-  onSearch,
-  ...props
-}: SearchProps): React.JSX.Element => {
+const SearchField = ({ className, onSearch, ...props }: SearchProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

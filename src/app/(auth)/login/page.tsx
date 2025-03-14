@@ -6,9 +6,8 @@ import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
 import { setTokensAndUserDataCookies } from "@/app/lib/action";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import "react-toastify/ReactToastify.min.css";
 import { login } from "@/app/lib/services/auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -26,9 +25,11 @@ const LogInSchema = z.object({
 
 type LogInInputs = z.infer<typeof LogInSchema>;
 
-export default function Login({ isUser = true }: { isUser?: boolean }) {
+export default function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const pathname = usePathname();
+  const isUser = pathname === "/login";
 
   const {
     register,
@@ -52,6 +53,7 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
         response.data.access_token,
         response.data.refresh_token,
         JSON.stringify(response.data.user),
+        JSON.stringify(response.data.permissions),
       );
       // if (isUser) {
       //   setUserInfo(JSON.stringify(response.data.user));
