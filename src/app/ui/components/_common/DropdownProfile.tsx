@@ -39,9 +39,11 @@ const DropdownProfile = ({
         ) : (
           <FaUserCircle size={40} className="rounded-full" />
         )}
-        <div className="text-[15px]">
-          {" "}
-          {userInfo?.name?.split(" ").slice(-2).join(" ")}
+        <div className="flex flex-col justify-center items-center">
+          <div className="text-[15px]">
+            {userInfo?.name?.split(" ").slice(-2).join(" ")}
+          </div>
+          <div className="text-[13px] text-gray-600"> {userInfo?.genId}</div>
         </div>
       </div>
       {toggleCollapse && (

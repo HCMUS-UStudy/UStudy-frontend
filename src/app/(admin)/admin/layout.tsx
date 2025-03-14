@@ -20,7 +20,7 @@ export default function AdminLayout({
   return (
     <BreadcrumbProvider>
       <div>
-        <Sidebar />
+        <Sidebar role="admin" />
         <div>
           <Header />
           <PageWrapper>{children}</PageWrapper>
