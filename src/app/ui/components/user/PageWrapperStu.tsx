@@ -8,6 +8,7 @@ export default function PageWrapperStu({ children }: { children: ReactNode }) {
   const pathname = usePathname(); // Lấy đường dẫn hiện tại
 
   const isQuizPage = pathname.includes("/quiz");
+  const isExercisePage = pathname.includes("/exercise");
 
   return (
     <div className="ml-from-sidebar bg-background p-[26px] h-[calc(100vh-var(--header-height))] flex">
@@ -17,7 +18,7 @@ export default function PageWrapperStu({ children }: { children: ReactNode }) {
       </div>
 
       {/* Cột lịch và bài tập */}
-      {!isQuizPage && (
+      {!isQuizPage && !isExercisePage && (
         <div className="w-[300px] overflow-y-auto bg-white bg-opacity-90 backdrop-blur-md border-gray-200 p-6 rounded-[22px] flex-shrink-0">
           {/* Calendar Section */}
           <h3 className="text-2xl font-extrabold mb-4 text-gray-800 text-center md:text-left">

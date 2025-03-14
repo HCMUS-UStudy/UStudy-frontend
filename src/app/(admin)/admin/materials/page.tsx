@@ -1,6 +1,6 @@
-import CourseDocumentsContent from "@/app/ui/components/admin/courses/CourseDocumentsContent ";
+import MaterialsContent from "@/app/ui/components/admin/materials/MaterialsContent";
 
-export default async function CourseDocumentsPage(props: {
+export default async function MaterialsPage(props: {
   params?: Promise<{
     id?: string;
   }>;
@@ -15,5 +15,5 @@ export default async function CourseDocumentsPage(props: {
   const query = searchParams?.query || "";
   const id = params?.id || "";
 
-  return <CourseDocumentsContent courseId={id} query={query} />;
+  return <MaterialsContent courseId={id} query={query} />;
 }

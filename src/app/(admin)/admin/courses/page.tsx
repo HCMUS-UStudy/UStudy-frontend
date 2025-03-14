@@ -3,9 +3,7 @@ import React from "react";
 import CourseTable from "@/app/ui/components/admin/courses/CourseTable";
 import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
 
-import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-import { HiAdjustments } from "react-icons/hi";
-import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
+//import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
 
 export default async function CoursePage(props: {
   searchParams?: Promise<{
@@ -81,24 +79,7 @@ export default async function CoursePage(props: {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-2 gap-14">
-          <SearchField
-            className="w-full bg-primary-lighter py-[2px] rounded-2xl"
-            placeholder="Tìm kiếm môn học..."
-          />
-          <div className="flex items-center gap-6 px-4">
-            <div className="flex items-center">
-              <DropdownCourse label="Lọc" />
-            </div>
-            <div className="flex items-center">
-              <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
-            </div>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto mt-6 max-h-[400px]">
-          <CourseTable searchQuery={query} subjectQuery={subject} />
-        </div>
+        <CourseTable searchQuery={query} subjectQuery={subject} />
       </div>
     </>
   );
