@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import { createNewCourse } from "@/app/lib/services/course";
 import {
   Dialog,
@@ -17,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getCreatorFromCookies } from "@/app/lib/action";
 
 const CreateGradeSchema = z.object({
   creator: z.string(),
@@ -36,13 +36,14 @@ type CreateGradeInputs = z.infer<typeof CreateGradeSchema>;
 
 const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   const [showModal, setShowModal] = useState(false);
+  const [creator, setCreator] = useState<string | null>(null);
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<CreateGradeInputs>({
     resolver: zodResolver(CreateGradeSchema),
-    defaultValues: { creator: localStorage.getItem("creator") ?? undefined },
+    defaultValues: { creator: creator ?? undefined },
   });
 
   const router = useRouter();
@@ -73,9 +74,15 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     }
   };
 
+  useEffect(() => {
+    const getDataFromCookies = async () => {
+      setCreator(await getCreatorFromCookies());
+    };
+    getDataFromCookies();
+  }, []);
+
   return (
     <>
-      <ToastContainer />
       <Button onClick={handleOpenModal} className="pl-6 pr-6">
         {buttonLabel}
       </Button>

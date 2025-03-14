@@ -7,8 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Branch } from "@/app/types/type";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
 import { RootState } from "@/app/store/store";
 import {
@@ -76,8 +75,8 @@ const BranchDetail = () => {
     const fetchBranches = async () => {
       try {
         const response = await getAllBranches(0, 100);
-        const modifiedData = response.data.content.sort(
-          (a: Branch, b: Branch) => a.name.localeCompare(b.name),
+        const modifiedData = response.content.sort((a: Branch, b: Branch) =>
+          a.name.localeCompare(b.name),
         );
         setBranches_(modifiedData);
         dispatch(setBranches(modifiedData));
@@ -89,7 +88,7 @@ const BranchDetail = () => {
       }
     };
     fetchBranches();
-  }, []);
+  }, [branches.length, dispatch]);
 
   useEffect(() => {
     if (!branchID) return;
@@ -254,7 +253,6 @@ const BranchDetail = () => {
 
   return (
     <>
-      <ToastContainer />
       <div className="overflow-x-hidden">
         <AnimatePresence>
           {!isExiting && (

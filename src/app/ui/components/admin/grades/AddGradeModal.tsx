@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -70,7 +69,6 @@ const AddGradeModal: React.FC<ModalGradeWrapperProps> = ({ buttonLabel }) => {
 
   return (
     <>
-      <ToastContainer />
       <Button onClick={handleOpenModal} className="pl-6 pr-6">
         {buttonLabel}
       </Button>

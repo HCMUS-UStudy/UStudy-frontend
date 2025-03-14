@@ -5,8 +5,7 @@ import { AllChapter, Classroom, Teacher } from "@/app/types/type";
 import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { IoWarning } from "react-icons/io5";
 import { FaUserPlus } from "react-icons/fa6";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import { revalidatePath } from "next/cache";
 import {
   Table,
@@ -395,7 +394,6 @@ export default function ClassManagement({
           </div>
         )}
       </Dialog>
-      <ToastContainer />
     </>
   );
 }

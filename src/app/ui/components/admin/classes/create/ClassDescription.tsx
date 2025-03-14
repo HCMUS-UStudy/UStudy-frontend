@@ -1,4 +1,4 @@
-import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
+import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
