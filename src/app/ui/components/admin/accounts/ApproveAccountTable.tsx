@@ -22,6 +22,7 @@ interface ApproveAccountTableProps {
   fetchData: (
     page: number,
     searchQuery: string,
+    courseQuery: string,
   ) => Promise<{
     content: {
       id: string;
@@ -72,6 +73,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
   // Fetch dữ liệu khi searchQuery hoặc currentPage thay đổi
   useEffect(() => {
@@ -82,6 +84,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
         const { content, totalPages } = await fetchData(
           currentPage - 1,
           searchQuery,
+          selectedCourse ?? "",
         );
         setClasses(content);
         setTotalPages(totalPages || 1);
@@ -119,7 +122,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="flex items-center justify-between">
-          <DropdownCourse label="Lọc" />
+          <DropdownCourse label="Lọc" onSelectCourse={setSelectedCourse} />
 
           <DropdownGrade label="Lọc" />
         </div>

@@ -1,85 +1,84 @@
 "use client";
 import React, { useEffect, useState } from "react";
-// import classNames from "classnames";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import "../../styles/header.css";
-import { User } from "@/app/types/type";
-// import Breadcrumb from "@/app/ui/components/_common/Breadcrumb";
+import { UserData, SideNavItem } from "@/app/types/type";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/app/ui/components/_common/DropdownMenu";
-
+  SIDENAV_ITEMS_STUDENT,
+  SIDENAV_ITEMS_TEACHER,
+} from "@/app/menu-constants";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
+import DropdownProfile from "../_common/DropdownProfile";
 import { handleLogoutCookies } from "@/app/lib/action";
-import { SIDENAV_ITEMS_STUDENT } from "@/app/menu-constants";
+import { getUserDataFromCookies } from "@/app/lib/action";
 
-const Header: React.FC = () => {
+const Header = ({ role }: { role: string }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [userInfo, setUserInfo] = useState<User | null>(null);
-  // const { specificName } = useBreadcrumbContext();
+  const [userInfo, setUserInfo] = useState<UserData | null>(null);
+  const [SIDENAV_ITEMS, setSIDENAV_ITEMS] = useState<SideNavItem[]>([]);
+
+  const [toggleCollapse, setToggleCollapse] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setUserInfo(JSON.parse(localStorage.getItem("userData") || "{}"));
+    const fetchData = async () => {
+      const userInfo = await getUserDataFromCookies();
+      setUserInfo(userInfo);
+    };
+    fetchData();
   }, []);
 
+  useEffect(() => {
+    if (role === "student") {
+      setSIDENAV_ITEMS(SIDENAV_ITEMS_STUDENT);
+    } else if (role === "teacher") {
+      setSIDENAV_ITEMS(SIDENAV_ITEMS_TEACHER);
+    }
+  }, [role]);
+
   const handleProfileClick = () => {
-    router.push("/student/profile");
+    router.push("/admin/profile");
   };
+
+  const handleToggle = () => {
+    setToggleCollapse(!toggleCollapse);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setToggleCollapse(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="h-header-height flex ml-from-sidebar px-12 justify-between items-center bg-foreground">
-      <div className="text-2xl font-bold">
-        {
-          SIDENAV_ITEMS_STUDENT.find((item) =>
-            item.menuList.some((menu) => pathname.includes(menu.path)),
-          )?.title
-        }
+      <div className="text-2xl font-bold mt-1">
+        {SIDENAV_ITEMS.find((item) => pathname.includes(item.path))?.title}
       </div>
-
       <div className="flex gap-6 items-center">
-        <div className="p-2 rounded-3xl bg-primary cursor-pointer">
-          <IoNotificationsOutline size={24} />
+        <div className="flex gap-3 items-center" ref={dropdownRef}>
+          <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
+            <IoNotificationsOutline size={24} />
+          </div>
+          <DropdownProfile
+            userInfo={userInfo}
+            handleToggle={handleToggle}
+            toggleCollapse={toggleCollapse}
+            handleProfileClick={handleProfileClick}
+            handleLogout={handleLogoutCookies}
+            dropdownRef={dropdownRef}
+          />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3">
-            {/* <FaUserCircle size={18} /> */}
-            {userInfo?.avatar ? (
-              <Image
-                src={userInfo.avatar}
-                alt="User Avatar"
-                width={40}
-                height={60}
-                className="rounded-full w-10 h-10"
-              />
-            ) : (
-              <FaUserCircle size={40} className="rounded-full" />
-            )}
-            <div className="text-[15px]">
-              {" "}
-              {userInfo?.name?.split(" ").slice(-2).join(" ")}
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleProfileClick}>
-              <div className="flex gap-3 items-center">
-                <FaUserCircle size={18} className="" /> Trang cá nhân
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogoutCookies}>
-              <div className="flex gap-3 items-center">
-                <FaSignOutAlt size={18} className="" /> Đăng xuất
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
   );

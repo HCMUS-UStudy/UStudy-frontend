@@ -514,31 +514,23 @@ export type Teacher = {
   active: boolean;
 };
 
-type UserForTeacher = {
-  gender: string;
-  createdAt: string;
-  active: boolean;
-};
-
-export type ClassTime = {
+export type classSessions = {
   id: string;
   day: number;
-  startTime: string;
-  endTime: string;
+  session: Session;
+  room: Room;
 };
 
 export type ClassTeacher = {
   id: string;
   name: string;
   description: string;
+  startDate: string;
+  endDate: string;
   grade: Grade;
   course: Course;
-  room: Room;
-  fee: number;
-  teacher: UserForTeacher;
-  students: UserForTeacher[];
-  classTimes: ClassTime[];
   status: string | null; // Status can be null
+  classSessions: classSessions[];
 };
 
 export type TeacherRegister = {
@@ -676,4 +668,26 @@ export type QnA = {
     }[];
     createdAt: string;
   }[];
+};
+
+export type QuizReview = {
+  quizId: string;
+  title: string;
+  score: number;
+  questions: QuestionReview[];
+};
+
+export type QuestionReview = {
+  questionId: string;
+  description: string;
+  selectedOption: Option;
+  correctOption: Option;
+  allOptions: Option[];
+  correct: boolean;
+};
+
+export type Option = {
+  optionId: string;
+  description: string;
+  correct: boolean;
 };
