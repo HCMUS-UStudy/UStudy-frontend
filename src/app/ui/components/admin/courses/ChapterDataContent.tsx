@@ -6,6 +6,7 @@ import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
 import { getCourseById } from "@/app/lib/services/course";
 import { getGradeById } from "@/app/lib/services/grade";
 import { getChapterById } from "@/app/lib/services/chapter";
+import DocumentGrid from "./MaterialGrid";
 import SearchField from "../../_common/text-field/SearchField";
 import { Select, SelectItem } from "../../_common/Select";
 import { Button } from "../../_common/Button";

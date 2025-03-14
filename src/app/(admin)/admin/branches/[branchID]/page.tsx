@@ -76,8 +76,8 @@ const BranchDetail = () => {
     const fetchBranches = async () => {
       try {
         const response = await getAllBranches(0, 100);
-        const modifiedData = response.data.content.sort(
-          (a: Branch, b: Branch) => a.name.localeCompare(b.name),
+        const modifiedData = response.content.sort((a: Branch, b: Branch) =>
+          a.name.localeCompare(b.name),
         );
         setBranches_(modifiedData);
         dispatch(setBranches(modifiedData));
@@ -89,7 +89,7 @@ const BranchDetail = () => {
       }
     };
     fetchBranches();
-  }, []);
+  }, [branches.length, dispatch]);
 
   useEffect(() => {
     if (!branchID) return;

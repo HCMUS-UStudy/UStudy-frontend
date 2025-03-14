@@ -30,7 +30,7 @@ const BranchPage: React.FC = () => {
       if (branches.length > 0) return;
       try {
         const response = await getAllBranches(0, 100);
-        const modifiedData = response.data.content.sort(
+        const modifiedData = [...response.content].sort(
           (a: Branch, b: Branch) => a.name.localeCompare(b.name),
         );
         setBranches_(modifiedData);
@@ -45,7 +45,7 @@ const BranchPage: React.FC = () => {
       }
     };
     fetchBranches();
-  }, []);
+  }, [branches.length, dispatch]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
