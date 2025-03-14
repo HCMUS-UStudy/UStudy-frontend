@@ -1,9 +1,9 @@
 import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader } from "../../../_common/Dialog";
 import { Button } from "../../../_common/Button";
-import { DaysInWeek, RoomItem, SessionBranchItem } from "@/app/types/type";
+import { DaysInWeek, RoomItem, SessionItem } from "@/app/types/type";
 import { FaCheck } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import {
@@ -14,22 +14,16 @@ import {
   TableRow,
 } from "../../../_common/Table";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { getSessionByBranchId } from "@/app/lib/services/session";
+import { useAppSelector } from "@/app/store/store";
+import { getAvailableRooms } from "@/app/lib/services/room";
+import SelectorLoadingHorizon from "./SelectorLoadingHorizon";
 
-const dummyRooms: RoomItem[] = [
-  { id: "room-1", name: "Phòng A101" },
-  { id: "room-2", name: "Phòng B202" },
-  { id: "room-3", name: "Phòng C303" },
-  { id: "room-4", name: "Phòng D404" },
-  { id: "room-5", name: "Phòng E505" },
-];
-
-const dummySessions: SessionBranchItem[] = [
-  { id: "session-1", name: "7h - 10h" },
-  { id: "session-2", name: "10h - 13h" },
-  { id: "session-3", name: "13h - 16h" },
-  { id: "session-4", name: "16h - 19h" },
-  { id: "session-5", name: "19h - 22h" },
-];
+type OverviewItem = {
+  day: DaysInWeek;
+  room: RoomItem;
+  session: SessionItem;
+};
 
 export default function DayRoomSessionSelector() {
   const {
@@ -37,7 +31,7 @@ export default function DayRoomSessionSelector() {
     formState: { errors },
     watch,
   } = useFormContext<CreateClassInputs>();
-  const daysInWeek: Record<DaysInWeek, string> = {
+  const daysMapping: Record<DaysInWeek, string> = {
     MONDAY: "Thứ hai",
     TUESDAY: "Thứ ba",
     WEDNESDAY: "Thứ tư",
@@ -46,30 +40,88 @@ export default function DayRoomSessionSelector() {
     SATURDAY: "Thứ bảy",
     SUNDAY: "Chủ nhật",
   };
+  const { selectedBranchId } = useAppSelector((state) => state.branch);
+  const numLessons = watch("numLessons");
   const classTimes = watch("classTimes");
+  const startDate = watch("startDate");
   const [isSelecting, setSelecting] = useState<boolean>(false);
   const [selectedDay, setSelectedDay] = useState<DaysInWeek | null>(null);
-  const [selectedSession, setSelectedSession] = useState<string>("");
-  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [selectedSession, setSelectedSession] = useState<SessionItem | null>(
+    null,
+  );
+  const [selectedRoom, setSelectedRoom] = useState<RoomItem | null>(null);
 
-  const handleSelectDaysInWeek = (day: DaysInWeek) => {
+  const [sessions, setSessions] = useState<SessionItem[]>([]);
+  const [rooms, setRooms] = useState<RoomItem[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState<boolean>(false);
+  const [loadingRooms, setLoadingRooms] = useState<boolean>(false);
+  const [overview, setOverview] = useState<OverviewItem[]>([]);
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        setLoadingSessions(true);
+        if (!selectedBranchId) {
+          return;
+        }
+        const fetchSessions = await getSessionByBranchId(selectedBranchId);
+        setSessions(fetchSessions);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingSessions(false);
+      }
+    };
+    fetchSessions();
+    return;
+  }, [selectedBranchId]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      if (!selectedBranchId || !selectedSession || !selectedDay) {
+        return;
+      }
+      try {
+        setLoadingRooms(true);
+        const response = await getAvailableRooms(
+          selectedBranchId,
+          selectedDay,
+          selectedSession.id,
+          startDate,
+          numLessons,
+        );
+        setRooms(response.content);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingRooms(false);
+      }
+    };
+    fetchRooms();
+    return;
+  }, [selectedBranchId, selectedSession, selectedDay, numLessons, startDate]);
+
+  const handleSelectDaysInWeek = async (day: DaysInWeek) => {
+    if (!selectedBranchId) {
+      return;
+    }
     setSelecting(true);
     setSelectedDay(day);
 
-    const existingDay = classTimes.find((item) => item.day === day);
+    const existingDay = overview.find((item) => item.day === day);
     if (existingDay) {
-      setSelectedSession(existingDay.branchSessionId);
-      setSelectedRoom(existingDay.roomId);
+      setSelectedSession(existingDay.session);
+      setSelectedRoom(existingDay.room);
     } else {
-      setSelectedRoom("");
-      setSelectedSession("");
+      setSelectedRoom(null);
+      setSelectedSession(null);
     }
   };
   const isDaySelected = (day: string) => {
     return classTimes.some((item) => item.day === day);
   };
   const handleSelectDayRoomSession = () => {
-    if (selectedSession === "") {
+    if (selectedSession === null) {
       toast.error("Vui lòng chọn ca học", {
         position: "bottom-right",
         autoClose: 3000,
@@ -77,7 +129,7 @@ export default function DayRoomSessionSelector() {
       });
       return;
     }
-    if (selectedRoom === "") {
+    if (selectedRoom === null) {
       toast.error("Vui lòng chọn phòng học", {
         position: "bottom-right",
         autoClose: 3000,
@@ -90,18 +142,34 @@ export default function DayRoomSessionSelector() {
     if (exists !== -1) {
       _classTimes[exists] = {
         ..._classTimes[exists],
-        branchSessionId: selectedSession,
-        roomId: selectedRoom,
+        branchSessionId: selectedSession.id,
+        roomId: selectedRoom.id,
       };
+      setOverview((current) => {
+        current[exists] = {
+          ...current[exists],
+          session: selectedSession,
+          room: selectedRoom,
+        };
+        return current;
+      });
     } else {
       if (selectedDay === null) {
         return;
       }
       _classTimes.push({
         day: selectedDay,
-        branchSessionId: selectedSession,
-        roomId: selectedRoom,
+        branchSessionId: selectedSession.id,
+        roomId: selectedRoom.id,
       });
+      setOverview((current) => [
+        ...current,
+        {
+          day: selectedDay,
+          session: selectedSession,
+          room: selectedRoom,
+        },
+      ]);
     }
     setValue("classTimes", _classTimes);
     toast.success("Thêm ngày học thành công !", {
@@ -117,6 +185,7 @@ export default function DayRoomSessionSelector() {
       "classTimes",
       _classTimes.filter((item) => item.day !== day),
     );
+    setOverview((current) => current.filter((item) => item.day !== day));
     toast.success("Xóa lớp học thành công", {
       position: "bottom-right",
       autoClose: 3000,
@@ -129,7 +198,7 @@ export default function DayRoomSessionSelector() {
         <h1 className="font-bold">Thành lập thời khóa biểu</h1>
         <div className="mt-2">
           <div className="flex flex-wrap gap-4">
-            {Object.entries(daysInWeek).map(([key, value]) => (
+            {Object.entries(daysMapping).map(([key, value]) => (
               <div key={key}>
                 <label
                   htmlFor={value}
@@ -162,11 +231,15 @@ export default function DayRoomSessionSelector() {
                 columns={["Thứ", "Phòng học", "Ca học", "Hành động"]}
               />
               <TableBody>
-                {classTimes.map((item) => (
+                {overview.map((item) => (
                   <TableRow key={item.day}>
-                    <TableCell>{item.day}</TableCell>
-                    <TableCell>{item.roomId}</TableCell>
-                    <TableCell>{item.branchSessionId}</TableCell>
+                    <TableCell>{daysMapping[item.day]}</TableCell>
+                    <TableCell>{item.room.name}</TableCell>
+                    <TableCell>
+                      {item.session.session.name} -{" "}
+                      {item.session.session.startTime.slice(0, -3)} -{" "}
+                      {item.session.session.endTime.slice(0, -3)}
+                    </TableCell>
                     <TableCell>
                       <div className="flex justify-center gap-2 w-full">
                         <button
@@ -203,56 +276,68 @@ export default function DayRoomSessionSelector() {
           <div className="text-base flex flex-col gap-4">
             <div>
               <h1 className="font-bold">Chọn ca học</h1>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {dummySessions.map((session) => (
-                  <label
-                    key={session.id}
-                    htmlFor={session.id}
-                    className="relative py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-slate-200
+              {loadingSessions ? (
+                <SelectorLoadingHorizon numberOfItems={2} />
+              ) : (
+                <div className="flex flex-col mt-2 overflow-auto gap-2">
+                  {sessions.map((session) => (
+                    <label
+                      key={session.id}
+                      htmlFor={session.id}
+                      className="relative px-3 py-2 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center border-2 border-slate-200
                          text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
-                  >
-                    <input
-                      type="radio"
-                      className="hidden peer"
-                      name="sessionSelector"
-                      id={session.id}
-                      checked={selectedSession === session.id}
-                      onChange={() => setSelectedSession(session.id)}
-                    />
-                    <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all">
-                      {session.name}
-                    </span>
-                    <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
-                  </label>
-                ))}
-              </div>
+                    >
+                      <input
+                        type="radio"
+                        className="hidden peer"
+                        name="sessionSelector"
+                        id={session.id}
+                        checked={selectedSession?.id === session.id}
+                        onChange={() => setSelectedSession(session)}
+                      />
+                      <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all">
+                        {session.session.name} -{" "}
+                        {session.session.startTime.slice(0, -3)} -{" "}
+                        {session.session.endTime.slice(0, -3)}
+                      </span>
+                      <FaCheck className="size-6 absolute right-3 text-primary-darkest opacity-0 peer-checked:opacity-70 transition-all" />
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
-            <div>
-              <h1 className="font-bold">Chọn phòng học</h1>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {dummyRooms.map((room) => (
-                  <label
-                    key={room.id}
-                    htmlFor={room.id}
-                    className="relative py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-slate-200
+            {selectedSession !== null && (
+              <div>
+                <h1 className="font-bold">Chọn phòng học</h1>
+                {loadingRooms ? (
+                  <SelectorLoadingHorizon numberOfItems={2} />
+                ) : (
+                  <div className="flex flex-col gap-2 mt-2">
+                    {rooms.map((room) => (
+                      <label
+                        key={room.id}
+                        htmlFor={room.id}
+                        className="relative px-3 py-2 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center border-2 border-slate-200
                          text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
-                  >
-                    <input
-                      type="radio"
-                      className="hidden peer"
-                      id={room.id}
-                      name={`roomSelector`}
-                      checked={selectedRoom === room.id}
-                      onChange={() => setSelectedRoom(room.id)}
-                    />
-                    <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all text-center">
-                      {room.name}
-                    </span>
-                    <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
-                  </label>
-                ))}
+                      >
+                        <input
+                          type="radio"
+                          className="hidden peer"
+                          id={room.id}
+                          name={`roomSelector`}
+                          checked={selectedRoom?.id === room.id}
+                          onChange={() => setSelectedRoom(room)}
+                        />
+                        <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all text-center">
+                          {room.name}
+                        </span>
+                        <FaCheck className="size-6 absolute right-3 text-primary-darkest opacity-0 peer-checked:opacity-70 transition-all" />
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            )}
             <div className="flex gap-2 self-end">
               <button
                 type="button"

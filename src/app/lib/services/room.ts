@@ -1,29 +1,30 @@
-import { SessionTimeItem } from "@/app/types/type";
+import { DaysInWeek, RoomData } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAvailableRooms = async (
   branchId: string,
-  times: SessionTimeItem[],
+  day: DaysInWeek,
+  branchSessionId: string,
   startDate: string,
-  endDate: string,
-) => {
+  numLessons: number,
+): Promise<RoomData> => {
   const body = {
-    times: times,
-    startDate: startDate,
-    endDate: endDate,
+    day,
+    branchSessionId,
+    startDate,
+    numLessons,
   };
   try {
     const response = await axiosInstance.post(
       `/room/list-available/${branchId}`,
       body,
       {
-        params: {
-          page: 0,
-          limit: 10,
+        cache: {
+          methods: ["post"],
         },
       },
     );
-    return response;
+    return response.data.data;
   } catch (error) {
     throw error;
   }

@@ -99,8 +99,15 @@ export type ChapterItem = {
 
 export type MaterialItem = {
   id: string;
-  fileName: string;
-  filePath: string;
+  name: string;
+  uploadedBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+  };
+  materialType: string;
+  type: string;
 };
 
 export type CourseDto = {
@@ -119,10 +126,11 @@ export type CourseItem = {
   courseDto: CourseDto;
 };
 
-export type TimeItem = {
-  day: number;
+export type ClassSessionItem = {
+  day: DaysInWeek;
   startTime: string;
   endTime: string;
+  branchSessionId: string;
 };
 
 export type DaysInWeek =
@@ -159,19 +167,20 @@ export type SessionItem = {
     contactNumber: string;
     status: "ACTIVE" | "INACTIVE" | "DELETED";
     rooms: number;
-    sessions: null;
+    sessions: Session[];
   };
-  session: {
-    id: string;
-    name: string;
-    startTime: string;
-    endTime: string;
-  };
+  session: Session;
 };
 
 export type RoomItem = {
   id: string;
   name: string;
+};
+
+export type RoomData = {
+  content: RoomItem[];
+  totalElements: number;
+  totalPages: number;
 };
 
 export type TeacherItem = {
@@ -198,7 +207,7 @@ export type ClassSchema = {
   description: string;
   fee: number;
   branchId: string;
-  classTimes: TimeItem[];
+  classTimes: ClassSessionItem[];
   roomId: string;
 };
 
@@ -271,7 +280,16 @@ export type Branch = {
   address: string;
   contactNumber: string;
   rooms: string;
+  status: "ACTIVE" | "INACTIVE";
   sessions: Session[];
+};
+
+export type BranchData = {
+  content: Branch[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
 };
 
 export type Duration = {
@@ -416,6 +434,7 @@ export type AllChapter = {
 export type CourseData = {
   content: CourseItem[];
   totalPages: number;
+  totalElements: number;
 };
 
 export type AccountData = {
@@ -549,4 +568,121 @@ export type ClassUserItem = {
 export type UserClassData = {
   content: ClassUserItem[];
   totalPages: number;
+};
+
+export type QuizItem = {
+  id: string;
+  title: string;
+  aclass: {
+    id: string;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    grade: {
+      id: string;
+      name: string;
+    };
+    course: {
+      id: string;
+      name: string;
+      createdBy: {
+        id: string;
+        genId: string;
+        email: string;
+        name: string;
+      };
+    };
+  };
+  startTime: string;
+  endTime: string;
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+    gender: "MALE" | "FEMALE" | "OTHER";
+    createdAt: string;
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
+    role: {
+      id: string;
+      name: "Teacher" | "Student" | "Admin";
+    };
+  };
+};
+
+export type QnA = {
+  id: string;
+  title: string;
+  duration: number; //phút
+  aclass: {
+    id: string;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    grade: {
+      id: string;
+      name: string;
+    };
+    course: {
+      id: string;
+      name: string;
+      createdBy: {
+        id: string;
+        genId: string;
+        email: string;
+        name: string;
+      };
+    };
+  };
+  startTime: string;
+  endTime: string;
+  questions: {
+    id: string;
+    description: string;
+    grade: {
+      id: string;
+      name: string;
+    };
+    course: {
+      id: string;
+      name: string;
+      createdBy: {
+        id: string;
+        genId: string;
+        email: string;
+        name: string;
+      };
+    };
+    questionType: "MULTIPLE_CHOICE" | "SHORT_ANSWER" | "ESSAY"; // Có thể mở rộng loại câu hỏi
+    options?: {
+      id: string;
+      description: string;
+    }[];
+    createdAt: string;
+  }[];
+};
+
+export type QuizReview = {
+  quizId: string;
+  title: string;
+  score: number;
+  questions: QuestionReview[];
+};
+
+export type QuestionReview = {
+  questionId: string;
+  description: string;
+  selectedOption: Option;
+  correctOption: Option;
+  allOptions: Option[];
+  correct: boolean;
+};
+
+export type Option = {
+  optionId: string;
+  description: string;
+  correct: boolean;
 };

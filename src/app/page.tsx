@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
-import { FaUserGraduate } from "react-icons/fa6";
 import Footer from "@/app/ui/components/_common/Footer";
 import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/user/CreateTeacher";
-import { IoLogInOutline, IoSparkles } from "react-icons/io5";
+import { IoLogInOutline } from "react-icons/io5";
 import Logo from "@/app/ui/components/_common/Logo";
+import StudentRegisterBtn from "./ui/components/user/student/StudentRegisterBtn";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -100,18 +100,7 @@ export default async function Home() {
                 bắt đầu hành trình chinh phục tri thức của bạn ngay hôm nay!
               </div>
             </div>
-            <Button
-              className="w-full rounded-[21px] overflow-hidden md:w-[240px] text-xl py-4 hover:scale-110"
-              type="submit"
-            >
-              Bắt đầu
-              {/* <span className="absolute -translate-y-1 translate-x-1 opacity-20">
-                Bắt đầu
-              </span> */}
-              <IoSparkles className="absolute size-10 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <IoSparkles className="absolute size-12 left-5 bottom-1 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-              <FaUserGraduate className="absolute size-14 -right-7 -bottom-2 origin-bottom group-hover:-rotate-[30deg] opacity-0 group-hover:opacity-100 transition-all duration-300" />
-            </Button>
+            <StudentRegisterBtn />
           </div>
           <Image
             className="object-cover border-4 border-primary-darker rounded-[24px] aspect-auto md:flex hidden"

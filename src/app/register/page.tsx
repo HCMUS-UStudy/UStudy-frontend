@@ -1,156 +1,140 @@
-import Image from "next/image";
-import React from "react";
-import { Input } from "../ui/components/_common/text-field/Input";
-import Link from "next/link";
+"use client";
+import React, { useState } from "react";
 import { Button } from "../ui/components/_common/Button";
+import { z } from "zod";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import StudentBasicInformation from "../ui/components/user/student/create/StudentBasicInformation";
+import StudentGradeSelector from "../ui/components/user/student/create/StudentGradeSelector";
+import StudentBranchSelector from "../ui/components/user/student/create/StudentBranchSelector";
+import StudentCoursesSelector from "../ui/components/user/student/create/StudentCoursesSelector";
+import { studentRegister } from "../lib/services/register";
+import { toast } from "react-toastify";
+import RegisterSuccessfully from "../ui/components/user/student/create/StudentRegisterSuccessfully";
+
+const StudentRegisterSchema = z.object({
+  name: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  email: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .email("Email không hợp lệ"),
+  birthday: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc")
+    .refine((data) => !isNaN(Date.parse(data)), {
+      message: "Ngày sinh không hợp lệ",
+    }),
+  phone: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
+    .min(9, "Số điện thoại từ 9 - 12 ký tự số")
+    .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
+  parentPhone: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
+    .min(9, "Số điện thoại từ 9 - 12 ký tự số")
+    .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
+  address: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  grades: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  courses: z.array(z.string()).min(1, "Chọn tối thiểu một khối học"),
+  branchId: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
+  classTimes: z
+    .array(
+      z.object({
+        day: z.enum([
+          "MONDAY",
+          "TUESDAY",
+          "WEDNESDAY",
+          "THURSDAY",
+          "FRIDAY",
+          "SATURDAY",
+          "SUNDAY",
+        ]),
+        branchSessionId: z
+          .string({ message: "Đây là trường bắt buộc" })
+          .min(1, "Đây là trường bắt buộc"),
+      }),
+    )
+    .min(1, "Chọn tối thiểu một ca học"),
+});
+
+export type StudentRegisterInputs = z.infer<typeof StudentRegisterSchema>;
 
 export default function StudentRegister() {
+  const methods = useForm<StudentRegisterInputs>({
+    resolver: zodResolver(StudentRegisterSchema),
+    defaultValues: {
+      gender: "MALE",
+      courses: [],
+      grades: "",
+      branchId: "",
+    },
+  });
+  const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
+  const [registerSuccessfully, setRegisterSuccessfully] =
+    useState<boolean>(false);
+
+  const onSubmit = async (data: StudentRegisterInputs) => {
+    console.log(data);
+    try {
+      setLoadingRegister(true);
+      const response = await studentRegister(data);
+      // console.log(response);
+      if (response.status === 200) {
+        setRegisterSuccessfully(true);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Đăng ký thất bại", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+    } finally {
+      setLoadingRegister(false);
+    }
+  };
+  if (registerSuccessfully) {
+    return <RegisterSuccessfully />;
+  }
+
   return (
-    <>
+    <FormProvider {...methods}>
       <div className="flex items-center justify-center h-screen overflow-auto">
-        {/* <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
-          <Image src="/logo.png" alt="Logo" width={280} height={280} />
-
-          <h1 className="text-2xl font-semibold text-[#273526]">
-            Trở thành một học viên của UStudy
-          </h1>
-        </div> */}
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light">
-          {/* <Image
-            className="absolute animate-fall_1 -top-[100px] opacity-50 left-[0%]"
-            src="/Intersect.png"
-            alt="Intersect"
-            width={100}
-            height={100}
-          />
-          <Image
-            className="absolute animate-fall_2 -top-[100px] opacity-50 left-[22%]"
-            src="/Intersect.png"
-            alt="Intersect"
-            width={100}
-            height={100}
-          />
-          <Image
-            className="absolute animate-fall_3 -top-[100px] opacity-50 left-[44%]"
-            src="/Intersect.png"
-            alt="Intersect"
-            width={100}
-            height={100}
-          />
-          <Image
-            className="absolute animate-fall_4 -top-[100px] opacity-50 left-[66%]"
-            src="/Intersect.png"
-            alt="Intersect"
-            width={100}
-            height={100}
-          />
-          <Image
-            className="absolute animate-fall_5 -top-[100px] opacity-50 left-[90%]"
-            src="/Intersect.png"
-            alt="Intersect"
-            width={100}
-            height={100}
-          /> */}
-
           <form
-            // onSubmit={handleSubmit(onSubmit)}
-            className="bg-foreground py-10 px-12 rounded-3xl shadow-lg z-[100] flex flex-col gap-5 w-1/3"
+            onSubmit={methods.handleSubmit(onSubmit)}
+            className="bg-foreground py-10 px-20 rounded-3xl shadow-lg z-[100] flex flex-col gap-5 w-3/4"
           >
             <div className="text-[#F48C06] text-3xl font-bold mb-3 flex justify-center">
               Ghi danh
             </div>
-            <div>
-              <Input
-                className="text-[14px]"
-                type="text"
-                placeholder="Họ và tên"
-                label="Họ và tên"
-              />
-            </div>
-            <div>
-              <Input
-                className="text-[14px]"
-                type="text"
-                placeholder="Email"
-                label="Email"
-              />
-            </div>
-            <div>
-              <Input
-                className="text-[14px]"
-                type="date"
-                placeholder="Ngày sinh"
-                label="Ngày sinh"
-              />
-            </div>
-            <div>
-              <Input
-                className="text-[14px]"
-                type="text"
-                placeholder="Số điện thoại"
-                label="Số điện thoại"
-              />
-            </div>
-            <div>
-              <Input
-                className="text-[14px]"
-                type="text"
-                placeholder="Số điện thoại phụ huynh"
-                label="Số điện thoại phụ huynh"
-              />
-            </div>
-            <div>
-              <Input
-                className="text-[14px]"
-                type="text"
-                placeholder="Địa chỉ"
-                label="Địa chỉ"
-              />
-            </div>
-            <div className="flex items-center gap-4">
-              <h1 className="text-gray-700">Giới tính:{"  "}</h1>
-              <div className="flex items-center gap-2">
-                <label
-                  htmlFor="MALE"
-                  className="cursor-pointer h-8 w-8 bg-background border-2  rounded-full flex justify-center items-center relative"
-                >
-                  <input
-                    type="radio"
-                    id="MALE"
-                    className="hidden peer"
-                    value={"MALE"}
-                    name="gender"
-                  />
-                  <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
-                  <div className="w-4 h-4 bg-primary-darkest scale-0  peer-checked:scale-100 transition-transform rounded-full"></div>
-                </label>
-                <span>Nam</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <label
-                  htmlFor="FEMALE"
-                  className="cursor-pointer h-8 w-8 bg-background border-2  rounded-full flex justify-center items-center relative"
-                >
-                  <input
-                    type="radio"
-                    id="FEMALE"
-                    className="hidden peer"
-                    value={"FEMALE"}
-                    name="gender"
-                  />
-                  <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
-                  <div className="w-4 h-4 bg-primary-darkest scale-0  peer-checked:scale-100 transition-transform rounded-full"></div>
-                </label>
-                <span>Nữ</span>
+            <div className="grid grid-cols-5 divide-x-2 gap-10">
+              <StudentBasicInformation />
+              <div className="col-span-3 flex flex-col gap-4 pl-10">
+                <StudentGradeSelector />
+                <StudentBranchSelector />
+                <StudentCoursesSelector />
               </div>
             </div>
-
-            <Button className="mt-6 w-full" type="submit">
+            <Button
+              isPending={loadingRegister}
+              className="mt-6 w-full"
+              type="submit"
+            >
               Đăng ký
             </Button>
           </form>
         </div>
       </div>
-    </>
+    </FormProvider>
   );
 }
