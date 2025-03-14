@@ -344,7 +344,7 @@ const ClassDetail = () => {
                 )}
               </span>
               <h2 className="text-2xl font-semibold text-highlight-text hover:text-[#FAB564] transition-all">
-                Lộ trình môn học
+                Nội dung môn học
               </h2>
             </div>
 
@@ -502,12 +502,14 @@ const ClassDetail = () => {
                           >
                             Bắt đầu
                           </button>
-                          <button
-                            className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
-                            onClick={() => handleReviewQuiz(quiz.id)}
-                          >
-                            Review
-                          </button>
+                          {quiz.completed && (
+                            <button
+                              className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
+                              onClick={() => handleReviewQuiz(quiz.id)}
+                            >
+                              Review
+                            </button>
+                          )}
                         </div>
                       </li>
                     ))}
@@ -581,12 +583,14 @@ const ClassDetail = () => {
                           >
                             Bắt đầu
                           </button>
-                          <button
-                            className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
-                            onClick={() => handleReviewExercise(exercise.id)}
-                          >
-                            Review
-                          </button>
+                          {exercise.completed && (
+                            <button
+                              className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
+                              onClick={() => handleReviewQuiz(exercise.id)}
+                            >
+                              Review
+                            </button>
+                          )}
                         </div>
                       </li>
                     ))}

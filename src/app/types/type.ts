@@ -610,6 +610,7 @@ export type QuizItem = {
       name: "Teacher" | "Student" | "Admin";
     };
   };
+  completed: boolean;
 };
 
 export type QnA = {

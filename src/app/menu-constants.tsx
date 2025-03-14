@@ -19,6 +19,8 @@ import { GiMoneyStack } from "react-icons/gi";
 import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
+import { HiOutlineDocumentText } from "react-icons/hi";
+import { FaClipboardList } from "react-icons/fa6";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -60,6 +62,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý lớp học",
     path: "/admin/classes",
     icon: <SiGoogleclassroom size={20} />,
+  },
+  {
+    title: "Quản lý tài liệu",
+    path: "/admin/materials",
+    icon: <HiOutlineDocumentText size={20} />,
   },
   {
     title: "Quản lý học phí",
@@ -116,6 +123,11 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
     title: "Lịch học",
     path: "/teacher/schedule",
     icon: <BsCalendar size={20} />,
+  },
+  {
+    title: "Điểm danh",
+    path: "/teacher/attendance",
+    icon: <FaClipboardList size={20} />,
   },
   {
     title: "Học phí",
