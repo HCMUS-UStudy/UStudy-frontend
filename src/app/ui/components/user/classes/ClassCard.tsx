@@ -1,9 +1,9 @@
 import React from "react";
-import { FaRegClock } from "react-icons/fa6";
-import { MdMeetingRoom } from "react-icons/md";
-import { MdPeopleOutline } from "react-icons/md";
-import { GrScheduleNew } from "react-icons/gr";
-import { ClassTeacher, ClassTime } from "@/app/types/type";
+// import { FaRegClock } from "react-icons/fa6";
+// import { MdMeetingRoom } from "react-icons/md";
+// import { MdPeopleOutline } from "react-icons/md";
+// import { GrScheduleNew } from "react-icons/gr";
+import { ClassTeacher } from "@/app/types/type";
 import { useRouter } from "next/navigation";
 
 export default function ClassCard({
@@ -18,62 +18,48 @@ export default function ClassCard({
     router.push(`/teacher/classes/${cls.id}`);
   };
 
-  const getDay = (classTimes: ClassTime[]) => {
-    const days = classTimes.map((item) => item.day);
-    days.sort((a, b) => a - b);
-    // Chuyển thành chuỗi "T2", "T6", ...
-    const dayLabels = days.map((day) => (day === 1 ? "CN" : `T${day}`));
-    return dayLabels.join(" - ");
-  };
-
-  const getTime = (classTimes: ClassTime[]) => {
-    return (
-      classTimes[0].startTime.split(":").slice(0, 2).join(":") +
-      " - " +
-      classTimes[0].endTime.split(":").slice(0, 2).join(":")
-    );
-  };
-
-  const details = [
-    { icon: <MdMeetingRoom className="font-semibold" />, text: cls.room?.name },
-    {
-      icon: <FaRegClock className="font-semibold" />,
-      // text: getTime(cls.classTimes),
-      text: "",
-    },
-    {
-      icon: <GrScheduleNew className="font-semibold" />,
-      // text: getDay(cls.classTimes),
-      text: "",
-    },
-    {
-      icon: <MdPeopleOutline className="font-semibold" />,
-      // text: `${cls.students.length} học sinh`,
-      text: "",
-    },
-  ];
-
   return (
     <div
-      className={`border rounded-2xl shadow-md p-5 cursor-pointer ${!completed ? "bg-white hover:bg-slate-50" : "bg-slate-100 hover:bg-slate-200"}`}
+      className={`border border-slate-200 rounded-2xl shadow-sm p-5 cursor-pointer 
+      ${!completed ? "bg-white hover:shadow-md hover:shadow-primary-light" : "bg-slate-100 hover:bg-slate-200"}`}
       onClick={handleClick}
     >
       <h2 className="text-lg font-semibold">{cls.name}</h2>
-      <div className="flex-col py-2">
-        {details.map((detail, index) => (
-          <p key={index} className="flex mt-2.5 items-center gap-2.5">
-            {detail.icon}
-            {detail.text}
-          </p>
-        ))}
-      </div>
-      {/* <button 
-        className={`mt-4 w-full py-2 px-4 rounded-2xl transition text-black
-                  ${!completed ? "bg-white" : "bg-slate-500 hover:bg-slate-600"}`}
-        onClick={handleClick}
-      >
-				Xem chi tiết
-			</button> */}
+      <p className="bg-gray-200 rounded-lg text-sm text-slate-800 w-fit px-1 mt-1">
+        {cls.course?.name} - {cls.grade.name}
+      </p>
+      <div className="flex-col py-2 text-sm">25 học sinh</div>
+      {!completed && (
+        <div className="flex items-center gap-4">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-primary-dark h-2.5 rounded-full"
+              style={{
+                width: `${
+                  ((new Date(cls.endDate).getTime() - Date.now()) /
+                    (new Date(cls.endDate).getTime() -
+                      new Date(cls.startDate).getTime())) *
+                  100
+                }%`,
+              }}
+            ></div>
+          </div>
+          <div className="text-[12px] text-primary-darkest">
+            {" "}
+            {Math.round(
+              ((new Date(cls.endDate).getTime() - Date.now()) /
+                (new Date(cls.endDate).getTime() -
+                  new Date(cls.startDate).getTime())) *
+                100,
+            )}
+            {"%"}
+          </div>
+        </div>
+      )}
+      <p className="text-[14px] text-gray-900 mt-1">
+        {new Date(cls.endDate).toLocaleDateString("en-GB")} -{" "}
+        {new Date(cls.startDate).toLocaleDateString("en-GB")}
+      </p>
     </div>
   );
 }

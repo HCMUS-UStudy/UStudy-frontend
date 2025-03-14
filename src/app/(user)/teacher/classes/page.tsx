@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { FiFilter } from "react-icons/fi";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import ClassList from "@/app/ui/components/user/classes/ClassList";
 import { ClassTeacher } from "@/app/types/type";
 import { getClassesForTeacher } from "@/app/lib/services/class";
@@ -11,9 +12,6 @@ import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
 export default function Classes() {
   const [ongoingClasses, setOngoingClasses] = useState<ClassTeacher[]>([]);
   const [completedClasses, setCompletedClasses] = useState<ClassTeacher[]>([]);
-
-  const dispatch = useDispatch();
-  // const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -35,17 +33,32 @@ export default function Classes() {
     };
 
     fetchClasses();
-  }, [dispatch]);
+  }, []);
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Danh sách lớp học</h1>
       <Tabs value="ongoing">
         <TabList>
           <Tab value="ongoing" label="Lớp đang dạy" />
           <Tab value="completed" label="Lớp đã hoàn thành" />
         </TabList>
 
+        <div className="flex items-center justify-between mb-4 gap-2">
+          <SearchField
+            className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+            placeholder="Tìm kiếm lớp học..."
+            // onSearch={handleSearch}
+          />
+          <div className="flex items-center gap-6 px-4">
+            <div className="flex items-center gap-3 cursor-pointer">
+              Lọc
+              <FiFilter className="w-5 h-5" />
+            </div>
+            <div className="flex items-center cursor-pointer">
+              <HiAdjustmentsHorizontal className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
         <TabPanel value={"ongoing"}>
           <ClassList classes={ongoingClasses} completed={false} />
         </TabPanel>

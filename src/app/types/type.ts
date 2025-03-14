@@ -509,31 +509,23 @@ export type Teacher = {
   active: boolean;
 };
 
-type UserForTeacher = {
-  gender: string;
-  createdAt: string;
-  active: boolean;
-};
-
-export type ClassTime = {
+export type classSessions = {
   id: string;
   day: number;
-  startTime: string;
-  endTime: string;
+  session: Session;
+  room: Room;
 };
 
 export type ClassTeacher = {
   id: string;
   name: string;
   description: string;
+  startDate: string;
+  endDate: string;
   grade: Grade;
   course: Course;
-  room: Room;
-  fee: number;
-  teacher: UserForTeacher;
-  students: UserForTeacher[];
-  classTimes: ClassTime[];
   status: string | null; // Status can be null
+  classSessions: classSessions[];
 };
 
 export type TeacherRegister = {
