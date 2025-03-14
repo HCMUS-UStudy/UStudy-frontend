@@ -1,7 +1,7 @@
 import axiosInstance from "@/app/lib/axios";
 
 export const getMaterialsByClassId = async (
-  query: string,
+  filter: string,
   currentPage: number,
   classId: string,
 ) => {
@@ -9,7 +9,7 @@ export const getMaterialsByClassId = async (
     params: {
       page: currentPage,
       limit: 100,
-      filter: query,
+      filter: filter,
     },
   });
   return response.data.data;

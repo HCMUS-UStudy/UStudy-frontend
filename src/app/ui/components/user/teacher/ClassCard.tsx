@@ -57,8 +57,8 @@ export default function ClassCard({
         </div>
       )}
       <p className="text-[14px] text-gray-900 mt-1">
-        {new Date(cls.endDate).toLocaleDateString("en-GB")} -{" "}
-        {new Date(cls.startDate).toLocaleDateString("en-GB")}
+        {new Date(cls.startDate).toLocaleDateString("en-GB")} -{" "}
+        {new Date(cls.endDate).toLocaleDateString("en-GB")}
       </p>
     </div>
   );
