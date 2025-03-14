@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { FiFilter } from "react-icons/fi";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import ClassList from "@/app/ui/components/user/classes/ClassList";
+import ClassList from "@/app/ui/components/user/teacher/ClassList";
 import { ClassTeacher } from "@/app/types/type";
 import { getClassesForTeacher } from "@/app/lib/services/class";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
