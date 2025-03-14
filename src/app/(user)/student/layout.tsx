@@ -1,30 +1,20 @@
-import React from "react";
-import HeaderStuTeach from "@/app/ui/components/user/Header";
-import { BreadcrumbProvider } from "@/app/context/BreadcrumbContext";
-import PageWrapperStu from "@/app/ui/components/user/PageWrapperStu";
-import SidebarStu from "@/app/ui/components/_common/sidebar/SidebarStu";
+"use client";
+import PageWrapper from "@/app/ui/components/_common/PageWrapper";
+import Sidebar from "@/app/ui/components/_common/sidebar/Sidebar";
+import Header from "@/app/ui/components/user/Header";
 
-export default function ClerkLayout({
+export default function TeacherLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <>
-      {/* <Sidebar menuItems={SIDENAV_ITEMS_STUDENT} />
+    <div className="bg-background">
+      <Sidebar role="student" />
       <div className="flex flex-col h-full w-full">
-        <HeaderStuTeach />
-        <PageWrapper>{children}</PageWrapper>
-      </div> */}
-      <BreadcrumbProvider>
-        <div>
-          <SidebarStu />
-          <div>
-            <HeaderStuTeach />
-            <PageWrapperStu>{children}</PageWrapperStu>
-          </div>
-        </div>
-      </BreadcrumbProvider>
-    </>
+        <Header role="student" />
+        <PageWrapper> {children} </PageWrapper>
+      </div>
+    </div>
   );
 }

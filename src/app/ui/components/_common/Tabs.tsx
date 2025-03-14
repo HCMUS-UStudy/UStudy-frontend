@@ -88,7 +88,7 @@ interface TabListProps {
  */
 const TabList: React.FC<TabListProps> = ({ children, className }) => {
   return (
-    <div className={cn("flex space-x-4 border-b mb-6", className)}>
+    <div className={cn("flex space-x-4 border-b mb-4", className)}>
       {children}
     </div>
   );
@@ -120,9 +120,10 @@ const Tab: React.FC<TabProps> = ({ label, value, className }) => {
   return (
     <button
       className={cn(
-        "py-2 px-4 text-lg font-semibold",
+        "py-2 px-4 text-[16px]",
         {
-          "border-b-2 border-primary text-primary": activeTab === value,
+          "border-b-2 font-semibold border-primary text-primary-dark":
+            activeTab === value,
           "text-gray-700": activeTab !== value,
         },
         className,
