@@ -8,6 +8,8 @@ export async function setUserDataCookies(userData: string) {
   const cookieStore = await cookies();
   cookieStore.set("userData", userData, {
     httpOnly: true,
+    secure: true,
+    sameSite: "strict",
   });
 }
 
@@ -15,6 +17,7 @@ export async function setTokensAndUserDataCookies(
   accessToken?: string,
   refreshToken?: string,
   userData?: string,
+  permissions?: string,
 ) {
   const cookieStore = await cookies();
   if (accessToken) {
@@ -35,6 +38,13 @@ export async function setTokensAndUserDataCookies(
   }
   if (userData) {
     cookieStore.set("userData", userData, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "strict",
+    });
+  }
+  if (permissions) {
+    cookieStore.set("permissions", permissions, {
       secure: true,
       httpOnly: true,
       sameSite: "strict",
@@ -64,6 +74,7 @@ export async function handleLogoutCookies() {
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
   cookieStore.delete("userData");
+  cookieStore.delete("permissions");
   switch (defaultRoute) {
     case "ADMIN":
       redirect("/admin/login");

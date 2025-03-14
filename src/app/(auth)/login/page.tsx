@@ -52,6 +52,7 @@ export default function Login({ isUser = true }: { isUser?: boolean }) {
         response.data.access_token,
         response.data.refresh_token,
         JSON.stringify(response.data.user),
+        JSON.stringify(response.data.permissions),
       );
       // if (isUser) {
       //   setUserInfo(JSON.stringify(response.data.user));

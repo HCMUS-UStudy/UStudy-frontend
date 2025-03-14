@@ -1,20 +1,20 @@
 import React from "react";
 
-//import CourseTable from "@/app/ui/components/admin/courses/CourseTable";
 import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
-
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { HiAdjustments } from "react-icons/hi";
 import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
 import RoleDisplay from "@/app/ui/components/admin/roles/RoleDisplay";
 
-export default async function RolePage(props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-    subject?: string;
-  }>;
-}) {
+// props: {
+//   searchParams?: Promise<{
+//     query?: string;
+//     page?: string;
+//     subject?: string;
+//   }>;
+// }
+
+export default async function RolePage() {
   //const searchParams = await props.searchParams;
   // const query = searchParams?.query || "";
   // const subject = searchParams?.subject || "All";
