@@ -20,8 +20,8 @@ const BranchSelector: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await getAllBranches(0, 20);
-        console.log("response", response);
-        const branchData = response.content.sort((a: Branch, b: Branch) =>
+        // console.log("response", response);
+        const branchData = [...response.content].sort((a: Branch, b: Branch) =>
           a.name.localeCompare(b.name),
         );
 

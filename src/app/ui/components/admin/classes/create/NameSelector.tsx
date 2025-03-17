@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
-import { CreateClassInputs } from "@/app/(admin)/clerk/classes/create/page";
+import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 
 export default function NameSelector() {
   const {

@@ -32,7 +32,7 @@ const ExercisePage = () => {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
-  const [finalScore, setFinalScore] = useState<number | null>(null);
+  const [finalScore] = useState<number | null>(null);
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [attachments, setAttachments] = useState<{ [key: string]: File[] }>({});

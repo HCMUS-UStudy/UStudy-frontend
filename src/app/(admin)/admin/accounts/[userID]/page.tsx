@@ -9,6 +9,7 @@ import { getListUserDetail } from "@/app/lib/services/user";
 import { AccountDetailItem, ClassUserItem } from "@/app/types/type";
 import { getListUserClass } from "@/app/lib/services/class";
 import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
+import Image from "next/image";
 
 const AccountDetail = () => {
   const params = useParams();
@@ -118,7 +119,7 @@ const AccountDetail = () => {
             </div>
             {user && (
               <div className="flex items-center gap-4">
-                <img
+                <Image
                   src={user.avatar}
                   alt="Avatar"
                   className="w-24 h-24 rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"

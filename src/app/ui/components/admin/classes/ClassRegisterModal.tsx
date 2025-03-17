@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { RegisterClassItem, MemberItem } from "@/app/types/type";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -423,7 +422,6 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
   return (
     <>
-      <ToastContainer />
       <Dialog
         className="min-h-[90vh] min-w-[80vw] m-4"
         isOpen={isOpen}
