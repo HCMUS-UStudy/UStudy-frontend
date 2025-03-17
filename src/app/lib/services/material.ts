@@ -32,3 +32,16 @@ export const getMaterialsByParent = async (
   );
   return response.data.data;
 };
+
+export const getListSystemMaterial = async (
+  currentPage: number,
+  limit: number,
+) => {
+  const response = await axiosInstance.get("/material/system/list", {
+    params: {
+      page: currentPage,
+      limit: limit,
+    },
+  });
+  return response.data.data;
+};

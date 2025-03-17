@@ -4,6 +4,7 @@ import { getMaterialsByParent } from "@/app/lib/services/material";
 import { MaterialItem } from "@/app/types/type";
 import Loading from "@/app/ui/components/_common/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import {
   FaFolder,
@@ -204,7 +205,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                   {item.name}
                 </span>
               </div>
-              <img
+              <Image
                 src={getThumbnail(item.name, item.type)}
                 alt={item.name}
                 className="w-32 h-32 object-cover rounded-lg mx-auto transition-transform duration-300 hover:scale-105"
@@ -233,7 +234,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                   {item.name}
                 </span>
               </div>
-              <img
+              <Image
                 src={getThumbnail(item.name, item.type)}
                 alt={item.name}
                 className="w-16 h-16 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
