@@ -22,6 +22,7 @@ export async function setTokensAndUserDataCookies(
 ) {
   const cookieStore = await cookies();
   if (accessToken) {
+    console.log("set access token");
     cookieStore.set("accessToken", accessToken, {
       secure: true,
       httpOnly: true,
