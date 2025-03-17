@@ -22,7 +22,7 @@ export async function setTokensAndUserDataCookies(
 ) {
   const cookieStore = await cookies();
   if (accessToken) {
-    cookieStore.set("accessToken2", accessToken, {
+    cookieStore.set("accessToken", accessToken, {
       secure: true,
       httpOnly: true,
       sameSite: "strict",
