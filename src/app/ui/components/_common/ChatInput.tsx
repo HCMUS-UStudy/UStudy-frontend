@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FaPaperclip, FaSmile, FaTimes } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
+import { FaPaperPlane } from "react-icons/fa6";
 
 interface ChatInputProps {
   currentQuestionId: string;
@@ -19,24 +20,29 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [message, setMessage] = useState<{ [key: string]: string }>({});
   const [attachments, setAttachments] = useState<{ [key: string]: File[] }>({});
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  // const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
+  //   null,
+  // );
+
+  // const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   const text = e.target.value;
+  //   setMessage((prev) => ({ ...prev, [currentQuestionId]: text }));
+
+  //   if (typingTimeout) clearTimeout(typingTimeout);
+
+  //   const newTimeout = setTimeout(() => {
+  //     onSendMessage(currentQuestionId, {
+  //       text,
+  //       files: attachments[currentQuestionId] || [],
+  //     });
+  //   }, 500); // Gửi sau 500ms nếu không nhập thêm
+
+  //   setTypingTimeout(newTimeout);
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
     setMessage((prev) => ({ ...prev, [currentQuestionId]: text }));
-
-    if (typingTimeout) clearTimeout(typingTimeout);
-
-    const newTimeout = setTimeout(() => {
-      onSendMessage(currentQuestionId, {
-        text,
-        files: attachments[currentQuestionId] || [],
-      });
-    }, 500); // Gửi sau 500ms nếu không nhập thêm
-
-    setTypingTimeout(newTimeout);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +61,20 @@ const ChatInput: React.FC<ChatInputProps> = ({
       [currentQuestionId]:
         prev[currentQuestionId]?.filter((_, i) => i !== index) || [],
     }));
+  };
+
+  const handleSendMessage = () => {
+    if (!message[currentQuestionId] && !attachments[currentQuestionId]?.length)
+      return;
+
+    onSendMessage(currentQuestionId, {
+      text: message[currentQuestionId] || "",
+      files: attachments[currentQuestionId] || [],
+    });
+
+    // Reset input
+    setMessage((prev) => ({ ...prev, [currentQuestionId]: "" }));
+    setAttachments((prev) => ({ ...prev, [currentQuestionId]: [] }));
   };
 
   return (
@@ -97,6 +117,13 @@ const ChatInput: React.FC<ChatInputProps> = ({
             onChange={handleFileChange}
           />
         </label>
+
+        <button
+          className="ml-2 text-blue-500 hover:text-blue-700 transition-all"
+          onClick={handleSendMessage}
+        >
+          <FaPaperPlane size={22} />
+        </button>
       </div>
 
       {/* Hiển thị danh sách tệp đính kèm */}

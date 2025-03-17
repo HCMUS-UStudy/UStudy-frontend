@@ -1,10 +1,12 @@
 "use client";
 
+import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 import { getClassById } from "@/app/lib/services/class";
 import { getMaterialsByClassId } from "@/app/lib/services/material";
 import { getQuizByClassId, getReviewQuiz } from "@/app/lib/services/quiz";
 import {
   ClassUserItem,
+  ExerciseItem,
   MaterialItem,
   QuizItem,
   QuizReview,
@@ -37,7 +39,7 @@ const ClassDetail = () => {
   const [quizItem, setQuizItem] = useState<QuizItem[]>([]);
   const [reviewQuiz, setReviewQuiz] = useState<QuizReview>();
 
-  const [exerciseItem, setExerciseItem] = useState<QuizItem[]>([]);
+  const [exerciseItem, setExerciseItem] = useState<ExerciseItem[]>([]);
 
   const [isReviewing, setIsReviewing] = useState(false);
   const [isOverviewOpen, setIsOverviewOpen] = useState(false); // Track the state of the "Tổng quan" tab
@@ -155,11 +157,12 @@ const ClassDetail = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await getQuizByClassId(0, 10, classId as string);
+      const response = await getAssignmentByClassId(0, 10, classId as string);
+
       setExerciseItem(response.content);
     } catch (err) {
-      console.error("Error fetching quiz:", err);
-      setError("Không thể tải thông tin quiz của lớp học.");
+      console.error("Error fetching assignment:", err);
+      setError("Không thể tải thông tin assignent của lớp học.");
     } finally {
       console.log(loading);
       console.log(error);
@@ -232,9 +235,9 @@ const ClassDetail = () => {
     router.push(`/student/classes/${classId}/exercise/${exerciseId}`);
   };
 
-  const handleReviewExercise = async (exerciseId: string) => {
-    console.error("Error fetching review quiz:", exerciseId);
-  };
+  // const handleReviewExercise = async (exerciseId: string) => {
+  //   console.error("Error fetching review quiz:", exerciseId);
+  // };
 
   if (!subject) {
     return (
@@ -583,14 +586,14 @@ const ClassDetail = () => {
                           >
                             Bắt đầu
                           </button>
-                          {exercise.completed && (
+                          {/* {exercise.completed && (
                             <button
                               className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
                               onClick={() => handleReviewQuiz(exercise.id)}
                             >
                               Review
                             </button>
-                          )}
+                          )} */}
                         </div>
                       </li>
                     ))}

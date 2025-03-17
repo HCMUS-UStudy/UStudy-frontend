@@ -4,6 +4,7 @@ import { QuizReview } from "@/app/types/type";
 import React, { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import ReviewQuiz from "./ReviewQuiz";
+import { Button } from "@/app/ui/components/_common/Button";
 
 interface ScoreModalProps {
   quizId: string;
@@ -59,18 +60,18 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
                 : "Đang tải..."}
             </p>
             <div className="flex justify-center gap-4">
-              <button
+              <Button
                 onClick={onClose}
                 className="bg-gradient-to-r from-gray-400 to-gray-500 text-white px-6 py-2 rounded-full hover:from-gray-500 hover:to-gray-600 transition-colors shadow-md"
               >
                 Đóng
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => handleReviewQuiz()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-full hover:from-blue-600 hover:to-indigo-600 transition-colors shadow-md"
+                className="bg-gradient-to-r from-primary-darker to-primary-darkest text-white px-6 py-2 rounded-full hover:from-primary-dark hover:to-primary-darker transition-colors shadow-md"
               >
                 Xem Review
-              </button>
+              </Button>
             </div>
           </div>
         </div>

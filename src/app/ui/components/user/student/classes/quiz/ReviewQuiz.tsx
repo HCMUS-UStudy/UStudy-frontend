@@ -1,5 +1,7 @@
 "use client";
 
+import { QuizReview } from "@/app/types/type";
+import { Button } from "@/app/ui/components/_common/Button";
 import React, { useState } from "react";
 import {
   FaCheckCircle,
@@ -7,28 +9,6 @@ import {
   FaChevronRight,
   FaTimesCircle,
 } from "react-icons/fa";
-
-export type QuizReview = {
-  quizId: string;
-  title: string;
-  score: number;
-  questions: QuestionReview[];
-};
-
-export type QuestionReview = {
-  questionId: string;
-  description: string;
-  selectedOption: Option;
-  correctOption: Option;
-  allOptions: Option[];
-  correct: boolean;
-};
-
-export type Option = {
-  optionId: string;
-  description: string;
-  correct: boolean;
-};
 
 interface ReviewQuizProps {
   reviewData: QuizReview;
@@ -44,7 +24,7 @@ const ReviewQuiz: React.FC<ReviewQuizProps> = ({ reviewData }) => {
     <div className="flex w-full max-w-6xl gap-6">
       {/* Nội dung câu hỏi */}
       <div className="bg-white shadow-lg rounded-3xl w-full p-8 border border-gray-300">
-        <h3 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        <h3 className="text-3xl font-bold mb-6 text-center text-primary-darkest">
           {reviewData.title}
         </h3>
 
@@ -80,15 +60,15 @@ const ReviewQuiz: React.FC<ReviewQuizProps> = ({ reviewData }) => {
 
         {/* Nút điều hướng */}
         <div className="flex justify-between">
-          <button
+          <Button
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg flex items-center"
             onClick={() => setCurrentIndex(Math.max(currentIndex - 1, 0))}
           >
             <FaChevronLeft className="mr-1" />
             Trước
-          </button>
-          <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg flex items-center"
+          </Button>
+          <Button
+            className="px-4 py-2 bg-primary-darker text-white shadow-md hover:bg-primary-darkest rounded-lg flex items-center"
             onClick={() =>
               setCurrentIndex(
                 Math.min(currentIndex + 1, reviewData.questions.length - 1),
@@ -97,7 +77,7 @@ const ReviewQuiz: React.FC<ReviewQuizProps> = ({ reviewData }) => {
           >
             Tiếp theo
             <FaChevronRight className="ml-1" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -108,7 +88,7 @@ const ReviewQuiz: React.FC<ReviewQuizProps> = ({ reviewData }) => {
         </h4>
         <div className="grid grid-cols-4 gap-3">
           {reviewData.questions.map((q, index) => (
-            <button
+            <Button
               key={index}
               className={`w-10 h-10 rounded-full flex items-center justify-center 
                 ${q.correct ? "bg-green-500 text-white" : "bg-red-500 text-white"}
@@ -117,7 +97,7 @@ const ReviewQuiz: React.FC<ReviewQuizProps> = ({ reviewData }) => {
             >
               {!q.correct && <FaTimesCircle className="text-white mr-1" />}
               {index + 1}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
