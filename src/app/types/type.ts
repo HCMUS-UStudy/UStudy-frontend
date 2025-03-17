@@ -465,6 +465,7 @@ export type ChapterData = {
 export type MaterialData = {
   content: MaterialItem[];
   totalPages: number;
+  totalElements: number;
 };
 
 type Grade = {

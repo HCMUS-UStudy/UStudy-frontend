@@ -1,7 +1,7 @@
 "use client";
 
 import { getClassById } from "@/app/lib/services/class";
-import { getMaterialsByClassId } from "@/app/lib/services/material";
+import { getMaterialsByClassId } from "@/app/lib/services/class-material";
 import { getQuizByClassId, getReviewQuiz } from "@/app/lib/services/quiz";
 import {
   ClassUserItem,
