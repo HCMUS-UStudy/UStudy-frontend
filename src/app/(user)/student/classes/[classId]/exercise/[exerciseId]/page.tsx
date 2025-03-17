@@ -1,10 +1,12 @@
 "use client";
 import { getDetailAssignment } from "@/app/lib/services/assignment";
 import { AssignmentDetails } from "@/app/types/type";
+import { Button } from "@/app/ui/components/_common/Button";
 import ChatInput from "@/app/ui/components/_common/ChatInput";
 import ScoreModal from "@/app/ui/components/user/student/classes/quiz/ScoreModal";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const ExercisePage = () => {
   const params = useParams();
@@ -131,6 +133,8 @@ const ExercisePage = () => {
   };
 
   const editAnswer = (questionId: string) => {
+    console.log(message);
+    console.log(attachments);
     setMessage((prev) => ({
       ...prev,
       [questionId]: submittedAnswers[questionId].text,
@@ -141,16 +145,19 @@ const ExercisePage = () => {
     }));
   };
 
-  const sendAdditionalMessage = (questionId: string) => {
-    setSubmittedAnswers((prev) => ({
-      ...prev,
-      [questionId]: {
-        text: prev[questionId].text + "\n" + message[questionId],
-        files: [...prev[questionId].files, ...(attachments[questionId] || [])],
-      },
-    }));
-    setMessage((prev) => ({ ...prev, [questionId]: "" }));
-    setAttachments((prev) => ({ ...prev, [questionId]: [] }));
+  const handleDelete = async (exerciseId: string) => {
+    console.log(exerciseId);
+    const isConfirmed = window.confirm(
+      "Bạn có chắc chắn muốn xóa bài tập này?",
+    );
+    if (!isConfirmed) return;
+
+    try {
+      toast.success("Xóa thành công!");
+    } catch (error) {
+      console.error("Lỗi khi xóa bài tập:", error);
+      toast.error("Có lỗi xảy ra, vui lòng thử lại!");
+    }
   };
 
   const removeSubmittedFile = (questionId: string, fileIndex: number) => {
@@ -218,12 +225,12 @@ const ExercisePage = () => {
                 <h4 className="text-xl font-semibold text-primary-darker mb-3">
                   📄 Tệp bài tập
                 </h4>
-                <button
+                <Button
                   onClick={() => downloadFile(filePath)}
                   className="px-4 py-2 bg-primary-darker text-white font-medium rounded-md transition-all duration-300 ease-in-out shadow-md hover:bg-hover-primary hover:text-primary-darkest"
                 >
                   ⬇ Bấm vào đây để tải file về
-                </button>
+                </Button>
               </div>
             )}
 
@@ -251,14 +258,14 @@ const ExercisePage = () => {
                             <span className="text-sm font-medium text-green-700 truncate max-w-[150px]">
                               {file.name}
                             </span>
-                            <button
+                            <Button
                               onClick={() =>
                                 removeSubmittedFile(currentExercise.id, index)
                               }
                               className="text-red-500 hover:text-red-700 transition-all"
                             >
                               ❌
-                            </button>
+                            </Button>
                           </div>
                         ),
                       )}
@@ -267,18 +274,18 @@ const ExercisePage = () => {
 
                   {/* Nút chỉnh sửa hoặc gửi thêm */}
                   <div className="mt-4 flex gap-3">
-                    <button
+                    <Button
                       className="px-4 py-2 bg-primary-dark text-white rounded-md shadow-md hover:bg-primary-darker transition-all"
                       onClick={() => editAnswer(currentExercise.id)}
                     >
                       ✏ Chỉnh sửa
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md shadow-md hover:bg-gray-400 transition-all"
-                      onClick={() => sendAdditionalMessage(currentExercise.id)}
+                    </Button>
+                    <Button
+                      className="px-4 py-2 bg-primary-darker text-white rounded-md shadow-md hover:bg-primary-darkest transition-all"
+                      onClick={() => handleDelete(currentExercise.id)}
                     >
-                      ➕ Gửi thêm
-                    </button>
+                      🗑 Xóa
+                    </Button>
                   </div>
                 </div>
               )}

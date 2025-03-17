@@ -120,6 +120,8 @@ const AccountDetail = () => {
             {user && (
               <div className="flex items-center gap-4">
                 <Image
+                  width={96}
+                  height={96}
                   src={user.avatar}
                   alt="Avatar"
                   className="w-24 h-24 rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
@@ -187,8 +189,8 @@ const AccountDetail = () => {
                       {Array.isArray(classes) && classes.length > 0 ? (
                         <div className="max-h-40 overflow-y-auto rounded-lg p-2">
                           <ul className="list-disc pl-4">
-                            {classes.map((classItem, index) => (
-                              <li key={index}>
+                            {classes.map((classItem) => (
+                              <li key={classItem.id}>
                                 {`${classItem.name} (${classItem.course.name} - ${classItem.grade.name})`}
                               </li>
                             ))}

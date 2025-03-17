@@ -45,3 +45,20 @@ export const getListSystemMaterial = async (
   });
   return response.data.data;
 };
+
+export const getSystemMaterialByParent = async (
+  folderId: string,
+  currentPage: number,
+  limit: number,
+  filter: string,
+) => {
+  const response = await axiosInstance.get("/material/system/list", {
+    params: {
+      folderId: folderId,
+      page: currentPage,
+      limit: limit,
+      filter: filter,
+    },
+  });
+  return response.data.data;
+};

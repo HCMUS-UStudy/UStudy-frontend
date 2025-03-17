@@ -101,7 +101,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         )}
 
         <textarea
-          className="flex-1 mx-3 p-3 border border-gray-200 rounded-lg min-h-[50px] resize-none focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"
+          className="flex-1 mx-3 p-3 border border-gray-200 rounded-lg min-h-[50px] resize-none focus:ring-2 focus:ring-primary-light focus:outline-none transition-all"
           rows={2}
           placeholder="Nhập tin nhắn..."
           value={message[currentQuestionId] || ""}
@@ -119,7 +119,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         </label>
 
         <button
-          className="ml-2 text-blue-500 hover:text-blue-700 transition-all"
+          className="ml-2 text-primary-dark hover:text-hover-primary transition-all"
           onClick={handleSendMessage}
         >
           <FaPaperPlane size={22} />
