@@ -1,5 +1,8 @@
 "use client";
-import { getDetailAssignment } from "@/app/lib/services/assignment";
+import {
+  getDetailAssignment,
+  handleDownloadFile,
+} from "@/app/lib/services/assignment";
 import { AssignmentDetails } from "@/app/types/type";
 import { Button } from "@/app/ui/components/_common/Button";
 import ChatInput from "@/app/ui/components/_common/ChatInput";
@@ -49,57 +52,55 @@ const ExercisePage = () => {
     fetchAssignmentData();
   }, [exerciseId]);
 
-  // const handleFinishQuiz = async () => {
-  //   if (!currentExercise) return;
-
-  //   console.log(showResult);
-  //   console.log(answers);
-
-  //   setShowResult(true);
-  //   setShowReview(false);
-  //   setIsSubmit(true);
-
-  //   setIsLoading(true);
-  //   // try {
-  //   //   const result = await submitQuiz(body);
-  //   //   if (result?.statusCode === "OK") {
-  //   //     console.log("Quiz submitted successfully:", result);
-  //   //     setModalOpen(true);
-  //   //     setFinalScore(result.data.score); // Cập nhật điểm vào state
-  //   //   } else {
-  //   //     alert("Failed to submit quiz!");
-  //   //   }
-  //   // } catch (error) {
-  //   //   console.error("Error submitting quiz:", error);
-  //   //   alert("An error occurred while submitting the quiz. Please try again!");
-  //   // } finally {
-  //   //   setIsLoading(false); // Tắt loading sau khi có kết quả
-  //   // }
-  // };
-
-  const downloadFile = async (url: string) => {
+  const downloadFile = async (filePath: string) => {
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      const response = await handleDownloadFile(exerciseId as string);
+
+      // Tạo URL từ Blob
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      // Lấy tên file từ header (nếu có)
+      const contentDisposition = response.headers["content-disposition"];
+      let filename = "downloaded_file"; // Tên mặc định
+
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="(.+)"/);
+        if (match && match.length > 1) {
+          filename = match[1];
+        }
+      } else {
+        // Nếu không có, lấy từ filePath
+        const urlParts = filePath.split("/");
+        filename = urlParts[urlParts.length - 1]; // Lấy phần cuối cùng của đường dẫn
       }
 
-      // Tạo Blob từ dữ liệu tải về
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
 
-      // Tạo thẻ a để tải file
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = url.split("/").pop() || "downloaded_file"; // Lấy tên file từ URL
-      document.body.appendChild(link);
-      link.click();
+      // Dọn dẹp URL sau khi tải xong
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      // Xóa link sau khi tải xong
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
+      toast.success("Tải file thành công!", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
     } catch (error) {
       console.error("Lỗi khi tải file:", error);
+      toast.error("Tải file thất bại!", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
     }
   };
 
