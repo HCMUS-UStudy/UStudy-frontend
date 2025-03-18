@@ -70,7 +70,7 @@ export default async function Home() {
           <Logo />
           <LandingPageSideBar />
           <Button
-            className="px-10 py-3 rounded-[20px] text-[17px] min-[320px]:hidden md:flex hover:scale-110"
+            className="px-10 py-3 rounded-[20px] text-[17px] min-[320px]:hidden md:flex hover:scale-105 transition-all duration-300"
             type="submit"
           >
             <Link
@@ -79,7 +79,7 @@ export default async function Home() {
             >
               Đăng nhập
             </Link>
-            <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-250" />
+            <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
           </Button>
         </div>
         <div className="flex flex-col md:grid grid-cols-5 justify-between gap-5 px-3 md:px-5 lg:px-2 pt-10">

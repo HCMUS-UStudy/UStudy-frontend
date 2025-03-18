@@ -13,6 +13,8 @@ export default function StudentCoursesSelector() {
     clearErrors,
     formState: { errors },
     watch,
+    setError,
+    getValues,
   } = useFormContext<StudentRegisterInputs>();
   const selectedGrade = watch("grades");
   const selectedCourses = watch("courses");
@@ -65,13 +67,15 @@ export default function StudentCoursesSelector() {
         setClassSessions(updatedClassSessions);
       }
       clearErrors("classTimes");
+      if (getValues("courses").length !== 0) {
+        clearErrors("courses");
+      } else {
+        setError("courses", { message: "Chọn tối thiểu một môn học" });
+      }
     } catch (error) {
       console.log(error);
     } finally {
       setLoadingClassSession(false);
-    }
-    if (selectedCourses.length !== 0) {
-      clearErrors("courses");
     }
   };
 
