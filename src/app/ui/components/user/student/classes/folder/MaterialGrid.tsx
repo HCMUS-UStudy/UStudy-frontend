@@ -6,6 +6,7 @@ import { Button } from "@/app/ui/components/_common/Button";
 import Loading from "@/app/ui/components/_common/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import {
   FaFolder,
@@ -33,6 +34,8 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
   const [folderHistory, setFolderHistory] = useState<
     { id: string; name: string }[]
   >([]);
+
+  const router = useRouter();
 
   const fetchMaterial = async (parentId: string | null) => {
     if (!parentId) return;
@@ -120,6 +123,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
               setCurrentFolderId(
                 Array.isArray(folderId) ? folderId[0] : folderId || null,
               );
+              router.push(`/student/classes/${classId}`);
             }}
             className="cursor-pointer text-primary-dark hover:underline"
           >
@@ -207,9 +211,11 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                 </span>
               </div>
               <Image
+                width={96}
+                height={96}
                 src={getThumbnail(item.name, item.type)}
                 alt={item.name}
-                className="w-32 h-32 object-cover rounded-lg mx-auto transition-transform duration-300 hover:scale-105"
+                className="object-cover rounded-lg mx-auto transition-transform duration-300 hover:scale-105"
               />
             </div>
           ))}
@@ -236,9 +242,11 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                 </span>
               </div>
               <Image
+                width={36}
+                height={36}
                 src={getThumbnail(item.name, item.type)}
                 alt={item.name}
-                className="w-16 h-16 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+                className="object-cover rounded-lg transition-transform duration-300 hover:scale-105"
               />
             </div>
           ))}
