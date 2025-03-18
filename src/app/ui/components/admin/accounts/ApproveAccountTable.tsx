@@ -86,6 +86,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
           searchQuery,
           selectedCourse ?? "",
         );
+        console.log(content);
         setClasses(content);
         setTotalPages(totalPages || 1);
       } catch (error) {

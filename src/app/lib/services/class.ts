@@ -24,6 +24,7 @@ export const getAllClasses = async (
       grade: gradeQuery,
     },
   });
+  console.log(response);
   return response.data.data;
 };
 

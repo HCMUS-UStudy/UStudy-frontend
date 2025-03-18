@@ -120,9 +120,11 @@ const AccountDetail = () => {
             {user && (
               <div className="flex items-center gap-4">
                 <Image
+                  width={96}
+                  height={96}
                   src={user.avatar}
                   alt="Avatar"
-                  className="w-24 h-24 rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
+                  className="rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
                 />
                 <div className="text-3xl font-bold drop-shadow-lg">
                   {user.name}

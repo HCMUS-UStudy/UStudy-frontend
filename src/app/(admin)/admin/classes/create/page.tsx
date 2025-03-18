@@ -17,7 +17,6 @@ import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import "react-toastify/ReactToastify.min.css";
 import { z } from "zod";
 
 const today = new Date().toISOString().split("T")[0];

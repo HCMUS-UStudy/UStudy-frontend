@@ -48,10 +48,10 @@ export default async function Home() {
           return (
             <div
               key={i}
-              className=" h-fit md:h-60 text-center py-4 px-5 md:px-10 flex flex-col justify-center items-center gap-1 md:gap-3 bg-white border border-slate-300 rounded-xl"
+              className="lg:h-72 text-center py-6 px-5 md:px-10 flex flex-col justify-center items-center gap-1 md:gap-3 bg-white border border-slate-300 rounded-xl"
             >
               {/* <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" /> */}
-              <div className="text-lg md:text-2xl font-bold">
+              <div className="text-xl xl:text-2xl font-bold">
                 {c.FeatureName}
               </div>
               <div className="text-secondary-text text-xs md:text-base">
@@ -65,7 +65,7 @@ export default async function Home() {
   };
   return (
     <div className=" bg-background">
-      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[550px] rounded-b-[50px] md:rounded-b-[180px] pt-10 min-[320px]:px-8 md:px-20">
+      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[570px] lg:h-[540px] rounded-b-[50px] lg:rounded-b-[140px] pt-10 px-12 lg:px-20">
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
@@ -82,8 +82,8 @@ export default async function Home() {
             <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-250" />
           </Button>
         </div>
-        <div className="flex flex-col md:flex-row justify-between gap-5 px-3 md:px-10 pt-10">
-          <div className="flex flex-col gap-6 md:justify-between text-[35px] md:text-[50px] font-bold max-w-[800px]">
+        <div className="flex flex-col md:grid grid-cols-5 justify-between gap-5 px-3 md:px-5 lg:px-2 pt-10">
+          <div className="flex flex-col gap-6 md:col-span-3 text-[35px] lg:text-[40px] xl:text-[50px] md:mr-10 font-bold">
             <div className="leading-tight md:leading-normal">
               <div className=" tracking-tight md:tracking-normal">
                 <span className="text-highlight-text">Kết nối</span> tri thức
@@ -92,7 +92,7 @@ export default async function Home() {
                 <span className="text-highlight-text">Chinh phục</span> mọi mục
                 tiêu
               </div>
-              <div className="text-secondary-text font-light text-sm md:text-base mt-2">
+              <div className="text-secondary-text font-light text-sm md:text-sm lg:text-base mt-2">
                 UStudy giúp giáo viên, học viên và phụ huynh kết nối dễ dàng
                 trong môi trường học tập hiện đại. Với các công cụ hỗ trợ tạo
                 lớp học, giao bài tập, chấm điểm, theo dõi tiến độ và điểm danh,
@@ -102,22 +102,31 @@ export default async function Home() {
             </div>
             <StudentRegisterBtn />
           </div>
-          <Image
-            className="object-cover border-4 border-primary-darker rounded-[24px] aspect-auto md:flex hidden"
-            src="/tutorSystem3.webp"
-            width={500}
-            height={450}
-            alt="tutorSystem"
-            loading="lazy"
-          />
+          {/* <Image
+              className="object-cover border-4 border-primary-darker rounded-[24px] aspect-auto md:flex hidden"
+              src="/tutorSystem3.webp"
+              width={500}
+              height={450}
+              alt="tutorSystem"
+              loading="lazy"
+            /> */}
+          <div className="relative col-span-2 w-full md:h-[350px] lg:h-[300px]">
+            <Image
+              className="object-cover border-4 aspect-auto md:flex hidden border-primary-darker rounded-[24px]"
+              src="/tutorSystem3.webp"
+              alt="tutorSystem"
+              loading="lazy"
+              fill
+            />
+          </div>
         </div>
       </div>
-      <div className="md:px-24 mx-auto flex flex-col justify-center">
-        <div className="mt-12 mx-9 md:mx-44 text-center">
-          <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[52px]">
+      <div className="md:px-10 xl:px-24 mx-auto flex flex-col justify-center">
+        <div className="mt-12 mx-9 md:mx-36 xl:mx-44 text-center">
+          <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[40px]">
             <span className="text-highlight-text">Vì sao</span> nên chọn UStudy?
           </div>
-          <div className="text-gray-700 text-sm md:text-lg font-thin mt-3">
+          <div className="text-gray-700 text-sm md:text-base xl:text-lg font-thin mt-3">
             UStudy mang đến giải pháp quản lý học tập toàn diện, giúp giáo viên,
             học sinh, và phụ huynh kết nối dễ dàng và hiệu quả. Chúng tôi cung
             cấp các công cụ giúp bạn theo dõi tiến độ học tập, đánh giá và cải
@@ -147,15 +156,18 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-hero rounded-t-[100px] mt-[200px] py-8 flex justify-evenly">
-        <Image
-          className="md:flex hidden object-contain"
-          src="/TeacherRegister.png"
-          width={500}
-          height={500}
-          alt="TeacherRegister"
-          priority
-        />
+      <div className="bg-hero rounded-t-[70px] lg:rounded-t-[100px] mt-[200px] py-8 flex items-center justify-evenly">
+        <div className="relative xl:h-[500px] xl:w-[500px] lg:h-[350px] lg:w-[350px] hidden lg:flex">
+          <Image
+            className="object-contain"
+            src="/TeacherRegister.png"
+            // width={500}
+            // height={500}
+            alt="TeacherRegister"
+            priority
+            fill
+          />
+        </div>
         <div>
           <CreateTeacher />
         </div>

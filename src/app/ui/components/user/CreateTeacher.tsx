@@ -138,7 +138,7 @@ export default function CreateTeacher() {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5"
+        className="w-[75vw] lg:w-[500px] md:w-[550px] mt-4 flex flex-col gap-3 md:gap-5"
       >
         <div>
           <Input

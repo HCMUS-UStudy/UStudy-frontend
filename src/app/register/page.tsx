@@ -112,14 +112,14 @@ export default function StudentRegister() {
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light">
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            className="bg-foreground py-10 px-20 rounded-3xl shadow-lg z-[100] flex flex-col gap-5 w-3/4"
+            className="bg-foreground py-10 px-10 lg:px-16 xl:px-20 rounded-3xl shadow-lg z-[100] flex flex-col gap-5 w-3/4"
           >
-            <div className="text-[#F48C06] text-3xl font-bold mb-3 flex justify-center">
+            <div className="text-highlight-text text-3xl font-bold mb-3 flex justify-center">
               Ghi danh
             </div>
-            <div className="grid grid-cols-5 divide-x-2 gap-10">
+            <div className="flex flex-col lg:grid grid-cols-5 lg:divide-x-2 gap-5">
               <StudentBasicInformation />
-              <div className="col-span-3 flex flex-col gap-4 pl-10">
+              <div className="col-span-3 flex flex-col gap-4 lg:pl-10">
                 <StudentGradeSelector />
                 <StudentBranchSelector />
                 <StudentCoursesSelector />
