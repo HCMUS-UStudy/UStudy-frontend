@@ -159,7 +159,7 @@ const QuizPage = () => {
                   key={opt.id}
                   className={`p-2 rounded-md border ${
                     selectedAnswers[selectedQuestion.id] === opt.id
-                      ? "bg-blue-100 border-blue-300"
+                      ? "bg-primary-lighter border-primary-light"
                       : "bg-gray-50 border-gray-300"
                   }`}
                 >
@@ -184,33 +184,37 @@ const QuizPage = () => {
         <h3 className="text-3xl font-bold mb-8 text-primary-darkest">
           📝 Xem lại câu trả lời
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-10 auto-rows-fr">
           {currentQuiz.questions.map((q, index) => (
             <div
               key={q.id}
-              className={`p-5 rounded-xl shadow-lg transition-transform transform hover:scale-105 cursor-pointer ${
+              className={`p-5 rounded-xl shadow-lg transition-transform transform hover:scale-105 cursor-pointer flex h-full items-center justify-center text-center ${
                 selectedAnswers[q.id] ? "bg-green-50" : "bg-red-50"
               }`}
-              onClick={() => setSelectedQuestion(q)} // Cập nhật state khi click vào câu hỏi
+              onClick={() => setSelectedQuestion(q)}
             >
-              <p className="font-semibold mb-3 text-lg text-gray-800">
-                Câu {index + 1}: {q.description}
-              </p>
-              <p
-                className={`text-base ${
-                  selectedAnswers[q.id] ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {selectedAnswers[q.id]
-                  ? `Đã trả lời: ${
-                      q.options?.find((opt) => opt.id === selectedAnswers[q.id])
-                        ?.description
-                    }`
-                  : "Chưa trả lời"}
-              </p>
+              <div className="flex-1 flex flex-col justify-center items-center">
+                <p className="font-semibold text-lg text-gray-800">
+                  Câu {index + 1}: {q.description}
+                </p>
+                <p
+                  className={`pt-4 text-base ${
+                    selectedAnswers[q.id] ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {selectedAnswers[q.id]
+                    ? `Đã trả lời: ${
+                        q.options?.find(
+                          (opt) => opt.id === selectedAnswers[q.id],
+                        )?.description
+                      }`
+                    : "Chưa trả lời"}
+                </p>
+              </div>
             </div>
           ))}
         </div>
+
         <div className="flex justify-center gap-6">
           <button
             className="px-6 py-2 rounded-full bg-gray-300 text-gray-800 shadow-md hover:bg-gray-400 transition-colors transform hover:scale-105"
@@ -219,7 +223,7 @@ const QuizPage = () => {
             🔙 Trở về
           </button>
           <button
-            className="px-6 py-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition-colors transform hover:scale-105"
+            className="px-6 py-2 rounded-full bg-primary-dark text-white shadow-md hover:bg-hover-primary transition-colors transform hover:scale-105"
             onClick={handleFinishQuiz}
           >
             📤 Nộp bài

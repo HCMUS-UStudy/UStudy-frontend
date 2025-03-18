@@ -51,23 +51,9 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
   const [totalPagesCl, setTotalPagesCl] = useState(0);
   const [totalPagesStuCl, setTotalPagesStuCl] = useState(0);
 
-  useEffect(() => {
-    if (isOpen && userId) {
-      fetchDetailUser(userId);
-    }
-  }, [isOpen, userId]);
-
-  useEffect(() => {
-    if (isOpen && userId) {
-      fetchClasses();
-      fetchClassStudentsIn();
-    }
-  }, [currentPageCl, currentPageStuCl, userId]);
-
   const fetchDetailUser = async (userId: string) => {
     try {
-      const response = await getListUserDetail(userId); // Lấy tối đa 100 lớp
-      console.log(response);
+      const response = await getListUserDetail(userId);
       setUserDetail({
         genId: response.data.genId,
         name: response.data.name,
@@ -78,28 +64,18 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
   };
 
   const fetchClasses = async () => {
-    let ClassData: ClassItem[] = [];
     setLoading(true);
 
     try {
       const response = await getAllClasses("", "", "", currentPageCl - 1, 5);
 
-      ClassData = response.content.map((item) => ({
-        id: item.id,
-        name: item.name,
-        course: item.course,
-        fee: item.fee,
-        room: item.room,
-        grade: item.grade,
-      }));
-
       // Set total pages for students based on API response
       console.log(totalPagesCl);
+      setClasses(response.content);
       setTotalPagesCl(response.totalPages || 0);
     } catch (error) {
       console.log(error);
     } finally {
-      setClasses(ClassData);
       setLoading(false);
     }
   };
@@ -109,7 +85,6 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       toast.error("Vui lòng chọn một học sinh.");
       return;
     }
-    let ClassStudentData: ClassUserItem[] = [];
     setLoading(true);
 
     try {
@@ -119,22 +94,13 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
         currentPageStuCl,
         5,
       );
-
-      ClassStudentData = response.content.map((item) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        course: item.course,
-        grade: item.grade,
-      }));
-
       // Set total pages for students based on API response
       console.log(totalPagesStuCl);
+      setStuClass(response.content);
       setTotalPagesStuCl(response.totalPages || 0);
     } catch (error) {
       console.log(error);
     } finally {
-      setStuClass(ClassStudentData);
       setLoading(false);
     }
   };
@@ -240,11 +206,8 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
         });
       }
 
-      // Cập nhật dữ liệu
-      setTimeout(() => {
-        fetchClassStudentsIn();
-        fetchClasses();
-      }, 500);
+      fetchClassStudentsIn();
+      fetchClasses();
     } catch (error) {
       console.log(error);
       toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
@@ -255,6 +218,19 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen && userId) {
+      fetchDetailUser(userId);
+    }
+  }, [isOpen, userId]);
+
+  useEffect(() => {
+    if (isOpen && userId) {
+      fetchClasses();
+      fetchClassStudentsIn();
+    }
+  }, [currentPageCl, currentPageStuCl, userId]);
 
   return (
     <>
@@ -285,7 +261,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
                   fetchData={(page, searchQuery, courseQuery) =>
                     getAllClasses(searchQuery, courseQuery, "", page, 5)
                   }
-                  classes={classes}
+                  class={classes}
                   isSelecting={isSelectingClass}
                   selectedClasses={selectedClasses}
                   toggleSelection={toggleSelection}
@@ -300,7 +276,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
                   fetchData={(page, searchQuery) =>
                     getListUserClass(userId, searchQuery, page, 3)
                   }
-                  classes={stuClass}
+                  class={stuClass}
                 />
               </div>
             </DialogContent>

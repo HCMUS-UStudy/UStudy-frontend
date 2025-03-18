@@ -36,7 +36,7 @@ interface ApproveAccountTableProps {
     }[];
     totalPages: number;
   }>;
-  classes: ClassItem[] | ClassUserItem[];
+  class: ClassItem[] | ClassUserItem[];
   isSelecting?: boolean;
   selectedClasses?: string[];
   toggleSelection?: (id: string) => void;
@@ -75,7 +75,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
-  // Fetch dữ liệu khi searchQuery hoặc currentPage thay đổi
+  // // Fetch dữ liệu khi searchQuery hoặc currentPage thay đổi
   useEffect(() => {
     console.log(loading);
     const fetchClasses = async () => {
@@ -164,7 +164,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
           ]}
         />
         <TableBody>
-          {!classes.length ? (
+          {!hasData ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center">
                 Không có dữ liệu
@@ -173,7 +173,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
           ) : (
             classes.map((classItem) => (
               <TableRow
-                key={classItem.id}
+                key={`${title}-${classItem.id}`}
                 className={
                   selectedClasses?.includes(classItem.id)
                     ? "bg-green-100"
