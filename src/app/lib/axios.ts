@@ -16,7 +16,7 @@ const requestUrl = ["/auth/login"];
 
 const instance = axios.create({
   // baseURL: `${backendUrl}/api`,
-  baseURL: "http://localhost:8080/api",
+  baseURL: "https://ustudy-backend-684432473097.us-central1.run.app/api",
   headers: {
     "Content-Type": "application/json",
   },
