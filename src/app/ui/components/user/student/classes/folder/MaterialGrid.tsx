@@ -2,8 +2,11 @@
 
 import { getMaterialsByParent } from "@/app/lib/services/class-material";
 import { MaterialItem } from "@/app/types/type";
+import { Button } from "@/app/ui/components/_common/Button";
 import Loading from "@/app/ui/components/_common/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import {
   FaFolder,
@@ -31,6 +34,8 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
   const [folderHistory, setFolderHistory] = useState<
     { id: string; name: string }[]
   >([]);
+
+  const router = useRouter();
 
   const fetchMaterial = async (parentId: string | null) => {
     if (!parentId) return;
@@ -77,7 +82,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
       case "doc":
       case "docx":
         return (
-          <FaFileWord className="text-blue-500 text-[25px] flex-shrink-0" />
+          <FaFileWord className="text-primary-dark text-[25px] flex-shrink-0" />
         );
       default:
         return (
@@ -118,8 +123,9 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
               setCurrentFolderId(
                 Array.isArray(folderId) ? folderId[0] : folderId || null,
               );
+              router.push(`/student/classes/${classId}`);
             }}
-            className="cursor-pointer text-blue-500 hover:underline"
+            className="cursor-pointer text-primary-dark hover:underline"
           >
             Gốc
           </span>
@@ -132,7 +138,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                 setCurrentFolderId(folder.id);
                 setFolderHistory(folderHistory.slice(0, index));
               }}
-              className="cursor-pointer text-blue-500 hover:underline"
+              className="cursor-pointer text-primary-dark hover:underline"
             >
               {folder.name}
             </span>
@@ -156,26 +162,26 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
           placeholder="Tìm kiếm tài liệu..."
         />
         <div className="flex items-center gap-6 px-4">
-          <button
+          <Button
             onClick={() => setViewMode("grid")}
             className={`p-2 rounded-lg ${
               viewMode === "grid"
-                ? "bg-blue-100 text-blue-500"
+                ? "bg-primary-light text-primary-dark"
                 : "text-gray-600"
             }`}
           >
             <FaThLarge />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setViewMode("list")}
             className={`p-2 rounded-lg ${
               viewMode === "list"
-                ? "bg-blue-100 text-blue-500"
+                ? "bg-primary-light text-primary-dark"
                 : "text-gray-600"
             }`}
           >
             <FaList />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -204,10 +210,12 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                   {item.name}
                 </span>
               </div>
-              <img
+              <Image
+                width={96}
+                height={96}
                 src={getThumbnail(item.name, item.type)}
                 alt={item.name}
-                className="w-32 h-32 object-cover rounded-lg mx-auto transition-transform duration-300 hover:scale-105"
+                className="object-cover rounded-lg mx-auto transition-transform duration-300 hover:scale-105"
               />
             </div>
           ))}
@@ -233,10 +241,12 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
                   {item.name}
                 </span>
               </div>
-              <img
+              <Image
+                width={36}
+                height={36}
                 src={getThumbnail(item.name, item.type)}
                 alt={item.name}
-                className="w-16 h-16 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+                className="object-cover rounded-lg transition-transform duration-300 hover:scale-105"
               />
             </div>
           ))}

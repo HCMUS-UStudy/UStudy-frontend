@@ -1,10 +1,12 @@
 "use client";
 
+import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 import { getClassById } from "@/app/lib/services/class";
 import { getMaterialsByClassId } from "@/app/lib/services/class-material";
 import { getQuizByClassId, getReviewQuiz } from "@/app/lib/services/quiz";
 import {
   ClassUserItem,
+  ExerciseItem,
   MaterialItem,
   QuizItem,
   QuizReview,
@@ -37,7 +39,7 @@ const ClassDetail = () => {
   const [quizItem, setQuizItem] = useState<QuizItem[]>([]);
   const [reviewQuiz, setReviewQuiz] = useState<QuizReview>();
 
-  const [exerciseItem, setExerciseItem] = useState<QuizItem[]>([]);
+  const [exerciseItem, setExerciseItem] = useState<ExerciseItem[]>([]);
 
   const [isReviewing, setIsReviewing] = useState(false);
   const [isOverviewOpen, setIsOverviewOpen] = useState(false); // Track the state of the "Tổng quan" tab
@@ -155,11 +157,12 @@ const ClassDetail = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await getQuizByClassId(0, 10, classId as string);
+      const response = await getAssignmentByClassId(0, 10, classId as string);
+
       setExerciseItem(response.content);
     } catch (err) {
-      console.error("Error fetching quiz:", err);
-      setError("Không thể tải thông tin quiz của lớp học.");
+      console.error("Error fetching assignment:", err);
+      setError("Không thể tải thông tin assignent của lớp học.");
     } finally {
       console.log(loading);
       console.log(error);
@@ -232,9 +235,9 @@ const ClassDetail = () => {
     router.push(`/student/classes/${classId}/exercise/${exerciseId}`);
   };
 
-  const handleReviewExercise = async (exerciseId: string) => {
-    console.error("Error fetching review quiz:", exerciseId);
-  };
+  // const handleReviewExercise = async (exerciseId: string) => {
+  //   console.error("Error fetching review quiz:", exerciseId);
+  // };
 
   if (!subject) {
     return (
@@ -344,7 +347,7 @@ const ClassDetail = () => {
                 )}
               </span>
               <h2 className="text-2xl font-semibold text-highlight-text hover:text-[#FAB564] transition-all">
-                Lộ trình môn học
+                Nội dung môn học
               </h2>
             </div>
 
@@ -417,7 +420,7 @@ const ClassDetail = () => {
                             {item.type === "FOLDER" ? (
                               <a
                                 href={`/student/classes/${classId}/folder/${item.id}`}
-                                className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-all shadow-md"
+                                className="px-4 py-2 bg-primary-darkest text-white rounded-full hover:bg-hover-primary text-sm transition-all shadow-md"
                               >
                                 Xem
                               </a>
@@ -426,7 +429,7 @@ const ClassDetail = () => {
                                 href={`/download/${item.id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-primary transition-all shadow-md"
+                                className="px-4 py-2 bg-primary-darkest text-white rounded-full hover:bg-hover-primary text-sm transition-all shadow-md"
                               >
                                 Tải về
                               </a>
@@ -497,17 +500,19 @@ const ClassDetail = () => {
                         </div>
                         <div className="col-span-3 flex justify-end space-x-4">
                           <button
-                            className="bg-primary-dark text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-primary-light transition-all shadow-md"
+                            className="bg-primary-darkest text-white hover:bg-hover-primary py-2 px-6 rounded-lg min-w-[120px] transition-all shadow-md"
                             onClick={() => handleStartQuiz(quiz.id)}
                           >
                             Bắt đầu
                           </button>
-                          <button
-                            className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
-                            onClick={() => handleReviewQuiz(quiz.id)}
-                          >
-                            Review
-                          </button>
+                          {quiz.completed && (
+                            <button
+                              className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
+                              onClick={() => handleReviewQuiz(quiz.id)}
+                            >
+                              Review
+                            </button>
+                          )}
                         </div>
                       </li>
                     ))}
@@ -576,17 +581,19 @@ const ClassDetail = () => {
                         </div>
                         <div className="col-span-3 flex justify-end space-x-4">
                           <button
-                            className="bg-primary-dark text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-primary-light transition-all shadow-md"
+                            className="bg-primary-darkest text-white hover:bg-hover-primary py-2 px-6 rounded-lg min-w-[120px] transition-all shadow-md"
                             onClick={() => handleStartExercise(exercise.id)}
                           >
                             Bắt đầu
                           </button>
-                          <button
-                            className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
-                            onClick={() => handleReviewExercise(exercise.id)}
-                          >
-                            Review
-                          </button>
+                          {/* {exercise.completed && (
+                            <button
+                              className="bg-gray-500 text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-gray-400 transition-all shadow-md"
+                              onClick={() => handleReviewQuiz(exercise.id)}
+                            >
+                              Review
+                            </button>
+                          )} */}
                         </div>
                       </li>
                     ))}

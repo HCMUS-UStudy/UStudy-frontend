@@ -616,6 +616,7 @@ export type QuizItem = {
       name: "Teacher" | "Student" | "Admin";
     };
   };
+  completed: boolean;
 };
 
 export type QnA = {
@@ -691,4 +692,100 @@ export type Option = {
   optionId: string;
   description: string;
   correct: boolean;
+};
+
+export type ExerciseItem = {
+  id: string;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+    gender: "MALE" | "FEMALE" | "OTHER";
+    createdAt: string;
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
+    role: {
+      id: string;
+      name: "Teacher" | "Student" | "Admin";
+      defaultRoute: string;
+    };
+  };
+};
+
+export type AssignmentDetails = {
+  id: string;
+  title: string;
+  description: string;
+  filePath: string;
+  dueDate: string;
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+    gender: "MALE" | "FEMALE" | "OTHER";
+    createdAt: string;
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
+    role: {
+      id: string;
+      name: string;
+      defaultRoute: string;
+    };
+  };
+};
+
+export type ClassScheduleItem = {
+  id: string;
+  date: string; // Format: YYYY-MM-DD
+  classSession: {
+    id: string;
+    day:
+      | "MONDAY"
+      | "TUESDAY"
+      | "WEDNESDAY"
+      | "THURSDAY"
+      | "FRIDAY"
+      | "SATURDAY"
+      | "SUNDAY";
+    session: {
+      id: string;
+      name: string;
+      startTime: string; // Format: HH:mm:ss
+      endTime: string; // Format: HH:mm:ss
+    };
+    room: {
+      id: string;
+      name: string;
+    };
+  };
+};
+
+export type AttendanceItem = {
+  user: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    gender: "MALE" | "FEMALE"; // Có thể thêm các giá trị khác nếu cần
+  };
+  status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED"; // Tuỳ chỉnh nếu có nhiều trạng thái
+  recordedAt: string; // ISO Date string (YYYY-MM-DDTHH:mm:ss.sssZ)
+};
+
+export type AttendaceData = {
+  attendances: {
+    content: AttendanceItem[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+  };
+  countStatus: Record<string, number>;
 };
