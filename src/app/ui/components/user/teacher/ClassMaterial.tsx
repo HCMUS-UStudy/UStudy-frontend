@@ -1,4 +1,6 @@
 import { MdArrowForwardIos } from "react-icons/md";
+import { toast } from "react-toastify";
+
 import { RiDeleteBin6Line } from "react-icons/ri";
 import {
   TbFolders,
@@ -17,6 +19,7 @@ import {
   downloadSystemMaterial,
   downloadPersonalMaterial,
   uploadClassMaterial,
+  // createFolder,
   deleteClassMaterial,
 } from "@/app/lib/services/class-material"; // API này chắc chắn có
 import { useEffect, useState } from "react";
@@ -85,6 +88,10 @@ const SingleMaterial = ({
       await deleteClassMaterial(classId, material.id);
       setShowDeleteModal(false);
       onMaterialDeleted();
+      toast.success("Xóa tài liệu thành công", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
     } catch (error) {
       console.error("Error deleting material:", error);
     }
@@ -111,10 +118,10 @@ const SingleMaterial = ({
   };
 
   return (
-    <div className="pb-5 pt-4">
+    <div className="py-4">
       {material.type == "FOLDER" ? (
         <div
-          className="flex gap-10 items-center px-2 cursor-pointer w-fit group"
+          className="flex gap-12 items-center px-2 cursor-pointer w-fit group"
           onClick={onToggleExpand}
         >
           <div className="flex text-[17px]">
@@ -125,9 +132,7 @@ const SingleMaterial = ({
             className={`flex justify-center items-center text-black 
             rounded-2xl h-fit transition-transform duration-300 w-fit group-hover:text-primary-darkest`}
           >
-            <MdArrowForwardIos
-              className={`${isExpanded ? "rotate-90" : ""}`} // Xoay mũi tên khi mở rộng
-            />
+            <MdArrowForwardIos className={`${isExpanded ? "rotate-90" : ""}`} />
           </div>
         </div>
       ) : (
@@ -197,7 +202,6 @@ const ClassMaterial = ({
       );
     } else {
       setExpandedFolders((prevState) => [...prevState, folderId]);
-
       // Kiểm tra xem nội dung thư mục đã được tải chưa
       if (!folderContents.has(folderId)) {
         try {
@@ -210,6 +214,7 @@ const ClassMaterial = ({
           setFolderContents(
             (prevMap) => new Map(prevMap.set(folderId, response.content)),
           );
+          console.log("Folder contents:", folderContents);
         } catch (error) {
           console.error("Error fetching folder contents:", error);
         }
@@ -231,6 +236,7 @@ const ClassMaterial = ({
   }, [classId]);
 
   const renderMaterials = (material: MaterialItem, classId: string) => {
+    if (!material || !material.id) return null;
     return (
       <div className="ml-10 mr-2" key={material.id}>
         <SingleMaterial
@@ -244,18 +250,25 @@ const ClassMaterial = ({
         {expandedFolders.includes(material.id) &&
           folderContents.has(material.id) && (
             <div className="ml-6">
-              {folderContents.get(material.id)?.length === 0 ? (
-                <div className="ml-5 pt-2 pb-5 text-primary-darkest">
-                  Không có tài liệu
-                </div>
-              ) : (
+              {folderContents.get(material.id)?.length !== 0 &&
                 folderContents.get(material.id)?.map((child) => (
                   <div key={child.id}>
                     {renderMaterials(child, classId)}{" "}
                     {/* Đệ quy để hiển thị tài liệu con */}
                   </div>
-                ))
-              )}
+                ))}
+              <label
+                className="cursor-pointer ml-8 p-4 flex items-center text-[17px]
+                 hover:text-primary-darkest"
+              >
+                <TbFilePlus className="text-[22px] mr-2" />
+                <div className="flex items-center">Tải tài liệu lên</div>
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(event) => handleFileUpload(event, material.id)}
+                />
+              </label>
             </div>
           )}
       </div>
@@ -264,20 +277,47 @@ const ClassMaterial = ({
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
+    parentId: string,
   ) => {
     if (!event.target.files || event.target.files.length === 0) return;
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append("description", "Tài liệu mới");
     formData.append("file", file);
+    formData.append("parentId", parentId);
 
     try {
       await uploadClassMaterial(formData, classId);
       await fetchMaterials();
+      toast.success("Tải tài liệu lên thành công", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
     } catch (error) {
       console.error("Error uploading material:", error);
+      toast.error("Tải tài liệu lên thất bại", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
     }
   };
+
+  // const handleCreateFolder = async (name: string) => {
+  //   try {
+  //     await createFolder(classId, name);
+  //     await fetchMaterials();
+  //     toast.success("Tạo thư mục thành công", {
+  //       autoClose: 2500,
+  //       pauseOnHover: false,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error uploading material:", error);
+  //     toast.error("Tạo thư mục thất bại", {
+  //       autoClose: 2500,
+  //       pauseOnHover: false,
+  //     });
+  //   }
+  // };
 
   return (
     <div className="flex flex-col border border-gray-200 shadow-sm rounded-3xl p-2">
@@ -301,16 +341,12 @@ const ClassMaterial = ({
         }`}
       >
         {materials.map((material) => renderMaterials(material, classId))}{" "}
-        <div className="flex justify-center gap-12 pt-6 pb-4">
-          <label className="cursor-pointer flex items-center text-[18px] hover:text-primary-darkest">
-            <TbFolderPlus className="text-[22px] mr-2" />
-            <span>Tạo thư mục</span>
-          </label>
-          <label className="cursor-pointer flex items-center text-[18px] hover:text-primary-darkest">
-            <TbFilePlus className="text-[22px] mr-2" />
-            <span>Tải tài liệu lên</span>
-            <input type="file" className="hidden" onChange={handleFileUpload} />
-          </label>
+        <div
+          className="cursor-pointer ml-8 mb-4 p-4 flex items-center text-[17px]
+         hover:text-primary-darkest w-fit"
+        >
+          <TbFolderPlus className="text-[22px] mr-2" />
+          <span>Tạo thư mục</span>
         </div>
       </div>
     </div>

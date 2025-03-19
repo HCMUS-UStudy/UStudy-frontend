@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { MaterialData, MaterialItem } from "@/app/types/type";
+import { MaterialData } from "@/app/types/type";
 
 // type CachedDataData = {
 //   data: MaterialData;
@@ -39,7 +39,7 @@ export const getMaterialsByParent = async (
   limit: number,
   classId: string,
   materialId: string,
-) => {
+): Promise<MaterialData> => {
   const response = await axiosInstance.get(
     `/class-material/view/${classId}/${materialId}`,
     {
@@ -76,18 +76,28 @@ export const uploadClassMaterial = async (data: FormData, classId: string) => {
       headers: {
         "Content-Type": "form-data",
       },
-      cache: {
-        update: {
-          getMaterialsByClassId: (cached: any, response) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
     },
+  );
+  return response.data;
+};
+
+export const createFolder = async (classId: string, name: string) => {
+  const response = await axiosInstance.post(
+    `/class-material/create/folder/${classId}`,
+    { name: name },
+    // {
+    //   cache: {
+    //     update: {
+    //       getMaterialsByClassId: (cached: any, response) => {
+    //         if (cached.state !== "cached") {
+    //           return "ignore";
+    //         }
+    //         cached.data.data.data.content.push(response.data.data);
+    //         return cached;
+    //       },
+    //     },
+    //   },
+    // },
   );
   return response.data;
 };
@@ -98,22 +108,22 @@ export const deleteClassMaterial = async (
 ) => {
   const response = await axiosInstance.delete(
     `/class-material/delete/${classId}/${materialId}`,
-    {
-      cache: {
-        update: {
-          getMaterialsByClassId: (cached: any) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content =
-              cached.data.data.data.content.filter(
-                (material: MaterialItem) => material.id !== materialId,
-              );
-            return cached;
-          },
-        },
-      },
-    },
+    // {
+    //   cache: {
+    //     update: {
+    //       getMaterialsByParent: (cached: any) => {
+    //         if (cached.state !== "cached") {
+    //           return "ignore";
+    //         }
+    //         cached.data.data.data.content =
+    //           cached.data.data.data.content.filter(
+    //             (material: MaterialItem) => material.id !== materialId,
+    //           );
+    //         return cached;
+    //       },
+    //     },
+    //   },
+    // },
   );
   return response.data;
 };
