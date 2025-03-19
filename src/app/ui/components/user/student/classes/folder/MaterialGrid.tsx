@@ -1,6 +1,6 @@
 "use client";
 
-import { getMaterialsByParent } from "@/app/lib/services/material";
+import { getMaterialsByParent } from "@/app/lib/services/class-material";
 import { MaterialItem } from "@/app/types/type";
 import { Button } from "@/app/ui/components/_common/Button";
 import Loading from "@/app/ui/components/_common/Loading";

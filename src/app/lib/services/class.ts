@@ -81,8 +81,8 @@ export const getClassesForTeacher = async () => {
       page: 0,
       limit: 10,
       name: "",
-      course: "",
-      grade: "",
+      courseId: "",
+      gradeId: "",
     },
   });
   return response.data.data.content;
