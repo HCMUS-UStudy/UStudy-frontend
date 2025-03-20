@@ -3,12 +3,20 @@ import {
   getDetailAssignment,
   handleDownloadFile,
 } from "@/app/lib/services/assignment";
-import { AssignmentDetails } from "@/app/types/type";
+import {
+  createNewSubmission,
+  deleteSubmission,
+  getSubmissionDetails,
+  updateSubmission,
+} from "@/app/lib/services/submission";
+import { AssignmentDetails, SubmissionItem } from "@/app/types/type";
 import { Button } from "@/app/ui/components/_common/Button";
 import ChatInput from "@/app/ui/components/_common/ChatInput";
+import ConfirmModal from "@/app/ui/components/_common/ConfirmModal";
 import ScoreModal from "@/app/ui/components/user/student/classes/quiz/ScoreModal";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FaFileAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const ExercisePage = () => {
@@ -22,15 +30,21 @@ const ExercisePage = () => {
   const [filePath, setFilePath] = useState<string | null>(null);
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isSubmit] = useState(false);
+  const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({});
   const [finalScore] = useState<number | null>(null);
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [attachments, setAttachments] = useState<{ [key: string]: File[] }>({});
+  const [submissionData, setSubmissionData] = useState<SubmissionItem | null>(
+    null,
+  );
   const [submittedAnswers, setSubmittedAnswers] = useState<{
-    [key: string]: { text: string; files: File[] };
+    [key: string]: { content: string; files: File[] };
   }>({});
   const [message, setMessage] = useState<{ [key: string]: string }>({});
+  const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
 
   // Hàm đóng modal
   const closeModal = () => {
@@ -50,6 +64,29 @@ const ExercisePage = () => {
       }
     };
     fetchAssignmentData();
+  }, [exerciseId]);
+
+  useEffect(() => {
+    const fetchSubmissionData = async () => {
+      try {
+        const response = await getSubmissionDetails(exerciseId as string);
+        if (response) {
+          setSubmissionData(response);
+          setSubmittedAnswers({
+            [exerciseId as string]: {
+              content: response.content,
+              files: response.files.map(
+                (file) => new File([], file.fileName), // Tạo File giả
+              ),
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu bài nộp:", error);
+      }
+    };
+
+    fetchSubmissionData();
   }, [exerciseId]);
 
   const downloadFile = async (filePath: string) => {
@@ -121,58 +158,103 @@ const ExercisePage = () => {
     );
   }
 
-  const handleAnswerChange = (
+  const handleAnswerChange = async (
     questionId: string,
-    message: { text: string; files: File[] },
+    message: { content: string; files: File[] },
   ) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: message.text }));
+    setAnswers((prev) => ({ ...prev, [questionId]: message.content }));
     setAttachments((prev) => ({ ...prev, [questionId]: message.files }));
-    setSubmittedAnswers((prev) => ({
-      ...prev,
-      [questionId]: message,
-    }));
+    setSubmittedAnswers((prev) => ({ ...prev, [questionId]: message }));
+
+    try {
+      let response;
+      if (submissionData) {
+        // Nếu đã có submission trước đó -> Update submission
+        response = await updateSubmission(
+          submissionData.id, // ID của bài nộp trước đó
+          exerciseId as string,
+          {
+            content: message.content,
+            files: message.files,
+          },
+        );
+        console.log(response);
+        toast.success("Cập nhật câu trả lời thành công!", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      } else {
+        // Nếu chưa có submission -> Tạo mới
+        await createNewSubmission(questionId, message);
+        toast.success("Gửi câu trả lời thành công!", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Lỗi", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+
+    setIsEditing((prev) => ({ ...prev, [questionId]: false }));
   };
 
   const editAnswer = (questionId: string) => {
     console.log(message);
     console.log(attachments);
+    if (!submittedAnswers[questionId]) {
+      console.warn("No submitted answer found for question:", questionId);
+      return;
+    }
+
     setMessage((prev) => ({
       ...prev,
-      [questionId]: submittedAnswers[questionId].text,
+      [questionId]: submittedAnswers[questionId]?.content || "",
     }));
     setAttachments((prev) => ({
       ...prev,
-      [questionId]: submittedAnswers[questionId].files,
+      [questionId]: submittedAnswers[questionId]?.files || [],
     }));
+    setIsEditing((prev) => ({ ...prev, [questionId]: true }));
   };
 
-  const handleDelete = async (exerciseId: string) => {
-    console.log(exerciseId);
-    const isConfirmed = window.confirm(
-      "Bạn có chắc chắn muốn xóa bài tập này?",
-    );
-    if (!isConfirmed) return;
+  const handleDelete = (submissionId: string) => {
+    setSelectedExercise(submissionId);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedExercise || !submissionData?.id) return;
 
     try {
-      toast.success("Xóa thành công!");
-    } catch (error) {
-      console.error("Lỗi khi xóa bài tập:", error);
-      toast.error("Có lỗi xảy ra, vui lòng thử lại!");
-    }
-  };
+      const response = await deleteSubmission(submissionData?.id);
+      console.log(response);
+      toast.success("Xóa thành công!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
 
-  const removeSubmittedFile = (questionId: string, fileIndex: number) => {
-    setSubmittedAnswers((prev) => {
-      const updatedFiles =
-        prev[questionId]?.files.filter((_, i) => i !== fileIndex) || [];
-      return {
-        ...prev,
-        [questionId]: {
-          ...prev[questionId],
-          files: updatedFiles,
-        },
-      };
-    });
+      // Cập nhật lại danh sách bài nộp sau khi xóa
+      setSubmissionData(null);
+      setSubmittedAnswers((prev) => {
+        const updatedAnswers = { ...prev };
+        delete updatedAnswers[selectedExercise];
+        return updatedAnswers;
+      });
+
+      setSelectedExercise(null);
+    } catch (error) {
+      console.error("Lỗi khi xóa bài nộp:", error);
+      toast.error("Có lỗi xảy ra, vui lòng thử lại!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+
+    setDeleteOpen(false);
   };
 
   return (
@@ -204,6 +286,14 @@ const ExercisePage = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Xóa bài tập"
+        message="Bạn có chắc chắn muốn xóa bài tập này không?"
+      />
 
       {!isSubmit && (
         <div className="bg-primary-lighter rounded-xl w-full p-8 backdrop-blur-md shadow-lg">
@@ -238,16 +328,17 @@ const ExercisePage = () => {
             {/* Khu vực nhập câu trả lời */}
             <div className="space-y-4">
               {/* Hiển thị câu trả lời đã gửi */}
-              {submittedAnswers[currentExercise.id] && (
+              {!isEditing[currentExercise.id] &&
+              submissionData &&
+              submittedAnswers[currentExercise.id]?.content ? (
                 <div className="mt-6 mb-6 p-6 bg-gray-50 rounded-lg border border-gray-300 shadow-sm">
                   <h4 className="text-lg font-semibold text-gray-700 mb-2">
                     ✍ Câu trả lời của bạn:
                   </h4>
                   <p className="text-gray-800">
-                    {submittedAnswers[currentExercise.id].text}
+                    {submittedAnswers[currentExercise.id].content}
                   </p>
 
-                  {/* Hiển thị file đã gửi nếu có */}
                   {submittedAnswers[currentExercise.id]?.files.length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-3">
                       {submittedAnswers[currentExercise.id]?.files.map(
@@ -256,24 +347,20 @@ const ExercisePage = () => {
                             key={index}
                             className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-all"
                           >
-                            <span className="text-sm font-medium text-green-700 truncate max-w-[150px]">
+                            {/* Icon file */}
+                            <FaFileAlt className="text-gray-500 text-lg" />
+
+                            {/* Tên file */}
+                            <span className="text-sm font-medium truncate max-w-[150px]">
                               {file.name}
                             </span>
-                            <Button
-                              onClick={() =>
-                                removeSubmittedFile(currentExercise.id, index)
-                              }
-                              className="text-red-500 hover:text-red-700 transition-all"
-                            >
-                              ❌
-                            </Button>
                           </div>
                         ),
                       )}
                     </div>
                   )}
 
-                  {/* Nút chỉnh sửa hoặc gửi thêm */}
+                  {/* Nút chỉnh sửa hoặc xóa */}
                   <div className="mt-4 flex gap-3">
                     <Button
                       className="px-4 py-2 bg-primary-dark text-white rounded-md shadow-md hover:bg-primary-darker transition-all"
@@ -282,20 +369,31 @@ const ExercisePage = () => {
                       ✏ Chỉnh sửa
                     </Button>
                     <Button
-                      className="px-4 py-2 bg-primary-darker text-white rounded-md shadow-md hover:bg-primary-darkest transition-all"
+                      className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-primary-darkest transition-all"
                       onClick={() => handleDelete(currentExercise.id)}
                     >
-                      🗑 Xóa
+                      🗑 Xóa câu trả lời
                     </Button>
                   </div>
                 </div>
+              ) : (
+                <ChatInput
+                  currentQuestionId={currentExercise.id}
+                  initialMessage={
+                    isEditing[currentExercise.id]
+                      ? submittedAnswers[currentExercise.id]?.content || ""
+                      : ""
+                  }
+                  initialAttachments={
+                    isEditing[currentExercise.id]
+                      ? submittedAnswers[currentExercise.id]?.files || []
+                      : []
+                  }
+                  onSendMessage={(questionId, message) =>
+                    handleAnswerChange(questionId, message)
+                  }
+                />
               )}
-              <ChatInput
-                currentQuestionId={currentExercise.id}
-                onSendMessage={(questionId, message) =>
-                  handleAnswerChange(questionId, message)
-                }
-              />
             </div>
           </div>
         </div>
