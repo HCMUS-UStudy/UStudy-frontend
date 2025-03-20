@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPaperclip, FaSmile, FaTimes } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
 import { FaPaperPlane } from "react-icons/fa6";
 
 interface ChatInputProps {
   currentQuestionId: string;
+  initialMessage?: string;
+  initialAttachments?: File[];
   onSendMessage: (
     questionId: string,
-    message: { text: string; files: File[] },
+    message: { content: string; files: File[] },
   ) => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
   currentQuestionId,
+  initialMessage = "",
+  initialAttachments = [],
   onSendMessage,
 }) => {
   const [message, setMessage] = useState<{ [key: string]: string }>({});
@@ -39,6 +43,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   //   setTypingTimeout(newTimeout);
   // };
+
+  useEffect(() => {
+    setMessage((prev) => ({ ...prev, [currentQuestionId]: initialMessage }));
+    setAttachments((prev) => ({
+      ...prev,
+      [currentQuestionId]: initialAttachments,
+    }));
+  }, [initialMessage, initialAttachments, currentQuestionId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
@@ -68,7 +80,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
       return;
 
     onSendMessage(currentQuestionId, {
-      text: message[currentQuestionId] || "",
+      content: message[currentQuestionId] || "",
       files: attachments[currentQuestionId] || [],
     });
 
