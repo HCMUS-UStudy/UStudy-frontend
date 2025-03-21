@@ -795,11 +795,18 @@ export interface SubmissionSchema {
   files: File[];
 }
 
+export interface UpdateSubmissionSchema {
+  content: string;
+  addedFiles: File[];
+  deletedFiles: string[];
+}
+
 export type SubmissionItem = {
   id: string;
   submissionDate: string;
   content: string;
   files: {
+    id: string;
     fileName: string;
     filePath: string;
   }[];

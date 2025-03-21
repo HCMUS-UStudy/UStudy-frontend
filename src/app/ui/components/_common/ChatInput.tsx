@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import { FaPaperclip, FaSmile, FaTimes } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
 import { FaPaperPlane } from "react-icons/fa6";
+import { SubmissionItem } from "@/app/types/type";
 
 interface ChatInputProps {
   currentQuestionId: string;
   initialMessage?: string;
   initialAttachments?: File[];
+  submissionData?: SubmissionItem | null;
   onSendMessage: (
     questionId: string,
-    message: { content: string; files: File[] },
+    message: { content: string; files: File[]; deletedFileIds?: string[] },
   ) => void;
 }
 
@@ -19,10 +21,13 @@ const ChatInput: React.FC<ChatInputProps> = ({
   currentQuestionId,
   initialMessage = "",
   initialAttachments = [],
+  submissionData = null,
   onSendMessage,
 }) => {
   const [message, setMessage] = useState<{ [key: string]: string }>({});
   const [attachments, setAttachments] = useState<{ [key: string]: File[] }>({});
+  const [removedFileIds, setRemovedFileIds] = useState<string[]>([]);
+
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
   // const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
   //   null,
@@ -68,6 +73,22 @@ const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const removeFile = (index: number) => {
+    const files = attachments[currentQuestionId] || [];
+    if (!files.length) return;
+
+    const fileToRemove = files[index];
+
+    // Nếu file đã tồn tại trong submissionData, lưu id vào danh sách xóa
+    const submissionFiles = submissionData?.files || [];
+    const fileIdsToRemove = submissionFiles
+      .filter((file) => file.fileName === fileToRemove.name)
+      .map((file) => file.id);
+
+    if (fileIdsToRemove.length > 0) {
+      setRemovedFileIds((prev) => [...prev, ...fileIdsToRemove]);
+    }
+
+    // Cập nhật danh sách file đính kèm
     setAttachments((prev) => ({
       ...prev,
       [currentQuestionId]:
@@ -79,14 +100,24 @@ const ChatInput: React.FC<ChatInputProps> = ({
     if (!message[currentQuestionId] && !attachments[currentQuestionId]?.length)
       return;
 
+    // Lọc ra các tệp mới (không có `id` trong submissionData)
+    const submissionFileNames = new Set(
+      submissionData?.files.map((file) => file.fileName) || [],
+    );
+    const newFiles = (attachments[currentQuestionId] || []).filter(
+      (file) => !submissionFileNames.has(file.name),
+    );
+
     onSendMessage(currentQuestionId, {
       content: message[currentQuestionId] || "",
-      files: attachments[currentQuestionId] || [],
+      files: newFiles, // Chỉ gửi tệp mới
+      deletedFileIds: removedFileIds.length > 0 ? removedFileIds : undefined, // Chỉ gửi nếu có tệp bị xóa
     });
 
     // Reset input
     setMessage((prev) => ({ ...prev, [currentQuestionId]: "" }));
     setAttachments((prev) => ({ ...prev, [currentQuestionId]: [] }));
+    setRemovedFileIds([]); // Reset danh sách tệp đã xóa sau khi gửi
   };
 
   return (
