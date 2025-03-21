@@ -1,5 +1,9 @@
 import axiosInstance from "@/app/lib/axios";
-import { SubmissionItem, SubmissionSchema } from "@/app/types/type";
+import {
+  SubmissionItem,
+  SubmissionSchema,
+  UpdateSubmissionSchema,
+} from "@/app/types/type";
 
 export const createNewSubmission = async (
   assignmentId: string,
@@ -36,14 +40,19 @@ export const getSubmissionDetails = async (assignmentId: string) => {
 export const updateSubmission = async (
   submissionId: string,
   assignmentId: string,
-  data: SubmissionSchema,
+  data: UpdateSubmissionSchema,
 ) => {
   const formData = new FormData();
   formData.append("content", data.content);
 
-  data.files.forEach((file) => {
-    formData.append("files", file); // BE nhận danh sách files[]
+  data.addedFiles.forEach((file) => {
+    formData.append("addedFiles", file);
   });
+
+  data.deletedFiles.forEach((file) => {
+    formData.append("deletedFiles", file);
+  });
+
   try {
     const response = await axiosInstance.patch(
       `/submission/update/${submissionId}?assignmentId=${assignmentId}`,

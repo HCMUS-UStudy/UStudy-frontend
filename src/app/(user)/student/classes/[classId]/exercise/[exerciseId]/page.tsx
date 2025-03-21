@@ -67,27 +67,27 @@ const ExercisePage = () => {
   }, [exerciseId]);
 
   useEffect(() => {
-    const fetchSubmissionData = async () => {
-      try {
-        const response = await getSubmissionDetails(exerciseId as string);
-        if (response) {
-          setSubmissionData(response);
-          setSubmittedAnswers({
-            [exerciseId as string]: {
-              content: response.content,
-              files: response.files.map(
-                (file) => new File([], file.fileName), // Tạo File giả
-              ),
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Lỗi khi tải dữ liệu bài nộp:", error);
-      }
-    };
-
     fetchSubmissionData();
   }, [exerciseId]);
+
+  const fetchSubmissionData = async () => {
+    try {
+      const response = await getSubmissionDetails(exerciseId as string);
+      if (response) {
+        setSubmissionData(response);
+        setSubmittedAnswers({
+          [exerciseId as string]: {
+            content: response.content,
+            files: response.files.map(
+              (file) => new File([], file.fileName), // Tạo File giả
+            ),
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu bài nộp:", error);
+    }
+  };
 
   const downloadFile = async (filePath: string) => {
     try {
@@ -160,7 +160,7 @@ const ExercisePage = () => {
 
   const handleAnswerChange = async (
     questionId: string,
-    message: { content: string; files: File[] },
+    message: { content: string; files: File[]; deletedFileIds?: string[] },
   ) => {
     setAnswers((prev) => ({ ...prev, [questionId]: message.content }));
     setAttachments((prev) => ({ ...prev, [questionId]: message.files }));
@@ -169,30 +169,31 @@ const ExercisePage = () => {
     try {
       let response;
       if (submissionData) {
-        // Nếu đã có submission trước đó -> Update submission
+        console.log("✅ File is deleted:", message.deletedFileIds);
         response = await updateSubmission(
-          submissionData.id, // ID của bài nộp trước đó
+          submissionData.id,
           exerciseId as string,
           {
             content: message.content,
-            files: message.files,
+            addedFiles: message.files,
+            deletedFiles: message.deletedFileIds || [],
           },
         );
-        console.log(response);
+        console.log("✅ Server response:", response);
         toast.success("Cập nhật câu trả lời thành công!", {
           position: "bottom-right",
           autoClose: 3000,
         });
       } else {
-        // Nếu chưa có submission -> Tạo mới
         await createNewSubmission(questionId, message);
         toast.success("Gửi câu trả lời thành công!", {
           position: "bottom-right",
           autoClose: 3000,
         });
       }
+      await fetchSubmissionData();
     } catch (error) {
-      console.log(error);
+      console.log("🚨 Error updating submission:", error);
       toast.error("Lỗi", {
         position: "bottom-right",
         autoClose: 3000,
@@ -389,6 +390,7 @@ const ExercisePage = () => {
                       ? submittedAnswers[currentExercise.id]?.files || []
                       : []
                   }
+                  submissionData={submissionData}
                   onSendMessage={(questionId, message) =>
                     handleAnswerChange(questionId, message)
                   }
