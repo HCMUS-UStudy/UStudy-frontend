@@ -80,7 +80,9 @@ export const getClassesForTeacher = async () => {
     params: {
       page: 0,
       limit: 10,
-      filter: "",
+      name: "",
+      courseId: "",
+      gradeId: "",
     },
   });
   return response.data.data.content;

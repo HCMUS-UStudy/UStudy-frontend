@@ -2,7 +2,7 @@
 
 import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 import { getClassById } from "@/app/lib/services/class";
-import { getMaterialsByClassId } from "@/app/lib/services/material";
+import { getMaterialsByClassId } from "@/app/lib/services/class-material";
 import { getQuizByClassId, getReviewQuiz } from "@/app/lib/services/quiz";
 import {
   ClassUserItem,
@@ -420,7 +420,7 @@ const ClassDetail = () => {
                             {item.type === "FOLDER" ? (
                               <a
                                 href={`/student/classes/${classId}/folder/${item.id}`}
-                                className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-all shadow-md"
+                                className="px-4 py-2 bg-primary-darkest text-white rounded-full hover:bg-hover-primary text-sm transition-all shadow-md"
                               >
                                 Xem
                               </a>
@@ -429,7 +429,7 @@ const ClassDetail = () => {
                                 href={`/download/${item.id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-primary transition-all shadow-md"
+                                className="px-4 py-2 bg-primary-darkest text-white rounded-full hover:bg-hover-primary text-sm transition-all shadow-md"
                               >
                                 Tải về
                               </a>
@@ -500,7 +500,7 @@ const ClassDetail = () => {
                         </div>
                         <div className="col-span-3 flex justify-end space-x-4">
                           <button
-                            className="bg-primary-dark text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-primary-light transition-all shadow-md"
+                            className="bg-primary-darkest text-white hover:bg-hover-primary py-2 px-6 rounded-lg min-w-[120px] transition-all shadow-md"
                             onClick={() => handleStartQuiz(quiz.id)}
                           >
                             Bắt đầu
@@ -581,7 +581,7 @@ const ClassDetail = () => {
                         </div>
                         <div className="col-span-3 flex justify-end space-x-4">
                           <button
-                            className="bg-primary-dark text-white py-2 px-6 rounded-lg min-w-[120px] hover:bg-primary-light transition-all shadow-md"
+                            className="bg-primary-darkest text-white hover:bg-hover-primary py-2 px-6 rounded-lg min-w-[120px] transition-all shadow-md"
                             onClick={() => handleStartExercise(exercise.id)}
                           >
                             Bắt đầu

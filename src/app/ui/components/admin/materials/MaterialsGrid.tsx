@@ -7,7 +7,6 @@ import {
   FaFilePdf,
   FaFileWord,
   FaFileAlt,
-  FaImage,
   FaThLarge,
   FaList,
 } from "react-icons/fa";
@@ -26,6 +25,22 @@ const MaterialsGrid: React.FC = () => {
     fetchMaterials();
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setActiveDropdown(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const fetchMaterials = async () => {
     setLoading(true);
     try {
@@ -42,20 +57,23 @@ const MaterialsGrid: React.FC = () => {
   };
 
   const getFileIcon = (name: string, type: string) => {
-    const size = "w-10 h-10"; // Kích thước icon cố định
     if (type === "FOLDER")
-      return <FaFolder className={`text-yellow-500 ${size}`} />;
-    if (name.endsWith(".pdf"))
-      return <FaFilePdf className={`text-red-500 ${size}`} />;
-    if (name.endsWith(".docx"))
-      return <FaFileWord className={`text-blue-500 ${size}`} />;
-    if (name.endsWith(".txt"))
-      return <FaFileAlt className={`text-gray-500 ${size}`} />;
-    if (name.match(/\.(jpg|jpeg|png|gif)$/))
-      return <FaImage className={`text-green-500 ${size}`} />;
-    return <FaFileAlt className={`text-gray-500 ${size}`} />;
+      return <FaFolder className="text-yellow-500 text-[30px]" />;
+    const extension = name.split(".").pop()?.toLowerCase();
+    switch (extension) {
+      case "pdf":
+        return <FaFilePdf className="text-red-500 text-[30px] flex-shrink-0" />;
+      case "doc":
+      case "docx":
+        return (
+          <FaFileWord className="text-blue-500 text-[30px] flex-shrink-0" />
+        );
+      default:
+        return (
+          <FaFileAlt className="text-gray-500 text-[30px] flex-shrink-0" />
+        );
+    }
   };
-
   return (
     <div>
       {/* Thanh điều hướng chuyển đổi chế độ xem */}
@@ -93,9 +111,9 @@ const MaterialsGrid: React.FC = () => {
               key={item.id}
               className="relative bg-white p-5 rounded-xl transition-all duration-300 border border-gray-200"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center">
                 {getFileIcon(item.name, item.type)}
-                <div className="flex-1">
+                <div className="pl-3 flex-1">
                   <p
                     className="font-semibold text-gray-800 text-sm md:text-base truncate w-40"
                     title={item.name}

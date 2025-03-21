@@ -470,6 +470,7 @@ export type ChapterData = {
 export type MaterialData = {
   content: MaterialItem[];
   totalPages: number;
+  totalElements: number;
 };
 
 type Grade = {
@@ -787,4 +788,36 @@ export type AttendaceData = {
     last: boolean;
   };
   countStatus: Record<string, number>;
+};
+
+export interface SubmissionSchema {
+  content: string;
+  files: File[];
+}
+
+export type SubmissionItem = {
+  id: string;
+  submissionDate: string;
+  content: string;
+  files: {
+    fileName: string;
+    filePath: string;
+  }[];
+  score: number;
+  feedback: string;
+  gradedBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+    gender: "MALE" | "FEMALE" | "OTHER";
+    createdAt: string;
+    status: "ACTIVE" | "INACTIVE";
+    role: {
+      id: string;
+      name: string;
+      defaultRoute: "ADMIN" | "USER" | "TEACHER";
+    };
+  } | null; // Nếu bài chưa được chấm có thể không có `gradedBy`
 };
