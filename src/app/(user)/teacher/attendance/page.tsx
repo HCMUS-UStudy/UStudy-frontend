@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaCalendarAlt, FaChalkboardTeacher } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa6";
 
@@ -39,6 +39,9 @@ const AttendancePage = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const prevScheduleId = useRef<string | null>(null);
+  const prevClass = useRef<string | null>(null);
 
   const translateDayOfWeek = (day: string): string => {
     const days: Record<string, string> = {
@@ -94,12 +97,13 @@ const AttendancePage = () => {
 
   useEffect(() => {
     const fetchSessions = async () => {
+      if (!selectedClass) return;
       setLoading(true);
       setError(false);
       console.log(totalPages);
       try {
         const response = await getAllClassSchedule(
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+          selectedClass,
           Number(month),
           Number(year),
         );
@@ -128,7 +132,7 @@ const AttendancePage = () => {
     };
 
     fetchSessions();
-  }, [month, year]);
+  }, [month, year, selectedClass]);
 
   useEffect(() => {
     const fetchAttendances = async () => {
@@ -136,7 +140,6 @@ const AttendancePage = () => {
       setLoading(true);
       try {
         const response = await getAllAttendances(
-          selectedClass,
           0,
           100,
           selectedScheduleId,
@@ -144,8 +147,17 @@ const AttendancePage = () => {
         );
         setAttendances(response.attendances.content); // Cập nhật danh sách điểm danh
         setTotalPages(response.attendances.totalPages); // Cập nhật tổng số trang
-        setTotalElements(response.attendances.totalElements);
-        setCountStatus(response.countStatus || {});
+        if (
+          prevScheduleId.current !== selectedScheduleId ||
+          prevClass.current !== selectedClass
+        ) {
+          setTotalElements(response.attendances.totalElements);
+          setCountStatus(response.countStatus || {});
+        }
+
+        // Cập nhật giá trị trước đó
+        prevScheduleId.current = selectedScheduleId;
+        prevClass.current = selectedClass;
       } catch (error) {
         console.error("Lỗi khi fetch attendance:", error);
       } finally {
@@ -156,14 +168,6 @@ const AttendancePage = () => {
     fetchAttendances();
   }, [selectedScheduleId, selectedLabel, selectedClass]); // Gọi lại khi trang thay đổi
 
-  // const handleAttendanceChange = (userId, newStatus) => {
-  //   setAttendances((prevAttendances) =>
-  //     prevAttendances.map((att) =>
-  //       att.user.id === userId ? { ...att, status: newStatus } : att,
-  //     ),
-  //   );
-  // };
-
   const attendanceStats = [
     {
       label: "Tất cả",
@@ -173,6 +177,15 @@ const AttendancePage = () => {
     { label: "Vắng mặt", value: countStatus["ABSENT"] || 0 },
     { label: "Đi muộn", value: countStatus["LATE"] || 0 },
     { label: "Vắng có phép", value: countStatus["EXCUSED"] || 0 },
+    {
+      label: "Chưa điểm danh",
+      value:
+        totalElements -
+          (countStatus["PRESENT"] || 0) -
+          (countStatus["ABSENT"] || 0) -
+          (countStatus["LATE"] || 0) -
+          (countStatus["EXCUSED"] || 0) || 0,
+    },
   ];
 
   return (
