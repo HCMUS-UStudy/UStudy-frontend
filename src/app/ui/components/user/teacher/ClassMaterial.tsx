@@ -245,12 +245,12 @@ const ClassMaterial = ({
   const fetchMaterials = async () => {
     try {
       const response = await getMaterialsByClassId("", 0, classId);
-      // sort by name
-      // response.content.sort((a, b) => {
-      //   if (a.type === "FOLDER" && b.type !== "FOLDER") return -1;
-      //   if (a.type !== "FOLDER" && b.type === "FOLDER") return 1;
-      //   return a.name.localeCompare(b.name);
-      // });
+      //sort by name
+      response.content.sort((a, b) => {
+        if (a.type === "FOLDER" && b.type !== "FOLDER") return -1;
+        if (a.type !== "FOLDER" && b.type === "FOLDER") return 1;
+        return a.name.localeCompare(b.name);
+      });
       setMaterials([...response.content]);
     } catch (error) {
       console.error("Error fetching materials:", error);
