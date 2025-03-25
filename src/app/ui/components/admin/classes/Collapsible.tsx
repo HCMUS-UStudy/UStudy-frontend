@@ -44,7 +44,7 @@ export default function Collapsible({
       />
 
       <div
-        className={`${secondaryColor} rounded-b-xl overflow-hidden transition-al duration-300 max-h-0 ${
+        className={`${secondaryColor} rounded-b-xl overflow-hidden transition-all duration-300 max-h-0 ${
           !maxHeight
             ? "peer-checked:max-h-96"
             : `peer-checked:max-h-[${maxHeight}]`

@@ -24,7 +24,7 @@ export const getAllClasses = async (
       grade: gradeQuery,
     },
   });
-  console.log(response);
+  // console.log(response.cached);
   return response.data.data;
 };
 
@@ -73,6 +73,7 @@ export const createNewClass = async (data: CreateClassInputs) => {
 
 export const getClassById = async (classId: string) => {
   const response = await axiosInstance.get(`/class/details/${classId}`);
+  console.log(response.cached);
   return response.data;
 };
 

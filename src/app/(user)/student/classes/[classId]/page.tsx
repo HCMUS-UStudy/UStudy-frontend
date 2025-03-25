@@ -13,6 +13,7 @@ import {
 } from "@/app/types/type";
 import Loading from "@/app/ui/components/_common/Loading";
 import ReviewQuiz from "@/app/ui/components/user/student/classes/quiz/ReviewQuiz";
+import clsx from "clsx";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import {
@@ -280,11 +281,17 @@ const ClassDetail = () => {
                 onClick={toggleOverview}
               >
                 <span className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-primary-dark text-primary-dark mr-4 bg-primary-lighter hover:bg-primary-light transition-all">
-                  {isOverviewOpen ? (
+                  {/* {isOverviewOpen ? (
                     <FaChevronUp size={20} />
                   ) : (
                     <FaChevronDown size={20} />
-                  )}
+                  )} */}
+                  <FaChevronUp
+                    className={clsx("size-5 transition-all duration-300", {
+                      "rotate-0": !isOverviewOpen,
+                      "rotate-180": isOverviewOpen,
+                    })}
+                  />
                 </span>
                 <h2 className="text-2xl font-semibold text-highlight-text hover:text-[#FAB564] transition-all">
                   Tổng quan
