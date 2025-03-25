@@ -1,8 +1,9 @@
 "use client";
 
 import { getAllAttendances } from "@/app/lib/services/attendance";
+import { getClassesForTeacher } from "@/app/lib/services/class";
 import { getAllClassSchedule } from "@/app/lib/services/classSchedule";
-import { AttendanceItem } from "@/app/types/type";
+import { AttendanceItem, ClassTeacher } from "@/app/types/type";
 import {
   Table,
   TableBody,
@@ -10,8 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { useEffect, useState } from "react";
-import { FaCalendarAlt } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import { FaCalendarAlt, FaChalkboardTeacher } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa6";
 
 const AttendancePage = () => {
   const [year, setYear] = useState("2025");
@@ -22,10 +24,13 @@ const AttendancePage = () => {
   >([]);
 
   const [attendances, setAttendances] = useState<AttendanceItem[]>([]);
+  const [teacherClasses, setTeacherClasses] = useState<ClassTeacher[]>([]);
   const [countStatus, setCountStatus] = useState<Record<string, number>>({});
   const [selectedScheduleId, setSelectedScheduleId] = useState<string | null>(
     null,
   );
+  const [selectedClass, setSelectedClass] = useState<string | null>(null);
+
   const [totalElements, setTotalElements] = useState<number | 0>(0);
   const [selectedLabel, setSelectedLabel] =
     useState<keyof typeof labelToEnglish>("Tất cả");
@@ -34,6 +39,9 @@ const AttendancePage = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const prevScheduleId = useRef<string | null>(null);
+  const prevClass = useRef<string | null>(null);
 
   const translateDayOfWeek = (day: string): string => {
     const days: Record<string, string> = {
@@ -64,18 +72,38 @@ const AttendancePage = () => {
     setSelectedScheduleId(scheduleId);
   };
 
-  const handleAttendanceChange = () => {
-    console.log("change status");
+  const handleAttendanceChange = (
+    userId: string | number,
+    status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED",
+  ) => {
+    setAttendances((prev) =>
+      prev.map((att) => (att.user.id === userId ? { ...att, status } : att)),
+    );
   };
 
   useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const classes = await getClassesForTeacher();
+
+        setTeacherClasses(classes);
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+
+  useEffect(() => {
     const fetchSessions = async () => {
+      if (!selectedClass) return;
       setLoading(true);
       setError(false);
       console.log(totalPages);
       try {
         const response = await getAllClassSchedule(
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
+          selectedClass,
           Number(month),
           Number(year),
         );
@@ -104,15 +132,14 @@ const AttendancePage = () => {
     };
 
     fetchSessions();
-  }, [month, year]);
+  }, [month, year, selectedClass]);
 
   useEffect(() => {
     const fetchAttendances = async () => {
-      if (!selectedScheduleId) return;
+      if (!selectedScheduleId || !selectedClass) return;
       setLoading(true);
       try {
         const response = await getAllAttendances(
-          "0a6cf6fc-caf1-4d37-b20b-eff2daec2cf2",
           0,
           100,
           selectedScheduleId,
@@ -120,8 +147,17 @@ const AttendancePage = () => {
         );
         setAttendances(response.attendances.content); // Cập nhật danh sách điểm danh
         setTotalPages(response.attendances.totalPages); // Cập nhật tổng số trang
-        setTotalElements(response.attendances.totalElements);
-        setCountStatus(response.countStatus || {});
+        if (
+          prevScheduleId.current !== selectedScheduleId ||
+          prevClass.current !== selectedClass
+        ) {
+          setTotalElements(response.attendances.totalElements);
+          setCountStatus(response.countStatus || {});
+        }
+
+        // Cập nhật giá trị trước đó
+        prevScheduleId.current = selectedScheduleId;
+        prevClass.current = selectedClass;
       } catch (error) {
         console.error("Lỗi khi fetch attendance:", error);
       } finally {
@@ -130,15 +166,7 @@ const AttendancePage = () => {
     };
 
     fetchAttendances();
-  }, [selectedScheduleId, selectedLabel]); // Gọi lại khi trang thay đổi
-
-  // const handleAttendanceChange = (userId, newStatus) => {
-  //   setAttendances((prevAttendances) =>
-  //     prevAttendances.map((att) =>
-  //       att.user.id === userId ? { ...att, status: newStatus } : att,
-  //     ),
-  //   );
-  // };
+  }, [selectedScheduleId, selectedLabel, selectedClass]); // Gọi lại khi trang thay đổi
 
   const attendanceStats = [
     {
@@ -149,10 +177,42 @@ const AttendancePage = () => {
     { label: "Vắng mặt", value: countStatus["ABSENT"] || 0 },
     { label: "Đi muộn", value: countStatus["LATE"] || 0 },
     { label: "Vắng có phép", value: countStatus["EXCUSED"] || 0 },
+    {
+      label: "Chưa điểm danh",
+      value:
+        totalElements -
+          (countStatus["PRESENT"] || 0) -
+          (countStatus["ABSENT"] || 0) -
+          (countStatus["LATE"] || 0) -
+          (countStatus["EXCUSED"] || 0) || 0,
+    },
   ];
 
   return (
     <div>
+      <div className="flex items-center space-x-4 mb-6 bg-primary-lighter p-4 rounded-lg">
+        <span className="font-semibold text-primary-dark text-lg flex items-center">
+          <FaChalkboardTeacher className="mr-2 text-xl" /> Chọn lớp:
+        </span>
+        <div className="relative w-64">
+          <select
+            className="w-full border border-primary-dark rounded-lg px-4 py-2 text-gray-700 focus:ring focus:ring-primary-dark appearance-none cursor-pointer"
+            value={selectedClass || ""}
+            onChange={(e) => setSelectedClass(e.target.value)}
+          >
+            <option value="" disabled>
+              -- Chọn lớp --
+            </option>
+            {teacherClasses.map((teacherClass) => (
+              <option key={teacherClass.id} value={teacherClass.id}>
+                {teacherClass.name} - {teacherClass.description}
+              </option>
+            ))}
+          </select>
+          <FaChevronDown className="absolute right-1 top-3 text-primary-dark pointer-events-none" />
+        </div>
+      </div>
+
       {/* Chọn ngày điểm danh */}
       <div className="flex flex-wrap items-center justify-between bg-primary-light p-4 rounded-lg shadow-md mb-6">
         {/* Phần chọn ngày, tháng, buổi */}
@@ -236,99 +296,110 @@ const AttendancePage = () => {
         ))}
       </div>
 
-      {/* Bảng điểm danh */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <Table>
-          <TableHeader
-            columns={[
-              "Mã số",
-              "Họ tên",
-              "Có mặt",
-              "Vắng mặt",
-              "Đi muộn",
-              "Vắng có phép",
-              "Ghi chú",
-            ]}
-            className="bg-primary text-gray-700"
-          />
-          <TableBody isLoading={loading}>
-            {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center text-primary-darker"
-                >
-                  Đang tải...
-                </TableCell>
-              </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-red-500">
-                  {error}
-                </TableCell>
-              </TableRow>
-            ) : attendances.length > 0 ? (
-              attendances.map((attendance) => (
-                <TableRow
-                  key={attendance.user.id}
-                  className="hover:bg-primary-lighter"
-                >
-                  <TableCell className="text-primary-darker">
-                    {attendance.user.genId}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {attendance.user.name}
-                  </TableCell>
-
-                  {/* Radio buttons */}
-                  {["PRESENT", "ABSENT", "LATE", "EXCUSED"].map((status) => (
-                    <TableCell key={status} className="">
-                      <label
-                        htmlFor={`attendance-${attendance.user.id}-${attendance.status}`}
-                        className="mx-auto cursor-pointer h-5 w-5 bg-background border-2 rounded-full flex justify-center items-center relative"
-                      >
-                        <input
-                          type="radio"
-                          id={`attendance-${attendance.user.id}-${attendance.status}`}
-                          name={`attendance-${attendance.user.id}`}
-                          className="hidden peer"
-                          value={`${attendance.status}`}
-                          checked={attendance.status === status} // So sánh với attendance.status
-                          onChange={() => handleAttendanceChange()}
-                        />
-                        <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
-                        <div className="w-3 h-3 bg-primary-darkest scale-0  peer-checked:scale-100 transition-transform rounded-full"></div>
-                      </label>
-                    </TableCell>
-                  ))}
-
-                  {/* Ô nhập ghi chú */}
-                  <TableCell>
-                    <input
-                      type="text"
-                      //value={attendance.user.note}
-                      // onChange={(e) =>
-                      //   handleNoteChange(attendance.user.id, e.target.value)
-                      // }
-                      className="border rounded-lg px-3 py-2 w-full focus:ring focus:ring-primary-darker"
-                      placeholder="Nhập ghi chú..."
-                    />
+      {/* Hiển thị thông báo nếu chưa chọn lớp hoặc lịch học */}
+      {!selectedClass || !selectedScheduleId ? (
+        <div className="text-center text-lg font-semibold text-highlight-text my-6">
+          Vui lòng chọn lớp và lịch học để xem danh sách điểm danh.
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <Table>
+            <TableHeader
+              columns={[
+                "Mã số",
+                "Họ tên",
+                "Có mặt",
+                "Vắng mặt",
+                "Đi muộn",
+                "Vắng có phép",
+                "Ghi chú",
+              ]}
+              className="bg-primary text-gray-700"
+            />
+            <TableBody isLoading={loading}>
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="text-center text-primary-darker"
+                  >
+                    Đang tải...
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-4 text-primary-darker"
-                >
-                  Không có dữ liệu.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-red-500">
+                    {error}
+                  </TableCell>
+                </TableRow>
+              ) : attendances.length > 0 ? (
+                attendances.map((attendance) => (
+                  <TableRow
+                    key={attendance.user.id}
+                    className="hover:bg-primary-lighter"
+                  >
+                    <TableCell className="text-primary-darker">
+                      {attendance.user.genId}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {attendance.user.name}
+                    </TableCell>
+
+                    {/* Radio buttons */}
+                    {["PRESENT", "ABSENT", "LATE", "EXCUSED"].map((status) => (
+                      <TableCell key={status}>
+                        <label
+                          htmlFor={`attendance-${attendance.user.id}-${status}`}
+                          className="mx-auto cursor-pointer h-5 w-5 bg-background border-2 rounded-full flex justify-center items-center relative"
+                        >
+                          <input
+                            type="radio"
+                            id={`attendance-${attendance.user.id}-${status}`}
+                            name={`attendance-${attendance.user.id}`}
+                            className="hidden peer"
+                            value={status}
+                            checked={attendance.status === status}
+                            onChange={() =>
+                              handleAttendanceChange(
+                                attendance.user.id,
+                                status as
+                                  | "PRESENT"
+                                  | "ABSENT"
+                                  | "LATE"
+                                  | "EXCUSED",
+                              )
+                            }
+                          />
+                          <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
+                          <div className="w-3 h-3 bg-primary-darkest scale-0  peer-checked:scale-100 transition-transform rounded-full"></div>
+                        </label>
+                      </TableCell>
+                    ))}
+
+                    {/* Ô nhập ghi chú */}
+                    <TableCell>
+                      <input
+                        type="text"
+                        className="border rounded-lg px-3 py-2 w-full focus:ring focus:ring-primary-darker"
+                        placeholder="Nhập ghi chú..."
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="text-center py-4 text-primary-darker"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };
