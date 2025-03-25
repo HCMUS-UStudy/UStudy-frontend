@@ -123,13 +123,6 @@ const ExercisePage = () => {
       // Dọn dẹp URL sau khi tải xong
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-
-      toast.success("Tải file thành công!", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
     } catch (error) {
       console.error("Lỗi khi tải file:", error);
       toast.error("Tải file thất bại!", {

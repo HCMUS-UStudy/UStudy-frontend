@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { ClassUserItem } from "@/app/types/type";
-import { getAllStudentClasses, getClassById } from "@/app/lib/services/class";
+import { getAllStudentClasses } from "@/app/lib/services/class";
 import Loading from "../../../_common/Loading";
 import { Button } from "../../../_common/Button";
 import { useRouter } from "next/navigation";
@@ -16,9 +16,6 @@ interface GradeTableProps {
 const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const router = useRouter();
-  const [classDetails, setClassDetails] = useState<{
-    [key: string]: ClassUserItem;
-  }>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,6 +42,7 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
       );
 
       setClasses(response.content);
+      console.log("Classes: ", classes);
       setTotalPages(response.totalPages || 1);
     } catch (err) {
       console.error("Error fetching classes:", err);
@@ -55,54 +53,37 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
     }
   };
 
-  const fetchClassDetails = async (classId: string) => {
-    if (classDetails[classId]) {
-      console.log(
-        `Class details for ${classId} already fetched:`,
-        classDetails[classId],
-      );
-      return; // Avoid fetching if details already exist
-    }
+  // const fetchClassDetails = async (classId: string) => {
+  //   if (classDetails[classId]) {
+  //     console.log(
+  //       `Class details for ${classId} already fetched:`,
+  //       classDetails[classId],
+  //     );
+  //     return; // Avoid fetching if details already exist
+  //   }
 
-    try {
-      const response = await getClassById(classId);
+  //   try {
+  //     const response = await getClassById(classId);
 
-      setClassDetails((prevDetails) => {
-        const updatedDetails = { ...prevDetails, [classId]: response.data };
-        console.log("Updated class details:", updatedDetails); // Log the updated state
-        return updatedDetails;
-      });
-    } catch (err) {
-      console.error("Error fetching class details:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     setClassDetails((prevDetails) => {
+  //       const updatedDetails = { ...prevDetails, [classId]: response.data };
+  //       console.log("Updated class details:", updatedDetails); // Log the updated state
+  //       return updatedDetails;
+  //     });
+  //   } catch (err) {
+  //     console.error("Error fetching class details:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     fetchClasses();
   }, [currentPage, searchQuery, defaultClass]);
 
-  useEffect(() => {
-    if (classes.length > 0) {
-      classes.forEach((classItem) => fetchClassDetails(classItem.id));
-    }
-  }, [classes]);
-
-  useEffect(() => {
-    if (classes.length > 0) {
-      const fetchDetails = async () => {
-        await Promise.all(
-          classes.map((classItem) => fetchClassDetails(classItem.id)),
-        );
-      };
-      fetchDetails();
-    }
-  }, [classes]);
-
   const handleDetail = (id: string) => {
     setLoading(true);
-    fetchClassDetails(id).finally(() => setLoading(false));
+    //fetchClassDetails(id).finally(() => setLoading(false));
     router.push(`/student/classes/${id}`);
   };
 
@@ -115,22 +96,22 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
           classes.map((classItem) => (
             <div
               key={classItem.id}
-              className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-transform transform hover:scale-95"
+              className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-all transform hover:shadow-md"
             >
               {/* Avatar */}
               <div className="w-14 h-14 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center font-extrabold text-lg mr-6">
-                {classDetails[classItem.id]?.course?.name.charAt(0)}
+                {classItem.course?.name.charAt(0) || "?"}
               </div>
               {/* Class Details */}
               <div className="flex-grow">
                 <h3 className="text-xl font-semibold text-gray-700 mb-1">
-                  {classDetails[classItem.id]?.course?.name
-                    ? `Lớp ${classItem.name} - ${classDetails[classItem.id]?.course?.name} ${classDetails[classItem.id]?.grade?.name}`
+                  {classItem?.course?.name
+                    ? `Lớp ${classItem.name} - ${classItem?.course?.name} ${classItem?.grade?.name}`
                     : classItem.name}
                 </h3>
                 <p className="text-sm text-gray-600">
                   <strong>Giáo viên:</strong>{" "}
-                  {/* {classDetails[classItem.id]?.teacher?.name ||
+                  {/* {classItem?.teacher?.name ||
                     "Chưa có giáo viên"} */}
                 </p>
                 {/* <p className="text-sm text-gray-600">
