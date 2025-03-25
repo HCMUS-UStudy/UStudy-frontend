@@ -7,6 +7,8 @@ import { getClassById } from "@/app/lib/services/class";
 import { MdArrowForwardIos } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import ClassMaterial from "@/app/ui/components/user/teacher/ClassMaterial";
+import Notification from "@/app/ui/components/user/teacher/Notification";
+import Loading from "@/app/ui/components/_common/Loading";
 
 const ComponentDetails = ({
   title,
@@ -56,7 +58,7 @@ export default function ClassDetail() {
   const [classDetail, setClassDetail] = useState<ClassTeacher | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [notiDetail, setNotiDetail] = useState(false);
+  // const [notiDetail, setNotiDetail] = useState(false);
   const [resourcesDetail, setResourcesDetail] = useState(false);
   const [assignmentDetail, setAssignmentDetail] = useState(false);
 
@@ -79,44 +81,52 @@ export default function ClassDetail() {
     }
   }, [classDetail]);
 
+  // const fetchListMembers = async () => {
+  //   const response = await getListMembers(classId, "", 0, 100, "STUDENT");
+  //   setMemberData(response);
+  // };
+
   if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
+    return <Loading />;
   }
 
-  // Nếu không tìm thấy lớp
   if (!classDetail) {
     return (
       <div className="text-center mt-20">
-        <h1 className="text-3xl font-bold">Class not found</h1>
-        <p className="mt-4">
-          Please check the class ID or go back to the class list.
-        </p>
+        <h1 className="text-3xl font-bold">Không tìm thấy lớp</h1>
       </div>
     );
   }
 
   return (
     <div className="container p-4 flex flex-col gap-6">
-      <div className="bg-white p-6">
-        <h2 className="text-3xl font-bold mb-4">{classDetail.name}</h2>
-        <div className="text-[18px]">
-          <strong>Môn: </strong> Lý - Khối 11
+      <div className="flex justify-between">
+        <div className="bg-white p-6">
+          <h2 className="text-3xl font-bold mb-4">{classDetail.name}</h2>
+          <div className="text-[18px]">
+            <strong>Môn: </strong> Lý - Khối 11
+          </div>
+          <div className="text-[18px]">
+            <strong>Thời gian: </strong>
+            T3 - T5 (15:00 - 17:00)
+          </div>
+          <div className="text-[18px]">
+            <strong>Phòng: </strong> 101
+          </div>
         </div>
-        <div className="text-[18px]">
-          <strong>Thời gian: </strong>
-          T3 - T5 (15:00 - 17:00)
-        </div>
-        <div className="text-[18px]">
-          <strong>Phòng: </strong> 101
+        {/* Danh danh sách học viên */}
+        <div className="mr-8 mt-6">
+          <button
+            className="text-primary-darker mt-4 hover:text-primary-darkest"
+            onClick={() => {}}
+          >
+            Xem danh sách học viên
+          </button>
         </div>
       </div>
 
       <div className="flex flex-col gap-4">
-        <ComponentDetails
-          title="📢 Thông báo"
-          showDetail={notiDetail}
-          setShowDetail={setNotiDetail}
-        />
+        <Notification classId={classId} />
 
         <ClassMaterial
           classId={classId}

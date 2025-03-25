@@ -47,7 +47,7 @@ export default function ClassCard({
           <div className="text-[12px] text-primary-darkest">
             {" "}
             {Math.round(
-              ((new Date(cls.endDate).getTime() - Date.now()) /
+              ((Date.now() - new Date(cls.startDate).getTime()) /
                 (new Date(cls.endDate).getTime() -
                   new Date(cls.startDate).getTime())) *
                 100,

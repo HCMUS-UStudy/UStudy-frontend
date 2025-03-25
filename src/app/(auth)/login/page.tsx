@@ -61,12 +61,13 @@ export default function Login() {
       //   localStorage.setItem("creator", response.data.user.name);
       //   localStorage.setItem("userData", JSON.stringify(response.data.user));
       // }
-      toast.success("Đăng nhập thành công ! Đang chuyển hướng", {
+      toast.success("Đăng nhập thành công! Đang chuyển hướng", {
         position: "bottom-right",
         autoClose: 5000,
         closeOnClick: false,
         pauseOnHover: false,
       });
+      console.log("Default Route:", defaultRoute);
       switch (defaultRoute) {
         case "TEACHER":
           router.push("/teacher/classes");
@@ -174,7 +175,12 @@ export default function Login() {
             <div className="flex w-full justify-between mt-4 px-1">
               <div className="flex items-center justify-center">
                 <input type="checkbox" id="rememberMe" className="mr-1" />
-                <div className="text-sm text-gray-600">Ghi nhớ đăng nhập</div>
+                <label
+                  htmlFor="rememberMe"
+                  className="text-sm text-gray-600 cursor-pointer"
+                >
+                  Ghi nhớ đăng nhập
+                </label>
               </div>
               <div className="flex">
                 <Link
