@@ -1,6 +1,9 @@
 "use client";
 
-import { getAllAttendances } from "@/app/lib/services/attendance";
+import {
+  getAllAttendances,
+  getAllAttendancesNoStatus,
+} from "@/app/lib/services/attendance";
 import { getClassesForTeacher } from "@/app/lib/services/class";
 import { getAllClassSchedule } from "@/app/lib/services/classSchedule";
 import { AttendanceItem, ClassTeacher } from "@/app/types/type";
@@ -19,6 +22,7 @@ const AttendancePage = () => {
   const [year, setYear] = useState("2025");
   const [month, setMonth] = useState("3");
   const [session, setSession] = useState("");
+  const [check, setCheck] = useState<number>(0);
   const [sessions, setSessions] = useState<
     { id: string; date: string; dayOfWeek: string }[]
   >([]);
@@ -62,10 +66,16 @@ const AttendancePage = () => {
     "Vắng mặt": "ABSENT",
     "Đi muộn": "LATE",
     "Vắng có phép": "EXCUSED",
+    "Chưa điểm danh": "UNKNOWN",
   } as const;
 
   const handleClick = (label: keyof typeof labelToEnglish) => {
     setSelectedLabel(label);
+    if (label === "Tất cả") {
+      setCheck(0);
+    } else {
+      setCheck(1);
+    }
   };
 
   const handleScheduleChange = (scheduleId: string) => {
@@ -137,14 +147,25 @@ const AttendancePage = () => {
   useEffect(() => {
     const fetchAttendances = async () => {
       if (!selectedScheduleId || !selectedClass) return;
+
       setLoading(true);
+      let response;
       try {
-        const response = await getAllAttendances(
-          0,
-          100,
-          selectedScheduleId,
-          labelToEnglish[selectedLabel],
-        );
+        if (check === 0) {
+          response = await getAllAttendancesNoStatus(
+            0,
+            100,
+            selectedScheduleId,
+          );
+        } else {
+          response = await getAllAttendances(
+            0,
+            100,
+            selectedScheduleId,
+            labelToEnglish[selectedLabel],
+          );
+        }
+
         setAttendances(response.attendances.content); // Cập nhật danh sách điểm danh
         setTotalPages(response.attendances.totalPages); // Cập nhật tổng số trang
         if (
@@ -279,21 +300,29 @@ const AttendancePage = () => {
         </button>
       </div>
 
-      {/* Các ô hiển thị số lượng học sinh (có thể click) */}
-      <div className="flex space-x-2 mb-4">
-        {attendanceStats.map((item, index) => (
-          <button
-            key={index}
-            className={`px-4 py-2 border border-primary-dark rounded-lg text-primary-dark font-semibold 
+      <div className="flex justify-between">
+        {/* Các ô hiển thị số lượng học sinh (có thể click) */}
+        <div className="flex space-x-2 mb-4">
+          {attendanceStats.map((item, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 border border-primary-dark rounded-lg text-primary-dark font-semibold 
       transition-all hover:bg-primary-light hover:shadow-md active:bg-primary-dark active:text-white
       ${selectedLabel === item.label ? "bg-primary-dark text-white" : ""}`}
-            onClick={() =>
-              handleClick(item.label as keyof typeof labelToEnglish)
-            }
-          >
-            {item.label}: {item.value}
+              onClick={() =>
+                handleClick(item.label as keyof typeof labelToEnglish)
+              }
+            >
+              {item.label}: {item.value}
+            </button>
+          ))}
+        </div>
+
+        <div className="">
+          <button className="bg-primary-dark text-white px-4 py-2 rounded-lg hover:bg-hover-primary">
+            Xác nhận
           </button>
-        ))}
+        </div>
       </div>
 
       {/* Hiển thị thông báo nếu chưa chọn lớp hoặc lịch học */}

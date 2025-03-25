@@ -96,7 +96,7 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
           classes.map((classItem) => (
             <div
               key={classItem.id}
-              className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-transform transform hover:scale-95"
+              className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-all transform hover:shadow-md"
             >
               {/* Avatar */}
               <div className="w-14 h-14 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center font-extrabold text-lg mr-6">
