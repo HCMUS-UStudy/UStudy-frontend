@@ -166,7 +166,13 @@ const AttendancePage = () => {
           );
         }
 
-        setAttendances(response.attendances.content); // Cập nhật danh sách điểm danh
+        const updatedAttendances = response.attendances.content.map((att) => ({
+          ...att,
+          status: att.status ?? "PRESENT", // Nếu null thì gán "PRESENT"
+        }));
+
+        setAttendances(updatedAttendances);
+
         setTotalPages(response.attendances.totalPages); // Cập nhật tổng số trang
         if (
           prevScheduleId.current !== selectedScheduleId ||

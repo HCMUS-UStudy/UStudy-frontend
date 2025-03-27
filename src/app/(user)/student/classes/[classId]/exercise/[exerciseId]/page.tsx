@@ -224,7 +224,8 @@ const ExercisePage = () => {
     if (!selectedExercise || !submissionData?.id) return;
 
     try {
-      const response = await deleteSubmission(submissionData?.id);
+      console.log(submissionData.id);
+      const response = await deleteSubmission(submissionData.id);
       console.log(response);
       toast.success("Xóa thành công!", {
         position: "bottom-right",
