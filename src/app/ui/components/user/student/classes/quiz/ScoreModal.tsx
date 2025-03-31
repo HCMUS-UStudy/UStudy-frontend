@@ -70,7 +70,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
                 onClick={() => handleReviewQuiz()}
                 className="bg-gradient-to-r from-primary-darker to-primary-darkest text-white px-6 py-2 rounded-full hover:from-primary-dark hover:to-primary-darker transition-colors shadow-md"
               >
-                Xem Review
+                Xem lại
               </Button>
             </div>
           </div>
