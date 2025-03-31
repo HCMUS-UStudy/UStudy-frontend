@@ -202,13 +202,14 @@ export default function DayRoomSessionSelector() {
               <div key={key}>
                 <label
                   htmlFor={value}
-                  className="relative py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-slate-200
+                  className="relative py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker has-[:disabled]:bg-slate-200 has-[:disabled]:hover:border-slate-200 has-[:disabled]:hover:cursor-default flex items-center justify-center h-20 w-20 border-2 border-slate-200
                          text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
                 >
                   <input
                     type="checkbox"
                     className="hidden peer"
                     id={value}
+                    disabled={!(numLessons !== 0 && startDate !== "")}
                     checked={isDaySelected(key)}
                     onChange={() => handleSelectDaysInWeek(key as DaysInWeek)}
                   />

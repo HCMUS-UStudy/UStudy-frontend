@@ -108,17 +108,21 @@ export const getListMembers = async (
   query: string,
   currentPage: number,
   limit: number,
-  role: string,
+  role: "STUDENT" | "TEACHER",
 ): Promise<MemberData> => {
-  const response = await axiosInstance.get(`/class/list-members/${classId}`, {
-    params: {
-      page: currentPage,
-      limit: limit,
-      role: role,
-      filter: query,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get(`/class/list-members/${classId}`, {
+      params: {
+        page: currentPage,
+        limit: limit,
+        role: role,
+        filter: query,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getListAvailableTea = async (

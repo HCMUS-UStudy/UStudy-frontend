@@ -86,8 +86,8 @@ export default function CreateClass() {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const numLessons = methods.watch("numLessons");
-  const startDate = methods.watch("startDate");
+  // const numLessons = methods.watch("numLessons");
+  // const startDate = methods.watch("startDate");
 
   const onSubmit = async (data: CreateClassInputs) => {
     try {
@@ -128,9 +128,10 @@ export default function CreateClass() {
           {/* <SessionSelector /> */}
           <DurationSelector />
           {/* <RoomSelector /> */}
-          {numLessons !== 0 && !isNaN(numLessons) && startDate !== "" && (
+          {/* {numLessons !== 0 && !isNaN(numLessons) && startDate !== "" && (
             <DayRoomSessionSelector />
-          )}
+          )} */}
+          <DayRoomSessionSelector />
           <ClassDescription />
           <Button isPending={loading} type="submit" className="w-full">
             Tạo lớp học mới
