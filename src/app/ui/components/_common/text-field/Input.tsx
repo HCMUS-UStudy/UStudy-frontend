@@ -14,6 +14,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   alwaysShowLabel?: boolean;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   isError?: boolean;
   errorMsg?: string | null;
   icon?: React.ReactNode;
@@ -49,6 +50,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
  * @param alwaysShowLabel - Always show label (default: false)
  * @param disabled - Disable the input
  * @param onChange - Function to handle input change
+ * @param onEnter - Function to handle enter key press
  * @param isError - Input has error or not (default: false)
  * @param errorMsg - Error message
  * @param icon - Input icon
@@ -68,6 +70,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       alwaysShowLabel = false,
       disabled = false,
       onChange,
+      onEnter,
       isError,
       errorMsg,
       icon,
@@ -139,6 +142,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             // onFocus={() => setIsFocused(true)}
             // onBlur={() => setIsFocused(false)}
             onChange={onChange}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && onEnter) {
+                onEnter(e);
+              }
+            }}
             {...props}
           />
 

@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { MaterialData } from "@/app/types/type";
+import { MaterialData, MaterialItem } from "@/app/types/type";
 
 // type CachedDataData = {
 //   data: MaterialData;
@@ -29,7 +29,7 @@ export const getMaterialsByClassId = async (
       limit: 100,
       filter: filter,
     },
-    id: "getMaterialsByClassId",
+    id: `getMaterialsByClassId_${classId}`,
   });
   return response.data.data;
 };
@@ -47,6 +47,7 @@ export const getMaterialsByParent = async (
         page: currentPage,
         limit: limit,
       },
+      id: `getMaterialsByParent_${classId}_${materialId}`,
     },
   );
   return response.data.data;
@@ -68,13 +69,31 @@ export const downloadSystemMaterial = async (materialId: string) => {
   return response.data;
 };
 
-export const uploadClassMaterial = async (data: FormData, classId: string) => {
+export const uploadClassMaterial = async (
+  data: FormData,
+  parentId: string,
+  classId: string,
+) => {
   const response = await axiosInstance.post(
     `/class-material/upload/file/${classId}`,
     data,
     {
       headers: {
         "Content-Type": "form-data",
+      },
+      cache: {
+        update: {
+          [`getMaterialsByParent_${classId}_${parentId}`]: (
+            cached: any,
+            response,
+          ) => {
+            if (cached.state !== "cached") {
+              return "ignore";
+            }
+            cached.data.data.data.content.push(response.data.data);
+            return cached;
+          },
+        },
       },
     },
   );
@@ -85,19 +104,19 @@ export const createFolder = async (classId: string, name: string) => {
   const response = await axiosInstance.post(
     `/class-material/create/folder/${classId}`,
     { name: name },
-    // {
-    //   cache: {
-    //     update: {
-    //       getMaterialsByClassId: (cached: any, response) => {
-    //         if (cached.state !== "cached") {
-    //           return "ignore";
-    //         }
-    //         cached.data.data.data.content.push(response.data.data);
-    //         return cached;
-    //       },
-    //     },
-    //   },
-    // },
+    {
+      cache: {
+        update: {
+          [`getMaterialsByClassId_${classId}`]: (cached: any, response) => {
+            if (cached.state !== "cached") {
+              return "ignore";
+            }
+            cached.data.data.data.content.push(response.data.data);
+            return cached;
+          },
+        },
+      },
+    },
   );
   return response.data;
 };
@@ -105,25 +124,26 @@ export const createFolder = async (classId: string, name: string) => {
 export const deleteClassMaterial = async (
   classId: string,
   materialId: string,
+  parentId: string,
 ) => {
   const response = await axiosInstance.delete(
     `/class-material/delete/${classId}/${materialId}`,
-    // {
-    //   cache: {
-    //     update: {
-    //       getMaterialsByParent: (cached: any) => {
-    //         if (cached.state !== "cached") {
-    //           return "ignore";
-    //         }
-    //         cached.data.data.data.content =
-    //           cached.data.data.data.content.filter(
-    //             (material: MaterialItem) => material.id !== materialId,
-    //           );
-    //         return cached;
-    //       },
-    //     },
-    //   },
-    // },
+    {
+      cache: {
+        update: {
+          [`getMaterialsByParent_${classId}_${parentId}`]: (cached: any) => {
+            if (cached.state !== "cached") {
+              return "ignore";
+            }
+            cached.data.data.data.content =
+              cached.data.data.data.content.filter(
+                (material: MaterialItem) => material.id !== materialId,
+              );
+            return cached;
+          },
+        },
+      },
+    },
   );
   return response.data;
 };

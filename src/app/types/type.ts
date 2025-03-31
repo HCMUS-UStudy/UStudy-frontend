@@ -792,6 +792,22 @@ export type AttendaceData = {
   countStatus: Record<string, number>;
 };
 
+export type NotificationItem = {
+  id: string;
+  title: string;
+  content: string;
+  sendDate: string;
+  read: boolean;
+  sender: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+  };
+  type: string;
+};
+
 export interface SubmissionSchema {
   content: string;
   files: File[];
@@ -815,11 +831,6 @@ export type SubmissionItem = {
   score: number;
   feedback: string;
   gradedBy: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    avatar: string;
     gender: "MALE" | "FEMALE" | "OTHER";
     createdAt: string;
     status: "ACTIVE" | "INACTIVE";

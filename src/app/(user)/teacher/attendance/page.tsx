@@ -66,7 +66,6 @@ const AttendancePage = () => {
     "Vắng mặt": "ABSENT",
     "Đi muộn": "LATE",
     "Vắng có phép": "EXCUSED",
-    "Chưa điểm danh": "UNKNOWN",
   } as const;
 
   const handleClick = (label: keyof typeof labelToEnglish) => {
@@ -166,7 +165,13 @@ const AttendancePage = () => {
           );
         }
 
-        setAttendances(response.attendances.content); // Cập nhật danh sách điểm danh
+        const updatedAttendances = response.attendances.content.map((att) => ({
+          ...att,
+          status: att.status ?? "PRESENT", // Nếu null thì gán "PRESENT"
+        }));
+
+        setAttendances(updatedAttendances);
+
         setTotalPages(response.attendances.totalPages); // Cập nhật tổng số trang
         if (
           prevScheduleId.current !== selectedScheduleId ||
@@ -198,15 +203,6 @@ const AttendancePage = () => {
     { label: "Vắng mặt", value: countStatus["ABSENT"] || 0 },
     { label: "Đi muộn", value: countStatus["LATE"] || 0 },
     { label: "Vắng có phép", value: countStatus["EXCUSED"] || 0 },
-    {
-      label: "Chưa điểm danh",
-      value:
-        totalElements -
-          (countStatus["PRESENT"] || 0) -
-          (countStatus["ABSENT"] || 0) -
-          (countStatus["LATE"] || 0) -
-          (countStatus["EXCUSED"] || 0) || 0,
-    },
   ];
 
   return (
