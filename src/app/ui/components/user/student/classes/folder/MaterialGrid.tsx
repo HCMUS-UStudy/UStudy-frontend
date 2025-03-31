@@ -1,12 +1,13 @@
 "use client";
 
-import { getMaterialsByParent } from "@/app/lib/services/class-material";
+import {
+  getMaterialsByClassId,
+  getMaterialsByParent,
+} from "@/app/lib/services/class-material";
 import { MaterialItem } from "@/app/types/type";
 import { Button } from "@/app/ui/components/_common/Button";
-import Loading from "@/app/ui/components/_common/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import {
   FaFolder,
@@ -19,23 +20,34 @@ import { FaList } from "react-icons/fa6";
 
 interface MaterialGridProps {
   classId: string;
-  folderId: string;
 }
 
-const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
+const MaterialGrid: React.FC<MaterialGridProps> = ({ classId }) => {
   const [materialItem, setMaterialItem] = useState<MaterialItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [currentFolderId, setCurrentFolderId] = useState<string | null>(
-    Array.isArray(folderId) ? folderId[0] : folderId || null,
-  );
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [folderHistory, setFolderHistory] = useState<
     { id: string; name: string }[]
   >([]);
 
-  const router = useRouter();
+  const fetchRootMaterial = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await getMaterialsByClassId("", 0, classId);
+      console.log(response);
+      setMaterialItem(response.content);
+      setCurrentFolderId(null); // Gốc không có folderId
+    } catch (err) {
+      console.error("Error fetching materials:", err);
+      setError("Không thể tải thông tin tài liệu lớp học.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchMaterial = async (parentId: string | null) => {
     if (!parentId) return;
@@ -59,10 +71,10 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
   };
 
   useEffect(() => {
-    if (classId && currentFolderId) {
-      fetchMaterial(currentFolderId);
+    if (classId) {
+      fetchRootMaterial();
     }
-  }, [classId, currentFolderId]);
+  }, [classId]);
 
   const handleFolderClick = (folderId: string, folderName: string) => {
     setFolderHistory((prev) => [
@@ -70,6 +82,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
       { id: currentFolderId!, name: folderName },
     ]);
     setCurrentFolderId(folderId);
+    fetchMaterial(folderId);
   };
 
   const getFileIcon = (name: string, type: string) => {
@@ -102,34 +115,53 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
     return "/images/file-thumbnail.png";
   };
 
-  if (!currentFolderId) {
-    return (
-      <div className="text-center text-gray-500 mt-10">
-        Không tìm thấy thông tin tài liệu.
-      </div>
-    );
-  }
   if (loading) {
-    return <Loading />;
+    return (
+      <>
+        <div className="animate-pulse">
+          <div className="mb-4 flex items-center space-x-2">
+            <div className="h-4 w-16 bg-gray-300 rounded"></div>
+            <span className="text-gray-400">/</span>
+            <div className="h-4 w-24 bg-gray-300 rounded"></div>
+          </div>
+
+          <div className="flex items-center justify-between mt-2 gap-14 ml-4 mr-4">
+            <div className="w-full h-10 bg-gray-300 rounded-2xl"></div>
+            <div className="flex space-x-2">
+              <div className="w-10 h-10 bg-gray-300 rounded-lg"></div>
+              <div className="w-10 h-10 bg-gray-300 rounded-lg"></div>
+            </div>
+          </div>
+
+          <div className="px-4 py-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-lg p-4 flex flex-col"
+              >
+                <div className="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div className="h-24 bg-gray-300 rounded-lg"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
-    <div className="px-2">
+    <div>
       <div className="mb-4 text-gray-700 flex items-center space-x-2">
-        {folderHistory.length > 0 && (
-          <span
-            onClick={() => {
-              setFolderHistory([]);
-              setCurrentFolderId(
-                Array.isArray(folderId) ? folderId[0] : folderId || null,
-              );
-              router.push(`/student/classes/${classId}`);
-            }}
-            className="cursor-pointer text-primary-dark hover:underline"
-          >
-            Gốc
-          </span>
-        )}
+        <span
+          onClick={() => {
+            setFolderHistory([]);
+            setCurrentFolderId(null);
+            fetchRootMaterial();
+          }}
+          className="cursor-pointer text-primary-dark hover:underline"
+        >
+          Gốc
+        </span>
         {folderHistory.map((folder, index) => (
           <React.Fragment key={folder.id}>
             <span className="text-gray-400">/</span>
@@ -137,6 +169,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
               onClick={() => {
                 setCurrentFolderId(folder.id);
                 setFolderHistory(folderHistory.slice(0, index));
+                fetchMaterial(folder.id);
               }}
               className="cursor-pointer text-primary-dark hover:underline"
             >
@@ -152,35 +185,31 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId, folderId }) => {
         )}
       </div>
 
-      <div className="flex items-center justify-center mb-6">
-        <h2 className="text-2xl font-bold">Tài liệu lớp học</h2>
-      </div>
-
-      <div className="flex items-center justify-between mt-2 gap-14 ml-4">
+      <div className="flex items-center justify-between gap-14">
         <SearchField
           className="w-full bg-primary-lighter py-[2px] rounded-2xl"
           placeholder="Tìm kiếm tài liệu..."
         />
-        <div className="flex items-center gap-6 px-4">
+        <div className="flex">
           <Button
             onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-lg ${
+            className={`p-3 mx-1 rounded-lg transition ${
               viewMode === "grid"
-                ? "bg-primary-light text-primary-dark"
-                : "text-gray-600"
+                ? "bg-primary-dark hover:bg-hover-primary text-white"
+                : "hover:bg-gray-200"
             }`}
           >
-            <FaThLarge />
+            <FaThLarge size={15} />
           </Button>
           <Button
             onClick={() => setViewMode("list")}
-            className={`p-2 rounded-lg ${
+            className={`p-3 mx-1 rounded-lg transition ${
               viewMode === "list"
-                ? "bg-primary-light text-primary-dark"
-                : "text-gray-600"
+                ? "bg-primary-dark hover:bg-hover-primary text-white"
+                : "hover:bg-gray-200"
             }`}
           >
-            <FaList />
+            <FaList size={15} />
           </Button>
         </div>
       </div>

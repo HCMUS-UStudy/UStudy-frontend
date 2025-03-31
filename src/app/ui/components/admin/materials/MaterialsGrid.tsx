@@ -75,7 +75,7 @@ const MaterialsGrid: React.FC = () => {
     }
   };
   return (
-    <div>
+    <div className="mb-10">
       {/* Thanh điều hướng chuyển đổi chế độ xem */}
       <div className="flex justify-end items-center mb-6">
         <div className="flex">
@@ -134,7 +134,7 @@ const MaterialsGrid: React.FC = () => {
               {activeDropdown === item.id && (
                 <div
                   ref={dropdownRef}
-                  className="absolute top-12 right-4 w-40 bg-white border rounded-md z-10 animate-fade-in"
+                  className="absolute top-20 right-4 w-40 bg-white border rounded-md z-10 animate-fade-in"
                 >
                   <button className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
                     Chỉnh sửa
@@ -151,51 +151,52 @@ const MaterialsGrid: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="space-y-3">
-          {materialItems.map((item) => (
-            <div
-              key={item.id}
-              className="relative flex items-center justify-between bg-white p-5 rounded-xl transition-all duration-300 border border-gray-200"
-            >
-              <div className="flex items-center space-x-4">
-                {getFileIcon(item.name, item.type)}
-                <div>
-                  <p
-                    className="font-semibold text-gray-800 text-sm md:text-base truncate w-60"
-                    title={item.name}
-                  >
-                    {item.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {item.uploadedBy.name}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => toggleDropdown(item.id)}
-                className="p-2 rounded-full hover:bg-gray-200 transition"
-              >
-                <FaEllipsisV className="text-gray-600" />
-              </button>
-              {activeDropdown === item.id && (
-                <div
-                  ref={dropdownRef}
-                  className="absolute top-12 right-4 w-40 bg-white border rounded-md z-50 animate-fade-in"
-                >
-                  <button className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
-                    Chỉnh sửa
-                  </button>
-                  <button className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
-                    Sao chép
-                  </button>
-                  <button className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-100">
-                    Xóa
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        // <div className="space-y-3">
+        //   {materialItems.map((item) => (
+        //     <div
+        //       key={item.id}
+        //       className="relative flex items-center justify-between bg-white p-5 rounded-xl transition-all duration-300 border border-gray-200"
+        //     >
+        //       <div className="flex items-center space-x-4">
+        //         {getFileIcon(item.name, item.type)}
+        //         <div>
+        //           <p
+        //             className="font-semibold text-gray-800 text-sm md:text-base truncate w-60"
+        //             title={item.name}
+        //           >
+        //             {item.name}
+        //           </p>
+        //           <p className="text-xs text-gray-500">
+        //             {item.uploadedBy.name}
+        //           </p>
+        //         </div>
+        //       </div>
+        //       <button
+        //         onClick={() => toggleDropdown(item.id)}
+        //         className="p-2 rounded-full hover:bg-gray-200 transition"
+        //       >
+        //         <FaEllipsisV className="text-gray-600" />
+        //       </button>
+        //       {activeDropdown === item.id && (
+        //         <div
+        //           ref={dropdownRef}
+        //           className="absolute top-12 right-4 w-40 bg-white border rounded-md z-50 animate-fade-in"
+        //         >
+        //           <button className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
+        //             Chỉnh sửa
+        //           </button>
+        //           <button className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100">
+        //             Sao chép
+        //           </button>
+        //           <button className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-100">
+        //             Xóa
+        //           </button>
+        //         </div>
+        //       )}
+        //     </div>
+        //   ))}
+        // </div>
+        <div></div>
       )}
     </div>
   );

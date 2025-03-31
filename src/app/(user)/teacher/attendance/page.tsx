@@ -66,7 +66,6 @@ const AttendancePage = () => {
     "Vắng mặt": "ABSENT",
     "Đi muộn": "LATE",
     "Vắng có phép": "EXCUSED",
-    "Chưa điểm danh": "UNKNOWN",
   } as const;
 
   const handleClick = (label: keyof typeof labelToEnglish) => {
@@ -204,15 +203,6 @@ const AttendancePage = () => {
     { label: "Vắng mặt", value: countStatus["ABSENT"] || 0 },
     { label: "Đi muộn", value: countStatus["LATE"] || 0 },
     { label: "Vắng có phép", value: countStatus["EXCUSED"] || 0 },
-    {
-      label: "Chưa điểm danh",
-      value:
-        totalElements -
-          (countStatus["PRESENT"] || 0) -
-          (countStatus["ABSENT"] || 0) -
-          (countStatus["LATE"] || 0) -
-          (countStatus["EXCUSED"] || 0) || 0,
-    },
   ];
 
   return (
