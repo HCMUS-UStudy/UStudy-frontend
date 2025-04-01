@@ -308,8 +308,11 @@ const ExercisePage = () => {
         isOpen={isDeleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleConfirmDelete}
+        type="delete"
         title="Xóa bài tập"
         message="Bạn có chắc chắn muốn xóa bài tập này không?"
+        confirmText="Xóa"
+        cancelText="Hủy"
       />
 
       {!isSubmit && (

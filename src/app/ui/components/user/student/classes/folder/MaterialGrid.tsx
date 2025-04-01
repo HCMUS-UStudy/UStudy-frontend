@@ -74,13 +74,11 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId }) => {
     if (classId) {
       fetchRootMaterial();
     }
+    return;
   }, [classId]);
 
   const handleFolderClick = (folderId: string, folderName: string) => {
-    setFolderHistory((prev) => [
-      ...prev,
-      { id: currentFolderId!, name: folderName },
-    ]);
+    setFolderHistory((prev) => [...prev, { id: folderId, name: folderName }]);
     setCurrentFolderId(folderId);
     fetchMaterial(folderId);
   };
@@ -167,8 +165,9 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId }) => {
             <span className="text-gray-400">/</span>
             <span
               onClick={() => {
+                const newHistory = folderHistory.slice(0, index);
+                setFolderHistory(newHistory);
                 setCurrentFolderId(folder.id);
-                setFolderHistory(folderHistory.slice(0, index));
                 fetchMaterial(folder.id);
               }}
               className="cursor-pointer text-primary-dark hover:underline"
