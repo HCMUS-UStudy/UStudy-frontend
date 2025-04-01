@@ -73,7 +73,7 @@ export default function Login() {
           router.push("/teacher/classes");
           break;
         case "STUDENT":
-          router.push("/student/home");
+          router.push("/member/home");
           break;
         case "ADMIN":
           router.push("/admin/dashboard");
