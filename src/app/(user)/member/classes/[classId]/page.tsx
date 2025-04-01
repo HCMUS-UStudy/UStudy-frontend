@@ -147,10 +147,11 @@ const ClassDetail = () => {
       fetchQuiz();
       fetchExercise();
     }
+    return;
   }, [classId]);
 
   const handleStartQuiz = (quizId: string) => {
-    router.push(`/student/classes/${classId}/quiz/${quizId}`);
+    router.push(`/member/classes/${classId}/quiz/${quizId}`);
   };
 
   const handleReviewQuiz = async (quizId: string) => {
@@ -169,12 +170,12 @@ const ClassDetail = () => {
     window.history.pushState(
       null,
       "",
-      `/student/classes/${classId}/quizId/${quizId}`,
+      `/member/classes/${classId}/quizId/${quizId}`,
     );
   };
 
   const handleStartExercise = (exerciseId: string) => {
-    router.push(`/student/classes/${classId}/exercise/${exerciseId}`);
+    router.push(`/member/classes/${classId}/exercise/${exerciseId}`);
   };
 
   return (
@@ -271,10 +272,6 @@ const ClassDetail = () => {
                   </div>
                 </div>
               </div>
-
-              <p className="text-lg text-primary-dark">
-                {classDetail?.description}
-              </p>
             </div>
           )}
 

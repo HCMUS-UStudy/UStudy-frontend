@@ -42,7 +42,7 @@ const Sidebar = ({ role }: { role: string }) => {
         {SIDENAV_ITEMS.map((item, idx) => (
           <div
             key={idx}
-            className={`flex items-center gap-2 px-[14px] py-[10px] rounded-2xl cursor-pointer ${
+            className={`flex items-center gap-2 px-[14px] py-[10px] rounded-2xl cursor-pointer transition-colors duration-200 ${
               pathname.includes(item.path)
                 ? "bg-primary hover:bg-hover-primary"
                 : "hover:bg-primary-light"

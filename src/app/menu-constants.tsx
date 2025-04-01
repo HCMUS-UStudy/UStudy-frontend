@@ -144,27 +144,27 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
 export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
   {
     title: "Trang chủ",
-    path: "/student/home",
+    path: "/member/home",
     icon: <BsHouseDoor size={20} />,
   },
   {
     title: "Lớp học",
-    path: "/student/classes",
+    path: "/member/classes",
     icon: <SiGoogleclassroom size={20} />,
   },
   {
     title: "Lịch học",
-    path: "/student/schedule",
+    path: "/member/schedule",
     icon: <BsCalendar size={20} />,
   },
   {
     title: "Học phí",
-    path: "/student/tuition",
+    path: "/member/tuition",
     icon: <BsCreditCard size={20} />,
   },
   {
     title: "Kết quả học tập",
-    path: "/student/results",
+    path: "/member/results",
     icon: <BsPersonWorkspace size={20} />,
   },
 ];

@@ -106,7 +106,7 @@ const config: Config = {
         fall_5: "fall 3s linear 2.5s infinite",
       },
       height: {
-        "header-height": "90px",
+        "header-height": "70px",
       },
       top: {
         "header-top": "90px",
