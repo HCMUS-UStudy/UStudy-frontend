@@ -52,13 +52,25 @@ export const getSystemMaterialByParent = async (
   limit: number,
   filter: string,
 ) => {
-  const response = await axiosInstance.get("/material/system/list", {
-    params: {
-      folderId: folderId,
-      page: currentPage,
-      limit: limit,
-      filter: filter,
+  const response = await axiosInstance.get(
+    `/material/system/list/${folderId}`,
+    {
+      params: {
+        page: currentPage,
+        limit: limit,
+        filter: filter,
+      },
     },
-  });
+  );
   return response.data.data;
+};
+
+export const downloadFile = async (materialId: string) => {
+  const response = await axiosInstance.get(
+    `/material/download/system/${materialId}`,
+    {
+      responseType: "blob", // Quan trọng để xử lý file
+    },
+  );
+  return response;
 };
