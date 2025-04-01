@@ -17,7 +17,6 @@ import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import "react-toastify/ReactToastify.min.css";
 import { z } from "zod";
 
 const today = new Date().toISOString().split("T")[0];
@@ -87,8 +86,8 @@ export default function CreateClass() {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const numLessons = methods.watch("numLessons");
-  const startDate = methods.watch("startDate");
+  // const numLessons = methods.watch("numLessons");
+  // const startDate = methods.watch("startDate");
 
   const onSubmit = async (data: CreateClassInputs) => {
     try {
@@ -129,9 +128,10 @@ export default function CreateClass() {
           {/* <SessionSelector /> */}
           <DurationSelector />
           {/* <RoomSelector /> */}
-          {numLessons !== 0 && !isNaN(numLessons) && startDate !== "" && (
+          {/* {numLessons !== 0 && !isNaN(numLessons) && startDate !== "" && (
             <DayRoomSessionSelector />
-          )}
+          )} */}
+          <DayRoomSessionSelector />
           <ClassDescription />
           <Button isPending={loading} type="submit" className="w-full">
             Tạo lớp học mới

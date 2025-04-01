@@ -73,7 +73,7 @@ export default function Login() {
           router.push("/teacher/classes");
           break;
         case "STUDENT":
-          router.push("/student/home");
+          router.push("/member/home");
           break;
         case "ADMIN":
           router.push("/admin/dashboard");
@@ -93,20 +93,22 @@ export default function Login() {
   return (
     <>
       <div className="flex items-center justify-center h-screen overflow-hidden">
-        <div className="flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
-          <Image src="/logo.png" alt="Logo" width={280} height={280} />
+        <div className="hidden lg:flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
+          <div className="relative  lg:h-[80px] lg:w-[250px] xl:h-[100px] xl:w-[300px]">
+            <Image className="object-contain" src="/logo.png" alt="Logo" fill />
+          </div>
           {isUser && (
-            <h1 className="text-2xl font-semibold text-[#273526]">
+            <h1 className="text-xl xl:text-2xl font-semibold text-[#273526]">
               Học tập toàn diện, Vươn tầm tri thức
             </h1>
           )}
           {!isUser && (
-            <h1 className="text-2xl font-semibold text-[#273526]">
+            <h1 className="text-xl xl:text-2xl font-semibold text-[#273526]">
               Chào mừng đến với trang quản lý hệ thống
             </h1>
           )}
         </div>
-        <div className="flex relative items-center h-full justify-center w-full bg-background">
+        <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
           <Image
             className="absolute animate-fall_1 -top-[100px] opacity-50 left-[0%]"
             src="/Intersect.png"
@@ -145,14 +147,14 @@ export default function Login() {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bg-foreground py-20 px-16 rounded-3xl shadow-lg z-[100]"
+            className="bg-foreground py-10 lg:py-10 xl:py-16 px-10 lg:px-14 xl:px-16 rounded-3xl shadow-lg z-[100]"
           >
-            <div className="text-[#F48C06] text-3xl font-bold flex justify-center">
+            <div className="text-[#F48C06] text-2xl md:text-3xl font-bold flex justify-center">
               Đăng nhập
             </div>
-            <div className="mt-6 mb-4 w-[350px]">
+            <div className="mt-6 mb-4 w-[250px] md:w-[350px]">
               <Input
-                className="text-[14px]"
+                className="text-base md:text-[14px]"
                 type="text"
                 placeholder="Nhập mã người dùng"
                 label="Mã người dùng"
@@ -172,8 +174,8 @@ export default function Login() {
                 {...register("password")}
               />
             </div>
-            <div className="flex w-full justify-between mt-4 px-1">
-              <div className="flex items-center justify-center">
+            <div className="flex flex-col gap-2 md:flex-row w-full justify-between mt-4 px-1">
+              <div className="flex items-center">
                 <input type="checkbox" id="rememberMe" className="mr-1" />
                 <label
                   htmlFor="rememberMe"
