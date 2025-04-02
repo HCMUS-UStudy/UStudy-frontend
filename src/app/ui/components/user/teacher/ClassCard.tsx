@@ -36,7 +36,7 @@ export default function ClassCard({
               className="bg-primary-dark h-2.5 rounded-full"
               style={{
                 width: `${
-                  ((new Date(cls.endDate).getTime() - Date.now()) /
+                  ((Date.now() - new Date(cls.startDate).getTime()) /
                     (new Date(cls.endDate).getTime() -
                       new Date(cls.startDate).getTime())) *
                   100
