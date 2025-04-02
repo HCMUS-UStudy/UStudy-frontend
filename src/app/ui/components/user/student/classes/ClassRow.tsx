@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { ClassUserItem } from "@/app/types/type";
 import { getAllStudentClasses } from "@/app/lib/services/class";
-import Loading from "../../../_common/Loading";
 import { Button } from "../../../_common/Button";
 import { useRouter } from "next/navigation";
 
@@ -23,75 +22,65 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
 
   const defaultClass = classQuery === "All" ? "" : classQuery;
 
-  const fetchClasses = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const searchParam =
-        searchQuery && defaultClass
-          ? `${defaultClass} ${searchQuery}`
-          : defaultClass || searchQuery || "";
-
-      const response = await getAllStudentClasses(
-        searchParam,
-        "",
-        "",
-        currentPage - 1,
-        5,
-      );
-
-      setClasses(response.content);
-      console.log("Classes: ", classes);
-      setTotalPages(response.totalPages || 1);
-    } catch (err) {
-      console.error("Error fetching classes:", err);
-      setError("Error fetching classes.");
-    } finally {
-      console.log(error);
-      setLoading(false);
-    }
-  };
-
-  // const fetchClassDetails = async (classId: string) => {
-  //   if (classDetails[classId]) {
-  //     console.log(
-  //       `Class details for ${classId} already fetched:`,
-  //       classDetails[classId],
-  //     );
-  //     return; // Avoid fetching if details already exist
-  //   }
-
-  //   try {
-  //     const response = await getClassById(classId);
-
-  //     setClassDetails((prevDetails) => {
-  //       const updatedDetails = { ...prevDetails, [classId]: response.data };
-  //       console.log("Updated class details:", updatedDetails); // Log the updated state
-  //       return updatedDetails;
-  //     });
-  //   } catch (err) {
-  //     console.error("Error fetching class details:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   useEffect(() => {
+    const fetchClasses = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const searchParam =
+          searchQuery && defaultClass
+            ? `${defaultClass} ${searchQuery}`
+            : defaultClass || searchQuery || "";
+
+        const response = await getAllStudentClasses(
+          searchParam,
+          "",
+          "",
+          currentPage - 1,
+          5,
+        );
+
+        setClasses(response.content);
+        console.log("Classes: ", classes);
+        setTotalPages(response.totalPages || 1);
+      } catch (err) {
+        console.error("Error fetching classes:", err);
+        setError("Error fetching classes.");
+      } finally {
+        console.log(error);
+        setLoading(false);
+      }
+    };
     fetchClasses();
+    return;
   }, [currentPage, searchQuery, defaultClass]);
 
   const handleDetail = (id: string) => {
     setLoading(true);
     //fetchClassDetails(id).finally(() => setLoading(false));
-    router.push(`/student/classes/${id}`);
+    router.push(`/member/classes/${id}`);
   };
 
   return (
     <div>
       <div className="flex flex-col space-y-6">
         {loading ? (
-          <Loading />
+          <div className="flex flex-col space-y-4">
+            {[...Array(3)].map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center bg-gray-100 border border-gray-200 p-6 rounded-2xl animate-pulse"
+              >
+                <div className="w-14 h-14 rounded-full bg-gray-300 mr-6"></div>
+                <div className="flex-grow">
+                  <div className="h-5 bg-gray-300 rounded w-2/3 mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                </div>
+                <div className="w-24 h-8 bg-gray-300 rounded-full"></div>
+              </div>
+            ))}
+          </div>
         ) : classes.length > 0 ? (
           classes.map((classItem) => (
             <div

@@ -13,6 +13,8 @@ export default function StudentCoursesSelector() {
     clearErrors,
     formState: { errors },
     watch,
+    setError,
+    getValues,
   } = useFormContext<StudentRegisterInputs>();
   const selectedGrade = watch("grades");
   const selectedCourses = watch("courses");
@@ -65,6 +67,11 @@ export default function StudentCoursesSelector() {
         setClassSessions(updatedClassSessions);
       }
       clearErrors("classTimes");
+      if (getValues("courses").length !== 0) {
+        clearErrors("courses");
+      } else {
+        setError("courses", { message: "Chọn tối thiểu một môn học" });
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -122,11 +129,11 @@ export default function StudentCoursesSelector() {
               <SelectorLoading size="sm" numberOfItems={5}></SelectorLoading>
             ) : courses.length !== 0 ? (
               <>
-                <div className="flex gap-3 mt-2">
+                <div className="flex flex-wrap gap-3 mt-2">
                   {courses.map((course) => (
                     <label
                       key={course.id}
-                      className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
+                      className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-16 w-16 lg:h-20 lg:w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
                     >
                       <input
                         type="checkbox"
@@ -136,10 +143,10 @@ export default function StudentCoursesSelector() {
                         checked={selectedCourses.includes(course.id)}
                         onChange={() => handleSelectCourse(course.id)}
                       />
-                      <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
+                      <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-center text-xs lg:text-sm">
                         {course.name}
                       </span>
-                      <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
+                      <FaCheck className="size-12 lg:size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
                     </label>
                   ))}
                 </div>

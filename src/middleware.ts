@@ -23,9 +23,9 @@ export async function middleware(request: NextRequest) {
             new URL("/teacher/classes", request.url),
           );
         case "STUDENT":
-          return NextResponse.redirect(new URL("/student/home", request.url));
+          return NextResponse.redirect(new URL("/member/home", request.url));
         case "PARENT":
-          // return NextResponse.redirect(new URL("/student/home", request.url));
+          return NextResponse.redirect(new URL("/member/home", request.url));
           break;
         case "ADMIN":
           return NextResponse.redirect(
@@ -98,6 +98,6 @@ export const config = {
     "/login",
     "/admin/:path*",
     "/teacher/:path*",
-    "/student/:path*",
+    "/member/:path*",
   ],
 };

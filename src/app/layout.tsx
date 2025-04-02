@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { nunito } from "@/app/ui/fonts";
 import Providers from "./store/Provider";
-import "react-toastify/ReactToastify.min.css";
 import ToastProvider from "./ui/components/toast-provider";
 
 export const metadata: Metadata = {

@@ -24,6 +24,7 @@ export const getAllClasses = async (
       grade: gradeQuery,
     },
   });
+  // console.log(response.cached);
   return response.data.data;
 };
 
@@ -72,6 +73,7 @@ export const createNewClass = async (data: CreateClassInputs) => {
 
 export const getClassById = async (classId: string) => {
   const response = await axiosInstance.get(`/class/details/${classId}`);
+  console.log(response.cached);
   return response.data;
 };
 
@@ -106,17 +108,21 @@ export const getListMembers = async (
   query: string,
   currentPage: number,
   limit: number,
-  role: string,
+  role: "STUDENT" | "TEACHER",
 ): Promise<MemberData> => {
-  const response = await axiosInstance.get(`/class/list-members/${classId}`, {
-    params: {
-      page: currentPage,
-      limit: limit,
-      role: role,
-      filter: query,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get(`/class/list-members/${classId}`, {
+      params: {
+        page: currentPage,
+        limit: limit,
+        role: role,
+        filter: query,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getListAvailableTea = async (

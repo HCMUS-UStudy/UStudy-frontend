@@ -67,9 +67,10 @@ export type AccountDetailItem = {
 
 export type MemberItem = {
   id: string;
+  genId: string;
   name: string;
   email: string;
-  gender: string;
+  gender: "MALE" | "FEMALE";
 };
 
 export type RegisterItem = {
@@ -336,6 +337,7 @@ export type ClassChooseData = {
 export type MemberData = {
   content: MemberItem[];
   totalPages: number;
+  pageNumber: number;
 };
 
 export type TeacherData = {
