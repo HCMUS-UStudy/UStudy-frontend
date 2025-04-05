@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ClassItem } from "@/app/types/type";
+import { ClassItem } from "@/app/types";
 import { usePathname, useRouter } from "next/navigation";
 import { getAllClasses } from "@/app/lib/services/class";
 import { Button } from "@/app/ui/components/_common/Button";

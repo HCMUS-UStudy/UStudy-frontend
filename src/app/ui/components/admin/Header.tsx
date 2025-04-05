@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import BranchSelector from "./BranchSelector";
-import { UserData } from "@/app/types/type";
+import { UserData } from "@/app/types";
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
 import { usePathname, useRouter } from "next/navigation";
 import DropdownProfile from "../_common/DropdownProfile";

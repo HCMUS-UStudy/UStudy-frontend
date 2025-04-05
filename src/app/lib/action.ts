@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { UserData } from "../types/type";
+import { UserData } from "../types";
 import { redirect } from "next/navigation";
 
 export async function setUserDataCookies(userData: string) {

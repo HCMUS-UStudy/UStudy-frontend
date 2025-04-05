@@ -25,7 +25,7 @@ import {
   deleteClassMaterial,
 } from "@/app/lib/services/class-material"; // API này chắc chắn có
 import { useEffect, useState } from "react";
-import { MaterialItem, UserData } from "@/app/types/type";
+import { MaterialItem, UserData } from "@/app/types";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { Input } from "../../_common/text-field/Input";
 

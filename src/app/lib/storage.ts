@@ -1,4 +1,4 @@
-import { User } from "../types/type";
+import { User } from "../types/user";
 
 export const getAccessToken = () => {
   return localStorage.getItem("accessToken");

@@ -6,7 +6,7 @@ import { RootState } from "@/app/store/store";
 import { setSelectedBranch, setBranches } from "../../../store/branch-slice";
 import { getAllBranches } from "@/app/lib/services/branch";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { Branch } from "@/app/types/type";
+import { Branch } from "@/app/types";
 
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();

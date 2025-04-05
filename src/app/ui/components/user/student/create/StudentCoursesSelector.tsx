@@ -1,10 +1,10 @@
 import { StudentRegisterInputs } from "@/app/register/page";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import SelectorLoading from "../../../admin/classes/create/SelectorLoading";
+import SelectorLoading from "../../../_common/loading/SelectorLoading";
 import { FaCheck } from "react-icons/fa6";
 import { getClassSession } from "@/app/lib/services/session";
-import { ClassSessionItem, CourseDto, DaysInWeek } from "@/app/types/type";
+import { ClassSessionItem, CourseDto, DaysInWeek } from "@/app/types";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
 
 export default function StudentCoursesSelector() {

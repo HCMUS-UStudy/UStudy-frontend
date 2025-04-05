@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { getListUserDetail } from "@/app/lib/services/user";
-import { AccountDetailItem, ClassUserItem } from "@/app/types/type";
+import { AccountDetailItem, ClassUserItem } from "@/app/types";
 import { getListUserClass } from "@/app/lib/services/class";
 import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
 import Image from "next/image";

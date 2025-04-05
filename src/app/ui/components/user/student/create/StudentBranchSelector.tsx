@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Loading from "../../../_common/Loading";
+import Loading from "../../../_common/loading/Loading";
 import { Select, SelectItem } from "../../../_common/Select";
 import { getAllBranches } from "@/app/lib/services/branch";
-import { Branch } from "@/app/types/type";
+import { Branch } from "@/app/types";
 import { StudentRegisterInputs } from "@/app/register/page";
 import { useFormContext } from "react-hook-form";
 

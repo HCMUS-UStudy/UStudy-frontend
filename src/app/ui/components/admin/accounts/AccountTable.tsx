@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
-import { AccountItem } from "@/app/types/type";
+import { AccountItem } from "@/app/types";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,

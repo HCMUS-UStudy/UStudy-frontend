@@ -1,4 +1,4 @@
-import { SideNavItem, SideNavItemGroup } from "@/app/types/type";
+import { SideNavItem, SideNavItemGroup } from "@/app/types";
 import {
   BsBook,
   BsCalendar,

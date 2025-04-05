@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { RegisterClassItem, MemberItem } from "@/app/types/type";
+import { RegisterClassItem, MemberItem } from "@/app/types";
 import { toast } from "react-toastify";
 import {
   Dialog,
@@ -185,8 +185,8 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       const response = await getClassById(classId); // Lấy tối đa 100 lớp
       console.log(response);
       setClassDetail({
-        name: response.data.name,
-        description: response.data.description,
+        name: response.name,
+        description: response.description,
       });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách lớp:", error);
@@ -210,6 +210,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
         email: item.email,
         genId: item.genId,
         gender: getGenderDisplayName(item.gender),
+        avatar: item.avatar,
       }));
 
       // Set total pages for students based on API response
@@ -242,9 +243,10 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
       StudentClassData = response.content.map((item) => ({
         id: item.id,
+        genId: item.genId,
         name: item.name,
         email: item.email,
-        gender: getGenderDisplayName(item.gender),
+        gender: item.gender,
       }));
 
       // Set total pages for students based on API response
@@ -280,6 +282,7 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
         email: item.email,
         genId: item.genId,
         gender: getGenderDisplayName(item.gender),
+        avatar: item.avatar,
       }));
       // Set total pages for teachers based on API response
       console.log(totalPagesTea);
@@ -311,9 +314,10 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
 
       TeacherClassData = response.content.map((item) => ({
         id: item.id,
+        genId: item.genId,
         name: item.name,
         email: item.email,
-        gender: getGenderDisplayName(item.gender),
+        gender: item.gender,
       }));
 
       // Set total pages for students based on API response
@@ -401,24 +405,6 @@ const ClassRegisterModal: React.FC<ClassRegisterModalProps> = ({
       setLoading(false);
     }
   };
-
-  // // Handle previous and next page functions
-  // const handlePreviousPageStu = () => {
-  //   if (currentPageStu > 1) setCurrentPageStu(currentPageStu - 1);
-  // };
-
-  // const handleNextPageStu = () => {
-  //   if (currentPageStu < totalPagesStu) setCurrentPageStu(currentPageStu + 1);
-  // };
-
-  // const handlePreviousPageStuCl = () => {
-  //   if (currentPageStuCl > 1) setCurrentPageStuCl(currentPageStuCl - 1);
-  // };
-
-  // const handleNextPageStuCl = () => {
-  //   if (currentPageStuCl < totalPagesStuCl)
-  //     setCurrentPageStu(currentPageStuCl + 1);
-  // };
 
   return (
     <>

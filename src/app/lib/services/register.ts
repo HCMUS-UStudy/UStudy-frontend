@@ -2,7 +2,7 @@ import {
   RegisterAccountData,
   RegisterClassData,
   TeacherRegister,
-} from "@/app/types/type";
+} from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { StudentRegisterInputs } from "@/app/register/page";
 
@@ -24,16 +24,20 @@ export const getStuClassRegister = async (
   classId: string,
   currentPage: number,
 ): Promise<RegisterClassData> => {
-  const response = await axiosInstance.get(
-    `/register/list-student-waiting/${classId}`,
-    {
-      params: {
-        page: currentPage,
-        limit: 5,
+  try {
+    const response = await axiosInstance.get(
+      `/register/list-student-waiting/${classId}`,
+      {
+        params: {
+          page: currentPage,
+          limit: 5,
+        },
       },
-    },
-  );
-  return response.data.data;
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const confirmRegister = async (userIds: string[], roleId: string) => {

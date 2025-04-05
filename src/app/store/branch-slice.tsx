@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Branch } from "../types/type";
+import { Branch } from "../types";
 
 interface BranchState {
   selectedBranchId: string | null;

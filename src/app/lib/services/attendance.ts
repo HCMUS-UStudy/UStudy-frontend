@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { AttendaceData } from "@/app/types/type";
+import { AttendaceData } from "@/app/types";
 
 export const getAllAttendancesNoStatus = async (
   currentPage: number,

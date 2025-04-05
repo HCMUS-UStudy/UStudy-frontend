@@ -1,4 +1,4 @@
-import { CourseData, CourseDto, CourseSchema } from "@/app/types/type";
+import { CourseData, CourseDto, CourseSchema } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAllCourses = async (

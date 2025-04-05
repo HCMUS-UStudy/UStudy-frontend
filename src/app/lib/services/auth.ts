@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { AuthResponse } from "@/app/types/type";
+import { AuthResponse } from "@/app/types";
 
 export const login = async (
   genId: string,

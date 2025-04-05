@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getAllGrades } from "@/app/lib/services/grade";
-import { GradeItem } from "@/app/types/type";
+import { GradeItem } from "@/app/types";
 import { FaCheck } from "react-icons/fa6";
-import SelectorLoading from "./SelectorLoading";
+import SelectorLoading from "../../../_common/loading/SelectorLoading";
 import { useFormContext } from "react-hook-form";
 import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 

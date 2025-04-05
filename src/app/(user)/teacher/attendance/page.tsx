@@ -6,7 +6,8 @@ import {
 } from "@/app/lib/services/attendance";
 import { getClassesForTeacher } from "@/app/lib/services/class";
 import { getAllClassSchedule } from "@/app/lib/services/classSchedule";
-import { AttendanceItem, ClassTeacher } from "@/app/types/type";
+import { ClassTeacher } from "@/app/types";
+import { AttendanceItem } from "@/app/types";
 import {
   Table,
   TableBody,

@@ -12,7 +12,7 @@ import { login } from "@/app/lib/services/auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CustomError } from "@/app/types/type";
+import { CustomError } from "@/app/types/common";
 
 const LogInSchema = z.object({
   genId: z
@@ -53,7 +53,7 @@ export default function Login() {
         response.data.access_token,
         response.data.refresh_token,
         JSON.stringify(response.data.user),
-        JSON.stringify(response.data.permissions),
+        JSON.stringify(response.data.screens),
       );
       // if (isUser) {
       //   setUserInfo(JSON.stringify(response.data.user));

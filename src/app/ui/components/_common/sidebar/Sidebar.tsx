@@ -8,7 +8,7 @@ import {
   SIDENAV_ITEMS_TEACHER,
 } from "@/app/menu-constants";
 import { useRouter, usePathname } from "next/navigation";
-import { SideNavItem } from "@/app/types/type";
+import { SideNavItem } from "@/app/types";
 
 const Sidebar = ({ role }: { role: string }) => {
   const router = useRouter();

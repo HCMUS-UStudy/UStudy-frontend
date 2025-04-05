@@ -1,4 +1,4 @@
-import { AccountData, AccountSchema } from "@/app/types/type";
+import { AccountData, AccountSchema } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
 export const createNewAccount = async (data: AccountSchema) => {

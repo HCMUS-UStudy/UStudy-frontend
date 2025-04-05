@@ -10,7 +10,7 @@ import {
 import Pagination from "../../_common/Pagination";
 import { usePathname, useRouter } from "next/navigation";
 import { getListMembers } from "@/app/lib/services/class";
-import { MemberItem } from "@/app/types/type";
+import { MemberItem } from "@/app/types";
 
 export default function ClassMembers({
   classId,

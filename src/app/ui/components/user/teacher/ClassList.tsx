@@ -1,7 +1,7 @@
 import React from "react";
 import ClassCard from "./ClassCard";
 
-import { ClassTeacher } from "@/app/types/type";
+import { ClassTeacher } from "@/app/types";
 
 export default function ClassList({
   classes,

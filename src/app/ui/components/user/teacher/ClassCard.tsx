@@ -3,7 +3,7 @@ import React from "react";
 // import { MdMeetingRoom } from "react-icons/md";
 // import { MdPeopleOutline } from "react-icons/md";
 // import { GrScheduleNew } from "react-icons/gr";
-import { ClassTeacher } from "@/app/types/type";
+import { ClassTeacher } from "@/app/types";
 import { useRouter } from "next/navigation";
 
 export default function ClassCard({
