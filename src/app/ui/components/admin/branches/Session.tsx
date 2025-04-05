@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/app/lib/services/session";
-import { Session } from "@/app/types/type";
+import { Session } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { createSession } from "@/app/lib/services/session";

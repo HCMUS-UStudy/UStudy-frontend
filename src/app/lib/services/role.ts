@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { Branch } from "@/app/types/type";
+import { Branch } from "@/app/types";
 
 export const getAllRoles = async () => {
   const response = await axiosInstance.get("/role/list", {});

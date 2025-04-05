@@ -1,5 +1,5 @@
 "use client";
-import { ExerciseItem } from "@/app/types/type";
+import { ExerciseItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { useState } from "react";

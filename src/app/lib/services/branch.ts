@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { BranchData, Session } from "@/app/types/type";
+import { BranchData, Session } from "@/app/types";
 
 type BranchUpdate = {
   id: string;

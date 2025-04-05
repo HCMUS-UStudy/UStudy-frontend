@@ -3,7 +3,7 @@ import {
   SubmissionItem,
   SubmissionSchema,
   UpdateSubmissionSchema,
-} from "@/app/types/type";
+} from "@/app/types";
 
 export const createNewSubmission = async (
   assignmentId: string,

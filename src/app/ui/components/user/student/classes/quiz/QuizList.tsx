@@ -1,51 +1,61 @@
 "use client";
 
-import { QuizItem } from "@/app/types/type";
+import { getQuizByClassId } from "@/app/lib/services/quiz";
+import { QuizItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
+import QuizListLoading from "@/app/ui/components/_common/loading/QuizListLoading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Image from "next/image";
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FaThLarge } from "react-icons/fa";
 import { FaList, FaSort } from "react-icons/fa6";
 
-interface QuizListProps {
-  loading: boolean;
-  quizItem: QuizItem[];
-  randomImages: string[];
-  handleStartQuiz: (id: string) => void;
-  handleReviewQuiz: (id: string) => void;
-}
-
-const QuizList: React.FC<QuizListProps> = ({
-  loading,
-  quizItem,
-  randomImages,
-  handleStartQuiz,
-  handleReviewQuiz,
-}) => {
+const QuizList: React.FC = () => {
+  const router = useRouter();
+  const { classId } = useParams<{ classId: string }>();
+  const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
   const [sortOrder, setSortOrder] = useState("desc");
 
+  const randomImages = [
+    "https://storage.googleapis.com/a1aa/image/etK-TPGHJCUFTdDL1RCjvPVzYEME-6M-4WM0R6qL1r4.jpg",
+    "https://storage.googleapis.com/a1aa/image/b3_Tj5jRj0RauxUD0v2nmQbjuj4Ru05BPm2FGdHScV0.jpg",
+    "https://storage.googleapis.com/a1aa/image/PRGq1Y0nXy0j83lLVvMrOvRvLAA9xn0liXQYUWGk4No.jpg",
+    "https://storage.googleapis.com/a1aa/image/KYIVzXTF65wwyjZHgfB2EZmGggTcgNIV074jfvlpeyI.jpg",
+    "https://storage.googleapis.com/a1aa/image/A2gBNcHuLIFDRYPmfXmepimBj79IpJsVpOeg4aolK3U.jpg",
+  ];
+
+  const handleStartQuiz = (quizId: string) => {
+    router.push(`/member/classes/${classId}/quiz/${quizId}`);
+  };
+
+  const handleReviewQuiz = async (quizId: string) => {
+    router.push(`/member/classes/${classId}/quiz/${quizId}/review`);
+  };
+
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      try {
+        setLoading(true);
+        const response = await getQuizByClassId(0, 10, classId as string);
+        setQuizzes(response.content);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuiz();
+    return;
+  }, [classId]);
+
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(3)].map((_, index) => (
-          <div key={index} className="p-5 border-2 rounded-lg animate-pulse">
-            <div className="h-40 bg-gray-300 rounded-lg"></div>
-            <div className="h-5 w-3/4 bg-gray-300 rounded-lg mt-4"></div>
-            <div className="h-4 w-1/2 bg-gray-300 rounded-lg mt-2"></div>
-            <div className="flex items-center mt-4">
-              <div className="w-8 h-8 rounded-full bg-gray-300"></div>
-              <div className="ml-2 h-4 w-20 bg-gray-300 rounded-lg"></div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
+    return <QuizListLoading />;
   }
 
-  if (quizItem.length === 0) {
+  if (quizzes.length === 0) {
     return (
       <div className="text-center text-gray-500 text-lg font-semibold mt-10">
         Không có bài quiz nào
@@ -110,7 +120,7 @@ const QuizList: React.FC<QuizListProps> = ({
             : "flex flex-col gap-4"
         }
       >
-        {quizItem.map((quiz, index) => {
+        {quizzes.map((quiz, index) => {
           const randomImage =
             randomImages[Math.floor(Math.random() * randomImages.length)];
 
@@ -126,7 +136,9 @@ const QuizList: React.FC<QuizListProps> = ({
                   viewMode === "list" ? "w-32 h-20 flex-shrink-0" : ""
                 }`}
               >
-                <img
+                <Image
+                  width={128}
+                  height={80}
                   src={randomImage}
                   alt="Quiz banner"
                   className={`object-cover rounded-lg ${

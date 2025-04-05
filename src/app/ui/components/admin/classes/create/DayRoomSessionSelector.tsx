@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader } from "../../../_common/Dialog";
 import { Button } from "../../../_common/Button";
-import { DaysInWeek, RoomItem, SessionItem } from "@/app/types/type";
+import { DaysInWeek, RoomItem, SessionItem } from "@/app/types";
 import { FaCheck } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import {
@@ -17,7 +17,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { getSessionByBranchId } from "@/app/lib/services/session";
 import { useAppSelector } from "@/app/store/store";
 import { getAvailableRooms } from "@/app/lib/services/room";
-import SelectorLoadingHorizon from "./SelectorLoadingHorizon";
+import SelectorLoadingHorizon from "../../../_common/loading/SelectorLoadingHorizon";
 
 type OverviewItem = {
   day: DaysInWeek;

@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "../../_common/Table";
 import Pagination from "../../_common/Pagination";
-import { RegisterClassItem, MemberItem } from "@/app/types/type";
+import { RegisterClassItem, MemberItem } from "@/app/types";
 
 import Dropdown from "../../_common/Dropdown";
 import SearchField from "../../_common/text-field/SearchField";
@@ -23,12 +23,7 @@ interface ClassTableProps {
     page: number,
     searchQuery: string,
   ) => Promise<{
-    content: {
-      id: string;
-      name: string;
-      email: string;
-      gender: string;
-    }[];
+    content: RegisterClassItem[] | MemberItem[];
     totalPages: number;
   }>;
   users: RegisterClassItem[] | MemberItem[];
@@ -57,9 +52,7 @@ const ClassTable: React.FC<ClassTableProps> = ({
   roles = {},
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [users, setUsers] = useState<
-    { id: string; name: string; email: string; gender: string }[]
-  >([]);
+  const [users, setUsers] = useState<RegisterClassItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -68,8 +61,8 @@ const ClassTable: React.FC<ClassTableProps> = ({
   useEffect(() => {
     console.log(loading);
     const fetchUsers = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         const { content, totalPages } = await fetchData(
           currentPage - 1,
           searchQuery,

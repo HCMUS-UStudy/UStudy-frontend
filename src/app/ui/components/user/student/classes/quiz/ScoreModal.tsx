@@ -1,6 +1,6 @@
 "use client";
 import { getReviewQuiz } from "@/app/lib/services/quiz";
-import { QuizReview } from "@/app/types/type";
+import { QuizReview } from "@/app/types";
 import React, { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import ReviewQuiz from "./ReviewQuiz";

@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { CustomError } from "../types/type";
+import { CustomError } from "../types";
 import { handleRefreshToken } from "@/app/lib/services/auth";
 import {
   getTokensFromCookies,

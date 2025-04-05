@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { NotificationItem } from "@/app/types/type";
+import { NotificationItem } from "@/app/types";
 import { getNotificationDetails } from "@/app/lib/services/notification";
-import Loading from "@/app/ui/components/_common/Loading";
+import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { IoReturnUpBack } from "react-icons/io5";
 

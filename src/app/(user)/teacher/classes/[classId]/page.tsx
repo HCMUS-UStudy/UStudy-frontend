@@ -1,14 +1,14 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { ClassTeacher } from "@/app/types/type";
 import { useEffect, useState } from "react";
 import { getClassById } from "@/app/lib/services/class";
 import { MdArrowForwardIos } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import ClassMaterial from "@/app/ui/components/user/teacher/ClassMaterial";
 import Notification from "@/app/ui/components/user/teacher/Notification";
-import Loading from "@/app/ui/components/_common/Loading";
+import Loading from "@/app/ui/components/_common/loading/Loading";
+import { ClassDetail } from "@/app/types";
 
 const ComponentDetails = ({
   title,
@@ -53,9 +53,9 @@ const ComponentDetails = ({
   );
 };
 
-export default function ClassDetail() {
+export default function ClassDetailPage() {
   const { classId } = useParams() as { classId: string };
-  const [classDetail, setClassDetail] = useState<ClassTeacher | null>(null);
+  const [classDetail, setClassDetail] = useState<ClassDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
   // const [notiDetail, setNotiDetail] = useState(false);
@@ -66,7 +66,7 @@ export default function ClassDetail() {
     const fetchClass = async () => {
       try {
         const response = await getClassById(classId);
-        setClassDetail(response.data);
+        setClassDetail(response);
       } catch (error) {
         console.error("Error fetching classes:", error);
       }
