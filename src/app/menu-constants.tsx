@@ -21,6 +21,7 @@ import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { FaClipboardList } from "react-icons/fa6";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -166,5 +167,10 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
     title: "Kết quả học tập",
     path: "/member/results",
     icon: <BsPersonWorkspace size={20} />,
+  },
+  {
+    title: "Tin nhắn",
+    path: "/student/chat",
+    icon: <IoChatbubblesOutline size={20} />,
   },
 ];

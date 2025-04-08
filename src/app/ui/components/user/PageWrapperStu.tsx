@@ -1,11 +1,17 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import CalendarWidget from "./CalendarWidget";
 import { usePathname } from "next/navigation";
 
 // Bọc nội dung trang
 export default function PageWrapperStu({ children }: { children: ReactNode }) {
   const pathname = usePathname(); // Lấy đường dẫn hiện tại
+  const [isClient, setIsClient] = useState(false);
+
+  // Đảm bảo rằng component chỉ render đầy đủ ở phía client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const isQuizPage = pathname.includes("/quiz");
   const isExercisePage = pathname.includes("/exercise");
