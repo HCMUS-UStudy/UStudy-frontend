@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   SIDENAV_ITEMS_ADMIN,
+  SIDENAV_ITEMS_PARENT,
   SIDENAV_ITEMS_STUDENT,
   SIDENAV_ITEMS_TEACHER,
 } from "@/app/menu-constants";
@@ -19,7 +20,9 @@ const Sidebar = ({ role }: { role: string }) => {
       ? SIDENAV_ITEMS_ADMIN
       : role === "teacher"
         ? SIDENAV_ITEMS_TEACHER
-        : SIDENAV_ITEMS_STUDENT,
+        : role === "parent"
+          ? SIDENAV_ITEMS_PARENT
+          : SIDENAV_ITEMS_STUDENT,
   );
 
   useEffect(() => {
@@ -28,7 +31,9 @@ const Sidebar = ({ role }: { role: string }) => {
         ? SIDENAV_ITEMS_ADMIN
         : role === "teacher"
           ? SIDENAV_ITEMS_TEACHER
-          : SIDENAV_ITEMS_STUDENT,
+          : role === "parent"
+            ? SIDENAV_ITEMS_PARENT
+            : SIDENAV_ITEMS_STUDENT,
     );
   }, [role]);
 

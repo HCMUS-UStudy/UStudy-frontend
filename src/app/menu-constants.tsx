@@ -20,7 +20,8 @@ import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { HiOutlineDocumentText } from "react-icons/hi";
-import { FaClipboardList } from "react-icons/fa6";
+import { FaClipboardList, FaRegCommentDots } from "react-icons/fa6";
+import { MdOutlineAssignment, MdOutlineNotificationsActive } from "react-icons/md";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -166,5 +167,53 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
     title: "Kết quả học tập",
     path: "/member/results",
     icon: <BsPersonWorkspace size={20} />,
+  },
+];
+
+export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
+  {
+    title: "Trang chủ",
+    path: "/parent/home",
+    icon: <BsHouseDoor size={20} />,
+  },
+  {
+    title: "Lớp học của con",
+    path: "/parent/classes",
+    icon: <SiGoogleclassroom size={20} />,
+  },
+  {
+    title: "Lịch học",
+    path: "/parent/schedule",
+    icon: <BsCalendar size={20} />,
+  },
+  {
+    title: "Điểm danh",
+    path: "/parent/attendance",
+    icon: <FaClipboardList size={20} />,
+  },
+  {
+    title: "Bài tập",
+    path: "/parent/assignments",
+    icon: <MdOutlineAssignment size={20} />,
+  },
+  {
+    title: "Học phí",
+    path: "/parent/tuition",
+    icon: <BsCreditCard size={20} />,
+  },
+  {
+    title: "Kết quả học tập",
+    path: "/parent/results",
+    icon: <BsPersonWorkspace size={20} />,
+  },
+  {
+    title: "Thông báo",
+    path: "/parent/notifications",
+    icon: <MdOutlineNotificationsActive size={20} />,
+  },
+  {
+    title: "Liên hệ giáo viên",
+    path: "/parent/contact",
+    icon: <FaRegCommentDots size={20} />,
   },
 ];
