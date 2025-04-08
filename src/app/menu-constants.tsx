@@ -30,6 +30,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <RiDashboard2Line size={20} />,
   },
   {
+    title: "Quản lý kết quả học tập",
+    path: "/admin/learning-results",
+    icon: <BsPersonWorkspace size={20} />,
+  },
+  {
     title: "Quản lý chi nhánh",
     path: "/admin/branches",
     icon: <GrMapLocation size={20} />,
@@ -73,7 +78,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý học phí",
     path: "/admin/fees",
     icon: <GiMoneyStack size={20} />,
-  },
+  }
 ];
 
 export const SIDENAV_ITEMS_CLERK: SideNavItemGroup[] = [
