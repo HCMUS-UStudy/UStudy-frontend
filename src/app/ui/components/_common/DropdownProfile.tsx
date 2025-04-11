@@ -2,7 +2,7 @@
 
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import Image from "next/image";
-import { UserData } from "@/app/types/type";
+import { UserData } from "@/app/types";
 
 const DropdownProfile = ({
   userInfo,

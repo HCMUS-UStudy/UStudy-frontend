@@ -4,8 +4,9 @@ import {
   getMaterialsByClassId,
   getMaterialsByParent,
 } from "@/app/lib/services/class-material";
-import { MaterialItem } from "@/app/types/type";
+import { MaterialItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
+import ClassMaterialLoading from "@/app/ui/components/_common/loading/ClassMaterialLoading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
@@ -114,37 +115,7 @@ const MaterialGrid: React.FC<MaterialGridProps> = ({ classId }) => {
   };
 
   if (loading) {
-    return (
-      <>
-        <div className="animate-pulse">
-          <div className="mb-4 flex items-center space-x-2">
-            <div className="h-4 w-16 bg-gray-300 rounded"></div>
-            <span className="text-gray-400">/</span>
-            <div className="h-4 w-24 bg-gray-300 rounded"></div>
-          </div>
-
-          <div className="flex items-center justify-between mt-2 gap-14 ml-4 mr-4">
-            <div className="w-full h-10 bg-gray-300 rounded-2xl"></div>
-            <div className="flex space-x-2">
-              <div className="w-10 h-10 bg-gray-300 rounded-lg"></div>
-              <div className="w-10 h-10 bg-gray-300 rounded-lg"></div>
-            </div>
-          </div>
-
-          <div className="px-4 py-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-lg p-4 flex flex-col"
-              >
-                <div className="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div className="h-24 bg-gray-300 rounded-lg"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </>
-    );
+    return <ClassMaterialLoading numberOfItems={4} />;
   }
 
   return (

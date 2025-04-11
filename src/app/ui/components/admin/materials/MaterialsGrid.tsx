@@ -9,7 +9,7 @@ import {
   FaThLarge,
   FaList,
 } from "react-icons/fa";
-import { MaterialItem } from "@/app/types/type";
+import { MaterialItem } from "@/app/types";
 import {
   downloadFile,
   getListSystemMaterial,

@@ -1,4 +1,4 @@
-import { DaysInWeek, RoomData } from "@/app/types/type";
+import { DaysInWeek, RoomData } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAvailableRooms = async (

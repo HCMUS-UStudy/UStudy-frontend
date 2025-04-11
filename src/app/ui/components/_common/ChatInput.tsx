@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FaPaperclip, FaSmile, FaTimes } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
 import { FaPaperPlane } from "react-icons/fa6";
-import { SubmissionItem } from "@/app/types/type";
+import { SubmissionItem } from "@/app/types";
 
 interface ChatInputProps {
   currentQuestionId: string;

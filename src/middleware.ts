@@ -23,10 +23,8 @@ export async function middleware(request: NextRequest) {
             new URL("/teacher/classes", request.url),
           );
         case "STUDENT":
-          return NextResponse.redirect(new URL("/member/home", request.url));
         case "PARENT":
           return NextResponse.redirect(new URL("/member/home", request.url));
-          break;
         case "ADMIN":
           return NextResponse.redirect(
             new URL("/admin/dashboard", request.url),
@@ -38,7 +36,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith("/teacher") && defaultRoute !== "TEACHER") {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    if (pathname.startsWith("/student") && defaultRoute !== "STUDENT") {
+    if (pathname.startsWith("/member") && defaultRoute !== "STUDENT") {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     if (pathname.startsWith("/parent") && defaultRoute !== "PARENT") {
@@ -46,6 +44,17 @@ export async function middleware(request: NextRequest) {
     }
     if (pathname.startsWith("/admin") && defaultRoute !== "ADMIN") {
       return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    if (pathname.startsWith("/member")) {
+      if (defaultRoute !== "STUDENT" && defaultRoute !== "PARENT") {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+      const classPageRegex = /^\/member\/classes\/([^\/]+)$/;
+      if (classPageRegex.test(pathname)) {
+        return NextResponse.redirect(
+          new URL(`${pathname}/overview`, request.url),
+        );
+      }
     }
     return NextResponse.next();
   } else {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Loading from "../../../_common/Loading";
+import Loading from "../../../_common/loading/Loading";
 import { Select, SelectItem } from "../../../_common/Select";
-import { GradeItem } from "@/app/types/type";
+import { GradeItem } from "@/app/types";
 import { getAllGrades } from "@/app/lib/services/grade";
 import { useFormContext } from "react-hook-form";
 import { StudentRegisterInputs } from "@/app/register/page";

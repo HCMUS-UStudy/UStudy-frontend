@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
-import { CourseDto } from "@/app/types/type";
-import SelectorLoading from "./SelectorLoading";
+import { CourseDto } from "@/app/types";
+import SelectorLoading from "../../../_common/loading/SelectorLoading";
 import { useFormContext } from "react-hook-form";
 import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 

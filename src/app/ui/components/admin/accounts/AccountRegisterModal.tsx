@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { RegisterItem } from "@/app/types/type";
+import { RegisterItem } from "@/app/types";
 import { toast } from "react-toastify";
 import {
   Dialog,

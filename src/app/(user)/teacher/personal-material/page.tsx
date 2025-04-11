@@ -8,8 +8,8 @@ import {
   getPersonalMaterial,
   downloadPersonalMaterial,
 } from "@/app/lib/services/personal-material";
-import { MaterialItem } from "@/app/types/type";
-import Loading from "@/app/ui/components/_common/Loading";
+import { MaterialItem } from "@/app/types/material";
+import Loading from "@/app/ui/components/_common/loading/Loading";
 import Tooltip from "@/app/ui/components/_common/Tooltip"; // Ensure this path is correct
 import {
   TbFileTypeDoc,

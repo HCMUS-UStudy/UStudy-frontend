@@ -31,7 +31,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
       {isDashboard ? (
         <div className="h-full p-1 overflow-y-auto">{children}</div>
       ) : (
-        <div className="h-full bg-foreground rounded-lg pt-6 pb-6 px-8 overflow-y-auto">
+        <div className="h-full bg-foreground rounded-lg py-6 px-8 overflow-y-auto">
           {children}
         </div>
       )}

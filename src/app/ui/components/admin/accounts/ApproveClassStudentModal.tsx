@@ -9,7 +9,7 @@ import {
 } from "@/app/ui/components/_common/Dialog";
 import { ArrowRightCircle } from "lucide-react";
 import { getListUserDetail } from "@/app/lib/services/user";
-import { ClassItem, ClassUserItem } from "@/app/types/type";
+import { ClassItem, ClassUserItem } from "@/app/types";
 import {
   addMembers,
   getAllClasses,

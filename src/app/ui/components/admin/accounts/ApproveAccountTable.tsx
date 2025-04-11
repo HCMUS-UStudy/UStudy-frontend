@@ -13,7 +13,7 @@ import Pagination from "../../_common/Pagination";
 import SearchField from "../../_common/text-field/SearchField";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ClassItem, ClassUserItem } from "@/app/types/type";
+import { ClassItem, ClassUserItem } from "@/app/types";
 import DropdownCourse from "../courses/DropdownCourse";
 import DropdownGrade from "../grades/DropdownGrade";
 

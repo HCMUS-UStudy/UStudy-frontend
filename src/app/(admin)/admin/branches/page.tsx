@@ -8,7 +8,7 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { FiFilter } from "react-icons/fi";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { Branch, Session } from "@/app/types/type";
+import { Branch, Session } from "@/app/types";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store/store";

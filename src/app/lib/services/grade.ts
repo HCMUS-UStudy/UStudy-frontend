@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { GradeData, GradeSchema } from "@/app/types/type";
+import { GradeData, GradeSchema } from "@/app/types";
 
 export const getAllGrades = async (
   query: string,

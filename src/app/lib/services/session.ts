@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { ClassSessionItem, SessionItem } from "@/app/types/type";
+import { ClassSessionItem, SessionItem } from "@/app/types";
 
 type SessionRequest = {
   name: string;

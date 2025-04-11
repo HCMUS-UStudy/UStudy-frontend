@@ -4,12 +4,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   SIDENAV_ITEMS_ADMIN,
+  SIDENAV_ITEMS_PARENT,
   SIDENAV_ITEMS_STUDENT,
   SIDENAV_ITEMS_TEACHER,
 } from "@/app/menu-constants";
 import { useRouter, usePathname } from "next/navigation";
-import { SideNavItem } from "@/app/types/type";
 import Tooltip from "../Tooltip";
+import { SideNavItem } from "@/app/types/common";
 
 const Sidebar = ({ role }: { role: string }) => {
   const router = useRouter();
@@ -20,7 +21,9 @@ const Sidebar = ({ role }: { role: string }) => {
       ? SIDENAV_ITEMS_ADMIN
       : role === "teacher"
         ? SIDENAV_ITEMS_TEACHER
-        : SIDENAV_ITEMS_STUDENT,
+        : role === "parent"
+          ? SIDENAV_ITEMS_PARENT
+          : SIDENAV_ITEMS_STUDENT,
   );
 
   useEffect(() => {
@@ -29,7 +32,9 @@ const Sidebar = ({ role }: { role: string }) => {
         ? SIDENAV_ITEMS_ADMIN
         : role === "teacher"
           ? SIDENAV_ITEMS_TEACHER
-          : SIDENAV_ITEMS_STUDENT,
+          : role === "parent"
+            ? SIDENAV_ITEMS_PARENT
+            : SIDENAV_ITEMS_STUDENT,
     );
   }, [role]);
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
 import Pagination from "@/app/ui/components/_common/Pagination"; // Import Pagination
-import { CourseItem } from "@/app/types/type";
+import { CourseItem } from "@/app/types";
 import { getAllCourses } from "@/app/lib/services/course";
 import {
   Table,

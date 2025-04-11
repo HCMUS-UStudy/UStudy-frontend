@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { MaterialData, MaterialItem } from "@/app/types/type";
+import { MaterialData, MaterialItem } from "@/app/types";
 
 // type CachedDataData = {
 //   data: MaterialData;
@@ -84,7 +84,7 @@ export const uploadClassMaterial = async (
       cache: {
         update: {
           [`getMaterialsByParent_${classId}_${parentId}`]: (
-            cached: any,
+            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
             response,
           ) => {
             if (cached.state !== "cached") {
@@ -107,6 +107,7 @@ export const createFolder = async (classId: string, name: string) => {
     {
       cache: {
         update: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [`getMaterialsByClassId_${classId}`]: (cached: any, response) => {
             if (cached.state !== "cached") {
               return "ignore";
@@ -131,6 +132,7 @@ export const deleteClassMaterial = async (
     {
       cache: {
         update: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [`getMaterialsByParent_${classId}_${parentId}`]: (cached: any) => {
             if (cached.state !== "cached") {
               return "ignore";

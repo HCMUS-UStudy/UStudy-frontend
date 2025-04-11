@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { UserData, SideNavItem } from "@/app/types/type";
+import { UserData, SideNavItem } from "@/app/types";
 import {
   SIDENAV_ITEMS_STUDENT,
   SIDENAV_ITEMS_TEACHER,

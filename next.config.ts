@@ -10,21 +10,12 @@ const nextConfig: NextConfig = {
         hostname: "ustudy.s3.ap-southeast-1.amazonaws.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+        pathname: "**",
+      },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: "/admin",
-        destination: "/admin/login",
-        permanent: true, // Use permanent: true for 308 status code, false for 307
-      },
-      {
-        source: "/staff",
-        destination: "/staff/dashboard",
-        permanent: true, // Use permanent: true for 308 status code, false for 307
-      },
-    ];
   },
 };
 

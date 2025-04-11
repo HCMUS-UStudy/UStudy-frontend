@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { ClassScheduleItem } from "@/app/types/type";
+import { ClassScheduleItem } from "@/app/types";
 
 export const getAllClassSchedule = async (
   classId: string,

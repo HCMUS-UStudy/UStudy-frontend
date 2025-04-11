@@ -4,7 +4,7 @@ import { Input } from "../../_common/text-field/Input";
 import { Button } from "../../_common/Button";
 import { getSession } from "@/app/lib/services/session";
 import { useEffect, useState } from "react";
-import { Session } from "@/app/types/type";
+import { Session } from "@/app/types";
 
 const Modal = ({
   handleCloseModal,

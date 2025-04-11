@@ -5,7 +5,7 @@ import { IoIosAdd } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getListNotificationByClass } from "@/app/lib/services/notification";
-import { NotificationItem } from "@/app/types/type";
+import { NotificationItem } from "@/app/types";
 
 const Notification = ({ classId }: { classId: string }) => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
