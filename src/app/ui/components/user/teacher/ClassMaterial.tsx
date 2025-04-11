@@ -196,15 +196,7 @@ const SingleMaterial = ({
   );
 };
 
-const ClassMaterial = ({
-  classId,
-  showDetail,
-  setShowDetail,
-}: {
-  classId: string;
-  showDetail: boolean;
-  setShowDetail: (value: boolean) => void;
-}) => {
+const ClassMaterial = ({ classId }: { classId: string }) => {
   const [materials, setMaterials] = useState([] as MaterialItem[]);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]); // Lưu các thư mục mở
   const [folderContents, setFolderContents] = useState<
@@ -368,72 +360,74 @@ const ClassMaterial = ({
   };
 
   return (
-    <div className="flex flex-col border border-gray-200 shadow-sm rounded-3xl p-2">
-      <div className="flex justify-between bg-white py-4 px-6">
-        <div className="flex items-center">
-          <h2 className="flex items-center text-[22px] font-bold">
-            📂 Tài liệu
-          </h2>
-        </div>
-        <div
-          className={`flex justify-center items-center p-3 bg-gray-50 border border-gray-200 text-primary-darkest
-          rounded-2xl cursor-pointer h-fit hover:border-primary-darkest transition-transform duration-300 ${showDetail ? "rotate-90" : ""} `}
-          onClick={() => setShowDetail(!showDetail)}
-        >
-          <MdArrowForwardIos />
-        </div>
-      </div>
-      <div
-        className={`bg-white ease-in-out overflow-y-auto transition-transform origin-top duration-300 ${
-          showDetail ? "scale-y-100" : "scale-y-0 h-0"
-        }`}
-      >
-        {materials.map((material) => renderMaterials(material, classId, ""))}{" "}
-        {newFolder && (
-          <div className="ml-8 mb-4 p-3 flex items-center text-[17px]">
-            <TbFolders className="text-[25px] text-yellow-500 mr-2" />
-            <Input
-              placeholder="Tên thư mục"
-              className="w-56"
-              value={newFolderName}
-              onChange={(event) => setNewFolderName(event.target.value)}
-              onEnter={() => {
+    // <div className="flex flex-col border border-gray-200 shadow-sm rounded-3xl p-2">
+    //   <div className="flex justify-between bg-white py-4 px-6">
+    //     <div className="flex items-center">
+    //       <h2 className="flex items-center text-[22px] font-bold">
+    //         📂 Tài liệu
+    //       </h2>
+    //     </div>
+    //     <div
+    //       className={`flex justify-center items-center p-3 bg-gray-50 border border-gray-200 text-primary-darkest
+    //       rounded-2xl cursor-pointer h-fit hover:border-primary-darkest transition-transform duration-300 ${showDetail ? "rotate-90" : ""} `}
+    //       onClick={() => setShowDetail(!showDetail)}
+    //     >
+    //       <MdArrowForwardIos />
+    //     </div>
+    //   </div>
+    //   <div
+    //     className={`bg-white ease-in-out overflow-y-auto transition-transform origin-top duration-300 ${
+    //       showDetail ? "scale-y-100" : "scale-y-0 h-0"
+    //     }`}
+    //   >
+    <>
+      {materials.map((material) => renderMaterials(material, classId, ""))}{" "}
+      {newFolder && (
+        <div className="ml-8 mb-4 p-3 flex items-center text-[17px]">
+          <TbFolders className="text-[25px] text-yellow-500 mr-2" />
+          <Input
+            placeholder="Tên thư mục"
+            className="w-56"
+            value={newFolderName}
+            onChange={(event) => setNewFolderName(event.target.value)}
+            onEnter={() => {
+              handleCreateFolder(newFolderName);
+              setNewFolder(false);
+              setNewFolderName("");
+            }}
+          />
+          <div className="flex items-center gap-1 ml-4">
+            <FaCheck
+              className="text-green-600 text-[18px] cursor-pointer ml-2 hover:text-green-800"
+              onClick={() => {
                 handleCreateFolder(newFolderName);
                 setNewFolder(false);
                 setNewFolderName("");
               }}
             />
-            <div className="flex items-center gap-1 ml-4">
-              <FaCheck
-                className="text-green-600 text-[18px] cursor-pointer ml-2 hover:text-green-800"
-                onClick={() => {
-                  handleCreateFolder(newFolderName);
-                  setNewFolder(false);
-                  setNewFolderName("");
-                }}
-              />
-              <FaTimes
-                className="text-red-600 text-[18px] cursor-pointer ml-2 hover:text-red-800"
-                onClick={() => {
-                  setNewFolder(false);
-                  setNewFolderName("");
-                }}
-              />
-            </div>
+            <FaTimes
+              className="text-red-600 text-[18px] cursor-pointer ml-2 hover:text-red-800"
+              onClick={() => {
+                setNewFolder(false);
+                setNewFolderName("");
+              }}
+            />
           </div>
-        )}
-        {!newFolder && (
-          <div
-            className="cursor-pointer ml-8 mb-4 p-4 flex items-center text-[17px]
+        </div>
+      )}
+      {!newFolder && (
+        <div
+          className="cursor-pointer ml-8 mb-4 p-4 flex items-center text-[17px]
          hover:text-primary-darkest w-fit"
-            onClick={handleNewFolder}
-          >
-            <TbFolderPlus className="text-[22px] mr-2" />
-            Tạo thư mục
-          </div>
-        )}
-      </div>
-    </div>
+          onClick={handleNewFolder}
+        >
+          <TbFolderPlus className="text-[22px] mr-2" />
+          Tạo thư mục
+        </div>
+      )}
+    </>
+    //   </div>
+    // </div>
   );
 };
 

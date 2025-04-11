@@ -13,6 +13,7 @@ import {
   // BsQuestionCircle,
   // BsWallet2,
 } from "react-icons/bs";
+import { MdOutlineFileCopy } from "react-icons/md";
 
 import { SiGoogleclassroom } from "react-icons/si";
 import { GiMoneyStack } from "react-icons/gi";
@@ -20,8 +21,12 @@ import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { HiOutlineDocumentText } from "react-icons/hi";
+import { LuClipboardList } from "react-icons/lu";
 import { FaClipboardList, FaRegCommentDots } from "react-icons/fa6";
-import { MdOutlineAssignment, MdOutlineNotificationsActive } from "react-icons/md";
+import {
+  MdOutlineAssignment,
+  MdOutlineNotificationsActive,
+} from "react-icons/md";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -128,12 +133,12 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
   {
     title: "Điểm danh",
     path: "/teacher/attendance",
-    icon: <FaClipboardList size={20} />,
+    icon: <LuClipboardList size={20} />,
   },
   {
-    title: "Học phí",
-    path: "/teacher/tuition",
-    icon: <BsCreditCard size={20} />,
+    title: "Tài liệu cá nhân",
+    path: "/teacher/personal-material",
+    icon: <MdOutlineFileCopy size={20} />,
   },
   {
     title: "Kết quả học tập",

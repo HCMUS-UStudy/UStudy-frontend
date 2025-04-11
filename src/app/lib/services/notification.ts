@@ -35,3 +35,16 @@ export const getNotificationDetails = async (notificationId: string) => {
   );
   return response.data.data;
 };
+
+export const createClassNotification = async (body: {
+  receiverId: string;
+  title: string;
+  content: string;
+  type?: string;
+}) => {
+  const response = await axiosInstance.post("/notification/create-class-noti", {
+    ...body,
+    type: body.type ?? "ANNOUNCEMENT",
+  });
+  return response.data.data;
+};
