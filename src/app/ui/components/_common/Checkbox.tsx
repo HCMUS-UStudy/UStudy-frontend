@@ -37,17 +37,15 @@ const Checkbox: React.FC<CheckboxProps> = ({
     >
       <div
         className={classNames(
-          "w-5 h-5 border-2 flex items-center justify-center rounded transition-all",
+          "w-5 h-5 border-2 flex items-center justify-center rounded-2xl transition-all",
           {
-            "border-gray-300 bg-gray-300 cursor-not-allowed": disabled,
-            "border-hover-primary bg-hover-primary": checked && !disabled, // Màu primary khi checked
+            "border-gray-400 bg-gray-200 cursor-not-allowed": disabled,
+            "border-primary-darkest bg-primary-dark": checked && !disabled, // Màu primary khi checked
             "border-gray-400 bg-transparent": !checked && !disabled,
           },
         )}
       >
-        {checked && (
-          <FaCheck className="w-3 h-3 text-white" /> // Biểu tượng checkmark
-        )}
+        {checked && <FaCheck className="w-3 h-3 text-white" />}
       </div>
       {label && <span>{label}</span>}
     </label>

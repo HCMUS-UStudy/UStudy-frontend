@@ -49,8 +49,26 @@ const Header: React.FC = () => {
     };
   }, []);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className="h-header-height flex ml-from-sidebar px-12 justify-between items-center bg-foreground">
+    <div
+      className={`h-header-height flex px-10 justify-between items-center bg-foreground 
+        ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+    >
       <div className="text-2xl font-bold mt-1">
         {
           SIDENAV_ITEMS_ADMIN.find((item) => pathname.includes(item.path))

@@ -145,7 +145,12 @@ export default function ClassDetail() {
         ></ComponentDetails>
       </div>
 
-      {addingModal && <AddingModal setAddingModal={setAddingModal} />}
+      {addingModal && (
+        <AddingModal
+          classDetail={classDetail}
+          setAddingModal={setAddingModal}
+        />
+      )}
     </div>
   );
 }

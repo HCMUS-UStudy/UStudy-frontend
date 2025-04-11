@@ -1,144 +1,215 @@
-import { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import { Button } from "../../_common/Button";
 import { toast } from "react-toastify";
 import Checkbox from "../../_common/Checkbox";
+import { motion } from "framer-motion";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import Switch from "../../_common/Switch";
+import { ClassTeacher } from "@/app/types/type";
+import { createQuestion } from "@/app/lib/services/question";
+import { IoReturnUpBack } from "react-icons/io5";
+import { useForm, useFieldArray } from "react-hook-form";
+import TextArea from "../../_common/text-field/TextArea";
+import { Input } from "../../_common/text-field/Input";
+
+type FormValues = {
+  question: string;
+  answers: { description: string; correct: boolean }[];
+  isMultipleChoice: boolean;
+};
 
 const QuizModal = ({
-  setQuizModal,
+  onGoBack,
+  onClose,
+  classDetail,
 }: {
-  setQuizModal: (value: boolean) => void;
+  onGoBack: () => void;
+  onClose: (value: boolean) => void;
+  classDetail: ClassTeacher;
 }) => {
-  const [question, setQuestion] = useState("");
-  const [answers, setAnswers] = useState([
-    { text: "", correct: false },
-    { text: "", correct: false },
-    { text: "", correct: false },
-    { text: "", correct: false },
-  ]);
-  // const [timeLimit, setTimeLimit] = useState<number>(1);
-  // const [points, setPoints] = useState(1);
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors, isSubmitted },
+  } = useForm<FormValues>({
+    defaultValues: {
+      question: "",
+      answers: [
+        { description: "", correct: false },
+        { description: "", correct: false },
+        { description: "", correct: false },
+        { description: "", correct: false },
+      ],
+      isMultipleChoice: false,
+    },
+    shouldFocusError: false, // Prevent focusing on errors when adding answers
+  });
 
-  const addAnswer = () => {
-    if (answers.length < 6) {
-      setAnswers([...answers, { text: "", correct: false }]);
-    } else {
-      toast.error("Tối đa 6 đáp án.");
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "answers",
+  });
+
+  const isMultipleChoice = watch("isMultipleChoice");
+
+  const handleMultipleChoiceToggle = (value: boolean) => {
+    setValue("isMultipleChoice", value);
+    if (!value) {
+      const updatedAnswers = fields.map((answer, index) => ({
+        ...answer,
+        correct: index === fields.findIndex((a) => a.correct),
+      }));
+      setValue("answers", updatedAnswers);
     }
   };
 
-  const removeAnswer = (index: number) => {
-    if (answers.length > 2) {
-      const newAnswers = answers.filter((_, i) => i !== index);
-      setAnswers(newAnswers);
-    } else {
-      toast.error("Cần ít nhất 2 đáp án.");
+  const onSubmit = async (data: FormValues) => {
+    const body = {
+      description: data.question,
+      gradeId: classDetail.grade.id,
+      courseId: classDetail.course.id,
+      questionType: "MULTIPLE_CHOICE",
+      options: data.answers.map((answer) => ({
+        description: answer.description,
+        isCorrect: answer.correct,
+      })),
+    };
+
+    try {
+      await createQuestion(body);
+      toast.success("Tạo câu hỏi thành công", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
+      onClose(false);
+    } catch (error) {
+      console.error("Failed to create question:", error);
+      toast.error("Tạo câu hỏi thất bại", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
     }
-  };
-
-  const updateAnswer = (index: number, text: string) => {
-    const newAnswers = [...answers];
-    newAnswers[index].text = text;
-    setAnswers(newAnswers);
-  };
-
-  const toggleCorrect = (index: number) => {
-    const newAnswers = [...answers];
-    newAnswers[index].correct = !newAnswers[index].correct;
-    setAnswers(newAnswers);
-  };
-
-  const handleSubmit = () => {
-    setQuizModal(false);
   };
 
   return (
     <div
       className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-50"
-      onClick={() => setQuizModal(false)}
+      onClick={() => onClose(false)}
     >
-      <div
-        className="bg-white p-5 rounded-lg w-3/5 shadow-lg"
+      <motion.div
+        className="flex flex-col bg-white p-5 rounded-lg w-1/2 shadow-lg"
         onClick={(e) => e.stopPropagation()}
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{ duration: 0.5 }}
       >
         <div className="flex justify-between pb-3 border-b">
+          <IoReturnUpBack
+            className="cursor-pointer text-[25px] text-primary-dark hover:text-primary-darkest"
+            onClick={onGoBack}
+          />
           <h1 className="text-lg font-bold">Tạo câu hỏi</h1>
           <RxCross1
-            className="cursor-pointer"
-            onClick={() => setQuizModal(false)}
+            className="cursor-pointer hover:text-primary-darkest"
+            onClick={() => onClose(false)}
           />
         </div>
-        <div className="mt-3">
-          <label className="font-medium">Câu hỏi</label>
-          <textarea
-            className="w-full bg-gray-100 rounded p-2 mt-1 min-h-11 max-h-32 focus:outline-none"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-        </div>
-        <div className="mt-3">
-          <label className="font-medium pr-2 border-r">Trả lời</label>
-          {answers.map((answer, index) => (
-            <div key={index} className="flex items-center gap-4 mt-2">
-              <Checkbox
-                checked={answer.correct}
-                onChange={() => toggleCorrect(index)}
-                disabled={
-                  answers.filter((a) => a.correct).length >= 1 &&
-                  !answer.correct
-                }
-                className="rounded-full"
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mt-3">
+            <label className="font-medium">Câu hỏi</label>
+            <TextArea
+              className="mt-1 min-h-12 max-h-32"
+              {...register("question", {
+                required: "Câu hỏi không được để trống",
+              })}
+              isError={!!errors.question}
+              errorMsg={errors.question?.message}
+            />
+          </div>
+          <div className="flex flex-col gap-2 mt-3 w-full">
+            <div className="flex items-center gap-4">
+              <label className="font-medium">Trả lời</label>
+              <div className="border-l h-5 border-gray-300"></div>
+              <div className="">Nhiều đáp án</div>
+              <Switch
+                checked={isMultipleChoice}
+                onChange={handleMultipleChoiceToggle}
               />
-              <input
-                type="text"
-                className="flex-1 text-[12px] bg-gray-100 rounded py-2 px-3 focus:outline-none"
-                value={answer.text}
-                onChange={(e) => updateAnswer(index, e.target.value)}
-              />
-              <button
-                className="text-red-500"
-                onClick={() => removeAnswer(index)}
-              >
-                Xóa
-              </button>
             </div>
-          ))}
-          <Button
-            className="mt-4 ml-6 text-sm bg-foreground hover:bg-slate-100 border border-gray-400 border-dashed"
-            onClick={addAnswer}
-          >
-            + Thêm đáp án
-          </Button>
-        </div>
-        {/* <div className="mt-3 flex gap-3">
-          <div className="flex-1">
-            <label className="font-medium">Thời gian (phút)</label>
-            <input
-              type="number"
-              className="w-full border rounded p-2 mt-1"
-              value={timeLimit}
-              onChange={(e) => setTimeLimit(parseInt(e.target.value))}
-            />
+            {fields.map((field, index) => (
+              <div key={field.id} className="flex items-center w-full gap-4">
+                <Checkbox
+                  checked={field.correct}
+                  onChange={() => {
+                    const updatedAnswers = [...fields];
+                    updatedAnswers[index].correct = !field.correct;
+                    setValue("answers", updatedAnswers);
+                  }}
+                  disabled={
+                    !isMultipleChoice &&
+                    fields.filter((a) => a.correct).length >= 1 &&
+                    !field.correct
+                  }
+                />
+                <div className="w-full">
+                  <Input
+                    type="text"
+                    {...register(`answers.${index}.description`, {
+                      required: "Đáp án không được để trống",
+                    })}
+                    isError={
+                      isSubmitted &&
+                      !!errors.answers?.[index]?.description &&
+                      errors.answers?.[index]?.description?.type === "required"
+                    }
+                    errorMsg={
+                      isSubmitted
+                        ? errors.answers?.[index]?.description?.message
+                        : ""
+                    }
+                  />
+                </div>
+                <RiDeleteBin6Line
+                  className={`text-[20px] ${
+                    fields.length > 2
+                      ? "text-red-500 hover:text-red-700 cursor-pointer"
+                      : "text-gray-300 cursor-not-allowed"
+                  }`}
+                  onClick={() => {
+                    if (fields.length > 2) remove(index);
+                  }}
+                />
+              </div>
+            ))}
+            <Button
+              className={`mt-3 ml-8 text-sm w-fit bg-foreground hover:bg-slate-100 border border-gray-400 border-dashed ${
+                fields.length >= 6 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => {
+                if (fields.length < 6)
+                  append({ description: "", correct: false });
+              }}
+              disabled={fields.length >= 6}
+              type="button"
+            >
+              + Thêm đáp án
+            </Button>
           </div>
-          <div className="flex-1">
-            <label className="font-medium">Điểm số</label>
-            <input
-              type="number"
-              className="w-full border rounded p-2 mt-1"
-              value={points}
-              onChange={(e) => setPoints(parseInt(e.target.value))}
-            />
+          <div className="flex justify-end mt-4 border-t pt-3">
+            <Button className="px-4 py-2 rounded-lg" type="submit">
+              Lưu
+            </Button>
           </div>
-        </div> */}
-        <div className="flex justify-end mt-4 border-t pt-3">
-          <Button
-            className="bg-gray-200 px-4 py-2 rounded-lg"
-            onClick={handleSubmit}
-          >
-            Lưu
-          </Button>
-        </div>
-      </div>
+        </form>
+      </motion.div>
     </div>
   );
 };

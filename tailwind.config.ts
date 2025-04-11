@@ -113,9 +113,11 @@ const config: Config = {
       },
       width: {
         "sidebar-width": "215px",
+        "sidebar-mobile": "80px",
       },
       margin: {
         "from-sidebar": "215px",
+        "from-sidebar-mobile": "80px",
       },
     },
   },
