@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -145,7 +146,7 @@ export default function Home() {
           // Add z-index to the tooltip
           const tooltipEl = document.querySelector(".chartjs-tooltip");
           if (tooltipEl instanceof HTMLElement) {
-            tooltipEl.style.zIndex = "9999"; // Safe access to `style` property
+            tooltipEl.style.zIndex = "9999";
           }
         },
       },
@@ -162,12 +163,11 @@ export default function Home() {
               const x = xScale.getPixelForValue(index);
               const y = yScale.getPixelForValue(value);
 
-              // Vẽ điểm phía trên cột
               ctx.save();
               ctx.font = "12px Arial";
               ctx.textAlign = "center";
-              ctx.fillStyle = "#333"; // Màu của chữ
-              ctx.fillText(value.toFixed(1), x, y - 2); // Điều chỉnh khoảng cách
+              ctx.fillStyle = "#333";
+              ctx.fillText(value.toFixed(1), x, y - 2);
               ctx.restore();
             });
           });
@@ -177,7 +177,7 @@ export default function Home() {
     scales: {
       x: {
         ticks: {
-          display: false, // Ẩn tên các môn học trên trục x
+          display: false,
         },
       },
       y: {
@@ -212,14 +212,13 @@ export default function Home() {
 
       ctx.save();
       ctx.font = "12px Arial";
-      ctx.fillStyle = "#4682B4"; // Color of the label
+      ctx.fillStyle = "#4682B4";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
 
-      // Rotate the text to make it vertical, reversed direction
       ctx.save();
-      ctx.translate(chartArea.right + 13, chartArea.top + chartHeight / 2); // Position of the text
-      ctx.rotate(Math.PI / 2); // Rotate to reverse direction (bottom to top)
+      ctx.translate(chartArea.right + 13, chartArea.top + chartHeight / 2);
+      ctx.rotate(Math.PI / 2);
       ctx.fillText("Điểm của bạn", 0, 0);
       ctx.restore();
 
@@ -275,7 +274,6 @@ export default function Home() {
     },
   });
 
-  // Đăng ký plugin
   ChartJS.register({
     id: "addPointsAboveBars",
     afterDraw(chart) {
