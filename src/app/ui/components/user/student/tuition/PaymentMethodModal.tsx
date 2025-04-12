@@ -9,21 +9,7 @@ import {
   createVnPayPayment,
   PaymentMethod as APIPaymentMethod,
 } from "@/app/lib/services/payment";
-
-interface TuitionPayment {
-  id: string;
-  invoiceNumber: string;
-  amount: number;
-  status: "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
-  dueDate: string;
-  paidDate?: string;
-  description: string;
-  semester: string;
-  classId: string;
-  className: string;
-  studentId: string;
-  studentName: string;
-}
+import { TuitionPayment } from "@/app/types";
 
 interface PaymentMethodModalProps {
   payment: TuitionPayment;

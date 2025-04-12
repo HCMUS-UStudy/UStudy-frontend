@@ -2,12 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FaDownload, FaEye, FaInfoCircle, FaUser } from "react-icons/fa";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/ui/components/_common/Card";
+import { Card, CardContent } from "@/app/ui/components/_common/Card";
 import {
   Table,
   TableBody,
@@ -22,27 +17,11 @@ import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import PaymentDetailsModal from "@/app/ui/components/user/parent/tuition/PaymentDetailsModal";
 import PaymentMethodModal from "@/app/ui/components/user/parent/tuition/PaymentMethodModal";
+import { TuitionPayment } from "@/app/types";
 
-// Tipos de datos para pagos de matrícula
-interface TuitionPayment {
-  id: string;
-  invoiceNumber: string;
-  amount: number;
-  status: "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
-  dueDate: string;
-  paidDate?: string;
-  description: string;
-  semester: string;
-  classId: string;
-  className: string;
-  studentId: string;
-  studentName: string;
-}
-
-// Componente principal
 export default function ParentTuitionPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(5);
+  const [totalPages] = useState(5);
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedStudent, setSelectedStudent] = useState<string | "all">("all");
   const [selectedPayment, setSelectedPayment] = useState<TuitionPayment | null>(
@@ -51,7 +30,6 @@ export default function ParentTuitionPage() {
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
 
-  // Datos de ejemplo - en producción, estos vendrían de una API
   const students = [
     { id: "STU001", name: "Nguyễn Văn A" },
     { id: "STU002", name: "Lê Thị B" },
@@ -661,7 +639,7 @@ export default function ParentTuitionPage() {
         <PaymentDetailsModal
           payment={selectedPayment}
           onClose={() => setShowPaymentDetails(false)}
-          onPayNow={(payment) => {
+          onPayNow={() => {
             setShowPaymentDetails(false);
             setShowPaymentMethod(true);
           }}

@@ -1,31 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/app/ui/components/_common/Card";
-import { FaCalendarAlt, FaFileInvoiceDollar, FaHistory } from "react-icons/fa";
 import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
-import { Button } from "@/app/ui/components/_common/Button";
 import PaymentDetailsModal from "@/app/ui/components/user/parent/tuition/PaymentDetailsModal";
 import PaymentMethodModal from "@/app/ui/components/user/parent/tuition/PaymentMethodModal";
-
-interface TuitionPayment {
-  id: string;
-  invoiceNumber: string;
-  amount: number;
-  status: "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
-  dueDate: string;
-  paidDate?: string;
-  description: string;
-  semester: string;
-  classId: string;
-  className: string;
-  studentId: string;
-  studentName: string;
-}
+import Header from "@/app/ui/components/user/student/tuition/Header";
+import PendingPaymentsList from "@/app/ui/components/user/student/tuition/PendingPaymentsList";
+import PaidPaymentsList from "@/app/ui/components/user/student/tuition/PaidPaymentsList";
+import AllPaymentsList from "@/app/ui/components/user/student/tuition/AllPaymentsList";
+import { TuitionPayment } from "@/app/types";
 
 export default function MemberTuitionPage() {
   const [activeTab, setActiveTab] = useState<string>("pending");
@@ -34,7 +17,6 @@ export default function MemberTuitionPage() {
   );
   const [showPaymentMethod, setShowPaymentMethod] = useState<boolean>(false);
 
-  // Datos de ejemplo (en una aplicación real, estos datos se obtendrían de una API)
   const pendingPayments: TuitionPayment[] = [
     {
       id: "1",
@@ -95,7 +77,6 @@ export default function MemberTuitionPage() {
     },
   ];
 
-  // Formatear la moneda (VND)
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -103,13 +84,11 @@ export default function MemberTuitionPage() {
     }).format(amount);
   };
 
-  // Formatear la fecha
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("vi-VN").format(date);
   };
 
-  // Obtener el color según el estado del pago
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PAID":
@@ -125,7 +104,6 @@ export default function MemberTuitionPage() {
     }
   };
 
-  // Traducir el estado de pago al vietnamita
   const getStatusName = (status: string) => {
     switch (status) {
       case "PAID":
@@ -141,121 +119,35 @@ export default function MemberTuitionPage() {
     }
   };
 
-  // Abrir el modal de detalles de pago
   const handleOpenDetails = (payment: TuitionPayment) => {
     setSelectedPayment(payment);
   };
 
-  // Cerrar el modal de detalles de pago
   const handleCloseDetails = () => {
     setSelectedPayment(null);
   };
 
-  // Iniciar el proceso de pago
   const handlePayNow = (payment: TuitionPayment) => {
     setSelectedPayment(payment);
     setShowPaymentMethod(true);
   };
 
-  // Cerrar el modal de método de pago
   const handleClosePaymentMethod = () => {
     setShowPaymentMethod(false);
   };
 
-  // Completar el proceso de pago
   const handlePaymentComplete = () => {
-    // En una aplicación real, aquí se actualizaría el estado del pago
     setShowPaymentMethod(false);
     setSelectedPayment(null);
-    // Y se recargarían los datos
   };
 
-  // Calcular el total de pagos pendientes
-  const totalPendingAmount = pendingPayments.reduce(
-    (sum, payment) => sum + payment.amount,
-    0,
-  );
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Học phí</h1>
-
-      {/* Tarjeta de resumen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-gradient-to-br from-primary-lighter to-primary-light border-none shadow-md">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">
-                  Tổng học phí chờ thanh toán
-                </p>
-                <p className="text-2xl font-bold text-primary-darker">
-                  {formatCurrency(totalPendingAmount)}
-                </p>
-              </div>
-              <div className="p-3 bg-white bg-opacity-30 rounded-full">
-                <FaFileInvoiceDollar className="h-6 w-6 text-primary-darkest" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <Button
-                variant="primary"
-                className="w-full"
-                onClick={() =>
-                  pendingPayments.length > 0 && handlePayNow(pendingPayments[0])
-                }
-                disabled={pendingPayments.length === 0}
-              >
-                Thanh toán ngay
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-md border-primary-light">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Kỳ học hiện tại</p>
-                <p className="text-xl font-bold text-gray-800">
-                  Học kỳ 1 năm học 2025-2026
-                </p>
-              </div>
-              <div className="p-3 bg-primary-lighter rounded-full">
-                <FaCalendarAlt className="h-6 w-6 text-primary-dark" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-sm text-gray-600">
-                Thời gian: 04/2025 - 08/2025
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-md border-primary-light">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Lịch sử thanh toán</p>
-                <p className="text-xl font-bold text-gray-800">
-                  {paidPayments.length} giao dịch
-                </p>
-              </div>
-              <div className="p-3 bg-primary-lighter rounded-full">
-                <FaHistory className="h-6 w-6 text-primary-dark" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-sm text-gray-600">
-                Cập nhật lần cuối: {formatDate(new Date().toISOString())}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabs para facturas pendientes y pagadas */}
+    <div className="px-2">
+      <Header
+        pendingPayments={pendingPayments}
+        paidPayments={paidPayments}
+        handlePayNow={handlePayNow}
+      />
       <Tabs value={activeTab} onTabChange={setActiveTab}>
         <TabList className="mb-6">
           <Tab label="Chờ thanh toán" value="pending" />
@@ -264,196 +156,38 @@ export default function MemberTuitionPage() {
         </TabList>
 
         <TabPanel value="pending">
-          {pendingPayments.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {pendingPayments.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                    <div>
-                      <h3 className="font-medium text-gray-900">
-                        {payment.className}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {payment.invoiceNumber}
-                      </p>
-                    </div>
-                    <div className="mt-2 sm:mt-0">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}
-                      >
-                        {getStatusName(payment.status)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <div>
-                      <p className="text-lg font-bold text-primary-darker">
-                        {formatCurrency(payment.amount)}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Hạn thanh toán: {formatDate(payment.dueDate)}
-                      </p>
-                    </div>
-
-                    <div className="flex space-x-2 mt-3 sm:mt-0">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleOpenDetails(payment)}
-                        className="text-sm px-3"
-                      >
-                        Chi tiết
-                      </Button>
-
-                      <Button
-                        variant="primary"
-                        onClick={() => handlePayNow(payment)}
-                        className="text-sm px-3"
-                      >
-                        Thanh toán
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-500 text-lg">
-                Không có học phí chờ thanh toán.
-              </p>
-            </div>
-          )}
+          <PendingPaymentsList
+            pendingPayments={pendingPayments}
+            formatCurrency={formatCurrency}
+            formatDate={formatDate}
+            getStatusColor={getStatusColor}
+            getStatusName={getStatusName}
+            handleOpenDetails={handleOpenDetails}
+            handlePayNow={handlePayNow}
+          />
         </TabPanel>
 
         <TabPanel value="paid">
-          {paidPayments.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {paidPayments.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                    <div>
-                      <h3 className="font-medium text-gray-900">
-                        {payment.className}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {payment.invoiceNumber}
-                      </p>
-                    </div>
-                    <div className="mt-2 sm:mt-0">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}
-                      >
-                        {getStatusName(payment.status)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <div>
-                      <p className="text-lg font-bold text-primary-darker">
-                        {formatCurrency(payment.amount)}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Đã thanh toán:{" "}
-                        {payment.paidDate && formatDate(payment.paidDate)}
-                      </p>
-                    </div>
-
-                    <div className="flex space-x-2 mt-3 sm:mt-0">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleOpenDetails(payment)}
-                        className="text-sm px-3"
-                      >
-                        Chi tiết
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-500 text-lg">
-                Bạn chưa có lịch sử thanh toán nào.
-              </p>
-            </div>
-          )}
+          <PaidPaymentsList
+            paidPayments={paidPayments}
+            formatCurrency={formatCurrency}
+            formatDate={formatDate}
+            getStatusColor={getStatusColor}
+            getStatusName={getStatusName}
+            handleOpenDetails={handleOpenDetails}
+          />
         </TabPanel>
 
         <TabPanel value="all">
-          {[...pendingPayments, ...paidPayments].length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {[...pendingPayments, ...paidPayments].map((payment) => (
-                <div
-                  key={payment.id}
-                  className="bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                    <div>
-                      <h3 className="font-medium text-gray-900">
-                        {payment.className}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {payment.invoiceNumber}
-                      </p>
-                    </div>
-                    <div className="mt-2 sm:mt-0">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}
-                      >
-                        {getStatusName(payment.status)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <div>
-                      <p className="text-lg font-bold text-primary-darker">
-                        {formatCurrency(payment.amount)}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {payment.status === "PAID"
-                          ? `Đã thanh toán: ${payment.paidDate && formatDate(payment.paidDate)}`
-                          : `Hạn thanh toán: ${formatDate(payment.dueDate)}`}
-                      </p>
-                    </div>
-
-                    <div className="flex space-x-2 mt-3 sm:mt-0">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleOpenDetails(payment)}
-                        className="text-sm px-3"
-                      >
-                        Chi tiết
-                      </Button>
-
-                      {payment.status === "PENDING" && (
-                        <Button
-                          variant="primary"
-                          onClick={() => handlePayNow(payment)}
-                          className="text-sm px-3"
-                        >
-                          Thanh toán
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-500 text-lg">Không có dữ liệu học phí.</p>
-            </div>
-          )}
+          <AllPaymentsList
+            payments={[...pendingPayments, ...paidPayments]}
+            formatCurrency={formatCurrency}
+            formatDate={formatDate}
+            getStatusColor={getStatusColor}
+            getStatusName={getStatusName}
+            handleOpenDetails={handleOpenDetails}
+            handlePayNow={handlePayNow}
+          />
         </TabPanel>
       </Tabs>
 

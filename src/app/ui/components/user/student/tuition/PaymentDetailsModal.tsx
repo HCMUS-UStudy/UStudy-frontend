@@ -4,21 +4,7 @@ import React, { useEffect, useCallback } from "react";
 import { FaCheckCircle, FaRegCalendarAlt, FaSchool } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
 import { MdCreditCard } from "react-icons/md";
-
-interface TuitionPayment {
-  id: string;
-  invoiceNumber: string;
-  amount: number;
-  status: "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
-  dueDate: string;
-  paidDate?: string;
-  description: string;
-  semester: string;
-  classId: string;
-  className: string;
-  studentId: string;
-  studentName: string;
-}
+import { TuitionPayment } from "@/app/types";
 
 interface PaymentDetailsModalProps {
   payment: TuitionPayment;
