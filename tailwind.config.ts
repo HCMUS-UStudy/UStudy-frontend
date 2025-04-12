@@ -106,7 +106,24 @@ const config: Config = {
         fall_5: "fall 3s linear 2.5s infinite",
       },
       height: {
-        "header-height": "70px",
+        "header-height": "8vh",
+        "screen-height": "calc(100vh - 8vh)",
+        "sub-header-height": "10vh",
+        "sub-screen-height": "calc(100vh - 8vh - 10vh)",
+        "chat-input-area": "12vh",
+        "chat-screen": "calc(100vh - 8vh - 10vh - 12vh)",
+      },
+      maxHeight: {
+        "screen-height": "calc(100vh - 8vh)",
+        "sub-header-height": "10vh",
+        "sub-screen-height": "calc(100vh - 8vh - 10vh - 5vh)",
+        "chat-input-area": "12vh",
+        "chat-screen": "calc(100vh - 8vh - 10vh - 12vh - 7vh)",
+      },
+      minHeight: {
+        "header-height": "8vh",
+        "sub-header-height": "10vh",
+        "chat-input-area": "12vh",
       },
       top: {
         "header-top": "90px",

@@ -30,9 +30,9 @@ const TeacherList: React.FC<TeacherListProps> = ({
   setSelectedTeacher,
 }) => {
   return (
-    <div className="md:col-span-1 h-full">
-      <Card className="h-full rounded-2xl shadow-md bg-white border min-h-[500px]">
-        <CardHeader>
+    <div className="md:col-span-1 max-h-screen-height">
+      <Card className="h-full shadow-md bg-white border">
+        <CardHeader className="max-h-sub-header-height min-h-sub-header-height">
           <CardTitle className="flex items-center text-primary-dark">
             <BsPerson className="mr-2" />
             Danh sách giáo viên
@@ -41,11 +41,11 @@ const TeacherList: React.FC<TeacherListProps> = ({
             Chọn giáo viên để nhắn tin
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2 overflow-y-auto max-h-[calc(100vh-300px)] scrollbar-thin scrollbar-thumb-gray-300">
+        <CardContent className="space-y-2 py-2 max-h-sub-screen-height overflow-auto scrollbar-thin scrollbar-thumb-gray-300">
           {teachers.map((teacher) => (
             <div
               key={teacher.id}
-              className={`flex items-center p-3 border rounded-xl cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
+              className={`flex items-center p-3 border rounded cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
                 selectedTeacher === teacher.name
                   ? "border-primary-dark bg-primary-lighter"
                   : "hover:bg-gray-50"
