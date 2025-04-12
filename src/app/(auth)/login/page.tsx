@@ -41,6 +41,7 @@ export default function Login() {
     try {
       setIsLoading(true);
       const response = await login(data.genId, data.password, isUser);
+      console.log("Login Response:", response);
       const defaultRoute = response.data.user.role.defaultRoute;
       if (
         (isUser && defaultRoute === "ADMIN") ||
