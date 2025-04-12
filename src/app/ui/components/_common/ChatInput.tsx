@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaPaperclip, FaSmile, FaTimes } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
 import { FaPaperPlane } from "react-icons/fa6";
@@ -29,6 +29,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [removedFileIds, setRemovedFileIds] = useState<string[]>([]);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
+  const emojiRef = useRef<HTMLDivElement | null>(null);
   // const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
   //   null,
   // );
@@ -56,6 +57,25 @@ const ChatInput: React.FC<ChatInputProps> = ({
       [currentQuestionId]: initialAttachments,
     }));
   }, [initialMessage, initialAttachments, currentQuestionId]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiRef.current &&
+        !emojiRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
@@ -130,7 +150,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
           <FaSmile size={22} />
         </button>
         {showEmojiPicker && (
-          <div className="absolute bottom-14 left-3 z-50 bg-white shadow-lg rounded-lg p-2">
+          <div
+            ref={emojiRef}
+            className="absolute bottom-14 left-3 z-50 bg-white shadow-lg rounded-lg p-2"
+          >
             <EmojiPicker
               onEmojiClick={(e) =>
                 setMessage((prev) => ({
