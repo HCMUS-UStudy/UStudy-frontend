@@ -1,14 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/components/_common/Card";
+import { Card } from "@/app/ui/components/_common/Card";
 import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
-import { BsBook, BsCalendar, BsPersonWorkspace, BsPerson } from "react-icons/bs";
+import {
+  BsBook,
+  BsCalendar,
+  BsPersonWorkspace,
+  BsPerson,
+} from "react-icons/bs";
 import { SiGoogleclassroom } from "react-icons/si";
-import { FaRegCommentDots, FaClipboardList } from "react-icons/fa6";
+import { FaRegCommentDots } from "react-icons/fa6";
 import { MdOutlineAssignment } from "react-icons/md";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function ParentClassesPage() {
   const [activeTab, setActiveTab] = useState("current");
@@ -82,14 +86,21 @@ export default function ParentClassesPage() {
                 <div className="flex flex-col md:flex-row">
                   <div className="bg-primary/10 p-4 flex items-center justify-center md:w-1/4">
                     <div className="text-center">
-                      <SiGoogleclassroom size={60} className="mx-auto mb-2 text-primary" />
-                      <h3 className="text-lg font-semibold">{classItem.subject}</h3>
+                      <SiGoogleclassroom
+                        size={60}
+                        className="mx-auto mb-2 text-primary"
+                      />
+                      <h3 className="text-lg font-semibold">
+                        {classItem.subject}
+                      </h3>
                       <p className="text-sm text-gray-600">{classItem.grade}</p>
                     </div>
                   </div>
                   <div className="p-4 flex-1">
                     <div className="mb-4">
-                      <h3 className="text-lg font-semibold">Thông tin lớp học</h3>
+                      <h3 className="text-lg font-semibold">
+                        Thông tin lớp học
+                      </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                         <div className="flex items-center">
                           <BsPerson className="mr-2 text-gray-600" />
@@ -167,14 +178,21 @@ export default function ParentClassesPage() {
                 <div className="flex flex-col md:flex-row">
                   <div className="bg-gray-100 p-4 flex items-center justify-center md:w-1/4">
                     <div className="text-center">
-                      <SiGoogleclassroom size={60} className="mx-auto mb-2 text-gray-600" />
-                      <h3 className="text-lg font-semibold">{classItem.subject}</h3>
+                      <SiGoogleclassroom
+                        size={60}
+                        className="mx-auto mb-2 text-gray-600"
+                      />
+                      <h3 className="text-lg font-semibold">
+                        {classItem.subject}
+                      </h3>
                       <p className="text-sm text-gray-600">{classItem.grade}</p>
                     </div>
                   </div>
                   <div className="p-4 flex-1">
                     <div className="mb-4">
-                      <h3 className="text-lg font-semibold">Thông tin lớp học</h3>
+                      <h3 className="text-lg font-semibold">
+                        Thông tin lớp học
+                      </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                         <div className="flex items-center">
                           <BsPerson className="mr-2 text-gray-600" />
@@ -186,8 +204,12 @@ export default function ParentClassesPage() {
                         <div className="flex items-center">
                           <BsCalendar className="mr-2 text-gray-600" />
                           <div>
-                            <p className="text-sm text-gray-600">Ngày hoàn thành:</p>
-                            <p className="font-medium">{classItem.completedDate}</p>
+                            <p className="text-sm text-gray-600">
+                              Ngày hoàn thành:
+                            </p>
+                            <p className="font-medium">
+                              {classItem.completedDate}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
@@ -200,8 +222,12 @@ export default function ParentClassesPage() {
                         <div className="flex items-center">
                           <BsPersonWorkspace className="mr-2 text-gray-600" />
                           <div>
-                            <p className="text-sm text-gray-600">Điểm tổng kết:</p>
-                            <p className="font-medium text-green-600">{classItem.finalScore}</p>
+                            <p className="text-sm text-gray-600">
+                              Điểm tổng kết:
+                            </p>
+                            <p className="font-medium text-green-600">
+                              {classItem.finalScore}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -212,7 +238,8 @@ export default function ParentClassesPage() {
                         href={`/parent/results?class=${classItem.id}`}
                         className="px-4 py-2 bg-green-600 text-white rounded-md flex items-center justify-center"
                       >
-                        <BsPersonWorkspace className="mr-2" /> Xem kết quả chi tiết
+                        <BsPersonWorkspace className="mr-2" /> Xem kết quả chi
+                        tiết
                       </Link>
                       <Link
                         href={`/parent/contact?teacher=${classItem.teacher}`}
@@ -230,4 +257,4 @@ export default function ParentClassesPage() {
       </Tabs>
     </div>
   );
-} 
+}
