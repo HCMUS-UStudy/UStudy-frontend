@@ -20,3 +20,4 @@ export * from "./qna";
 export * from "./common";
 export * from "./user";
 export * from "./member";
+export * from "./tutition";
