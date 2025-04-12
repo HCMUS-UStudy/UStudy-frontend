@@ -170,7 +170,7 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
   },
   {
     title: "Kết quả học tập",
-    path: "/member/results",
+    path: "/member/academic-results",
     icon: <BsPersonWorkspace size={20} />,
   },
 ];
@@ -208,7 +208,7 @@ export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
   },
   {
     title: "Kết quả học tập",
-    path: "/parent/results",
+    path: "/parent/academic-results",
     icon: <BsPersonWorkspace size={20} />,
   },
   {
