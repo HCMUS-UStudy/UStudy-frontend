@@ -1,13 +1,19 @@
-import { FaArrowRight, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaCalendarAlt,
+  FaClock,
+  FaMapMarkerAlt,
+  FaUser,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 
 export default function Schedule() {
   const currentDate = new Date();
-  const formattedDate = new Intl.DateTimeFormat('vi-VN', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const formattedDate = new Intl.DateTimeFormat("vi-VN", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   }).format(currentDate);
 
   const scheduleData = [
@@ -19,7 +25,7 @@ export default function Schedule() {
       teacher: "Nguyễn Văn A",
       location: "Phòng 101",
       status: "upcoming", // upcoming, ongoing, completed
-      detail: "Ôn tập chương 3: Đạo hàm và ứng dụng"
+      detail: "Ôn tập chương 3: Đạo hàm và ứng dụng",
     },
     {
       subject: "Vật lý",
@@ -29,7 +35,7 @@ export default function Schedule() {
       teacher: "Trần Thị B",
       location: "Phòng 203",
       status: "upcoming",
-      detail: "Bài tập chương: Dao động cơ học"
+      detail: "Bài tập chương: Dao động cơ học",
     },
     {
       subject: "Hóa học",
@@ -39,7 +45,7 @@ export default function Schedule() {
       teacher: "Lê Văn C",
       location: "Phòng thí nghiệm",
       status: "upcoming",
-      detail: "Thực hành: Phản ứng oxi hóa - khử"
+      detail: "Thực hành: Phản ứng oxi hóa - khử",
     },
     {
       subject: "Sinh học",
@@ -49,7 +55,7 @@ export default function Schedule() {
       teacher: "Phạm Thị D",
       location: "Phòng 305",
       status: "upcoming",
-      detail: "Hệ sinh thái và môi trường"
+      detail: "Hệ sinh thái và môi trường",
     },
   ];
 
@@ -65,7 +71,7 @@ export default function Schedule() {
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
@@ -73,7 +79,9 @@ export default function Schedule() {
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
         <div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-1">Lịch học</h3>
+          <h3 className="text-2xl font-semibold text-gray-800 mb-1">
+            Lịch học
+          </h3>
           <p className="text-sm text-gray-500">{formattedDate}</p>
         </div>
         <div className="flex items-center mt-3 sm:mt-0">
@@ -93,12 +101,20 @@ export default function Schedule() {
       {/* Tóm tắt theo ngày trong tuần */}
       <div className="grid grid-cols-7 gap-2 mb-6 bg-gray-50 p-3 rounded-lg">
         {weeklySummary.map((day, index) => (
-          <div 
-            key={index} 
-            className={`flex flex-col items-center justify-center p-2 rounded-md ${index === 2 ? 'bg-blue-100 border border-blue-200' : ''}`}
+          <div
+            key={index}
+            className={`flex flex-col items-center justify-center p-2 rounded-md ${index === 2 ? "bg-blue-100 border border-blue-200" : ""}`}
           >
-            <span className={`text-sm font-medium ${index === 2 ? 'text-blue-800' : 'text-gray-500'}`}>{day.day}</span>
-            <span className={`text-xl font-bold ${index === 2 ? 'text-blue-800' : 'text-gray-700'}`}>{day.count}</span>
+            <span
+              className={`text-sm font-medium ${index === 2 ? "text-blue-800" : "text-gray-500"}`}
+            >
+              {day.day}
+            </span>
+            <span
+              className={`text-xl font-bold ${index === 2 ? "text-blue-800" : "text-gray-700"}`}
+            >
+              {day.count}
+            </span>
             <span className="text-xs text-gray-400">lớp</span>
           </div>
         ))}
@@ -116,13 +132,18 @@ export default function Schedule() {
           >
             <div className="flex items-start flex-1 mb-3 sm:mb-0">
               {/* Màu sắc theo môn học */}
-              <div className={`w-2 h-full self-stretch rounded-l-lg mr-3 ${
-                schedule.subject.includes("Toán") ? "bg-blue-500" :
-                schedule.subject.includes("Lý") ? "bg-purple-500" :
-                schedule.subject.includes("Hóa") ? "bg-green-500" : 
-                "bg-red-500"
-              }`}></div>
-              
+              <div
+                className={`w-2 h-full self-stretch rounded-l-lg mr-3 ${
+                  schedule.subject.includes("Toán")
+                    ? "bg-blue-500"
+                    : schedule.subject.includes("Lý")
+                      ? "bg-purple-500"
+                      : schedule.subject.includes("Hóa")
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                }`}
+              ></div>
+
               <div className="flex flex-col w-full space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -133,7 +154,7 @@ export default function Schedule() {
                       {schedule.grade}
                     </span>
                   </div>
-                  
+
                   <div className="sm:hidden flex items-center gap-1 ml-auto">
                     <FaClock className="h-3 w-3 text-gray-400" />
                     <span className="text-xs font-semibold text-gray-800">
@@ -141,21 +162,27 @@ export default function Schedule() {
                     </span>
                   </div>
                 </div>
-                
-                <p className="text-sm text-gray-600 sm:pr-2">{schedule.detail}</p>
-                
+
+                <p className="text-sm text-gray-600 sm:pr-2">
+                  {schedule.detail}
+                </p>
+
                 <div className="flex flex-wrap justify-between items-center mt-1">
                   <div className="flex items-center flex-wrap gap-x-4 gap-y-1">
                     <div className="flex items-center">
                       <FaUser className="h-3 w-3 text-gray-400 mr-1" />
-                      <span className="text-xs text-gray-600">{schedule.teacher}</span>
+                      <span className="text-xs text-gray-600">
+                        {schedule.teacher}
+                      </span>
                     </div>
                     <div className="flex items-center">
                       <FaMapMarkerAlt className="h-3 w-3 text-gray-400 mr-1" />
-                      <span className="text-xs text-gray-600">{schedule.location}</span>
+                      <span className="text-xs text-gray-600">
+                        {schedule.location}
+                      </span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-2 sm:mt-0 flex items-center sm:hidden">
                     <FaCalendarAlt className="h-3 w-3 text-gray-400 mr-1" />
                     <span className="text-xs text-gray-600">
@@ -170,9 +197,7 @@ export default function Schedule() {
               <div>
                 <div className="flex items-center justify-end">
                   <FaCalendarAlt className="h-3 w-3 text-gray-400 mr-1" />
-                  <span className="text-sm text-gray-600">
-                    {schedule.date}
-                  </span>
+                  <span className="text-sm text-gray-600">{schedule.date}</span>
                 </div>
                 <div className="flex items-center justify-end mt-1">
                   <FaClock className="h-3 w-3 text-gray-400 mr-1" />
@@ -195,14 +220,6 @@ export default function Schedule() {
             </div>
           </motion.div>
         ))}
-      </div>
-      
-      {/* Thêm nút để xem lịch học trên lịch  */}
-      <div className="mt-6 flex justify-center">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors">
-          <FaCalendarAlt className="mr-2" />
-          Xem trên lịch tháng
-        </button>
       </div>
     </motion.div>
   );

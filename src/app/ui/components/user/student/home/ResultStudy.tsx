@@ -50,7 +50,6 @@ export default function ResultStudy() {
 
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Cho phép điều chỉnh kích thước độc lập
     plugins: {
       legend: {
         display: false,
@@ -112,17 +111,8 @@ export default function ResultStudy() {
     scales: {
       x: {
         ticks: {
-          display: true, // Hiển thị nhãn trục x
-          font: {
-            size: 11 // Kích thước chữ nhãn
-          },
-          autoSkip: true,
-          maxRotation: 45, // Xoay nhãn
-          minRotation: 45
-        },
-        grid: {
           display: false,
-        }
+        },
       },
       y: {
         beginAtZero: true,
@@ -130,32 +120,20 @@ export default function ResultStudy() {
           display: true,
           position: "left",
           text: "Điểm trung bình lớp",
-          font: {
-            size: 13,
-            weight: "bold"
-          }
         },
         ticks: {
-          display: true, // Hiển thị các giá trị trục y
-          stepSize: 2,
-          font: {
-            size: 11
-          },
+          display: false,
+          stepSize: 5,
           min: 0,
           max: 10,
         },
-        grid: {
-          color: "rgba(0, 0, 0, 0.05)",
-        }
       },
     },
 
     layout: {
       padding: {
-        top: 20,
+        top: 15,
         right: 25,
-        left: 10,
-        bottom: 10
       },
     },
   };
@@ -255,7 +233,7 @@ export default function ResultStudy() {
   });
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
@@ -267,8 +245,19 @@ export default function ResultStudy() {
         </h3>
         <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center">
           <span>Xem thêm</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 ml-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </div>

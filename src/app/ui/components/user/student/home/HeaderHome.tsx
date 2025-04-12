@@ -4,8 +4,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../_common/Card";
-import { FaBook, FaEye, FaChartLine } from "react-icons/fa6";
-import { FaQuestionCircle, FaTasks, FaArrowRight, FaChevronRight } from "react-icons/fa";
+import { FaBook } from "react-icons/fa6";
+import { FaQuestionCircle, FaTasks, FaChevronRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 export default function HeaderHome() {
@@ -34,7 +34,7 @@ export default function HeaderHome() {
                   +8.00%
                 </span>
               </div>
-              
+
               <div className="flex items-center text-xs">
                 <div className="flex flex-col items-end">
                   <span className="text-gray-500">Đang tham gia</span>
@@ -42,21 +42,28 @@ export default function HeaderHome() {
                 </div>
               </div>
             </div>
-            
+
             {/* Tiến độ */}
             <div className="mt-2 mb-2">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-700">Tiến độ học tập</span>
+                <span className="text-xs font-medium text-gray-700">
+                  Tiến độ học tập
+                </span>
                 <span className="text-xs font-medium text-blue-700">65%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1.5">
-                <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: "65%" }}></div>
+                <div
+                  className="bg-blue-600 h-1.5 rounded-full"
+                  style={{ width: "65%" }}
+                ></div>
               </div>
             </div>
-            
+
             {/* Thêm nút xem chi tiết */}
             <div className="mt-2 flex justify-between items-center text-xs border-t border-gray-100 pt-2">
-              <span className="text-gray-500">Sắp diễn ra: <span className="font-semibold">8 lớp</span></span>
+              <span className="text-gray-500">
+                Sắp diễn ra: <span className="font-semibold">8 lớp</span>
+              </span>
               <button className="text-blue-600 hover:text-blue-800 transition-colors flex items-center">
                 Chi tiết
                 <FaChevronRight className="ml-1 h-2 w-2" />
@@ -89,28 +96,37 @@ export default function HeaderHome() {
                   +10.00%
                 </span>
               </div>
-              
+
               <div className="flex gap-2 text-xs">
                 <div className="px-1.5 py-0.5 bg-red-50 rounded-md">
                   <span className="font-semibold text-red-600">8 cần nộp</span>
                 </div>
                 <div className="px-1.5 py-0.5 bg-green-50 rounded-md">
-                  <span className="font-semibold text-green-600">32 đã nộp</span>
+                  <span className="font-semibold text-green-600">
+                    32 đã nộp
+                  </span>
                 </div>
               </div>
             </div>
-            
+
             {/* Trạng thái hoàn thành */}
             <div className="mt-2 mb-2">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-700">Đã hoàn thành</span>
-                <span className="text-xs font-medium text-green-700">32/50</span>
+                <span className="text-xs font-medium text-gray-700">
+                  Đã hoàn thành
+                </span>
+                <span className="text-xs font-medium text-green-700">
+                  32/50
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1.5">
-                <div className="bg-green-600 h-1.5 rounded-full" style={{ width: "64%" }}></div>
+                <div
+                  className="bg-green-600 h-1.5 rounded-full"
+                  style={{ width: "64%" }}
+                ></div>
               </div>
             </div>
-            
+
             {/* Footer */}
             <div className="mt-2 flex justify-between items-center text-xs border-t border-gray-100 pt-2">
               <span className="text-gray-500">10 bài mới trong tuần</span>
@@ -146,7 +162,7 @@ export default function HeaderHome() {
                   +7.00%
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2 text-xs">
                 <div className="flex items-center gap-1 bg-gray-50 rounded-md px-1.5 py-0.5">
                   <span className="font-semibold text-red-600">7.8</span>
@@ -158,18 +174,23 @@ export default function HeaderHome() {
                 </div>
               </div>
             </div>
-            
+
             {/* Tiến độ */}
             <div className="mt-2 mb-2">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-700">Hoàn thành</span>
+                <span className="text-xs font-medium text-gray-700">
+                  Hoàn thành
+                </span>
                 <span className="text-xs font-medium text-red-700">18/30</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1.5">
-                <div className="bg-red-600 h-1.5 rounded-full" style={{ width: "60%" }}></div>
+                <div
+                  className="bg-red-600 h-1.5 rounded-full"
+                  style={{ width: "60%" }}
+                ></div>
               </div>
             </div>
-            
+
             {/* Footer */}
             <div className="mt-2 flex justify-between items-center text-xs border-t border-gray-100 pt-2">
               <span className="text-gray-500">5 trắc nghiệm sắp đến hạn</span>
