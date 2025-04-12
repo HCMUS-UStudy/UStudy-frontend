@@ -23,6 +23,7 @@ export const getRegister = async (
 export const getStuClassRegister = async (
   classId: string,
   currentPage: number,
+  limit = 5,
 ): Promise<RegisterClassData> => {
   try {
     const response = await axiosInstance.get(
@@ -30,7 +31,7 @@ export const getStuClassRegister = async (
       {
         params: {
           page: currentPage,
-          limit: 5,
+          limit,
         },
       },
     );
