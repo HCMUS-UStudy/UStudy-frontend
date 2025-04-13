@@ -36,10 +36,10 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith("/teacher") && defaultRoute !== "TEACHER") {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    if (pathname.startsWith("/member") && defaultRoute !== "STUDENT") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (pathname.startsWith("/parent") && defaultRoute !== "PARENT") {
+    if (
+      pathname.startsWith("/member") &&
+      !(defaultRoute === "PARENT" || defaultRoute === "STUDENT")
+    ) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     if (pathname.startsWith("/admin") && defaultRoute !== "ADMIN") {

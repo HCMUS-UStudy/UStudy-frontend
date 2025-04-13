@@ -6,7 +6,7 @@ import RegisteredClass from "@/app/ui/components/user/parent/home/RegisteredClas
 import Notifications from "@/app/ui/components/user/parent/home/Notifications";
 import Events from "@/app/ui/components/user/parent/home/Events";
 
-export default function ParentHomePage() {
+export default function ParentHome() {
   return (
     <div className="px-2">
       <div className="h-full">
