@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Button } from "../../_common/Button";
+import { Button } from "../../../_common/Button";
 import { IoSparkles } from "react-icons/io5";
 import { FaUserGraduate } from "react-icons/fa6";
 import { useRouter } from "next/navigation";

@@ -77,7 +77,7 @@ const Header = ({ role }: { role: string }) => {
 
   return (
     <div
-      className={`h-header-height flex px-10 justify-between items-center bg-foreground 
+      className={`h-header-height min-h-header-height flex px-10 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       <div className="text-xl font-bold mt-1">

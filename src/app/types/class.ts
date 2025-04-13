@@ -139,7 +139,7 @@ export type Classroom = {
     avatar: string;
     email: string;
     genId: string;
-    gender: "MALE" | "FEMALE" | "OTHER";
+    gender: "MALE" | "FEMALE";
     id: string;
     name: string;
   } | null;
@@ -152,7 +152,7 @@ export type Classroom = {
       createdAt: string;
       email: string;
       genId: string;
-      gender: string;
+      gender: "MALE" | "FEMALE";
       id: string;
       name: string;
       role: string;
@@ -175,6 +175,14 @@ export type RegisterClassItem = {
   name: string;
   email: string;
   genId: string;
-  gender: string;
+  gender: "MALE" | "FEMALE";
   avatar: string;
+};
+
+export type ApproveResponse = {
+  failedCount: number;
+  failedMembers: {
+    genId: string;
+    name: string;
+  }[];
 };

@@ -1,6 +1,4 @@
-"use client";
-
-import Login from "@/app/(auth)/login/page";
+import Login from "@/app/ui/components/_common/Login";
 
 export default function AdminLogin() {
   return <Login />;

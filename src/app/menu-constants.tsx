@@ -1,4 +1,4 @@
-import { SideNavItem, SideNavItemGroup } from "@/app/types";
+import { SideNavItem } from "@/app/types";
 import {
   BsBook,
   BsCalendar,
@@ -78,39 +78,6 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý học phí",
     path: "/admin/fees",
     icon: <GiMoneyStack size={20} />,
-  },
-];
-
-export const SIDENAV_ITEMS_CLERK: SideNavItemGroup[] = [
-  {
-    title: "Thống kê",
-    menuList: [
-      {
-        title: "Bảng thống kê",
-        path: "/clerk/dashboard",
-        icon: <BsHouseDoor size={20} />,
-      },
-    ],
-  },
-  {
-    title: "Quản lý",
-    menuList: [
-      {
-        title: "Quản lý tài khoản",
-        path: "/clerk/accounts",
-        icon: <BsPerson size={20} />,
-      },
-      {
-        title: "Quản lý môn học",
-        path: "/clerk/courses",
-        icon: <BsBook size={20} />,
-      },
-      {
-        title: "Quản lý lớp học",
-        path: "/clerk/classes",
-        icon: <SiGoogleclassroom size={20} />,
-      },
-    ],
   },
 ];
 

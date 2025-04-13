@@ -9,7 +9,7 @@ export default function ParentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-background">
+    <div className="bg-background h-screen">
       <Sidebar role="parent" />
       <div className="flex flex-col h-full w-full">
         <Header role="parent" />
@@ -17,4 +17,4 @@ export default function ParentLayout({
       </div>
     </div>
   );
-} 
+}
