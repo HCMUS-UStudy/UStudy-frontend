@@ -10,6 +10,7 @@ import {
   TooltipItem,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { motion } from "framer-motion";
 
 // Đăng ký các thành phần cần thiết của Chart.js
 ChartJS.register(
@@ -144,7 +145,7 @@ export default function ResultStudy() {
       const chartHeight = chartArea.bottom - chartArea.top;
 
       ctx.save();
-      ctx.font = "12px Arial";
+      ctx.font = "bold 12px Arial";
       ctx.fillStyle = "#4682B4";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -232,16 +233,35 @@ export default function ResultStudy() {
   });
 
   return (
-    <div className="bg-white p-6 rounded-xl border hover:shadow-xl transition-shadow">
-      <div className="flex items-center justify-between mb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="bg-white p-6 rounded-xl border hover:shadow-xl transition-shadow h-full flex flex-col"
+    >
+      <div className="flex items-center justify-between mb-4">
         <h3 className="text-2xl font-semibold text-gray-800">
           Kết quả học tập
         </h3>
-        <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors">
-          Xem thêm
+        <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center">
+          <span>Xem thêm</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 ml-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
         </button>
       </div>
-      <div className="relative bg-gradient-to-b from-blue-50 to-white p-4 rounded-lg shadow-md">
+      <div className="relative bg-gradient-to-b from-blue-50 to-white p-4 rounded-lg shadow-md flex-grow h-[400px]">
         <Bar data={subjectScores} options={chartOptions} />
       </div>
 
@@ -261,6 +281,6 @@ export default function ResultStudy() {
           <span className="text-gray-600 text-sm">Điểm trung bình lớp</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
