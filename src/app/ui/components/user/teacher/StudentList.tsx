@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getListMembers } from "@/app/lib/services/class";
 import { IoClose } from "react-icons/io5";
-import { MemberData } from "@/app/types/type";
+import { MemberData } from "@/app/types";
 
 const StudentList = ({
   classId,

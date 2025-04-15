@@ -9,8 +9,8 @@ import { useState } from "react";
 import QuizModal from "./QuizModal";
 import NotificationModal from "./NotificationModal";
 import { AnimatePresence } from "framer-motion"; // Import Framer Motion
-import { ClassTeacher } from "@/app/types/type";
 import { motion } from "framer-motion"; // Import Framer Motion
+import { ClassDetail, ClassTeacher } from "@/app/types";
 
 const EachItem = ({
   Icon,
@@ -41,7 +41,7 @@ const AddingModal = ({
   classDetail,
   setAddingModal,
 }: {
-  classDetail: ClassTeacher;
+  classDetail: ClassTeacher | ClassDetail;
   setAddingModal: (value: boolean) => void;
 }) => {
   // const [addingQuiz, setAddingQuiz] = useState(false);

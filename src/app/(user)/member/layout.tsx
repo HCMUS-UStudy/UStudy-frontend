@@ -13,7 +13,7 @@ export default async function TeacherLayout({
   console.log(permissions);
   return (
     <div className="bg-background">
-      <Sidebar role="student" />
+      <Sidebar role="parent" />
       <div className="flex flex-col h-full w-full">
         <Header role="student" />
         <PageWrapper> {children} </PageWrapper>

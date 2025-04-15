@@ -43,7 +43,7 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
         );
 
         setClasses(response.content);
-        console.log("Classes: ", classes);
+        // console.log("Classes: ", classes);
         setTotalPages(response.totalPages || 1);
       } catch (err) {
         console.error("Error fetching classes:", err);
@@ -58,7 +58,7 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery, classQuery }) => {
   }, [currentPage, searchQuery, defaultClass]);
 
   const handleDetail = (id: string) => {
-    setLoading(true);
+    // setLoading(true);
     //fetchClassDetails(id).finally(() => setLoading(false));
     router.push(`/member/classes/${id}`);
   };
