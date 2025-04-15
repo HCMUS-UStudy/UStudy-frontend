@@ -273,7 +273,7 @@ export default function ParentContactPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
       {/* Danh sách giáo viên */}
       <TeacherList
         teachers={teachers}
@@ -282,7 +282,7 @@ export default function ParentContactPage() {
       />
 
       {/* Khu vực chat */}
-      <ChatMessage
+      {/* <ChatMessage
         selectedTeacher={selectedTeacher}
         conversationHistory={conversationHistory}
         teachers={teachers}
@@ -293,7 +293,7 @@ export default function ParentContactPage() {
         emojiRef={emojiRef}
         messagesEndRef={messagesEndRef}
         handleSendMessage={handleSendMessage}
-      />
+      /> */}
     </div>
   );
 }
