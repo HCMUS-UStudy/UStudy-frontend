@@ -50,6 +50,7 @@ export default function ResultStudy() {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false, // Cho phép điều chỉnh kích thước độc lập
     plugins: {
       legend: {
         display: false,
@@ -111,6 +112,15 @@ export default function ResultStudy() {
     scales: {
       x: {
         ticks: {
+          display: true, // Hiển thị nhãn trục x
+          font: {
+            size: 11, // Kích thước chữ nhãn
+          },
+          autoSkip: true,
+          maxRotation: 45, // Xoay nhãn
+          minRotation: 45,
+        },
+        grid: {
           display: false,
         },
       },
@@ -122,18 +132,26 @@ export default function ResultStudy() {
           text: "Điểm trung bình lớp",
         },
         ticks: {
-          display: false,
-          stepSize: 5,
+          display: true, // Hiển thị các giá trị trục y
+          stepSize: 2,
+          font: {
+            size: 11,
+          },
           min: 0,
           max: 10,
+        },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
         },
       },
     },
 
     layout: {
       padding: {
-        top: 15,
+        top: 20,
         right: 25,
+        left: 10,
+        bottom: 10,
       },
     },
   };
