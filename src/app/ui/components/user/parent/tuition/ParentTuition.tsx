@@ -11,7 +11,7 @@ import PendingPaymentsTable from "@/app/ui/components/user/parent/tuition/Pendin
 import PaidPaymentsTable from "@/app/ui/components/user/parent/tuition/PaidPaymentsTable";
 import AllPaymentTable from "@/app/ui/components/user/parent/tuition/AllPaymentTable";
 
-export default function ParentTuitionPage() {
+export default function ParentTuition() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages] = useState(5);
   const [activeTab, setActiveTab] = useState("pending");

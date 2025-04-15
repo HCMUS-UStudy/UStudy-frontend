@@ -79,24 +79,87 @@ export default function ParentContactPage() {
     },
     {
       id: 4,
-      name: "Nguyễn Văn A",
-      subject: "Toán học",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 5 phút trước",
+      name: "Lê Thị B",
+      subject: "Sinh học",
+      avatar: "/teacher.png",
+      lastActive: "Hoạt động 10 phút trước",
     },
     {
       id: 5,
-      name: "Trần Văn C",
-      subject: "Vật lý",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 30 phút trước",
+      name: "Ngô Văn E",
+      subject: "Tiếng Anh",
+      avatar: "/student.png",
+      lastActive: "Hoạt động 1 giờ trước",
     },
     {
       id: 6,
+      name: "Hoàng Thị F",
+      subject: "Lịch sử",
+      avatar: "/teacher.png",
+      lastActive: "Hoạt động 20 phút trước",
+    },
+    {
+      id: 7,
+      name: "Đỗ Văn G",
+      subject: "Địa lý",
+      avatar: "/student.png",
+      lastActive: "Hoạt động 3 giờ trước",
+    },
+    {
+      id: 8,
+      name: "Nguyễn Thị H",
+      subject: "Công nghệ",
+      avatar: "/teacher.png",
+      lastActive: "Hoạt động 8 phút trước",
+    },
+    {
+      id: 9,
+      name: "Phan Văn I",
+      subject: "Giáo dục công dân",
+      avatar: "/student.png",
+      lastActive: "Hoạt động 25 phút trước",
+    },
+    {
+      id: 10,
+      name: "Vũ Thị K",
+      subject: "Tin học",
+      avatar: "/teacher.png",
+      lastActive: "Hoạt động 50 phút trước",
+    },
+    {
+      id: 11,
+      name: "Nguyễn Văn A",
+      subject: "Toán học",
+      avatar: "/student.png",
+      lastActive: "Hoạt động 7 phút trước",
+    },
+    {
+      id: 12,
+      name: "Trần Văn C",
+      subject: "Vật lý",
+      avatar: "/teacher.png",
+      lastActive: "Hoạt động 1 giờ trước",
+    },
+    {
+      id: 13,
       name: "Phạm Thị D",
       subject: "Hóa học",
       avatar: "/student.png",
-      lastActive: "Hoạt động 2 giờ trước",
+      lastActive: "Hoạt động 45 phút trước",
+    },
+    {
+      id: 14,
+      name: "Lê Thị B",
+      subject: "Sinh học",
+      avatar: "/teacher.png",
+      lastActive: "Hoạt động 15 phút trước",
+    },
+    {
+      id: 15,
+      name: "Ngô Văn E",
+      subject: "Tiếng Anh",
+      avatar: "/student.png",
+      lastActive: "Hoạt động 4 giờ trước",
     },
   ];
 
@@ -210,29 +273,27 @@ export default function ParentContactPage() {
   };
 
   return (
-    <div className="px-2 md:px-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Danh sách giáo viên */}
-        <TeacherList
-          teachers={teachers}
-          selectedTeacher={selectedTeacher}
-          setSelectedTeacher={setSelectedTeacher}
-        />
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 h-full">
+      {/* Danh sách giáo viên */}
+      <TeacherList
+        teachers={teachers}
+        selectedTeacher={selectedTeacher}
+        setSelectedTeacher={setSelectedTeacher}
+      />
 
-        {/* Khu vực chat */}
-        <ChatMessage
-          selectedTeacher={selectedTeacher}
-          conversationHistory={conversationHistory}
-          teachers={teachers}
-          messageInput={messageInput}
-          setMessageInput={setMessageInput}
-          showEmojiPicker={showEmojiPicker}
-          setShowEmojiPicker={setShowEmojiPicker}
-          emojiRef={emojiRef}
-          messagesEndRef={messagesEndRef}
-          handleSendMessage={handleSendMessage}
-        />
-      </div>
+      {/* Khu vực chat */}
+      <ChatMessage
+        selectedTeacher={selectedTeacher}
+        conversationHistory={conversationHistory}
+        teachers={teachers}
+        messageInput={messageInput}
+        setMessageInput={setMessageInput}
+        showEmojiPicker={showEmojiPicker}
+        setShowEmojiPicker={setShowEmojiPicker}
+        emojiRef={emojiRef}
+        messagesEndRef={messagesEndRef}
+        handleSendMessage={handleSendMessage}
+      />
     </div>
   );
 }

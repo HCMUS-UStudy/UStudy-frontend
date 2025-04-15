@@ -25,13 +25,15 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
   }, []);
   return (
     <div
-      className={`bg-background p-4 h-[calc(100vh-var(--header-height))]
+      className={`bg-background p-4 max-h-screen-height
       ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       {isDashboard ? (
-        <div className="h-full p-1 overflow-y-auto">{children}</div>
+        <div className="h-full p-3 overflow-y-auto">{children}</div>
       ) : (
-        <div className="h-full bg-foreground rounded-lg py-6 px-8 overflow-y-auto">
+        <div
+          className={`h-full p-4 bg-foreground rounded-lg ${pathname === "/parent/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}
+        >
           {children}
         </div>
       )}

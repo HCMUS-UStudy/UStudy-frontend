@@ -1,4 +1,4 @@
-import { SideNavItem, SideNavItemGroup } from "@/app/types";
+import { SideNavItem } from "@/app/types";
 import {
   BsBook,
   BsCalendar,
@@ -81,39 +81,6 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   },
 ];
 
-export const SIDENAV_ITEMS_CLERK: SideNavItemGroup[] = [
-  {
-    title: "Thống kê",
-    menuList: [
-      {
-        title: "Bảng thống kê",
-        path: "/clerk/dashboard",
-        icon: <BsHouseDoor size={20} />,
-      },
-    ],
-  },
-  {
-    title: "Quản lý",
-    menuList: [
-      {
-        title: "Quản lý tài khoản",
-        path: "/clerk/accounts",
-        icon: <BsPerson size={20} />,
-      },
-      {
-        title: "Quản lý môn học",
-        path: "/clerk/courses",
-        icon: <BsBook size={20} />,
-      },
-      {
-        title: "Quản lý lớp học",
-        path: "/clerk/classes",
-        icon: <SiGoogleclassroom size={20} />,
-      },
-    ],
-  },
-];
-
 export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
   {
     title: "Trang chủ",
@@ -170,7 +137,7 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
   },
   {
     title: "Kết quả học tập",
-    path: "/member/results",
+    path: "/member/academic-results",
     icon: <BsPersonWorkspace size={20} />,
   },
 ];
@@ -178,47 +145,47 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
 export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
   {
     title: "Trang chủ",
-    path: "/parent/home",
+    path: "/member/home",
     icon: <BsHouseDoor size={20} />,
   },
   {
-    title: "Lớp học của con",
-    path: "/parent/classes",
+    title: "Lớp học",
+    path: "/member/classes",
     icon: <SiGoogleclassroom size={20} />,
   },
   {
     title: "Lịch học",
-    path: "/parent/schedule",
+    path: "/member/schedule",
     icon: <BsCalendar size={20} />,
   },
   {
     title: "Điểm danh",
-    path: "/parent/attendance",
+    path: "/member/attendance",
     icon: <FaClipboardList size={20} />,
   },
   {
     title: "Bài tập",
-    path: "/parent/assignments",
+    path: "/member/assignments",
     icon: <MdOutlineAssignment size={20} />,
   },
   {
     title: "Học phí",
-    path: "/parent/tuition",
+    path: "/member/tuition",
     icon: <BsCreditCard size={20} />,
   },
   {
     title: "Kết quả học tập",
-    path: "/parent/results",
+    path: "/member/academic-results",
     icon: <BsPersonWorkspace size={20} />,
   },
   {
     title: "Thông báo",
-    path: "/parent/notifications",
+    path: "/member/notifications",
     icon: <MdOutlineNotificationsActive size={20} />,
   },
   {
     title: "Liên hệ giáo viên",
-    path: "/parent/contact",
+    path: "/member/contact",
     icon: <FaRegCommentDots size={20} />,
   },
 ];

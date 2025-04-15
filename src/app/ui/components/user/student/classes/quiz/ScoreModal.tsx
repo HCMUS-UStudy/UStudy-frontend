@@ -1,10 +1,10 @@
 "use client";
 import { getReviewQuiz } from "@/app/lib/services/quiz";
-import { QuizReview } from "@/app/types";
 import React, { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import ReviewQuiz from "./ReviewQuiz";
 import { Button } from "@/app/ui/components/_common/Button";
+import { QuizReviewData } from "@/app/types";
 
 interface ScoreModalProps {
   quizId: string;
@@ -20,7 +20,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
   score,
   onClose,
 }) => {
-  const [reviewQuiz, setReviewQuiz] = useState<QuizReview>();
+  const [reviewQuiz, setReviewQuiz] = useState<QuizReviewData>();
   const [isReviewing, setIsReviewing] = useState(false);
   if (!isOpen) return null;
 

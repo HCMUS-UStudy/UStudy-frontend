@@ -1,11 +1,7 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import { ClassItem } from "@/app/types";
-import { usePathname, useRouter } from "next/navigation";
+import React, { memo, useEffect, useState } from "react";
 import { getAllClasses } from "@/app/lib/services/class";
 import { Button } from "@/app/ui/components/_common/Button";
-import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
   TableBody,
@@ -14,7 +10,12 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import { ArrowRightCircle, Eye } from "lucide-react";
-import ClassRegisterModal from "./ClassRegisterModal";
+import { IoWarningOutline } from "react-icons/io5";
+import { ClassItem } from "@/app/types";
+import ClassPagination from "./ClassPagination";
+import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
+
+const MemoizedClassPagination = memo(ClassPagination);
 
 export default function ClassesTable({
   query,
@@ -25,133 +26,88 @@ export default function ClassesTable({
 }) {
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
-  // let displays: ClassItem[] = [];
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<string>("");
   useEffect(() => {
-    const fetchData = async () => {
-      let filteredData: ClassItem[] = [];
-      setIsLoading(true);
+    const fetchClasses = async () => {
       try {
-        const response = await getAllClasses(query, "", "", currentPage - 1, 5);
-        filteredData = response.content.map((item) => ({
-          id: item.id,
-          name: item.name,
-          course: {
-            name: item.course.name,
-          },
-          room: {
-            // name: item.room.name,
-            name: "",
-          },
-          // fee: item.fee,
-          fee: 0,
-          grade: {
-            name: item.grade.name,
-          },
-        }));
+        setIsLoading(true);
+        const response = await getAllClasses("", currentPage - 1, 5);
+        setClasses(response.content);
         setTotalPages(response.totalPages);
       } catch (error) {
         console.log(error);
       } finally {
-        setClasses(filteredData);
         setIsLoading(false);
       }
     };
-    fetchData();
-  }, [currentPage, query]);
-  // console.log(classes);
+    fetchClasses();
+    return;
+  }, [query, currentPage]);
 
-  const handlePrevClick = () => {
-    if (currentPage > 1) {
-      currentPage--;
-      const params = new URLSearchParams();
-      params.set("page", currentPage.toString());
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  };
-
-  const handleNextClick = () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      const params = new URLSearchParams();
-      params.set("page", currentPage.toString());
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  };
-
-  const handlePageClick = (page: number) => {
-    currentPage = page;
-    const params = new URLSearchParams();
-    params.set("page", currentPage.toString());
-    router.replace(`${pathname}?${params.toString()}`);
-  };
-
-  const handleOpenModal = (id: string) => {
-    setSelectedClassId(id);
-    setIsModalOpen(true);
-  };
-
-  return (
-    <div>
-      <Table>
-        <TableHeader
-          columns={["ID", "Tên lớp", "Môn học", "Khối", "Phòng", "Học phí", ""]}
-          className="bg-gray-100"
+  if (classes.length === 0 && isLoading === false) {
+    return (
+      <div className="flex flex-col items-center py-4 w-full self-center text-primary-dark border-2 border-dashed rounded border-primary-dark">
+        <IoWarningOutline className="size-24" />
+        <div className="text-xl">Chưa có lớp học</div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <Table>
+          <TableHeader
+            columns={["ID", "Tên lớp", "Môn học", "Khối", "Học phí", ""]}
+            className="bg-gray-100"
+          />
+          <TableBody isLoading={isLoading}>
+            {classes.map((c, i) => (
+              <TableRow key={i}>
+                <TableCell className="w-20">{i + 1}</TableCell>
+                <TableCell>{c.name}</TableCell>
+                <TableCell>{c.course.name}</TableCell>
+                <TableCell>{c.grade.name}</TableCell>
+                <TableCell>{c.fee} VNĐ</TableCell>
+                <TableCell className="p-0 w-5 flex items-center justify-center gap-2 px-2 py-3">
+                  {/* Nút xem lớp */}
+                  <Button
+                    // onClick={() =>
+                    //   router.push(`/clerk/classes/${c.id}/class-management`)
+                    // }
+                    type="button"
+                    variant="outlined"
+                    className="p-2 "
+                  >
+                    <Eye size={20} />
+                  </Button>
+                  {/* <ClassEnrollment classId={c.id} /> */}
+                  <Button
+                    onClick={() => {
+                      setIsOpen(true);
+                      setSelectedId(c.id);
+                    }}
+                    type="button"
+                    variant="outlined"
+                    className="p-2"
+                  >
+                    <ArrowRightCircle size={20} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <MemoizedClassPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
         />
-        <TableBody isLoading={isLoading}>
-          {classes.map((c, i) => (
-            <TableRow key={i}>
-              <TableCell className="w-20">{i + 1}</TableCell>
-              <TableCell>{c.name}</TableCell>
-              <TableCell>{c.course.name}</TableCell>
-              <TableCell>{c.grade.name}</TableCell>
-              <TableCell>{c.room.name}</TableCell>
-              <TableCell>{c.fee} VNĐ</TableCell>
-              <TableCell className="p-0 w-5 flex items-center justify-center space-x-2 px-2 py-3">
-                {/* Nút xem lớp */}
-                <Button
-                  onClick={() =>
-                    router.push(`/clerk/classes/${c.id}/class-management`)
-                  }
-                  type="button"
-                  variant="outlined"
-                  className="p-2 "
-                >
-                  <Eye size={20} />
-                </Button>
-
-                {/* Nút duyệt thẳng vào lớp */}
-                <Button
-                  onClick={() => handleOpenModal(c.id)}
-                  type="button"
-                  variant="outlined"
-                  className="p-2"
-                >
-                  <ArrowRightCircle size={20} />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handlePageClick={(page) => handlePageClick(page)}
-        handlePreviousPage={handlePrevClick}
-        handleNextPage={handleNextClick}
-      />
-      {isModalOpen && (
-        <ClassRegisterModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          classId={selectedClassId}
+        <ClassEnrollmentModal
+          classId={selectedId}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
         />
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 }

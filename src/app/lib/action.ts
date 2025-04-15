@@ -4,7 +4,6 @@ import { UserData } from "../types";
 import { redirect } from "next/navigation";
 
 export async function setUserDataCookies(userData: string) {
-  console.log("set user data");
   const cookieStore = await cookies();
   cookieStore.set("userData", userData, {
     httpOnly: true,
@@ -96,4 +95,10 @@ export async function handleLogoutCookies() {
     default:
       redirect("/login");
   }
+}
+
+export async function getPermissions(): Promise<string[] | null> {
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value;
+  return permissions ? JSON.parse(permissions) : null;
 }

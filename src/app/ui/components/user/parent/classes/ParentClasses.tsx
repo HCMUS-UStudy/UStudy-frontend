@@ -5,7 +5,7 @@ import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
 import CurrentClass from "@/app/ui/components/user/parent/classes/CurrentClass";
 import CompletedClass from "@/app/ui/components/user/parent/classes/CompletedClass";
 
-export default function ParentClassesPage() {
+export default function ParentClasses() {
   const [activeTab, setActiveTab] = useState("current");
 
   return (
