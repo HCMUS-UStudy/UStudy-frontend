@@ -10,7 +10,7 @@ import { IoReturnUpBack } from "react-icons/io5";
 import { useForm, useFieldArray } from "react-hook-form";
 import TextArea from "../../_common/text-field/TextArea";
 import { Input } from "../../_common/text-field/Input";
-import { ClassDetail, ClassTeacher } from "@/app/types";
+import { ClassDetail } from "@/app/types";
 
 type FormValues = {
   question: string;
@@ -25,7 +25,7 @@ const QuizModal = ({
 }: {
   onGoBack: () => void;
   onClose: (value: boolean) => void;
-  classDetail: ClassTeacher | ClassDetail;
+  classDetail: ClassDetail;
 }) => {
   const {
     register,
@@ -54,7 +54,6 @@ const QuizModal = ({
   });
 
   const isMultipleChoice = watch("isMultipleChoice");
-
   const handleMultipleChoiceToggle = (value: boolean) => {
     setValue("isMultipleChoice", value);
     if (!value) {
