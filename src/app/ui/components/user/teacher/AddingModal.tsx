@@ -9,7 +9,7 @@ import { useState } from "react";
 import QuizModal from "./QuizModal";
 import NotificationModal from "./NotificationModal";
 import { AnimatePresence } from "framer-motion"; // Import Framer Motion
-import { ClassTeacher } from "@/app/types/type";
+import { ClassDetail } from "@/app/types";
 import { motion } from "framer-motion"; // Import Framer Motion
 
 const EachItem = ({
@@ -41,7 +41,7 @@ const AddingModal = ({
   classDetail,
   setAddingModal,
 }: {
-  classDetail: ClassTeacher;
+  classDetail: ClassDetail;
   setAddingModal: (value: boolean) => void;
 }) => {
   // const [addingQuiz, setAddingQuiz] = useState(false);

@@ -5,7 +5,7 @@ import Checkbox from "../../_common/Checkbox";
 import { motion } from "framer-motion";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Switch from "../../_common/Switch";
-import { ClassTeacher } from "@/app/types/type";
+import { ClassDetail } from "@/app/types";
 import { createQuestion } from "@/app/lib/services/question";
 import { IoReturnUpBack } from "react-icons/io5";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -25,7 +25,7 @@ const QuizModal = ({
 }: {
   onGoBack: () => void;
   onClose: (value: boolean) => void;
-  classDetail: ClassTeacher;
+  classDetail: ClassDetail;
 }) => {
   const {
     register,
@@ -54,7 +54,6 @@ const QuizModal = ({
   });
 
   const isMultipleChoice = watch("isMultipleChoice");
-
   const handleMultipleChoiceToggle = (value: boolean) => {
     setValue("isMultipleChoice", value);
     if (!value) {
