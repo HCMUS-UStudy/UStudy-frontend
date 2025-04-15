@@ -169,6 +169,7 @@ export default function AttendanceCalendar({
             <Calendar
               onChange={handleDateChange}
               value={selectedDate}
+              locale="vi"
               className="w-full rounded-lg border-0"
               tileClassName={getTileClassName}
               tileContent={renderTileContent}
