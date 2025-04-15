@@ -8,10 +8,7 @@ export const metadata: Metadata = {
 
 export default function ParentAcademicResults() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Kết quả học tập của con
-      </h1>
+    <div className="px-2">
       <ParentAcademicResultsView />
     </div>
   );
