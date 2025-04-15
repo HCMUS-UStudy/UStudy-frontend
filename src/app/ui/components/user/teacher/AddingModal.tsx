@@ -9,8 +9,8 @@ import { useState } from "react";
 import QuizModal from "./QuizModal";
 import NotificationModal from "./NotificationModal";
 import { AnimatePresence } from "framer-motion"; // Import Framer Motion
-import { ClassDetail } from "@/app/types";
 import { motion } from "framer-motion"; // Import Framer Motion
+import { ClassDetail } from "@/app/types";
 
 const EachItem = ({
   Icon,

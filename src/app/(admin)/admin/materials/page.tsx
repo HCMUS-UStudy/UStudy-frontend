@@ -1,5 +1,7 @@
+"use server";
 import AddAccountModal from "@/app/ui/components/admin/accounts/AddAccountModal";
 import MaterialsGrid from "@/app/ui/components/admin/materials/MaterialsGrid";
+import { Suspense } from "react";
 
 export default async function MaterialsPage() {
   return (
@@ -12,7 +14,9 @@ export default async function MaterialsPage() {
       </div>
 
       <div className="overflow-x-auto mt-6">
-        <MaterialsGrid />
+        <Suspense>
+          <MaterialsGrid />
+        </Suspense>
       </div>
     </div>
   );

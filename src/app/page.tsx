@@ -6,9 +6,20 @@ import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageS
 import CreateTeacher from "./ui/components/user/CreateTeacher";
 import { IoLogInOutline } from "react-icons/io5";
 import Logo from "@/app/ui/components/_common/Logo";
-import StudentRegisterBtn from "./ui/components/user/student/StudentRegisterBtn";
+import StudentRegisterBtn from "./ui/components/user/student/register/StudentRegisterBtn";
 
 export default async function Home() {
+  try {
+    const courses = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses`,
+      {
+        cache: "no-store",
+      },
+    );
+    console.log(await courses.json());
+  } catch (error) {
+    console.log(error);
+  }
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
     const contents = [
       {

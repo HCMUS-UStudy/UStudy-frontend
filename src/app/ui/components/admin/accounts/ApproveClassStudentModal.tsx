@@ -9,7 +9,7 @@ import {
 } from "@/app/ui/components/_common/Dialog";
 import { ArrowRightCircle } from "lucide-react";
 import { getListUserDetail } from "@/app/lib/services/user";
-import { ClassItem, ClassUserItem } from "@/app/types";
+import { ApproveResponse, ClassItem, ClassUserItem } from "@/app/types";
 import {
   addMembers,
   getAllClasses,
@@ -67,7 +67,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getAllClasses("", "", "", currentPageCl - 1, 5);
+      const response = await getAllClasses("", currentPageCl - 1, 5);
 
       // Set total pages for students based on API response
       console.log(totalPagesCl);
@@ -141,25 +141,22 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
     try {
       // Dùng Promise.all để chạy nhiều request cùng lúc
-      const responses: Array<{ data: { failedCount: number } }> =
-        await Promise.all(
-          selectedClasses.map((classId: string) =>
-            addMembers([userId], classId, "STUDENT"),
-          ),
-        );
+      const responses: Array<ApproveResponse> = await Promise.all(
+        selectedClasses.map((classId: string) =>
+          addMembers([userId], classId, "STUDENT"),
+        ),
+      );
 
       let failedCount = 0;
-      responses.forEach(
-        (response: { data: { failedCount: number } }, index: number) => {
-          if (response.data.failedCount > 0) {
-            failedCount++;
-            toast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`, {
-              position: "bottom-right",
-              autoClose: 5000,
-            });
-          }
-        },
-      );
+      responses.forEach((response, index: number) => {
+        if (response.failedCount > 0) {
+          failedCount++;
+          toast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`, {
+            position: "bottom-right",
+            autoClose: 5000,
+          });
+        }
+      });
 
       if (failedCount === 0) {
         toast.success("Thêm học viên vào tất cả lớp thành công!", {
@@ -194,7 +191,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     try {
       const response = await addMembers([userId], classId, "STUDENT");
 
-      if (response.data?.failedCount > 0) {
+      if (response.failedCount > 0) {
         toast.error(`Thêm không thành công vào lớp ${classId}`, {
           position: "bottom-right",
           autoClose: 5000,
@@ -259,7 +256,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
                 <ApproveAccountTable
                   title="Danh sách lớp"
                   fetchData={(page, searchQuery, courseQuery) =>
-                    getAllClasses(searchQuery, courseQuery, "", page, 5)
+                    getAllClasses(searchQuery, page, 5, courseQuery)
                   }
                   class={classes}
                   isSelecting={isSelectingClass}

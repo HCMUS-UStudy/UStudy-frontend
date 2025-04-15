@@ -34,7 +34,7 @@ const SearchField = ({ className, onSearch, ...props }: SearchProps) => {
   const { replace } = useRouter();
   const handleSearch = useDebouncedCallback((term: string) => {
     onSearch?.(term);
-    console.log(term);
+    // console.log(term);
     const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("query", term);
@@ -51,7 +51,7 @@ const SearchField = ({ className, onSearch, ...props }: SearchProps) => {
       )}
     >
       <div className="pl-3">
-        <IoSearchOutline size={20} />
+        <IoSearchOutline size={20} className="text-primary-darkest" />
       </div>
       <input
         type="text"
