@@ -5,12 +5,12 @@ import Checkbox from "../../_common/Checkbox";
 import { motion } from "framer-motion";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Switch from "../../_common/Switch";
-import { ClassTeacher } from "@/app/types/type";
 import { createQuestion } from "@/app/lib/services/question";
 import { IoReturnUpBack } from "react-icons/io5";
 import { useForm, useFieldArray } from "react-hook-form";
 import TextArea from "../../_common/text-field/TextArea";
 import { Input } from "../../_common/text-field/Input";
+import { ClassDetail, ClassTeacher } from "@/app/types";
 
 type FormValues = {
   question: string;
@@ -25,7 +25,7 @@ const QuizModal = ({
 }: {
   onGoBack: () => void;
   onClose: (value: boolean) => void;
-  classDetail: ClassTeacher;
+  classDetail: ClassTeacher | ClassDetail;
 }) => {
   const {
     register,

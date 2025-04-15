@@ -1,5 +1,3 @@
-import axios from "../axios";
-
 export type PaymentMethod =
   | "VNPAY"
   | "BANK_TRANSFER"
@@ -55,24 +53,24 @@ export const createVnPayPayment = async (
 /**
  * Check payment status
  */
-export const checkPaymentStatus = async (
-  transactionId: string,
-): Promise<PaymentResponse> => {
-  try {
-    // In a real implementation, this would call your backend
-    // const response = await axios.get(`/api/payments/status/${transactionId}`);
-    // return response.data;
+// export const checkPaymentStatus = async (
+//   transactionId: string,
+// ): Promise<PaymentResponse> => {
+//   try {
+//     // In a real implementation, this would call your backend
+//     // const response = await axios.get(`/api/payments/status/${transactionId}`);
+//     // return response.data;
 
-    // Simulate successful response for demo
-    return {
-      success: true,
-      message: "Payment completed successfully",
-    };
-  } catch (error) {
-    console.error("Error checking payment status:", error);
-    return {
-      success: false,
-      message: "Failed to check payment status. Please contact support.",
-    };
-  }
-};
+//     // Simulate successful response for demo
+//     return {
+//       success: true,
+//       message: "Payment completed successfully",
+//     };
+//   } catch (error) {
+//     console.error("Error checking payment status:", error);
+//     return {
+//       success: false,
+//       message: "Failed to check payment status. Please contact support.",
+//     };
+//   }
+// };

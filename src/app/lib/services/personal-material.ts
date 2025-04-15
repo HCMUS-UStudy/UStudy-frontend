@@ -1,5 +1,5 @@
-import { MaterialData } from "@/app/types/type";
 import axiosInstance from "@/app/lib/axios";
+import { MaterialData } from "@/app/types";
 
 export const getMaterial = async (): Promise<MaterialData> => {
   const response = await axiosInstance.get(`/material/personal/list`, {
