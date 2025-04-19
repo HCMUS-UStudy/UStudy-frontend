@@ -63,6 +63,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
 
       const response = await getAllAccount(
         searchQuery,
+        5,
         defaultRole,
         currentPage - 1,
       );

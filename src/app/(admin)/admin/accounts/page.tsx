@@ -5,6 +5,7 @@ import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegi
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { HiAdjustments } from "react-icons/hi";
 import Dropdown from "@/app/ui/components/_common/Dropdown";
+import AccountNumber from "@/app/ui/components/admin/accounts/AccountNumber";
 
 const roles = {
   All: "Tất cả",
@@ -29,7 +30,7 @@ export default async function AccountPage(props: {
   return (
     <div className="px-2">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
+        <AccountNumber searchQuery={query} roleQuery={role} />
         <div className="flex items-center space-x-2">
           <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
           <AddAccountModal buttonLabel="Tạo người dùng" />
