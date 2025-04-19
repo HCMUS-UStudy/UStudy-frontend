@@ -30,7 +30,7 @@ export default async function AccountPage(props: {
     <div className="px-2">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center">
           <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
           <AddAccountModal buttonLabel="Tạo người dùng" />
         </div>

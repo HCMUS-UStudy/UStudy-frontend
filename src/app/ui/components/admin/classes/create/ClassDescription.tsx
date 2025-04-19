@@ -1,6 +1,6 @@
-import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import { CreateClassInputs } from "./CreateClass";
 
 export default function ClassDescription() {
   const { register } = useFormContext<CreateClassInputs>();

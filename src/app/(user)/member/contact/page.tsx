@@ -282,7 +282,7 @@ export default function ParentContactPage() {
       />
 
       {/* Khu vực chat */}
-      {/* <ChatMessage
+      <ChatMessage
         selectedTeacher={selectedTeacher}
         conversationHistory={conversationHistory}
         teachers={teachers}
@@ -293,7 +293,7 @@ export default function ParentContactPage() {
         emojiRef={emojiRef}
         messagesEndRef={messagesEndRef}
         handleSendMessage={handleSendMessage}
-      /> */}
+      />
     </div>
   );
 }

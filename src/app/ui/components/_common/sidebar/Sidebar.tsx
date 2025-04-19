@@ -11,10 +11,14 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import Tooltip from "../Tooltip";
 import { SideNavItem } from "@/app/types/common";
+import { RootState, useAppSelector } from "@/app/store/store";
 
 const Sidebar = ({ role }: { role: string }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const permissions = useAppSelector(
+    (state: RootState) => state.permission.screens,
+  );
 
   const [SIDENAV_ITEMS, setSIDENAV_ITEMS] = useState<SideNavItem[]>(
     role === "admin"
@@ -41,6 +45,7 @@ const Sidebar = ({ role }: { role: string }) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    console.log(permissions);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };

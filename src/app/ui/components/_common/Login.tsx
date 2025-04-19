@@ -13,6 +13,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CustomError } from "@/app/types/common";
+import { useDispatch } from "react-redux";
+import { setPermissions } from "@/app/store/PermissionScreenSlice";
 
 const LogInSchema = z.object({
   genId: z
@@ -30,6 +32,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const isUser = pathname === "/login";
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -55,6 +58,7 @@ export default function Login() {
         JSON.stringify(response.data.user),
         JSON.stringify(response.data.screens),
       );
+      dispatch(setPermissions(response.data.screens));
       toast.success("Đăng nhập thành công", {
         position: "bottom-right",
         autoClose: 5000,

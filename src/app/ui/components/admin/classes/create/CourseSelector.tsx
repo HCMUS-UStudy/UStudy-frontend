@@ -4,7 +4,7 @@ import { getCoursesByGradeId } from "@/app/lib/services/course";
 import { CourseDto } from "@/app/types";
 import SelectorLoading from "../../../_common/loading/SelectorLoading";
 import { useFormContext } from "react-hook-form";
-import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
+import { CreateClassInputs } from "./CreateClass";
 
 export default function CourseSelector() {
   const {
@@ -24,7 +24,7 @@ export default function CourseSelector() {
         }
         setLoading(true);
         const response = await getCoursesByGradeId(selectedGrade);
-        console.log(response);
+        // console.log(response);
         setCourses(response.content);
         if (response.totalElements === 0) {
           setError("courseId", {

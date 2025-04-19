@@ -1,4 +1,3 @@
-import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader } from "../../../_common/Dialog";
@@ -18,10 +17,11 @@ import { getSessionByBranchId } from "@/app/lib/services/session";
 import { useAppSelector } from "@/app/store/store";
 import { getAvailableRooms } from "@/app/lib/services/room";
 import SelectorLoadingHorizon from "../../../_common/loading/SelectorLoadingHorizon";
+import { CreateClassInputs } from "./CreateClass";
 
 type OverviewItem = {
   day: DaysInWeek;
-  room: RoomItem;
+  room: RoomItem | null;
   session: SessionItem;
 };
 
@@ -129,27 +129,27 @@ export default function DayRoomSessionSelector() {
       });
       return;
     }
-    if (selectedRoom === null) {
-      toast.error("Vui lòng chọn phòng học", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
-      return;
-    }
+    // if (selectedRoom === null) {
+    //   toast.error("Vui lòng chọn phòng học", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    //   return;
+    // }
     const _classTimes = [...classTimes];
     const exists = _classTimes.findIndex((item) => item.day === selectedDay);
     if (exists !== -1) {
       _classTimes[exists] = {
         ..._classTimes[exists],
         branchSessionId: selectedSession.id,
-        roomId: selectedRoom.id,
+        roomId: selectedRoom ? selectedRoom.id : null,
       };
       setOverview((current) => {
         current[exists] = {
           ...current[exists],
           session: selectedSession,
-          room: selectedRoom,
+          room: selectedRoom ?? null,
         };
         return current;
       });
@@ -160,7 +160,7 @@ export default function DayRoomSessionSelector() {
       _classTimes.push({
         day: selectedDay,
         branchSessionId: selectedSession.id,
-        roomId: selectedRoom.id,
+        roomId: selectedRoom ? selectedRoom.id : null,
       });
       setOverview((current) => [
         ...current,
@@ -235,7 +235,9 @@ export default function DayRoomSessionSelector() {
                 {overview.map((item) => (
                   <TableRow key={item.day}>
                     <TableCell>{daysMapping[item.day]}</TableCell>
-                    <TableCell>{item.room.name}</TableCell>
+                    <TableCell>
+                      {item.room ? item.room.name : "Chưa chọn phòng"}
+                    </TableCell>
                     <TableCell>
                       {item.session.session.name} -{" "}
                       {item.session.session.startTime.slice(0, -3)} -{" "}
@@ -269,12 +271,12 @@ export default function DayRoomSessionSelector() {
       </span>
       <Dialog isOpen={isSelecting} onClose={() => setSelecting(false)}>
         <DialogHeader>
-          <div className="text-base">
+          <div className="text-base px-5">
             Vui lòng chọn phòng học và ca học tương ứng
           </div>
         </DialogHeader>
         <DialogContent>
-          <div className="text-base flex flex-col gap-4">
+          <div className="text-base flex flex-col gap-4 px-2">
             <div>
               <h1 className="font-bold">Chọn ca học</h1>
               {loadingSessions ? (
@@ -312,6 +314,11 @@ export default function DayRoomSessionSelector() {
                 <h1 className="font-bold">Chọn phòng học</h1>
                 {loadingRooms ? (
                   <SelectorLoadingHorizon numberOfItems={2} />
+                ) : rooms.length === 0 ? (
+                  <div className="text-sm text-primary-darkest">
+                    Chưa có phòng học cho ca này, có thể chọn sau khi tạo lớp
+                    học
+                  </div>
                 ) : (
                   <div className="flex flex-col gap-2 mt-2">
                     {rooms.map((room) => (
