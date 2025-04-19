@@ -87,11 +87,11 @@ export default function CreateForumPostPage() {
   };
 
   return (
-    <div className="container py-8">
+    <div className="px-2">
       <Button
         variant="basic"
         onClick={handleBackClick}
-        className="mb-6 flex items-center hover:bg-primary-lighter"
+        className="mb-4 flex items-center hover:bg-primary-lighter"
       >
         <FaArrowLeft className="mr-2" /> Quay lại diễn đàn
       </Button>
