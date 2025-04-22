@@ -9,17 +9,14 @@ import Logo from "@/app/ui/components/_common/Logo";
 import StudentRegisterBtn from "./ui/components/user/student/register/StudentRegisterBtn";
 
 export default async function Home() {
-  try {
-    const courses = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses`,
-      {
-        cache: "no-store",
-      },
-    );
-    console.log(await courses.json());
-  } catch (error) {
-    console.log(error);
-  }
+  const fetchCourses = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/course`,
+    {
+      cache: "no-cache",
+    },
+  );
+  // console.log(await fetchCourses.json());
+  const courses = (await fetchCourses.json()).content;
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
     const contents = [
       {
@@ -180,7 +177,7 @@ export default async function Home() {
           />
         </div>
         <div>
-          <CreateTeacher />
+          <CreateTeacher courses={courses} />
         </div>
       </div>
       <Footer />

@@ -30,9 +30,9 @@ const TeacherList: React.FC<TeacherListProps> = ({
   setSelectedTeacher,
 }) => {
   return (
-    <div className="md:col-span-1 max-h-screen-height">
-      <Card className="h-full shadow-md bg-white border">
-        <CardHeader className="max-h-sub-header-height min-h-sub-header-height">
+    <div className="md:col-span-1 h-sub-screen-height">
+      <Card className="h-full shadow-md bg-white border flex flex-col">
+        <CardHeader className="">
           <CardTitle className="flex items-center text-primary-dark">
             <BsPerson className="mr-2" />
             Danh sách giáo viên
@@ -41,7 +41,7 @@ const TeacherList: React.FC<TeacherListProps> = ({
             Chọn giáo viên để nhắn tin
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2 py-2 max-h-sub-screen-height overflow-auto scrollbar-thin scrollbar-thumb-gray-300">
+        <CardContent className="space-y-2 py-2 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
           {teachers.map((teacher) => (
             <div
               key={teacher.id}

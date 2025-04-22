@@ -1,5 +1,4 @@
 "use server";
-import { getPermissions } from "@/app/lib/action";
 import PageWrapper from "@/app/ui/components/_common/PageWrapper";
 import Sidebar from "@/app/ui/components/_common/sidebar/Sidebar";
 import Header from "@/app/ui/components/user/Header";
@@ -9,8 +8,6 @@ export default async function TeacherLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const permissions = await getPermissions();
-  console.log(permissions);
   return (
     <div className="bg-background">
       <Sidebar role="parent" />

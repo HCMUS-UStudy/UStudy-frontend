@@ -12,11 +12,11 @@ import { setupCache } from "axios-cache-interceptor";
 
 const requestUrl = ["/auth/login"];
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const instance = axios.create({
-  baseURL: `${backendUrl}/api`,
-  // baseURL: "http://localhost:8080/api",
+  // baseURL: `${backendUrl}/api`,
+  baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -95,10 +95,8 @@ axiosInstance.interceptors.response.use(
   },
   function (error: AxiosError) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
-    console.log(error.response);
     if (error.response?.status === 403) {
       //handleLogout();
-      console.log("403 hoặc 401");
       // window.location.href = '/login';
     }
     const customError: CustomError = {

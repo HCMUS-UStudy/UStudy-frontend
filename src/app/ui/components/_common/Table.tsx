@@ -160,7 +160,7 @@ export const TableBody: React.FC<TableBodyProps> = ({
           <TableRow key={i} className="hover:bg-transparent">
             {columns.map((_, index) => (
               <TableCell key={index}>
-                <div className="bg-slate-300 h-2 rounded-full"></div>
+                <div className="bg-slate-200 h-3 my-1 rounded"></div>
               </TableCell>
             ))}
           </TableRow>
@@ -169,7 +169,27 @@ export const TableBody: React.FC<TableBodyProps> = ({
     );
   }
 
-  return <tbody>{children}</tbody>;
+  const hasData =
+    React.Children.toArray(children).filter((child) =>
+      React.isValidElement(child),
+    ).length > 0;
+
+  return (
+    <tbody>
+      {hasData ? (
+        children
+      ) : (
+        <TableRow>
+          <TableCell
+            className="text-primary-darkest bg-primary-lighter"
+            colSpan={columns.length}
+          >
+            Không có dữ liệu
+          </TableCell>
+        </TableRow>
+      )}
+    </tbody>
+  );
 };
 
 interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {

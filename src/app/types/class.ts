@@ -1,3 +1,4 @@
+import { GenderType } from "./common";
 import { Course, CourseDto } from "./course";
 import { Grade, GradeItem } from "./grade";
 import { Room } from "./room";
@@ -48,16 +49,14 @@ export type ClassSchema = {
 export type ClassItem = {
   id: string;
   name: string;
-  course: {
-    name: string;
-  };
+  course: CourseDto;
   fee: number;
+  startDate: string;
+  endDate: string;
   room: {
     name: string;
   };
-  grade: {
-    name: string;
-  };
+  grade: GradeItem;
 };
 
 export type ClassData = {
@@ -139,7 +138,7 @@ export type Classroom = {
     avatar: string;
     email: string;
     genId: string;
-    gender: "MALE" | "FEMALE";
+    gender: GenderType;
     id: string;
     name: string;
   } | null;
@@ -152,7 +151,7 @@ export type Classroom = {
       createdAt: string;
       email: string;
       genId: string;
-      gender: "MALE" | "FEMALE";
+      gender: GenderType;
       id: string;
       name: string;
       role: string;
@@ -175,7 +174,7 @@ export type RegisterClassItem = {
   name: string;
   email: string;
   genId: string;
-  gender: "MALE" | "FEMALE";
+  gender: GenderType;
   avatar: string;
 };
 

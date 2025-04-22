@@ -1,3 +1,5 @@
+import { GenderType } from "./common";
+
 export type AuthResponse = {
   message: string;
   statusCode: string;
@@ -13,7 +15,7 @@ export type UserData = {
   avatar: string;
   email: string;
   genId: string;
-  gender: "MALE" | "FEMALE";
+  gender: GenderType;
   name: string;
   role: {
     createdAt: string;

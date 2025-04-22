@@ -7,8 +7,8 @@ import {
   ApproveResponse,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
-import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
 import { MemberData } from "@/app/types/member";
+import { CreateClassInputs } from "@/app/ui/components/admin/classes/create/CreateClass";
 
 export const getAllClasses = async (
   nameQuery: string,
@@ -26,6 +26,7 @@ export const getAllClasses = async (
         course: courseQuery,
         grade: gradeQuery,
       },
+      cache: false,
     });
     return response.data.data;
   } catch (error) {

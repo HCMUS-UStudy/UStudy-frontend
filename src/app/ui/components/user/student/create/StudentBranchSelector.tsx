@@ -33,6 +33,7 @@ export default function StudentBranchSelector() {
     setValue("branchId", branchId);
     clearErrors("branchId");
     setValue("classTimes", []);
+    setValue("courses", []);
   };
   return (
     <>

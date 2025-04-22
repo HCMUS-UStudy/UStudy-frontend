@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Pagination from "../../_common/Pagination";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function ClassPagination({
   currentPage,
@@ -12,10 +12,11 @@ export default function ClassPagination({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const handlePrevClick = () => {
     if (currentPage > 1) {
       currentPage--;
-      const params = new URLSearchParams();
+      const params = new URLSearchParams(searchParams);
       params.set("page", currentPage.toString());
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -24,7 +25,7 @@ export default function ClassPagination({
   const handleNextClick = () => {
     if (currentPage < totalPages) {
       currentPage++;
-      const params = new URLSearchParams();
+      const params = new URLSearchParams(searchParams);
       params.set("page", currentPage.toString());
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -32,7 +33,9 @@ export default function ClassPagination({
 
   const handlePageClick = (page: number) => {
     currentPage = page;
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams);
+    console.log("here");
+    console.log(params);
     params.set("page", currentPage.toString());
     router.replace(`${pathname}?${params.toString()}`);
   };

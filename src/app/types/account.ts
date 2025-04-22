@@ -1,23 +1,26 @@
+import { AccountStatus, GenderType } from "./common";
+import { RoleItem } from "./role";
+
 export type AccountItem = {
   id: string;
   name: string;
   email: string;
   genId: string;
-  role: { id: string; name: string };
+  role: RoleItem;
   status: string;
   createdAt: string;
 };
 
 export type AccountDetailItem = {
   id: string;
-  name: string;
-  email: string;
   genId: string;
+  email: string;
+  name: string;
   avatar: string;
-  gender: "MALE" | "FEMALE";
-  status: "ACTIVE" | "DELETED" | "LOCKED";
+  gender: GenderType;
   createdAt: string;
-  role: { id: string; name: string };
+  status: AccountStatus;
+  role: RoleItem;
 };
 
 export type AccountSchema = {
@@ -26,7 +29,7 @@ export type AccountSchema = {
   phone: string;
   address: string;
   birthday: string;
-  gender: "MALE" | "FEMALE";
+  gender: GenderType;
   roleId: string;
 };
 
@@ -47,5 +50,11 @@ export type RegisterItem = {
   address: string;
   birthday: string;
   phone: string;
-  gender: string;
+  gender: GenderType;
+};
+
+export type DeleteAccountResponse = {
+  message: string;
+  statusCode: string;
+  data: AccountDetailItem;
 };
