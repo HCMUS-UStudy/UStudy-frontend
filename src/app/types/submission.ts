@@ -1,3 +1,5 @@
+import { GenderType } from "./common";
+
 export interface SubmissionSchema {
   content: string;
   files: File[];
@@ -21,7 +23,7 @@ export type SubmissionItem = {
   score: number;
   feedback: string;
   gradedBy: {
-    gender: "MALE" | "FEMALE" | "OTHER";
+    gender: GenderType;
     createdAt: string;
     status: "ACTIVE" | "INACTIVE";
     role: {

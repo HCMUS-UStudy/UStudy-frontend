@@ -21,3 +21,4 @@ export * from "./common";
 export * from "./user";
 export * from "./member";
 export * from "./tutition";
+export * from "./register";

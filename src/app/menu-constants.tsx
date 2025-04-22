@@ -184,7 +184,7 @@ export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
     icon: <MdOutlineNotificationsActive size={20} />,
   },
   {
-    title: "Liên hệ giáo viên",
+    title: "Liên hệ giáo vụ",
     path: "/member/contact",
     icon: <FaRegCommentDots size={20} />,
   },

@@ -26,6 +26,7 @@ export const getAllClasses = async (
         course: courseQuery,
         grade: gradeQuery,
       },
+      cache: false,
     });
     return response.data.data;
   } catch (error) {

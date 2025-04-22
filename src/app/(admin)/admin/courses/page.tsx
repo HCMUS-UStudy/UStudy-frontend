@@ -2,6 +2,7 @@ import React from "react";
 
 import CourseTable from "@/app/ui/components/admin/courses/CourseTable";
 import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
+import CourseNumber from "@/app/ui/components/admin/courses/CourseNumber";
 
 //import DropdownCourse from "@/app/ui/components/admin/courses/DropdownCourse";
 
@@ -73,7 +74,7 @@ export default async function CoursePage(props: {
     <>
       <div className="px-2">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Tổng số môn học ({11})</h2>
+          <CourseNumber searchQuery={query} subjectQuery={subject} />
           <div className="flex items-center space-x-2">
             <AddCourseModal buttonLabel="Tạo môn học" />
           </div>

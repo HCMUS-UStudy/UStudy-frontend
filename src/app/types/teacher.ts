@@ -1,3 +1,5 @@
+import { GenderType } from "./common";
+
 export type TeacherItem = {
   email: string;
   genId: string;
@@ -25,7 +27,7 @@ export type Teacher = {
   name: string;
   avatar: string;
   role: string;
-  gender: "MALE" | "FEMALE";
+  gender: GenderType;
   createdAt: string;
   active: boolean;
 };
@@ -38,5 +40,5 @@ export type TeacherRegister = {
   address: string;
   courses: string[];
   grades: string[];
-  gender: "MALE" | "FEMALE";
+  gender: GenderType;
 };

@@ -3,6 +3,7 @@ import ClassNavigationBar from "@/app/ui/components/admin/classes/ClassNavigatio
 import Image from "next/image";
 import React from "react";
 import { BsFillBookFill } from "react-icons/bs";
+import ClassLayoutWrapper from "@/app/ui/components/admin/classes/ClassLayoutWrapper";
 
 export default async function ClassLayout({
   params,
@@ -12,10 +13,9 @@ export default async function ClassLayout({
   children: React.ReactNode;
 }) {
   const { classId } = await params;
-
   const classDetail = await getClassById(classId);
 
-  //////// dummy data thôi ////////////////////////////////////////
+  // dummy data
   const classMembers = [
     { id: 1, name: "Nguyễn Văn A", avatar: "/student.png" },
     { id: 2, name: "Trần Thị B", avatar: "/teacher.png" },
@@ -25,22 +25,20 @@ export default async function ClassLayout({
   ];
   const displayedMembers = classMembers.slice(0, 2);
   const remainingCount = classMembers.length - displayedMembers.length;
-  ///////////////////////////////////////////////////////////////////
-  return (
+
+  const layout = (
     <>
       <div className="border-b border-primary-light">
         <div className="flex items-center space-x-4 mb-3">
           <div className="bg-highlight-text text-white p-3 rounded-lg shadow">
             <BsFillBookFill className="text-2xl" />
           </div>
-
           <div className="flex items-center space-x-4">
             <h1 className="text-3xl font-bold text-primary-darker">
               {classDetail.course.name
                 ? `Lớp ${classDetail.name} - ${classDetail.course.name} ${classDetail.grade.name}`
                 : classDetail.name}
             </h1>
-
             <div className="flex items-center space-x-1">
               {displayedMembers.map((member) => (
                 <Image
@@ -52,7 +50,6 @@ export default async function ClassLayout({
                   className="w-10 h-10 rounded-full border-2 border-primary-light shadow-md"
                 />
               ))}
-
               {remainingCount > 0 && (
                 <div className="w-10 h-10 rounded-full bg-primary text-primary-darkest flex items-center justify-center text-sm font-bold border-2 border-primary-light shadow-md">
                   +{remainingCount}
@@ -66,4 +63,6 @@ export default async function ClassLayout({
       <div className="mt-3">{children}</div>
     </>
   );
+
+  return <ClassLayoutWrapper layout={layout}>{children}</ClassLayoutWrapper>;
 }

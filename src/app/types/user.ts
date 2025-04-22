@@ -1,3 +1,5 @@
+import { GenderType } from "./common";
+
 export type User = {
   accountNonExpired: boolean;
   accountNonLocked: boolean;
@@ -13,7 +15,7 @@ export type User = {
   email: string;
   enabled: boolean;
   genId: string;
-  gender: "MALE" | "FEMALE" | "OTHER";
+  gender: GenderType;
   id: string;
   isActive: boolean;
   name: string;
