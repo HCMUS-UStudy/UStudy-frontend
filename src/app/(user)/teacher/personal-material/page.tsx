@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosAdd } from "react-icons/io";
 import { PiFolderPlus } from "react-icons/pi";
 import {
   getListMaterial,
-  getListMaterialByParent,
   createFolder,
-  createFolderByParent,
   getPreview,
+  downloadMaterial,
   uploadMaterial,
-  uploadMaterialByParent,
+  deleteMaterial,
 } from "@/app/lib/services/personal-material";
-import { MaterialItem } from "@/app/types/material";
+import { PersonalMaterialItem } from "@/app/types";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import {
@@ -23,54 +22,87 @@ import {
   TbFileTypePpt,
   TbFileTypeTxt,
   TbFileTypeZip,
+  TbFileTypePng,
+  TbFileTypeJpg,
 } from "react-icons/tb";
-import { MdOutlineFileDownload, MdDriveFileMoveOutline } from "react-icons/md";
+import { FiEdit3 } from "react-icons/fi";
+
+import {
+  MdOutlineFileDownload,
+  MdOutlineArrowForwardIos,
+} from "react-icons/md";
+import { GrView } from "react-icons/gr";
+
 import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
-import { IoReturnUpBack } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import UploadModal from "@/app/ui/components/user/teacher/UploadModal";
 
-const fileTypeIcons = [
+export const fileTypeIcons = [
   {
     type: "pdf",
-    icon: <TbFileTypePdf className="text-[25px] text-red-700 mr-2" />,
+    icon: <TbFileTypePdf className="text-[25px] text-red-700" />,
   },
   {
     type: "doc",
-    icon: <TbFileTypeDoc className="text-[25px] text-blue-600 mr-2" />,
+    icon: <TbFileTypeDoc className="text-[25px] text-blue-600" />,
   },
   {
     type: "docx",
-    icon: <TbFileTypeDocx className="text-[25px] text-blue-700 mr-2" />,
+    icon: <TbFileTypeDocx className="text-[25px] text-blue-700" />,
   },
   {
     type: "ppt",
-    icon: <TbFileTypePpt className="text-[25px] text-red-800 mr-2" />,
+    icon: <TbFileTypePpt className="text-[25px] text-red-800" />,
   },
   {
     type: "pptx",
-    icon: <TbFileTypePpt className="text-[25px] text-red-800 mr-2" />,
+    icon: <TbFileTypePpt className="text-[25px] text-red-800" />,
   },
   {
     type: "txt",
-    icon: <TbFileTypeTxt className="text-[25px] text-gray-700 mr-2" />,
+    icon: <TbFileTypeTxt className="text-[25px] text-gray-700" />,
   },
   {
     type: "zip",
-    icon: <TbFileTypeZip className="text-[25px] text-yellow-700 mr-2" />,
+    icon: <TbFileTypeZip className="text-[25px] text-yellow-700" />,
+  },
+  {
+    type: "jpg",
+    icon: <TbFileTypeJpg className="text-[25px] text-slate-700" />,
+  },
+  {
+    type: "jpeg",
+    icon: <TbFileTypeJpg className="text-[25px] text-slate-700" />,
+  },
+  {
+    type: "png",
+    icon: <TbFileTypePng className="text-[25px] text-slate-700" />,
   },
 ];
 
 export default function PersonalMaterial() {
-  const [material, setMaterial] = useState<MaterialItem[]>([]);
+  const [material, setMaterial] = useState<PersonalMaterialItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFile, setActiveFile] = useState<string | null>(null);
-  const fileListRef = useRef<HTMLDivElement>(null);
+  const [activeFile, setActiveFile] = useState<PersonalMaterialItem | null>(
+    null,
+  );
+  const activeFileRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<(HTMLDivElement | null)[]>([]);
+  const createFolderRef = useRef<HTMLDivElement>(null);
+  const popUpFolderRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [breadcrumb, setBreadcrumb] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+  const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const buttonRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
 
   useEffect(() => {
     const checkScreen = () => {
@@ -78,66 +110,60 @@ export default function PersonalMaterial() {
     };
 
     checkScreen();
-    window.addEventListener("resize", checkScreen); // lắng nghe thay đổi kích thước
+    window.addEventListener("resize", checkScreen);
 
-    return () => window.removeEventListener("resize", checkScreen); // cleanup
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  const fetchMaterial = async (folderId: string | null = null) => {
+  const fetchMaterial = useCallback(async () => {
     try {
-      setMaterial([]); // Clear trước khi fetch mới
+      setMaterial([]);
       setLoading(true);
-      const data = folderId
-        ? await getListMaterialByParent(folderId)
-        : await getListMaterial();
-      setMaterial(
-        data.content
-          .map((item: MaterialItem) => ({
-            ...item,
-            name:
-              item.type === "FOLDER"
-                ? item.name
-                : item.name.split("_").slice(1).join(" "),
-          }))
-          .sort((a, b) =>
-            a.type === "FOLDER" && b.type !== "FOLDER" ? -1 : 0,
-          ),
+      const data = await getListMaterial(currentFolderId || null);
+      const sortedData = data.content.sort(
+        (a: PersonalMaterialItem, b: PersonalMaterialItem) => {
+          if (a.material.type === "FOLDER" && b.material.type !== "FOLDER")
+            return -1;
+          if (a.material.type !== "FOLDER" && b.material.type === "FOLDER")
+            return 1;
+          return 0;
+        },
       );
+      setMaterial(sortedData);
     } catch (error) {
       console.error("Error fetching material:", error);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchMaterial(currentFolderId);
   }, [currentFolderId]);
 
-  const handleClickFolder = (folderId: string) => {
-    setCurrentFolderId(folderId);
-  };
+  useEffect(() => {
+    fetchMaterial();
+  }, [fetchMaterial]);
 
-  const handleCreateFolder = () => {
+  const handleClickFolder = useCallback(
+    (folderId: string, folderName: string) => {
+      setCurrentFolderId(folderId);
+      setBreadcrumb((prev) => [...prev, { id: folderId, name: folderName }]);
+    },
+    [],
+  );
+
+  const handleCreateFolder = useCallback(() => {
     setCreatingFolder(true);
     setNewFolderName("");
-  };
+  }, []);
 
-  const handleSubmitNewFolder = async () => {
-    console.log("Creating folder:", newFolderName);
+  const handleSubmitNewFolder = useCallback(async () => {
     if (!newFolderName.trim()) return;
     try {
-      if (currentFolderId) {
-        await createFolderByParent(newFolderName, currentFolderId || null);
-      } else {
-        await createFolder(newFolderName);
-      }
+      await createFolder(newFolderName, currentFolderId || null);
       toast.success("Tạo thư mục thành công", {
         autoClose: 2500,
         pauseOnHover: false,
         closeOnClick: true,
       });
-      fetchMaterial(currentFolderId);
+      fetchMaterial();
     } catch (error) {
       toast.error("Tạo thư mục thất bại", {
         autoClose: 2500,
@@ -148,67 +174,115 @@ export default function PersonalMaterial() {
     } finally {
       setCreatingFolder(false);
     }
-  };
+  }, [newFolderName, currentFolderId, fetchMaterial]);
 
-  const handleViewFile = async (id: string) => {
-    try {
-      const blob = await getPreview(id);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.target = "_blank";
-      const materialItem = material.find((item) => item.id === id);
-      if (materialItem) {
-        link.download = materialItem.name;
+  const handleViewFile = useCallback(
+    async (id: string, canViewFile: boolean = false) => {
+      try {
+        const blob = await getPreview(id);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        if (canViewFile) {
+          link.target = "_blank";
+        } else {
+          const materialItem = material.find((item) => item.id === id);
+          if (materialItem) {
+            link.download = materialItem.material.name;
+          }
+        }
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error("Error downloading file:", error);
       }
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    }
-  };
+    },
+    [material],
+  );
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    parentId: string | null = null,
-  ) => {
-    if (!event.target.files || event.target.files.length === 0) return;
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("description", "Tài liệu mới");
-    formData.append("file", file);
-    if (parentId) {
-      formData.append("parentId", parentId);
-    }
-
-    try {
-      if (parentId) {
-        await uploadMaterialByParent(formData, parentId || null);
-      } else {
-        await uploadMaterial(formData);
+  const handleDownload = useCallback(
+    async (id: string) => {
+      try {
+        const blob = await downloadMaterial(id);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        const materialItem = material.find((item) => item.id === id);
+        if (materialItem) {
+          link.download = materialItem.material.name;
+        }
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch {
+        toast.error("Tải xuống thất bại", {
+          autoClose: 2500,
+          pauseOnHover: false,
+          closeOnClick: true,
+        });
       }
+    },
+    [material],
+  );
 
-      fetchMaterial(currentFolderId);
-      toast.success("Tải tài liệu lên thành công", {
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      if (!file) return;
+      const formData = new FormData();
+      formData.append("description", "Tài liệu mới");
+      formData.append("file", file);
+      if (currentFolderId) {
+        formData.append("parentId", currentFolderId);
+      }
+      try {
+        await uploadMaterial(formData, currentFolderId || null);
+        fetchMaterial();
+        toast.success("Tải tài liệu lên thành công", {
+          autoClose: 2500,
+          pauseOnHover: false,
+        });
+      } catch (error) {
+        console.error("Error uploading material:", error);
+        toast.error("Tải tài liệu lên thất bại", {
+          autoClose: 2500,
+          pauseOnHover: false,
+        });
+      }
+    },
+    [currentFolderId, fetchMaterial],
+  );
+
+  const handleDelete = useCallback(async () => {
+    try {
+      await deleteMaterial(currentFolderId || null, deleteItem || "");
+      fetchMaterial();
+      toast.success("Xóa tài liệu thành công", {
         autoClose: 2500,
         pauseOnHover: false,
       });
     } catch (error) {
-      console.error("Error uploading material:", error);
-      toast.error("Tải tài liệu lên thất bại", {
+      console.error("Error deleting file:", error);
+      toast.error("Xóa tài liệu thất bại", {
         autoClose: 2500,
         pauseOnHover: false,
       });
     }
-  };
+  }, [currentFolderId, fetchMaterial, deleteItem]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
-    if (fileListRef.current && !fileListRef.current.contains(target)) {
+    const clickedOutsideFileList = fileRef.current.every(
+      (file) => file && !file.contains(target),
+    );
+    const clickedOutsideActiveFile =
+      activeFileRef.current && !activeFileRef.current.contains(target);
+
+    if (clickedOutsideFileList && clickedOutsideActiveFile) {
       setActiveFile(null);
     }
   };
+
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => {
@@ -216,44 +290,66 @@ export default function PersonalMaterial() {
     };
   }, []);
 
-  // const handleCreateFolder = async () => {
-  //   setMaterial((prev) => [
-  //     ...prev,
-  //     {
-  //       id: "new-folder",
-  //       name: "Thư mục mới",
-  //       uploadedBy: {
-  //         id: "user-id",
-  //         genId: "user-gen-id",
-  //         email: "user-email",
-  //         name: "user-name",
-  //       },
-  //       materialType: "PERSONAL",
-  //       type: "FOLDER",
-  //     },
-  //   ]);
-  //   try {
-  //     const response = await createFolder("Thư mục mới");
-  //     console.log("Thư mục mới đã được tạo:", response.data);
-  //   } catch (error) {
-  //     console.error("Error creating folder:", error);
-  //   }
-  // };
+  useEffect(() => {
+    const handleClickOutsidePopUp = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        openOptionsId &&
+        popUpFolderRef.current &&
+        !popUpFolderRef.current.contains(target)
+      ) {
+        setOpenOptionsId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutsidePopUp);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsidePopUp);
+    };
+  }, [openOptionsId]);
+
+  useEffect(() => {
+    const handleClickOutsideCreateFolder = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        creatingFolder &&
+        createFolderRef.current &&
+        !createFolderRef.current.contains(target)
+      ) {
+        setCreatingFolder(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutsideCreateFolder);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideCreateFolder);
+    };
+  }, [creatingFolder]);
+
+  const [popUpLeft, setPopUpLeft] = useState(false);
+  const toggleOptions = useCallback((id: string, index: number) => {
+    if (buttonRefs.current) {
+      const rect = buttonRefs.current[index]?.getBoundingClientRect();
+      const popupWidth = 150;
+      const screenWidth = window.innerWidth;
+      if (rect) {
+        setPopUpLeft(rect.right + popupWidth > screenWidth);
+      }
+    }
+    setOpenOptionsId((prev) => (prev === id ? null : id));
+  }, []);
+
   return (
     <div className="flex flex-col h-full justify-between">
-      <div className="flex flex-col gap-4 p-3">
-        <div className="flex items-center mb-4 gap-4">
-          <label
-            htmlFor="file-upload"
-            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-300
-          hover:bg-gray-100 shadow-sm rounded-2xl"
+      <div className="flex flex-col gap-1 p-3">
+        <div className="flex items-center gap-4 mb-2">
+          <div
+            onClick={() => {
+              setShowUploadModal(true);
+            }}
+            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
+            hover:bg-primary-lighter shadow-sm rounded-2xl"
           >
-            <input
-              type="file"
-              id="file-upload"
-              className="hidden"
-              onChange={(e) => handleFileUpload(e, currentFolderId || null)}
-            />
             {isMobile ? (
               <Tooltip text="Tải tài liệu lên">
                 <IoIosAdd className="w-7 h-7" />
@@ -264,10 +360,10 @@ export default function PersonalMaterial() {
             <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[15px]">
               Tải tài liệu lên
             </span>
-          </label>
+          </div>
           <div
-            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-300
-          hover:bg-gray-100 shadow-sm rounded-2xl"
+            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
+            hover:bg-primary-lighter shadow-sm rounded-2xl"
             onClick={handleCreateFolder}
           >
             {isMobile ? (
@@ -286,120 +382,321 @@ export default function PersonalMaterial() {
         {loading ? (
           <Loading />
         ) : (
-          <div>
-            {currentFolderId && (
-              <button onClick={() => setCurrentFolderId(null)}>
-                <IoReturnUpBack
-                  className="text-[25px] text-primary-dark
-                  hover:text-primary-darkest"
-                />
-              </button>
+          <>
+            {activeFile ? (
+              <div
+                className="flex justify-between items-center w-full px-2 py-1 bg-white border
+                rounded-full shadow-sm mb-2"
+                ref={activeFileRef}
+              >
+                <div className={`flex items-center gap-5 `}>
+                  <Tooltip text="Hủy chọn">
+                    <div
+                      className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
+                      onClick={() => setActiveFile(null)}
+                    >
+                      <RxCross2 className="text-[20px] text-gray-700" />
+                    </div>
+                  </Tooltip>
+                  <div className="flex items-center gap-[6px]">
+                    <Tooltip text="Xem">
+                      <div
+                        className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
+                        onClick={() => {
+                          setActiveFile(null);
+                          if (activeFile.material.type === "FOLDER") {
+                            handleClickFolder(
+                              activeFile.id,
+                              activeFile.material.name,
+                            );
+                          } else {
+                            handleViewFile(
+                              activeFile.id,
+                              activeFile.material.name.endsWith("pdf"),
+                            );
+                          }
+                        }}
+                      >
+                        <GrView className="text-[20px] text-gray-700" />
+                      </div>
+                    </Tooltip>
+                    {activeFile.material.type !== "FOLDER" && (
+                      <Tooltip text="Tải xuống">
+                        <div
+                          className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
+                          onClick={() => {
+                            handleDownload(activeFile.id);
+                            setActiveFile(null);
+                          }}
+                        >
+                          <MdOutlineFileDownload className="text-[20px] text-gray-700" />
+                        </div>
+                      </Tooltip>
+                    )}
+                    <Tooltip text="Đổi tên">
+                      <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
+                        <FiEdit3 className="text-[20px] text-gray-700" />
+                      </div>
+                    </Tooltip>
+                    <Tooltip text="Xóa">
+                      <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
+                        <LuTrash2 className="text-[20px] text-gray-700" />
+                      </div>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mr-2">
+                  <div className="items-center gap-2 hidden md:inline text-[14px]">
+                    <span className="hidden lg:inline"> Sửa đổi gần nhất </span>
+                    <span className="text-primary-darker">
+                      {new Date(activeFile.lastModified).toLocaleString(
+                        "vi-VN",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        },
+                      )}
+                    </span>
+                  </div>
+                  <div className="items-center gap-2 hidden md:inline text-[14px]">
+                    <span className="hidden lg:inline"> Đăng tải bởi </span>
+                    <span className="text-primary-darker">
+                      {activeFile.material.uploadedBy.name}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-3 mb-2">
+                {breadcrumb.length > 0 ? (
+                  <div className="flex items-center gap-2 px-1 flex-wrap text-[17px]">
+                    <span
+                      className="cursor-pointer hover:bg-primary-lighter rounded-xl px-2"
+                      onClick={() => {
+                        setBreadcrumb([]);
+                        setCurrentFolderId(null);
+                      }}
+                    >
+                      Tất cả tài liệu
+                    </span>
+                    {breadcrumb.map((item, index) => (
+                      <div key={item.id} className="flex items-center gap-2">
+                        <MdOutlineArrowForwardIos className="text-gray-500" />
+                        <span
+                          className={`px-2 text-[17px] ${
+                            index === breadcrumb.length - 1
+                              ? "text-gray-700 font-semibold"
+                              : "cursor-pointer hover:bg-primary-lighter rounded-xl"
+                          }`}
+                          onClick={() => {
+                            const newBreadcrumb = breadcrumb.slice(
+                              0,
+                              index + 1,
+                            );
+                            setBreadcrumb(newBreadcrumb);
+                            setCurrentFolderId(item.id);
+                          }}
+                        >
+                          {item.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="flex items-center px-2 text-gray-800 font-semibold text-[17px]">
+                    Tất cả tài liệu
+                  </span>
+                )}
+              </div>
             )}
 
-            {material.length > 0 ? (
-              <div
-                ref={fileListRef}
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
-              >
-                {creatingFolder && (
-                  <div
-                    className="flex w-full items-center py-3 pl-4 pr-3 border rounded-xl 
-                    shadow-sm border-primary-light bg-primary-lighter"
-                  >
-                    <TbFolders className="w-7 h-7 text-primary-darker" />
-                    <input
-                      autoFocus
-                      value={newFolderName}
-                      placeholder="Tên thư mục"
-                      onChange={(e) => setNewFolderName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleSubmitNewFolder();
-                        else if (e.key === "Escape") setCreatingFolder(false);
-                      }}
-                      className="flex w-full mx-4 text-sm border-b border-primary-darker focus:outline-none bg-transparent"
-                    />
-                    <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {creatingFolder && (
+                <div
+                  className="flex w-full items-center py-3 pl-4 pr-3 border rounded-xl 
+                  shadow-md border-primary-light bg-primary-lighter"
+                  ref={createFolderRef}
+                >
+                  <TbFolders className="w-7 h-7 text-primary-darker" />
+                  <input
+                    autoFocus
+                    value={newFolderName}
+                    placeholder="Tên thư mục"
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSubmitNewFolder();
+                      else if (e.key === "Escape") setCreatingFolder(false);
+                    }}
+                    className="flex w-full mx-4 text-sm border-b border-primary-darker focus:outline-none bg-transparent"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Tooltip text="Xác nhận">
                       <FaCheck
                         className="cursor-pointer text-green-600 hover:text-green-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           handleSubmitNewFolder();
                         }}
                       />
+                    </Tooltip>
+                    <Tooltip text="Hủy">
                       <FaTimes
                         className="cursor-pointer text-red-600 hover:text-red-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           setCreatingFolder(false);
                         }}
                       />
-                    </div>
+                    </Tooltip>
                   </div>
-                )}
-                {material.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`flex items-center py-3 pl-4 pr-3 border rounded-xl cursor-pointer border-gray-200  
-                    ${activeFile === item.id ? "bg-slate-200 shadow-md hover:shadow-lg" : "shadow-sm hover:shadow-md"}`}
-                    onDoubleClick={() => {
-                      setActiveFile(null);
-                      if (item.type === "FOLDER") {
-                        handleClickFolder(item.id);
-                      } else {
-                        handleViewFile(item.id);
-                      }
-                    }}
-                    onClick={() => setActiveFile(item.id)}
-                  >
-                    {item.type === "FOLDER" ? (
-                      <TbFolders className="text-[25px] text-primary-darker mr-2" />
-                    ) : (
-                      fileTypeIcons.map((icon, index) =>
-                        item.name.endsWith(icon.type) ? (
-                          <span key={`${item.id}-${index}`}>{icon.icon}</span>
-                        ) : null,
-                      )
-                    )}
-                    <span
-                      className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap"
-                      style={{ maxWidth: "100%" }}
+                </div>
+              )}
+              {material.length > 0
+                ? material.map((item, index) => (
+                    <div
+                      ref={(el) => {
+                        fileRef.current[index] = el;
+                      }}
+                      key={item.id}
+                      className={`flex items-center py-3 pl-4 pr-3 border rounded-xl cursor-pointer border-gray-200 
+                      ${
+                        activeFile?.id === item.id
+                          ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`
+                          : `${openOptionsId === item.id ? "shadow-md" : "shadow-sm hover:shadow-md"}`
+                      }`}
+                      onDoubleClick={() => {
+                        setActiveFile(null);
+                        if (item.material.type === "FOLDER") {
+                          handleClickFolder(item.id, item.material.name);
+                        } else {
+                          handleViewFile(
+                            item.id,
+                            item.material.name.endsWith("pdf"),
+                          );
+                        }
+                      }}
+                      onClick={() => setActiveFile(item)}
                     >
-                      {item.name}
-                    </span>
-                    <div className="ml-auto relative">
-                      <Tooltip text="Tùy chọn">
-                        <span
-                          className={`py-1 px-3 rounded-full hover:bg-gray-200 
-                          text-lg ${activeFile === item.id ? "hover:bg-slate-300" : ""}`}
-                        >
-                          ⋮
-                        </span>
-                      </Tooltip>
+                      {item.material.type === "FOLDER" ? (
+                        <TbFolders className="text-[25px] text-primary-darker mr-2" />
+                      ) : (
+                        fileTypeIcons.map((icon, index) =>
+                          item.material.name.endsWith(icon.type) ? (
+                            <span key={`${item.id}-${index}`} className="mr-2">
+                              {icon.icon}
+                            </span>
+                          ) : null,
+                        )
+                      )}
+                      <span
+                        className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap"
+                        style={{ maxWidth: "100%" }}
+                      >
+                        {item.material.name}
+                      </span>
+                      <div className="ml-auto relative">
+                        <Tooltip text="Tùy chọn">
+                          <span
+                            ref={(el) => {
+                              buttonRefs.current[index] = el;
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleOptions(item.id, index);
+                              if (activeFile?.id !== item.id) {
+                                setActiveFile(null);
+                              }
+                            }}
+                            className={`py-1 px-3 rounded-full hover:bg-gray-200 
+                            text-lg ${activeFile?.id === item.id ? "hover:bg-primary-light" : ""}`}
+                          >
+                            ⋮
+                          </span>
+                        </Tooltip>
+
+                        {openOptionsId === item.id && (
+                          <div
+                            className={`absolute ${popUpLeft ? "right-0" : "left-0"} top-7 z-10 bg-white border
+                              shadow-lg rounded-lg py-2 w-36`}
+                            ref={popUpFolderRef}
+                          >
+                            {item.material.type !== "FOLDER" && (
+                              <button
+                                className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                onClick={() => {
+                                  handleDownload(item.id);
+                                  setOpenOptionsId(null);
+                                }}
+                              >
+                                <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
+                                Tải xuống
+                              </button>
+                            )}
+                            <button
+                              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                              onClick={() => {
+                                toast.info(
+                                  "Chức năng đổi tên chưa được cài đặt",
+                                );
+                                setOpenOptionsId(null);
+                              }}
+                            >
+                              <FiEdit3 className="w-4 h-4 text-gray-700" />
+                              Đổi tên
+                            </button>
+                            <button
+                              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                              onClick={() => {
+                                setShowDeleteModal(item.id);
+                                setOpenOptionsId(null);
+                              }}
+                            >
+                              <LuTrash2 className="w-4 h-4 text-gray-700" />
+                              Xóa
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-64 text-gray-500">
-                Không có tài liệu nào trong danh sách này.
-              </div>
-            )}
-          </div>
+                  ))
+                : !creatingFolder && (
+                    <div className="col-span-5 flex h-64 items-center justify-center text-gray-700">
+                      Không có tài liệu nào.
+                    </div>
+                  )}
+            </div>
+          </>
         )}
       </div>
-      {activeFile && (
-        <div className="flex items-center gap-2 w-full py-1 px-2 bg-white border rounded-full shadow-sm">
-          <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-            <RxCross2 className="text-[20px] text-gray-700" />
-          </div>
-          <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-            <MdOutlineFileDownload className="text-[20px] text-gray-700" />
-          </div>
-          <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-            <MdDriveFileMoveOutline className="text-[20px] text-gray-700" />
-          </div>
-          <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-            <LuTrash2 className="text-[20px] text-gray-700" />
+      {showUploadModal && (
+        <UploadModal
+          onClose={() => setShowUploadModal(false)}
+          onUpload={handleFileUpload}
+        />
+      )}
+      {deleteItem && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa tài liệu này không?</p>
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                onClick={() => setShowDeleteModal(null)}
+              >
+                Hủy
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                onClick={() => {
+                  handleDelete();
+                  setShowDeleteModal(null);
+                }}
+              >
+                Xóa
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -25,7 +25,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
   }, []);
   return (
     <div
-      className={`bg-background p-4 max-h-screen-height
+      className={`bg-background p-4 h-screen-height
       ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       {isDashboard ? (

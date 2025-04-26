@@ -15,7 +15,7 @@ const config: Config = {
         "primary-lighter": "#EBF8F4",
         // "primary-dark": "#1e40af", // blue-800
         "primary-dark": "#78AE91",
-        "primary-darker": "#3AA97A",
+        "primary-darker": "#4ea677",
         "primary-darkest": "#1F845A",
         footer: "#103723",
 
