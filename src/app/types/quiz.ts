@@ -1,3 +1,4 @@
+import { DefaultRoute, GenderType } from "./common";
 import { CourseDto } from "./course";
 import { GradeItem } from "./grade";
 
@@ -26,13 +27,13 @@ export type QuizItem = {
     email: string;
     name: string;
     avatar: string;
-    gender: "MALE" | "FEMALE" | "OTHER";
+    gender: GenderType;
     createdAt: string;
     status: "ACTIVE" | "INACTIVE" | "BANNED";
     role: {
       id: string;
       name: "Teacher" | "Student" | "Admin";
-      defaultRoute: "ADMIN" | "STUDENT" | "TEACHER" | "PARENT";
+      defaultRoute: DefaultRoute;
     };
   };
   completed: boolean;

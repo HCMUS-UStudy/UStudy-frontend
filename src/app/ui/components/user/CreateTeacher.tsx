@@ -9,7 +9,7 @@ import { FaCheck } from "react-icons/fa6";
 import SelectorLoading from "../_common/loading/SelectorLoading";
 import { CourseItem, GradeItem } from "@/app/types";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
-import { getAllCourses } from "@/app/lib/services/course";
+// import { getAllCourses } from "@/app/lib/services/course";
 import { teacherRegister } from "@/app/lib/services/register";
 import { toast } from "react-toastify";
 
@@ -43,7 +43,7 @@ const TeacherRegisterSchema = z.object({
 
 type TeacherRegisterInputs = z.infer<typeof TeacherRegisterSchema>;
 
-export default function CreateTeacher() {
+export default function CreateTeacher({ courses }: { courses: CourseItem[] }) {
   const {
     register,
     handleSubmit,
@@ -95,25 +95,25 @@ export default function CreateTeacher() {
   const selectedCourse = watch("courses");
 
   const [grades, setGrades] = useState<GradeItem[]>([]);
-  const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
+  // const [courses, setCourses] = useState<CourseItem[]>([]);
+  // const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
   const [loadingGrades, setLoadingGrades] = useState<boolean>(false);
   const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoadingCourses(true);
-        const response = await getAllCourses("", 15, 0);
-        setCourses(response.content);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoadingCourses(false);
-      }
-    };
-    fetchCourses();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCourses = async () => {
+  //     try {
+  //       setLoadingCourses(true);
+  //       const response = await getAllCourses("", 15, 0);
+  //       setCourses(response.content);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoadingCourses(false);
+  //     }
+  //   };
+  //   fetchCourses();
+  // }, []);
 
   useEffect(() => {
     const fetchGrades = async () => {
@@ -234,39 +234,39 @@ export default function CreateTeacher() {
             {...register("address")}
           />
         </div>
-        {loadingCourses ? (
+        {/* {loadingCourses ? (
           <SelectorLoading size="sm"></SelectorLoading>
-        ) : (
-          <>
-            <div>
-              <div className="text-gray-700 font-bold">
-                Bạn mong muốn dạy môn học nào ?
-              </div>
-              <div className="flex flex-wrap gap-3 mt-3">
-                {courses.map((course) => (
-                  <label
-                    key={course.courseDto.id}
-                    className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
-                  >
-                    <input
-                      type="radio"
-                      className="hidden peer"
-                      value={course.courseDto.id}
-                      {...register("courses")}
-                    />
-                    <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
-                      {course.courseDto.name}
-                    </span>
-                    <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
-                  </label>
-                ))}
-              </div>
-              <div className="text-[13px] text-error mt-1">
-                {errors.courses?.message}
-              </div>
+        ) : ( */}
+        <>
+          <div>
+            <div className="text-gray-700 font-bold">
+              Bạn mong muốn dạy môn học nào ?
             </div>
-          </>
-        )}
+            <div className="flex flex-wrap gap-3 mt-3">
+              {courses.map((course) => (
+                <label
+                  key={course.courseDto.id}
+                  className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
+                >
+                  <input
+                    type="radio"
+                    className="hidden peer"
+                    value={course.courseDto.id}
+                    {...register("courses")}
+                  />
+                  <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
+                    {course.courseDto.name}
+                  </span>
+                  <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
+                </label>
+              ))}
+            </div>
+            <div className="text-[13px] text-error mt-1">
+              {errors.courses?.message}
+            </div>
+          </div>
+        </>
+        {/* )} */}
 
         {selectedCourse !== null && selectedCourse !== undefined && (
           <div>

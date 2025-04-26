@@ -7,6 +7,16 @@ import { getClassSession } from "@/app/lib/services/session";
 import { ClassSessionItem, CourseDto, DaysInWeek } from "@/app/types";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
 
+const dayOrder = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+];
+
 export default function StudentCoursesSelector() {
   const {
     setValue,
@@ -56,7 +66,7 @@ export default function StudentCoursesSelector() {
         selectedGrade,
         courseId,
       );
-      // console.log(response);
+      console.log(response);
       if (isAdded) {
         setClassSessions((currentSession) => [...currentSession, ...response]);
       } else {
@@ -78,6 +88,10 @@ export default function StudentCoursesSelector() {
       setLoadingClassSession(false);
     }
   };
+
+  useEffect(() => {
+    setClassSessions([]);
+  }, [selectedBranch, selectedGrade]);
 
   const handleSelectClassSession = (
     day: DaysInWeek,
@@ -129,7 +143,7 @@ export default function StudentCoursesSelector() {
               <SelectorLoading size="sm" numberOfItems={5}></SelectorLoading>
             ) : courses.length !== 0 ? (
               <>
-                <div className="flex flex-wrap gap-3 mt-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                   {courses.map((course) => (
                     <label
                       key={course.id}
@@ -172,13 +186,19 @@ export default function StudentCoursesSelector() {
                 <SelectorLoading size="sm" numberOfItems={5}></SelectorLoading>
               ) : classSessions.length !== 0 ? (
                 <>
-                  <div className="flex flex-col mt-3 overflow-auto h-52 divide-y">
+                  <div className="flex flex-col overflow-auto divide-y">
                     {[
                       ...new Map(
-                        classSessions.map((cs) => [
-                          `${cs.day}-${cs.startTime}-${cs.endTime}`,
-                          cs,
-                        ]),
+                        classSessions
+                          .sort((a, b) => {
+                            return (
+                              dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
+                            );
+                          })
+                          .map((cs) => [
+                            `${cs.day}-${cs.startTime}-${cs.endTime}`,
+                            cs,
+                          ]),
                       ).values(),
                     ].map((cs, index) => (
                       <label

@@ -52,7 +52,6 @@ export const getClassSession = async (
         },
       },
     );
-    console.log(response.cached);
     return response.data.data;
   } catch (error) {
     throw error;

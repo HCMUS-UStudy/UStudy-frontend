@@ -4,6 +4,7 @@ import { HiAdjustments } from "react-icons/hi";
 import GradeTable from "@/app/ui/components/admin/grades/GradeTable";
 import AddGradeModal from "@/app/ui/components/admin/grades/AddGradeModal";
 import DropdownGrade from "@/app/ui/components/admin/grades/DropdownGrade";
+import GradeNumber from "@/app/ui/components/admin/grades/GradeNumber";
 
 export default async function GradePage(props: {
   searchParams?: Promise<{
@@ -19,7 +20,7 @@ export default async function GradePage(props: {
   return (
     <div className="px-2">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Tổng số khối học (11)</h2>
+        <GradeNumber searchQuery={query} gradeQuery={grade} />
         <div className="flex items-center space-x-2">
           <AddGradeModal buttonLabel="Tạo khối học" />
         </div>

@@ -23,3 +23,9 @@ export type CustomError = {
   status?: number;
   data?: string | unknown;
 };
+
+export type GenderType = "MALE" | "FEMALE";
+
+export type DefaultRoute = "ADMIN" | "TEACHER" | "STUDENT" | "PARENT";
+
+export type AccountStatus = "ACTIVE" | "DELETED" | "LOCKED";

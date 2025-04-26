@@ -22,3 +22,4 @@ export * from "./user";
 export * from "./member";
 export * from "./tutition";
 export * from "./personal-material";
+export * from "./register";

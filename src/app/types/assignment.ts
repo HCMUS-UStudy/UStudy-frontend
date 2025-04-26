@@ -1,3 +1,5 @@
+import { GenderType } from "./common";
+
 export type ExerciseItem = {
   id: string;
   title: string;
@@ -10,7 +12,7 @@ export type ExerciseItem = {
     email: string;
     name: string;
     avatar: string;
-    gender: "MALE" | "FEMALE" | "OTHER";
+    gender: GenderType;
     createdAt: string;
     status: "ACTIVE" | "INACTIVE" | "BANNED";
     role: {
@@ -33,7 +35,7 @@ export type AssignmentDetails = {
     email: string;
     name: string;
     avatar: string;
-    gender: "MALE" | "FEMALE" | "OTHER";
+    gender: GenderType;
     createdAt: string;
     status: "ACTIVE" | "INACTIVE" | "BANNED";
     role: {
