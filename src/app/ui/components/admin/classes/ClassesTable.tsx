@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import { getAllClasses } from "@/app/lib/services/class";
 import {
   Table,
@@ -9,10 +9,11 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import { ArrowRight, Eye } from "lucide-react";
-import { ClassItem } from "@/app/types";
+import { ClassData } from "@/app/types";
 import ClassPagination from "./ClassPagination";
 import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
 import Tooltip from "../../_common/Tooltip";
+import { useQuery } from "@tanstack/react-query";
 
 const MemoizedClassPagination = memo(ClassPagination);
 
@@ -23,28 +24,22 @@ export default function ClassesTable({
   query: string;
   currentPage: number;
 }) {
-  const [classes, setClasses] = useState<ClassItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const {
+    data: fetchClasses,
+    status,
+    error,
+  } = useQuery<ClassData>({
+    queryKey: ["classes", query, currentPage],
+    queryFn: () => getAllClasses(query, currentPage - 1, 5),
+    placeholderData: (prevData) => prevData,
+  });
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<string>("");
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getAllClasses(query, currentPage - 1, 5);
-        console.log(response.content);
-        setClasses(response.content);
-        setTotalPages(response.totalPages);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchClasses();
-    return;
-  }, [query, currentPage]);
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <div>
@@ -62,8 +57,8 @@ export default function ClassesTable({
           ]}
           className="bg-gray-100"
         />
-        <TableBody isLoading={isLoading}>
-          {classes.map((c, i) => (
+        <TableBody isLoading={status === "pending"}>
+          {fetchClasses?.content.map((c, i) => (
             <TableRow key={i}>
               <TableCell>{i + 1}</TableCell>
               <TableCell className="max-w-12">{c.name}</TableCell>
@@ -98,10 +93,12 @@ export default function ClassesTable({
           ))}
         </TableBody>
       </Table>
-      <MemoizedClassPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
+      {status === "success" && (
+        <MemoizedClassPagination
+          currentPage={currentPage}
+          totalPages={fetchClasses?.totalPages || 1}
+        />
+      )}
       <ClassEnrollmentModal
         classId={selectedId}
         isOpen={isOpen}

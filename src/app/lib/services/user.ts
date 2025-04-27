@@ -3,7 +3,6 @@ import axiosInstance from "@/app/lib/axios";
 
 export const createNewAccount = async (data: AccountSchema) => {
   const response = await axiosInstance.post("/user/create", data);
-  // console.log(response);
   return response.data;
 };
 
@@ -14,8 +13,6 @@ export const getAllAccount = async (
   currentPage: number,
 ): Promise<AccountData> => {
   try {
-    const cacheKey = `Accounts_${query}_${limit}_${roleQuery}_${currentPage}`;
-    console.log(cacheKey);
     const response = await axiosInstance.get("/user/list", {
       params: {
         page: currentPage,
@@ -24,7 +21,6 @@ export const getAllAccount = async (
         filterNameOrGenId: query,
         classId: "",
       },
-      id: cacheKey,
     });
     return response.data.data;
   } catch (error) {
@@ -48,21 +44,9 @@ export const getListUserDetail = async (userId: string) => {
 
 export const deleteUser = async (
   userId: string,
-  query: string,
-  limit: number,
-  roleQuery: string,
-  currentPage: number,
 ): Promise<DeleteAccountResponse> => {
   try {
-    const cacheKey = `Accounts_${query}_${limit}_${roleQuery}_${currentPage}`;
-    console.log(cacheKey);
-    const response = await axiosInstance.delete(`/user/delete/${userId}`, {
-      cache: {
-        update: {
-          [cacheKey]: "delete",
-        },
-      },
-    });
+    const response = await axiosInstance.delete(`/user/delete/${userId}`, {});
     return response.data;
   } catch (error) {
     throw error;

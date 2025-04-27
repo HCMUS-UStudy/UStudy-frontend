@@ -14,7 +14,6 @@ export const getRegister = async (
   queryName: string | null,
 ): Promise<RegisterAccountData> => {
   try {
-    const cacheKey = `Register-${role}-${currentPage}-${queryName}`;
     const response = await axiosInstance.get("/register/list-waiting", {
       params: {
         page: currentPage,
@@ -22,7 +21,6 @@ export const getRegister = async (
         role,
         name: queryName,
       },
-      id: cacheKey,
     });
     return response.data.data;
   } catch (error) {
@@ -54,21 +52,11 @@ export const getStuClassRegister = async (
 export const confirmRegister = async (
   userIds: string[],
   roleId: string,
-  role: "STUDENT" | "TEACHER",
-  currentPage: number,
 ): Promise<RegisterResponse> => {
   try {
-    const cacheKey = `Register-${role}-${currentPage}`;
     const response = await axiosInstance.put(
       `/register/update/accept?roleId=${roleId}`,
       userIds,
-      {
-        cache: {
-          update: {
-            [cacheKey]: "delete",
-          },
-        },
-      },
     );
     return response.data;
   } catch (error) {
@@ -78,21 +66,11 @@ export const confirmRegister = async (
 
 export const rejectRegister = async (
   userIds: string[],
-  role: "STUDENT" | "TEACHER",
-  currentPage: number,
 ): Promise<RegisterResponse> => {
   try {
-    const cacheKey = `Register-${role}-${currentPage}`;
     const response = await axiosInstance.put(
       `/register/update/reject`,
       userIds, // Đưa registerId vào body
-      {
-        cache: {
-          update: {
-            [cacheKey]: "delete",
-          },
-        },
-      },
     );
     return response.data;
   } catch (error) {

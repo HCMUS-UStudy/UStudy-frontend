@@ -8,13 +8,13 @@ import {
   setTokensAndUserDataCookies,
 } from "./action";
 import { redirect } from "next/navigation";
-import { setupCache } from "axios-cache-interceptor";
+// import { setupCache } from "axios-cache-interceptor";
 
 const requestUrl = ["/auth/login"];
 
 // const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const instance = axios.create({
+const axiosInstance = axios.create({
   // baseURL: `${backendUrl}/api`,
   baseURL: "http://localhost:8080/api",
   headers: {
@@ -22,10 +22,10 @@ const instance = axios.create({
   },
 });
 
-const axiosInstance = setupCache(instance, {
-  debug: console.log,
-  interpretHeader: false,
-});
+// const axiosInstance = setupCache(instance, {
+//   debug: console.log,
+//   interpretHeader: false,
+// });
 
 const decodeToken = (token: string) => {
   return JSON.parse(atob(token.split(".")[1]));
