@@ -1,7 +1,6 @@
 "use client";
 import { createNewClass } from "@/app/lib/services/class";
 import { RootState } from "@/app/store/store";
-import { GradeItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import ClassDescription from "@/app/ui/components/admin/classes/create/ClassDescription";
 import CourseSelector from "@/app/ui/components/admin/classes/create/CourseSelector";
@@ -67,7 +66,7 @@ const CreateClassSchema = z.object({
 
 export type CreateClassInputs = z.infer<typeof CreateClassSchema>;
 
-export default function CreateClass({ grades }: { grades: GradeItem[] }) {
+export default function CreateClass() {
   const { selectedBranchId } = useSelector((state: RootState) => state.branch);
   const methods = useForm<CreateClassInputs>({
     resolver: zodResolver(CreateClassSchema),
@@ -116,7 +115,7 @@ export default function CreateClass({ grades }: { grades: GradeItem[] }) {
           onSubmit={methods.handleSubmit(onSubmit)}
         >
           <NameSelector />
-          <GradeSelector grades={grades} />
+          <GradeSelector />
           <CourseSelector />
           {/* <SessionSelector /> */}
           <DurationSelector />

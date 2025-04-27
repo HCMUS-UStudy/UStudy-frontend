@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
-import { AccountItem } from "@/app/types";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
@@ -17,6 +16,13 @@ import { useRouter } from "next/navigation";
 import Tooltip from "../../_common/Tooltip";
 import { toast } from "react-toastify";
 import { accountStatus, roleMap } from "@/app/lib/utils";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { Eye } from "lucide-react";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -27,64 +33,111 @@ const AccountTable: React.FC<AccountTableProps> = ({
   searchQuery,
   roleQuery,
 }) => {
-  const [users, setUsers] = useState<AccountItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  // const [users, setUsers] = useState<AccountItem[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
   const router = useRouter();
-  const [trigger, setTrigger] = useState<boolean>(false);
+  // const [trigger, setTrigger] = useState<boolean>(false);
+
+  const {
+    data: fetchAccounts,
+    error,
+    status,
+  } = useQuery({
+    queryKey: [
+      "Accounts",
+      searchQuery,
+      currentPage - 1,
+      roleQuery.toUpperCase(),
+    ],
+    queryFn: () =>
+      getAllAccount(
+        searchQuery,
+        5,
+        roleQuery === "All" ? "" : roleQuery.toUpperCase(),
+        currentPage - 1,
+      ),
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const roleQueryUp = (roleQuery || "All").toUpperCase();
-        const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
+    setTotalPages(fetchAccounts?.totalPages || 1);
+  }, [fetchAccounts]);
 
-        const response = await getAllAccount(
-          searchQuery,
-          5,
-          defaultRole,
-          currentPage - 1,
-        );
-        // console.log(response.content);
-        setUsers(response.content);
-        setTotalPages(response.totalPages || 1);
-      } catch (error) {
-        console.log(error);
-        setError("Error fetching users.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-  }, [currentPage, searchQuery, roleQuery, trigger]); // Use searchQueryState in the dependency array
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const roleQueryUp = (roleQuery || "All").toUpperCase();
+  //       const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
+
+  //       const response = await getAllAccount(
+  //         searchQuery,
+  //         5,
+  //         defaultRole,
+  //         currentPage - 1,
+  //       );
+  //       // console.log(response.content);
+  //       setUsers(response.content);
+  //       setTotalPages(response.totalPages || 1);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setError("Error fetching users.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, [currentPage, searchQuery, roleQuery, trigger]); // Use searchQueryState in the dependency array
 
   const handleDetail = (userId: string) => {
     router.push(`/admin/accounts/${userId}`);
   };
 
-  const handleDeleteAccount = async (userId: string) => {
-    try {
-      setLoading(true);
-      await deleteUser(userId, searchQuery, 5, roleQuery, currentPage);
-      setTrigger((prev) => !prev);
+  const queryClient = useQueryClient();
+  const useDeleteAccountMutation = useMutation({
+    mutationFn: (userId: string) => deleteUser(userId),
+    onSuccess: () => {
       toast.success("Xóa tài khoản thành công", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } catch (error) {
-      console.log(error);
+      queryClient.invalidateQueries({ queryKey: ["Accounts"] });
+    },
+    onError: () => {
       toast.error("Xóa tài khoản thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleDeleteAccount = async (userId: string) => {
+    // try {
+    //   // setLoading(true);
+    //   await deleteUser(userId, searchQuery, 5, roleQuery, currentPage);
+    //   // setTrigger((prev) => !prev);
+    //   toast.success("Xóa tài khoản thành công", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Xóa tài khoản thất bại", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    // } finally {
+    //   // setLoading(false);
+    // }
+    useDeleteAccountMutation.mutate(userId);
   };
 
   return (
@@ -102,15 +155,15 @@ const AccountTable: React.FC<AccountTableProps> = ({
           ]}
           className="bg-gray-100"
         />
-        <TableBody isLoading={loading}>
+        <TableBody isLoading={status === "pending"}>
           {error ? (
             <TableRow>
               <TableCell colSpan={7} className="text-red-500">
-                {error}
+                {error.message}
               </TableCell>
             </TableRow>
           ) : (
-            users.map((user) => (
+            fetchAccounts?.content.map((user) => (
               <TableRow
                 key={user.id}
                 className="hover:bg-primary-lighter cursor-pointer"
@@ -149,13 +202,20 @@ const AccountTable: React.FC<AccountTableProps> = ({
                       <FiLock className="size-5" />
                     </Tooltip>
                   </button>
+                  <button
+                    onClick={() => handleDetail(user.id)}
+                    className="flex justify-center items-center text-primary-dark hover:text-primary-darkest transition-colors"
+                  >
+                    <Tooltip text="Xem chi tiết">
+                      <Eye className="size-6" />
+                    </Tooltip>
+                  </button>
                 </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
-
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

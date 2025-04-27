@@ -34,8 +34,6 @@ export default function ClassPagination({
   const handlePageClick = (page: number) => {
     currentPage = page;
     const params = new URLSearchParams(searchParams);
-    console.log("here");
-    console.log(params);
     params.set("page", currentPage.toString());
     router.replace(`${pathname}?${params.toString()}`);
   };

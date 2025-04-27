@@ -15,11 +15,8 @@ export default async function Classes(props: {
   const currentPage = Number(searchParams?.page) || 1;
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex justify-between">
-        <SearchField
-          className="w-[200px] border-2 border-primary-dark placeholder:text-gray-500 rounded"
-          placeholder="Tìm theo tên lớp..."
-        />
+      <div className="flex justify-between gap-10">
+        <SearchField className="" placeholder="Tìm theo tên lớp..." />
         <div className="flex">
           <CreateClassButton />
         </div>

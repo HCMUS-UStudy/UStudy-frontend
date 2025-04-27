@@ -8,10 +8,10 @@ import AccountNumber from "@/app/ui/components/admin/accounts/AccountNumber";
 
 const roles = {
   All: "Tất cả",
-  Admin: "Admin",
-  Teacher: "Giáo viên",
-  Parent: "Phụ huynh",
-  Student: "Học sinh",
+  ADMIN: "Admin",
+  TEACHER: "Giáo viên",
+  PARENT: "Phụ huynh",
+  STUDENT: "Học sinh",
 };
 
 export default async function AccountPage(props: {
@@ -37,7 +37,7 @@ export default async function AccountPage(props: {
 
       <div className="flex items-center justify-between mt-2 gap-14">
         <SearchField
-          className="w-full bg-primary-lighter py-[2px]"
+          className="w-full bg-primary-lighter"
           placeholder="Tìm kiếm người dùng..."
         />
         <div className="flex items-center gap-6">
@@ -52,9 +52,6 @@ export default async function AccountPage(props: {
               position="bottom-right"
             />
           </div>
-          {/* <div className="flex items-center">
-            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
-          </div> */}
         </div>
       </div>
 
