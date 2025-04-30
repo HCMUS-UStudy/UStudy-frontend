@@ -20,7 +20,7 @@ export const getGradesByCourseId = async (
   query: string,
   currentPage: number,
   courseId: string,
-) => {
+): Promise<GradeData> => {
   const response = await axiosInstance.get(`/grade/list/${courseId}`, {
     params: {
       page: currentPage,

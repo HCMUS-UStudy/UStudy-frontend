@@ -175,7 +175,7 @@ const Select: React.FC<SelectProps> = ({
         {label && (
           <Label
             className={cn(
-              "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-blue-500 px-1",
+              "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-primary-darkest px-1",
             )}
             style={{
               backgroundColor: customStyle?.labelBg

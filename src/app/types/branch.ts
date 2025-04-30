@@ -5,7 +5,7 @@ export type Branch = {
   name: string;
   address: string;
   contactNumber: string;
-  rooms: string;
+  rooms: number;
   status: "ACTIVE" | "INACTIVE";
   sessions: Session[];
 };

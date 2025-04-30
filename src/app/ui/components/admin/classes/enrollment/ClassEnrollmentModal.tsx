@@ -66,8 +66,10 @@ export default function ClassEnrollmentModal({
               <Loading className="size-6" />
             ) : (
               <h2 className="text-lg font-bold text-gray-900">
-                {classDetail?.name || "Không có dữ liệu"} -{" "}
-                {classDetail?.description || "Không có dữ liệu"}
+                {classDetail?.name || ""}
+                {classDetail?.description
+                  ? ` - ${classDetail.description}`
+                  : ""}
               </h2>
             )}
           </div>

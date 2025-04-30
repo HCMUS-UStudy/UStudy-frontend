@@ -104,7 +104,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
   }, [columns, setColumns]);
 
   return (
-    <thead className={className}>
+    <thead className={`${className} bg-slate-100`}>
       <tr className="border-b-2 border-slate-200">
         {columns.map((col, index) => (
           <th key={index} className="py-3">
@@ -255,5 +255,42 @@ export const TableCell: React.FC<TableCellProps> = ({
     <td className={cn("px-2 py-3 text-sm text-center", className)} {...props}>
       {children}
     </td>
+  );
+};
+
+interface TableFooterProps {
+  columns: string[];
+  footerData: string[];
+  className?: string;
+}
+
+/**
+ * TableFooter component
+ *
+ * @param columns - Array of column names (same as header)
+ * @param footerData - Array of footer data corresponding to each column
+ * @param className - Custom style for the footer row
+ *
+ * @example
+ * ```tsx
+ * <TableFooter columns={["Column 1", "Column 2"]} footerData={["Total", "100"]} />
+ * ```
+ */
+
+export const TableFooter: React.FC<TableFooterProps> = ({
+  columns,
+  footerData,
+  className,
+}: TableFooterProps) => {
+  return (
+    <tfoot className={className}>
+      <TableRow className="bg-slate-100 font-semibold">
+        {columns.map((col, index) => (
+          <TableCell key={index} className="text-center">
+            {footerData[index] ?? ""}
+          </TableCell>
+        ))}
+      </TableRow>
+    </tfoot>
   );
 };
