@@ -11,6 +11,7 @@ import StudentCoursesSelector from "../ui/components/user/student/create/Student
 import { studentRegister } from "../lib/services/register";
 import { toast } from "react-toastify";
 import RegisterSuccessfully from "../ui/components/user/student/create/StudentRegisterSuccessfully";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const StudentRegisterSchema = z.object({
   name: z
@@ -78,29 +79,45 @@ export default function StudentRegister() {
       branchId: "",
     },
   });
-  const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
-  const [registerSuccessfully, setRegisterSuccessfully] =
-    useState<boolean>(false);
-
-  const onSubmit = async (data: StudentRegisterInputs) => {
-    console.log(data);
-    try {
-      setLoadingRegister(true);
-      const response = await studentRegister(data);
-      // console.log(response);
-      if (response.status === 200) {
-        setRegisterSuccessfully(true);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Đăng ký thất bại", {
+  const queryClient = useQueryClient();
+  const useRegisterMutation = useMutation({
+    mutationFn: (data: StudentRegisterInputs) => studentRegister(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
+      setRegisterSuccessfully(true);
+    },
+    onError: () => {
+      toast.error("Ghi danh thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } finally {
-      setLoadingRegister(false);
-    }
+    },
+  });
+  // const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
+  const [registerSuccessfully, setRegisterSuccessfully] =
+    useState<boolean>(false);
+
+  const onSubmit = async (data: StudentRegisterInputs) => {
+    useRegisterMutation.mutate(data);
+    // console.log(data);
+    // try {
+    //   setLoadingRegister(true);
+    //   const response = await studentRegister(data);
+    //   // console.log(response);
+    //   if (response.status === 200) {
+    //     setRegisterSuccessfully(true);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Đăng ký thất bại", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    // } finally {
+    //   setLoadingRegister(false);
+    // }
   };
   if (registerSuccessfully) {
     return <RegisterSuccessfully />;
@@ -126,7 +143,7 @@ export default function StudentRegister() {
               </div>
             </div>
             <Button
-              isPending={loadingRegister}
+              isPending={useRegisterMutation.status === "pending"}
               className="mt-6 w-full"
               type="submit"
             >

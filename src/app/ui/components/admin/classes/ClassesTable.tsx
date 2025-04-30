@@ -29,7 +29,7 @@ export default function ClassesTable({
     status,
     error,
   } = useQuery<ClassData>({
-    queryKey: ["classes", query, currentPage],
+    queryKey: ["Classes", query, currentPage],
     queryFn: () => getAllClasses(query, currentPage - 1, 5),
     placeholderData: (prevData) => prevData,
   });
@@ -55,7 +55,6 @@ export default function ClassesTable({
             "Ngày kết thúc",
             "",
           ]}
-          className="bg-gray-100"
         />
         <TableBody isLoading={status === "pending"}>
           {fetchClasses?.content.map((c, i) => (

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
-import { CourseDto } from "@/app/types";
 import SelectorLoading from "../../../_common/loading/SelectorLoading";
 import { useFormContext } from "react-hook-form";
 import { CreateClassInputs } from "./CreateClass";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CourseSelector() {
   const {
@@ -13,35 +13,57 @@ export default function CourseSelector() {
     watch,
     setError,
   } = useFormContext<CreateClassInputs>();
-  const [courses, setCourses] = useState<CourseDto[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [courses, setCourses] = useState<CourseDto[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
   const selectedGrade = watch("gradeId");
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!selectedGrade) {
-          return;
-        }
-        setLoading(true);
-        const response = await getCoursesByGradeId(selectedGrade);
-        // console.log(response);
-        setCourses(response.content);
-        if (response.totalElements === 0) {
-          setError("courseId", {
-            message:
-              "Chưa có môn học cho khối này, vui lòng chọn khối khác cho lớp học",
-          });
-        } else {
-          setError("courseId", { message: "" });
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (!selectedGrade) {
+  //         return;
+  //       }
+  //       setLoading(true);
+  //       const response = await getCoursesByGradeId(selectedGrade);
+  //       // console.log(response);
+  //       setCourses(response.content);
+  //       if (response.totalElements === 0) {
+  //         setError("courseId", {
+  //           message:
+  //             "Chưa có môn học cho khối này, vui lòng chọn khối khác cho lớp học",
+  //         });
+  //       } else {
+  //         setError("courseId", { message: "" });
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [selectedGrade, setError]);
+
+  const { data: courses, status } = useQuery({
+    queryKey: ["CoursesByGradeId", selectedGrade],
+    queryFn: () => {
+      if (selectedGrade) {
+        return getCoursesByGradeId(selectedGrade);
       }
-    };
-    fetchData();
-  }, [selectedGrade, setError]);
+      return null;
+    },
+    enabled: !!selectedGrade,
+  });
+
+  useEffect(() => {
+    if (courses?.totalElements === 0) {
+      setError("courseId", {
+        message:
+          "Chưa có môn học cho khối này, vui lòng chọn khối khác cho lớp học",
+      });
+    } else {
+      setError("courseId", { message: "" });
+    }
+  }, [courses, setError]);
 
   if (selectedGrade === "") {
     return <></>;
@@ -50,11 +72,11 @@ export default function CourseSelector() {
       <div>
         <h1 className="font-bold">Chọn môn cho lớp học</h1>
         <div className="flex flex-wrap gap-4 w-2/3 mt-2">
-          {loading ? (
+          {status === "pending" ? (
             <SelectorLoading size="sm" numberOfItems={5} />
           ) : (
             <>
-              {courses.map((course) => (
+              {courses?.content.map((course) => (
                 <label
                   htmlFor={course.id}
                   key={course.id}

@@ -24,6 +24,7 @@ import { Header } from "./Header";
 import { SubjectScoreChart } from "./SubjectScoreChart";
 import { ProgressChart } from "./ProgressChart";
 import DetailedScoresTable from "./DetailedScoresTable";
+import { Select, SelectItem } from "../../../_common/Select";
 
 // Đăng ký các components cho Chart.js
 ChartJS.register(
@@ -138,23 +139,23 @@ export default function AcademicResultsView() {
   return (
     <div className="space-y-6">
       {/* Thông tin chung */}
-      <Header
+      {/* <Header
         overallAverage={overallAverage}
         ranking={ranking}
         selectedSemester={selectedSemester}
         selectedYear={selectedYear}
         totalSubjects={detailedScores.length}
-      />
+      /> */}
 
       {/* Bộ lọc học kỳ và năm học */}
       <div className="flex flex-wrap gap-6 items-center bg-white p-6 rounded-lg border border-primary-light shadow-md">
         {/* Học kỳ */}
         <div className="flex-1 min-w-[200px]">
-          <label
+          {/* <label
             htmlFor="semester"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Học kỳ
+            Chọn lớp học
           </label>
           <select
             id="semester"
@@ -164,11 +165,15 @@ export default function AcademicResultsView() {
           >
             <option value="HK1">Học kỳ 1</option>
             <option value="HK2">Học kỳ 2</option>
-          </select>
+          </select> */}
+          <Select defaultLabel="Chọn lớp học để xem kết quả">
+            <SelectItem value={"lớp toán"}>Lớp toán</SelectItem>
+            <SelectItem value={"lớp lý"}>Lớp lý</SelectItem>
+          </Select>
         </div>
 
         {/* Năm học */}
-        <div className="flex-1 min-w-[200px]">
+        {/* <div className="flex-1 min-w-[200px]">
           <label
             htmlFor="year"
             className="block text-sm font-medium text-gray-700 mb-2"
@@ -184,7 +189,7 @@ export default function AcademicResultsView() {
             <option value="2022-2023">2022-2023</option>
             <option value="2023-2024">2023-2024</option>
           </select>
-        </div>
+        </div> */}
       </div>
 
       {/* Tabs cho biểu đồ và bảng điểm */}

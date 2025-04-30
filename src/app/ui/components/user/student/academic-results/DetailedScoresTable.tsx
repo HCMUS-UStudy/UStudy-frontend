@@ -4,6 +4,14 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../_common/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHeader,
+  TableRow,
+} from "../../../_common/Table";
 
 interface Score {
   subject: string;
@@ -25,6 +33,44 @@ interface DetailedScoresTableProps {
   ranking: Ranking;
 }
 
+const testResults = [
+  {
+    id: 1,
+    examName: "Toán học kỳ 1",
+    score: 8.5,
+    averageScore: 7.0,
+    examDate: "2025-04-10",
+  },
+  {
+    id: 2,
+    examName: "Văn học kỳ 1",
+    score: 7.2,
+    averageScore: 6.8,
+    examDate: "2025-04-12",
+  },
+  {
+    id: 3,
+    examName: "Tiếng Anh giữa kỳ",
+    score: 9.0,
+    averageScore: 7.5,
+    examDate: "2025-03-28",
+  },
+  {
+    id: 4,
+    examName: "Lý học kỳ 2",
+    score: 6.8,
+    averageScore: 7.1,
+    examDate: "2025-05-05",
+  },
+  {
+    id: 5,
+    examName: "Hóa học kỳ 2",
+    score: 7.5,
+    averageScore: 7.0,
+    examDate: "2025-05-08",
+  },
+];
+
 export default function DetailedScoresTable({
   detailedScores,
   overallAverage,
@@ -36,7 +82,41 @@ export default function DetailedScoresTable({
         <CardTitle>Chi tiết điểm số</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        <Table>
+          <TableHeader
+            columns={[
+              "ID",
+              "Bài kiểm tra",
+              "Điểm",
+              "Điểm trung bình",
+              "Ngày làm bài",
+            ]}
+          />
+          <TableBody>
+            {testResults.map((result) => (
+              <TableRow key={result.id}>
+                <TableCell>{result.id}</TableCell>
+                <TableCell>{result.examName}</TableCell>
+                <TableCell>{result.score}</TableCell>
+                <TableCell>{result.averageScore}</TableCell>
+                <TableCell>
+                  {new Date(result.examDate).toLocaleDateString("vi-VN")}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter
+            columns={[
+              "ID",
+              "Bài kiểm tra",
+              "Điểm",
+              "Điểm trung bình",
+              "Ngày làm bài",
+            ]}
+            footerData={["Điểm trung bình", "", "", "", "8.2"]}
+          />
+        </Table>
+        {/* <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-primary-lighter border-b border-primary-light">
@@ -109,7 +189,7 @@ export default function DetailedScoresTable({
               </tr>
             </tfoot>
           </table>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );
