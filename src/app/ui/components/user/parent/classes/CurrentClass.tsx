@@ -1,59 +1,98 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
   BsPerson,
   BsCalendar,
-  BsBook,
   BsPersonWorkspace,
+  BsBook,
 } from "react-icons/bs";
-import { MdMeetingRoom, MdOutlineAssignment } from "react-icons/md";
+import { MdOutlineAssignment } from "react-icons/md";
 import { FaRegCommentDots } from "react-icons/fa";
 import { Card } from "../../../_common/Card";
-
-interface ClassItem {
-  id: number;
-  subject: string;
-  grade: string;
-  teacher: string;
-  schedule: string;
-  progress: number;
-  room: string;
-}
-
-const currentClasses: ClassItem[] = [
-  {
-    id: 1,
-    subject: "Toán học",
-    grade: "Lớp 10",
-    teacher: "Nguyễn Văn A",
-    schedule: "Thứ 2, 4, 6 (17:30 - 19:00)",
-    progress: 70,
-    room: "P201",
-  },
-  {
-    id: 2,
-    subject: "Vật lý",
-    grade: "Lớp 10",
-    teacher: "Trần Văn C",
-    schedule: "Thứ 3, 5, 7 (19:30 - 21:00)",
-    progress: 60,
-    room: "P201",
-  },
-  {
-    id: 3,
-    subject: "Hóa học",
-    grade: "Lớp 10",
-    teacher: "Phạm Thị D",
-    schedule: "Thứ 2, 4, 6 (19:30 - 21:00)",
-    progress: 80,
-    room: "P201",
-  },
-];
+import { ChildClass } from "@/app/types";
+import { getListChildClasses } from "@/app/lib/services/childClasses";
+import { AiOutlineCalendar } from "react-icons/ai";
 
 export default function CurrentClass() {
+  const [classes, setClasses] = useState<ChildClass[]>([]);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const data = await getListChildClasses(
+          "6619a4e4-b268-4b86-9b5f-929cbb69c871",
+          0,
+          10,
+          "",
+        );
+
+        const now = new Date();
+        const filteredClasses = data.content.filter((classItem: ChildClass) => {
+          const endDate = new Date(classItem.endDate);
+          return endDate >= now;
+        });
+
+        setClasses(filteredClasses);
+      } catch (error) {
+        console.error("Error fetching classes", error);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+
+  const dayOfWeekMapping: Record<string, string> = {
+    MONDAY: "Thứ Hai",
+    TUESDAY: "Thứ Ba",
+    WEDNESDAY: "Thứ Tư",
+    THURSDAY: "Thứ Năm",
+    FRIDAY: "Thứ Sáu",
+    SATURDAY: "Thứ Bảy",
+    SUNDAY: "Chủ Nhật",
+  };
+
+  function formatDate(dateStr: string) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  function getScheduleForAllDays(classItem: ChildClass) {
+    const allDays = classItem.scheduleInfo.map(
+      (schedule) => dayOfWeekMapping[schedule.dayOfWeek],
+    );
+    return allDays.length ? allDays.join(", ") : "Chưa có lịch học";
+  }
+
+  function calculateProgress(startDate: string, endDate: string) {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (now < start) {
+      return 0;
+    }
+
+    if (now > end) {
+      return 100;
+    }
+
+    const totalDays = (end.getTime() - start.getTime()) / (1000 * 3600 * 24);
+    const daysPassed = (now.getTime() - start.getTime()) / (1000 * 3600 * 24);
+
+    const progress = (daysPassed / totalDays) * 100;
+    return progress;
+  }
+
   return (
     <div className="grid grid-cols-1 gap-6">
-      {currentClasses.map((classItem) => (
+      {classes.map((classItem) => (
         <Card
           key={classItem.id}
           className="overflow-hidden rounded-2xl hover:shadow-md transition-shadow duration-300"
@@ -65,8 +104,12 @@ export default function CurrentClass() {
                   size={64}
                   className="mx-auto mb-3 text-primary"
                 />
-                <h3 className="text-xl font-semibold">{classItem.subject}</h3>
-                <p className="text-sm text-gray-600 mt-1">{classItem.grade}</p>
+                <h3 className="text-xl font-semibold">
+                  {classItem.course?.name || "Chưa có môn học"}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {classItem.grade?.name || "Chưa có khối lớp"}
+                </p>
               </div>
             </div>
 
@@ -82,7 +125,7 @@ export default function CurrentClass() {
                     <div>
                       <p className="text-sm text-gray-600">Giáo viên:</p>
                       <p className="font-medium text-gray-900">
-                        {classItem.teacher}
+                        {classItem.teacherName}
                       </p>
                     </div>
                   </div>
@@ -91,16 +134,19 @@ export default function CurrentClass() {
                     <div>
                       <p className="text-sm text-gray-600">Lịch học:</p>
                       <p className="font-medium text-gray-900">
-                        {classItem.schedule}
+                        {getScheduleForAllDays(classItem)}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MdMeetingRoom className="text-gray-500" size={20} />
+                    <AiOutlineCalendar className="text-gray-500" size={20} />
                     <div>
-                      <p className="text-sm text-gray-600">Phòng học:</p>
+                      <p className="text-sm text-gray-600">
+                        Thời gian lớp học:
+                      </p>
                       <p className="font-medium text-gray-900">
-                        {classItem.room}
+                        {formatDate(classItem.startDate)} -{" "}
+                        {formatDate(classItem.endDate)}
                       </p>
                     </div>
                   </div>
@@ -111,7 +157,12 @@ export default function CurrentClass() {
                       <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
                         <div
                           className="bg-primary h-2.5 rounded-full transition-all duration-300"
-                          style={{ width: `${classItem.progress}%` }}
+                          style={{
+                            width: `${calculateProgress(
+                              classItem.startDate,
+                              classItem.endDate,
+                            )}%`,
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -133,7 +184,7 @@ export default function CurrentClass() {
                   <BsPersonWorkspace className="mr-2" /> Kết quả học tập
                 </Link>
                 <Link
-                  href={`/parent/contact?teacher=${classItem.teacher}`}
+                  href={`/parent/contact?teacher=${classItem.teacherName}`}
                   className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
                   <FaRegCommentDots className="mr-2" /> Liên hệ giáo viên
