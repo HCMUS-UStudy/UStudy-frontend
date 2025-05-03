@@ -1,9 +1,9 @@
 import { GenderType } from "./common";
 
-export type ExerciseItem = {
+export type AssignmentItem = {
   id: string;
   title: string;
-  description: string;
+  duration: number;
   startTime: string;
   endTime: string;
   createdBy: {
@@ -11,37 +11,26 @@ export type ExerciseItem = {
     genId: string;
     email: string;
     name: string;
-    avatar: string;
     gender: GenderType;
-    createdAt: string;
-    status: "ACTIVE" | "INACTIVE" | "BANNED";
-    role: {
+  };
+  completed: boolean;
+  aclass: {
+    id: string;
+    name: string;
+    description: string;
+    grade: {
       id: string;
-      name: "Teacher" | "Student" | "Admin";
-      defaultRoute: "ADMIN" | "USER" | "TEACHER";
+      name: string;
+    };
+    course: {
+      id: string;
+      name: string;
     };
   };
 };
 
-export type AssignmentDetails = {
-  id: string;
-  title: string;
-  description: string;
-  filePath: string;
-  dueDate: string;
-  createdBy: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    avatar: string;
-    gender: GenderType;
-    createdAt: string;
-    status: "ACTIVE" | "INACTIVE" | "BANNED";
-    role: {
-      id: string;
-      name: string;
-      defaultRoute: string;
-    };
-  };
+export type AssignmentData = {
+  content: AssignmentItem[];
+  totalPages: number;
+  totalElements: number;
 };
