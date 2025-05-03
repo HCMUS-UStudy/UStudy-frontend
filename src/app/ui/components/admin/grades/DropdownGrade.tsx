@@ -79,7 +79,7 @@ export default function DropdownGrade({ label }: DropdownGradeProps) {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100 mr-4 whitespace-nowrap"
+        className="flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-primary transition-colors mr-4 whitespace-nowrap"
         onClick={() => setIsOpen(!isOpen)}
       >
         <FiFilter className="w-5 h-5 text-gray-600 shrink-0" />
@@ -93,8 +93,8 @@ export default function DropdownGrade({ label }: DropdownGradeProps) {
           {items.map(({ key, label }) => (
             <button
               key={key}
-              className={`block w-full text-left px-4 py-2 hover:bg-green-100 ${
-                selected === key ? "bg-green-200" : ""
+              className={`block w-full text-left px-4 py-2 hover:bg-primary transition-colors ${
+                selected === key ? "bg-primary-light" : ""
               }`}
               onClick={() => handleSelect(key, label)}
             >

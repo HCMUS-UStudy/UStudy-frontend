@@ -25,7 +25,7 @@ export default function StudentBasicInformation() {
         <Input
           className="text-[14px]"
           type="text"
-          placeholder="Email"
+          placeholder="abc@gmail.com..."
           label="Email"
           isError={errors.email !== undefined}
           errorMsg={errors.email?.message}
@@ -69,7 +69,7 @@ export default function StudentBasicInformation() {
         <Input
           className="text-[14px]"
           type="text"
-          placeholder="Địa chỉ"
+          placeholder="227 Nguyễn Văn Cừ, P. Bến Thành, Quận 5, TP.HCM"
           label="Địa chỉ"
           isError={errors.address !== undefined}
           errorMsg={errors.address?.message}

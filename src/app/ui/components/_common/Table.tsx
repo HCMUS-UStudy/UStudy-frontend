@@ -195,6 +195,7 @@ export const TableBody: React.FC<TableBodyProps> = ({
 interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   children: React.ReactNode;
   className?: string;
+  isFetching?: boolean;
 }
 
 /**
@@ -202,6 +203,7 @@ interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
  *
  * @param children - TableCell
  * @param className - Custom style for table row
+ * @param isFetching - use when table is REFETCHING NEW DATA
  *
  * @example
  * ```tsx
@@ -214,12 +216,14 @@ interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
 export const TableRow: React.FC<TableRowProps> = ({
   children,
   className,
+  isFetching = false,
   ...props
 }: TableRowProps) => {
   return (
     <tr
       className={cn(
-        "hover:bg-primary-light transition-all duration-200 border-b-2 border-slate-100",
+        "transition-all duration-200 border-b-2 border-slate-100",
+        isFetching ? "bg-primary animate-pulse" : "hover:bg-primary-light",
         className,
       )}
       {...props}

@@ -28,6 +28,7 @@ export default function ClassesTable({
     data: fetchClasses,
     status,
     error,
+    isFetching,
   } = useQuery<ClassData>({
     queryKey: ["Classes", query, currentPage],
     queryFn: () => getAllClasses(query, currentPage - 1, 5),
@@ -98,11 +99,13 @@ export default function ClassesTable({
           totalPages={fetchClasses?.totalPages || 1}
         />
       )}
-      <ClassEnrollmentModal
-        classId={selectedId}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-      />
+      {isOpen && (
+        <ClassEnrollmentModal
+          classId={selectedId}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        />
+      )}
     </div>
   );
 }
