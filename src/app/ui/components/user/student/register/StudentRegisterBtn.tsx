@@ -13,7 +13,7 @@ export default function StudentRegisterBtn() {
       className="w-full rounded-xl lg:rounded-[21px] overflow-hidden md:w-[240px] text-base lg:text-xl py-4 hover:scale-110"
       type="submit"
     >
-      Bắt đầu
+      Ghi danh ngay
       {/* <span className="absolute -translate-y-1 translate-x-1 opacity-20">
                   Bắt đầu
                 </span> */}

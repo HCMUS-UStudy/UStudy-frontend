@@ -1,12 +1,18 @@
 import { Input } from "../../_common/text-field/Input";
 import { Button } from "../../_common/Button";
-import { Dialog, DialogContent, DialogHeader } from "../../_common/Dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "../../_common/Dialog";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createSession } from "@/app/lib/services/session";
+import { createSession, updateSession } from "@/app/lib/services/session";
 import { toast } from "react-toastify";
+import { Session } from "@/app/types";
 
 const CreateSessionSchema = z
   .object({
@@ -33,9 +39,11 @@ export type CreateSessionInputs = z.infer<typeof CreateSessionSchema>;
 const SessionModal = ({
   isOpen,
   onClose,
+  selectedSession,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  selectedSession?: Session;
 }) => {
   const {
     register,
@@ -43,9 +51,22 @@ const SessionModal = ({
     handleSubmit,
   } = useForm<CreateSessionInputs>({
     resolver: zodResolver(CreateSessionSchema),
+    defaultValues: {
+      name: selectedSession?.name || "",
+      startTime: selectedSession?.startTime || "",
+      endTime: selectedSession?.endTime || "",
+    },
   });
   const onSubmit = (data: CreateSessionInputs) => {
-    useCreateSessionMutation.mutate(data);
+    if (selectedSession) {
+      return useUpdateSessionMutation.mutate({
+        id: selectedSession.id,
+        name: data.name,
+        startTime: data.startTime,
+        endTime: data.endTime,
+      });
+    }
+    return useCreateSessionMutation.mutate(data);
   };
   const queryClient = useQueryClient();
   const useCreateSessionMutation = useMutation({
@@ -68,11 +89,35 @@ const SessionModal = ({
       });
     },
   });
+  const useUpdateSessionMutation = useMutation({
+    mutationFn: (data: Session) => updateSession(data),
+    onSuccess: (res) => {
+      console.log(res);
+      queryClient.invalidateQueries({ queryKey: ["Sessions"] });
+      toast.success("Chỉnh sửa ca học mới thành công", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      onClose();
+    },
+    onError: () => {
+      toast.error("Chỉnh sửa ca học thất bại", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+    },
+  });
   return (
     <Dialog className="w-1/3" isOpen={isOpen} onClose={onClose}>
       <DialogHeader className="text-center">Tạo ca học mới</DialogHeader>
       <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          id="SessionForm"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
           <Input
             placeholder="Tên ca học"
             label="Tên ca học"
@@ -94,14 +139,27 @@ const SessionModal = ({
             errorMsg={errors.endTime?.message}
             {...register("endTime")}
           />
+        </form>
+      </DialogContent>
+      <DialogFooter>
+        {selectedSession ? (
           <Button
+            form="SessionForm"
+            isPending={useUpdateSessionMutation.status === "pending"}
+            className="w-full"
+          >
+            Cập nhật ca học
+          </Button>
+        ) : (
+          <Button
+            form="SessionForm"
             isPending={useCreateSessionMutation.status === "pending"}
-            className="mt-3"
+            className="w-full"
           >
             Tạo ca học mới
           </Button>
-        </form>
-      </DialogContent>
+        )}
+      </DialogFooter>
     </Dialog>
     //   <div>
     //     <div

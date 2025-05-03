@@ -20,11 +20,12 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { Header } from "./Header";
 import { SubjectScoreChart } from "./SubjectScoreChart";
 import { ProgressChart } from "./ProgressChart";
 import DetailedScoresTable from "./DetailedScoresTable";
 import { Select, SelectItem } from "../../../_common/Select";
+import { useQuery } from "@tanstack/react-query";
+import { getAllClasses } from "@/app/lib/services/class";
 
 // Đăng ký các components cho Chart.js
 ChartJS.register(
@@ -120,6 +121,11 @@ export default function AcademicResultsView() {
     },
   ];
 
+  const { data: classes, status } = useQuery({
+    queryKey: ["Classes"],
+    queryFn: () => getAllClasses("", 0, 100),
+  });
+
   // Tính điểm trung bình tổng
   const overallAverage =
     detailedScores.reduce((sum, item) => sum + item.average, 0) /
@@ -166,9 +172,15 @@ export default function AcademicResultsView() {
             <option value="HK1">Học kỳ 1</option>
             <option value="HK2">Học kỳ 2</option>
           </select> */}
-          <Select defaultLabel="Chọn lớp học để xem kết quả">
-            <SelectItem value={"lớp toán"}>Lớp toán</SelectItem>
-            <SelectItem value={"lớp lý"}>Lớp lý</SelectItem>
+          <Select
+            defaultLabel="Chọn lớp học để xem kết quả"
+            isLoading={status === "pending"}
+          >
+            {classes?.content.map((item) => (
+              <SelectItem key={item.id} value={item.id}>
+                {item.name} - {item.course.name} - {item.grade.name}
+              </SelectItem>
+            ))}
           </Select>
         </div>
 

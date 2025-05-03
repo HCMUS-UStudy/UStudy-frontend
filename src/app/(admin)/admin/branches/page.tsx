@@ -11,8 +11,8 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 import { Branch } from "@/app/types";
 import { useDispatch } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
-import { useQuery } from "@tanstack/react-query";
+import { setBranches } from "@/app/store/branch-slice";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
@@ -37,8 +37,10 @@ const BranchPage: React.FC = () => {
   const searchParams = useSearchParams();
 
   const { data: fetchBranches, status } = useQuery({
-    queryKey: ["Branches", currentPage - 1],
-    queryFn: () => getAllBranches(currentPage - 1, 100),
+    queryKey: ["Branches", currentPage - 1, searchParams.get("name") || ""],
+    queryFn: () =>
+      getAllBranches(currentPage - 1, 5, searchParams.get("name") || ""),
+    placeholderData: keepPreviousData,
   });
   useEffect(() => {
     console.log(fetchBranches);

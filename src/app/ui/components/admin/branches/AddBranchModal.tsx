@@ -140,7 +140,7 @@ const CreateBranchModal = ({
   return (
     <div>
       <Dialog isOpen={isOpen} onClose={onClose}>
-        <DialogHeader>Tạo chi nhánh mới</DialogHeader>
+        <DialogHeader className="text-center">Tạo chi nhánh mới</DialogHeader>
         <DialogContent>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -179,7 +179,7 @@ const CreateBranchModal = ({
             />
             {/* Phần chọn Ca học với checkbox */}
             <div>
-              <div className="flex gap-2 items-center ml-2 text-sm text-gray-700">
+              <div className="flex gap-2 items-center ml-2 text-gray-700">
                 Ca học {status === "pending" && <Loading className="size-5" />}
               </div>
               {status === "success" && (
@@ -189,6 +189,7 @@ const CreateBranchModal = ({
                       key={item.id}
                       type="checkbox"
                       value={item.id}
+                      className="truncate"
                       variant="label"
                       labelText={`${item.name} - ${item.startTime} - ${item.endTime}`}
                       {...register("sessions")}
@@ -201,18 +202,13 @@ const CreateBranchModal = ({
               </span>
             </div>
 
-            <div className="flex justify-end mt-2 gap-4">
-              <Button
-                type="button"
-                className="bg-gray-200 hover:bg-gray-300 text-sm"
-                onClick={() => onClose()}
-              >
-                Hủy
-              </Button>
-              <Button type="submit" className="text-sm">
-                Thêm
-              </Button>
-            </div>
+            <Button
+              isPending={useCreateBranchMutation.status === "pending"}
+              type="submit"
+              className=""
+            >
+              Thêm ca học
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
