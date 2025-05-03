@@ -1,4 +1,4 @@
-import { TuitionPayment } from "@/app/types";
+import { PaymentItem } from "@/app/types";
 import { FaUser, FaInfoCircle, FaEye } from "react-icons/fa";
 import {
   Table,
@@ -10,13 +10,13 @@ import {
 import { Button } from "../../../_common/Button";
 
 interface Props {
-  filteredPendingPayments: TuitionPayment[];
+  filteredPendingPayments: PaymentItem[];
   formatCurrency: (amount: number) => string;
   formatDate: (date: string | Date) => string;
   getStatusName: (status: string) => string;
   getStatusColor: (status: string) => string;
-  handleViewDetails: (payment: TuitionPayment) => void;
-  handlePayNow: (payment: TuitionPayment) => void;
+  handleViewDetails: (payment: PaymentItem) => void;
+  handlePayNow: (payment: PaymentItem) => void;
 }
 
 export default function PendingPaymentsTable({
@@ -43,7 +43,7 @@ export default function PendingPaymentsTable({
       <Table>
         <TableHeader
           columns={[
-            "Mã hóa đơn",
+            "Thời gian học", // Đổi từ "Mã hóa đơn"
             "Học sinh",
             "Lớp học",
             "Số tiền",
@@ -55,29 +55,36 @@ export default function PendingPaymentsTable({
         />
         <TableBody>
           {filteredPendingPayments.map((payment) => (
-            <TableRow key={payment.id}>
-              <TableCell>{payment.invoiceNumber}</TableCell>
+            <TableRow key={payment.invoiceId}>
+              <TableCell>
+                {formatDate(payment.paymentPeriodDto.startDate)} -{" "}
+                {formatDate(payment.paymentPeriodDto.endDate)}
+              </TableCell>
               <TableCell>
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
                     <FaUser className="h-4 w-4" />
                   </div>
-                  <span>{payment.studentName}</span>
+                  <span>{payment.paymentPeriodDto.student.name}</span>
                 </div>
               </TableCell>
               <TableCell>
                 <div>
-                  <p className="font-medium">{payment.className}</p>
-                  <p className="text-sm text-gray-500">{payment.semester}</p>
+                  <p className="font-medium">
+                    {payment.paymentPeriodDto.enrolledClass.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {payment.paymentPeriodDto.enrolledClass.course.name}
+                  </p>
                 </div>
               </TableCell>
               <TableCell className="font-medium text-primary-darker">
-                {formatCurrency(payment.amount)}
+                {formatCurrency(payment.paymentPeriodDto.amount)}
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-center">
-                  {formatDate(payment.dueDate)}
-                  {new Date(payment.dueDate) < new Date() && (
+                  {formatDate(payment.paymentDate)}
+                  {new Date(payment.paymentDate) < new Date() && (
                     <FaInfoCircle
                       className="ml-2 text-red-500"
                       title="Quá hạn"
@@ -87,7 +94,9 @@ export default function PendingPaymentsTable({
               </TableCell>
               <TableCell>
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                    payment.status,
+                  )}`}
                 >
                   {getStatusName(payment.status)}
                 </span>

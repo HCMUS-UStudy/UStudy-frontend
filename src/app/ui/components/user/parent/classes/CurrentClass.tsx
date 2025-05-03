@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
@@ -15,34 +14,32 @@ import { Card } from "../../../_common/Card";
 import { ChildClass } from "@/app/types";
 import { getListChildClasses } from "@/app/lib/services/childClasses";
 import { AiOutlineCalendar } from "react-icons/ai";
+import { useQuery } from "@tanstack/react-query";
+import ClassCardSkeleton from "./ClassCardSkeleton";
 
 export default function CurrentClass() {
-  const [classes, setClasses] = useState<ChildClass[]>([]);
+  const now = new Date();
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const data = await getListChildClasses(
-          "6619a4e4-b268-4b86-9b5f-929cbb69c871",
-          0,
-          10,
-          "",
-        );
-
-        const now = new Date();
-        const filteredClasses = data.content.filter((classItem: ChildClass) => {
-          const endDate = new Date(classItem.endDate);
-          return endDate >= now;
-        });
-
-        setClasses(filteredClasses);
-      } catch (error) {
-        console.error("Error fetching classes", error);
-      }
-    };
-
-    fetchClasses();
-  }, []);
+  const {
+    data: classes = [],
+    isLoading,
+    error,
+  } = useQuery<ChildClass[]>({
+    queryKey: ["childClasses", "6619a4e4-b268-4b86-9b5f-929cbb69c871"],
+    queryFn: async () => {
+      const data = await getListChildClasses(
+        "6619a4e4-b268-4b86-9b5f-929cbb69c871",
+        0,
+        10,
+        "",
+      );
+      return data.content.filter((classItem: ChildClass) => {
+        const endDate = new Date(classItem.endDate);
+        return endDate >= now;
+      });
+    },
+    placeholderData: (prevData) => prevData,
+  });
 
   const dayOfWeekMapping: Record<string, string> = {
     MONDAY: "Thứ Hai",
@@ -89,6 +86,10 @@ export default function CurrentClass() {
     const progress = (daysPassed / totalDays) * 100;
     return progress;
   }
+
+  if (isLoading) return <ClassCardSkeleton />;
+
+  if (error) return <div>Lỗi: {(error as Error).message}</div>;
 
   return (
     <div className="grid grid-cols-1 gap-6">

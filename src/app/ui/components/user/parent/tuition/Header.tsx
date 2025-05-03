@@ -1,33 +1,29 @@
 import { Card, CardContent } from "../../../_common/Card";
-import { TuitionPayment } from "@/app/types";
+import { PaymentItem } from "@/app/types";
 import { TbCoin } from "react-icons/tb";
 import { MdCreditCard, MdReceipt } from "react-icons/md";
 
 interface HeaderProps {
-  pendingPayments: TuitionPayment[];
-  paidPayments: TuitionPayment[];
-  getFilteredPayments: (payments: TuitionPayment[]) => TuitionPayment[];
+  pendingPayments: PaymentItem[];
+  paidPayments: PaymentItem[];
   formatCurrency: (amount: number) => string;
 }
 
 export default function Header({
   pendingPayments,
   paidPayments,
-  getFilteredPayments,
   formatCurrency,
 }: HeaderProps) {
   const calculateTotals = () => {
-    const filteredPending = getFilteredPayments(pendingPayments);
-    const filteredPaid = getFilteredPayments(paidPayments);
+    const totalPending = pendingPayments.reduce(
+      (sum, payment) => sum + payment.paymentPeriodDto.amount,
+      0,
+    );
+    const totalPaid = paidPayments.reduce(
+      (sum, payment) => sum + payment.paymentPeriodDto.amount,
+      0,
+    );
 
-    const totalPending = filteredPending.reduce(
-      (sum, payment) => sum + payment.amount,
-      0,
-    );
-    const totalPaid = filteredPaid.reduce(
-      (sum, payment) => sum + payment.amount,
-      0,
-    );
     const totalAmount = totalPending + totalPaid;
 
     return { totalAmount, totalPaid, totalPending };
