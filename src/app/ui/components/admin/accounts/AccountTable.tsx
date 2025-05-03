@@ -140,6 +140,15 @@ const AccountTable: React.FC<AccountTableProps> = ({
     useDeleteAccountMutation.mutate(userId);
   };
 
+  function formatDateToVN(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
   return (
     <div>
       <Table>
@@ -180,9 +189,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
                     {accountStatus[user.status].label}
                   </span>
                 </TableCell>
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString("vi-VN")}
-                </TableCell>
+                <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
                 <TableCell className="flex justify-center items-center gap-2">
                   <button className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors">
                     <Tooltip text="Chỉnh sửa tài khoản">
