@@ -80,6 +80,7 @@ export const createNewClass = async (data: CreateClassInputs) => {
 export const getClassById = async (classId: string): Promise<ClassDetail> => {
   try {
     const response = await axiosInstance.get(`/class/details/${classId}`);
+    console.log("response", response.data.data);
     return response.data.data;
   } catch (error) {
     throw error;

@@ -31,21 +31,21 @@ const Checkbox: React.FC<CheckboxProps> = ({
           "cursor-not-allowed text-gray-200": disabled,
           "text-primary": !disabled,
         },
-        className,
       )}
       onClick={handleToggle}
     >
       <div
         className={classNames(
-          "w-5 h-5 border-2 flex items-center justify-center rounded-2xl transition-all",
+          "w-4 h-4 border-2 flex items-center justify-center rounded-2xl transition-all",
           {
             "border-gray-400 bg-gray-200 cursor-not-allowed": disabled,
-            "border-primary-darkest bg-primary-dark": checked && !disabled, // Màu primary khi checked
+            "border-primary-dark bg-primary-dark": checked && !disabled, // Màu primary khi checked
             "border-gray-400 bg-transparent": !checked && !disabled,
           },
+          className,
         )}
       >
-        {checked && <FaCheck className="w-3 h-3 text-white" />}
+        {checked && <FaCheck className="w-2 h-2 text-white" />}
       </div>
       {label && <span>{label}</span>}
     </label>

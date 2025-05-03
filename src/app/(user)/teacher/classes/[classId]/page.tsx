@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getClassById } from "@/app/lib/services/class";
 import { MdArrowForwardIos } from "react-icons/md";
-import ClassMaterial from "@/app/ui/components/user/teacher/ClassMaterial";
+// import ClassMaterial from "@/app/ui/components/user/teacher/ClassMaterial";
 import Notification from "@/app/ui/components/user/teacher/Notification";
 import { Button } from "@/app/ui/components/_common/Button";
 import AddingModal from "@/app/ui/components/user/teacher/AddingModal";
@@ -53,7 +53,7 @@ export default function ClassDetailPage() {
   const [loading, setLoading] = useState(true);
 
   const [notiDetail, setNotiDetail] = useState(false);
-  const [resourcesDetail, setResourcesDetail] = useState(false);
+  // const [resourcesDetail, setResourcesDetail] = useState(false);
   const [assignmentDetail, setAssignmentDetail] = useState(false);
 
   const [addingModal, setAddingModal] = useState(false);
@@ -95,16 +95,19 @@ export default function ClassDetailPage() {
   }
 
   return (
-    <div className="container p-4 flex flex-col gap-6">
+    <div className="container px-4 flex flex-col gap-6">
+      {/* <TeacherNavigation activeTab={""} classId={classId} /> */}
+
       <div className="flex justify-between">
         <div className="bg-white p-6">
           <h2 className="text-3xl font-bold mb-4">{classDetail.name}</h2>
           <div className="text-[18px]">
-            <strong>Môn: </strong> Lý - Khối 11
+            <strong>Môn: </strong> {classDetail.course.name} -{" "}
+            {classDetail.grade.name}
           </div>
           <div className="text-[18px]">
             <strong>Thời gian: </strong>
-            T3 - T5 (15:00 - 17:00)
+            {classDetail.startDate} - {classDetail.endDate}
           </div>
           <div className="text-[18px]">
             <strong>Phòng: </strong> 101
@@ -130,13 +133,13 @@ export default function ClassDetailPage() {
           <Notification classId={classId} />
         </ComponentDetails>
 
-        <ComponentDetails
+        {/* <ComponentDetails
           title="📂 Tài liệu"
           showDetail={resourcesDetail}
           setShowDetail={setResourcesDetail}
         >
           <ClassMaterial classId={classId} />
-        </ComponentDetails>
+        </ComponentDetails> */}
 
         <ComponentDetails
           title="📝 Bài tập"

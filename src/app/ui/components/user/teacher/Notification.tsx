@@ -22,7 +22,7 @@ const Notification = ({ classId }: { classId: string }) => {
       setNotifications(data);
     };
     fetchData();
-  }, []);
+  }, [classId]);
 
   // const handleToggleDetail = () => {
   //   setShowDetail(!showDetail);
