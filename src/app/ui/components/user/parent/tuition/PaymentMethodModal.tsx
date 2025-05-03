@@ -2,29 +2,22 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
-import { FaCheck, FaCreditCard, FaQrcode, FaWallet } from "react-icons/fa";
-import { BsBank2 } from "react-icons/bs";
+import { FaCheck, FaWallet } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
 import {
   createVnPayPayment,
   PaymentMethod as APIPaymentMethod,
 } from "@/app/lib/services/payment";
 import { toast } from "react-toastify";
-import { TuitionPayment } from "@/app/types";
+import { PaymentItem } from "@/app/types";
 
 interface PaymentMethodModalProps {
-  payment: TuitionPayment;
+  payment: PaymentItem;
   onClose: () => void;
   onPaymentComplete: () => void;
 }
 
-type PaymentMethod =
-  | "bank_transfer"
-  | "credit_card"
-  | "qr_code"
-  | "momo"
-  | "vnpay"
-  | "";
+type PaymentMethod = "momo" | "vnpay" | "";
 
 const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
   payment,
@@ -72,24 +65,6 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       icon: <MdPayment className="h-6 w-6" />,
     },
     {
-      id: "bank_transfer",
-      name: "Chuyển khoản ngân hàng",
-      description: "Chuyển khoản trực tiếp từ tài khoản ngân hàng của bạn",
-      icon: <BsBank2 className="h-6 w-6" />,
-    },
-    {
-      id: "credit_card",
-      name: "Thẻ tín dụng / Ghi nợ",
-      description: "Thanh toán an toàn bằng thẻ Visa, MasterCard, JCB",
-      icon: <FaCreditCard className="h-6 w-6" />,
-    },
-    {
-      id: "qr_code",
-      name: "Quét mã QR",
-      description: "Quét mã QR bằng ứng dụng ngân hàng của bạn",
-      icon: <FaQrcode className="h-6 w-6" />,
-    },
-    {
       id: "momo",
       name: "Ví MoMo",
       description: "Thanh toán nhanh chóng qua ví điện tử MoMo",
@@ -107,9 +82,9 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       if (selectedMethod === "vnpay") {
         // Call VNPay service
         const response = await createVnPayPayment({
-          paymentId: payment.id,
-          amount: payment.amount,
-          description: `Thanh toán hóa đơn ${payment.invoiceNumber} - ${payment.className}`,
+          paymentId: payment.paymentPeriodDto.id,
+          amount: payment.paymentPeriodDto.amount,
+          description: `Thanh toán hóa đơn ${payment.invoiceId} - ${payment.paymentPeriodDto.enrolledClass.name}`,
           redirectUrl: `${window.location.origin}/parent/tuition/payment-callback`,
           paymentMethod: "VNPAY" as APIPaymentMethod,
         });
@@ -159,8 +134,8 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             </h2>
             <p className="text-gray-600 mb-6">
               Thanh toán cho học phí{" "}
-              <span className="font-medium">{payment.invoiceNumber}</span> đã
-              được xử lý thành công.
+              <span className="font-medium">{payment.invoiceId}</span> đã được
+              xử lý thành công.
             </p>
             <Button variant="primary" onClick={handleFinish} className="w-full">
               Hoàn tất
@@ -186,12 +161,12 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           <div className="flex items-center justify-between mb-6 bg-primary-lighter p-4 rounded-lg">
             <div>
               <p className="text-sm text-gray-600">Thanh toán cho hóa đơn</p>
-              <p className="font-medium">{payment.invoiceNumber}</p>
+              <p className="font-medium">{payment.invoiceId}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Tổng số tiền</p>
               <p className="text-xl font-bold text-primary-darker">
-                {formatCurrency(payment.amount)}
+                {formatCurrency(payment.paymentPeriodDto.amount)}
               </p>
             </div>
           </div>
@@ -238,44 +213,6 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
               ))}
             </div>
           </div>
-
-          {selectedMethod === "bank_transfer" && (
-            <div className="bg-gray-50 p-4 rounded-lg mb-6">
-              <h4 className="font-medium mb-2">Thông tin chuyển khoản</h4>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="text-gray-600">Ngân hàng:</span> VietcomBank
-                </p>
-                <p>
-                  <span className="text-gray-600">Số tài khoản:</span>{" "}
-                  1234567890
-                </p>
-                <p>
-                  <span className="text-gray-600">Chủ tài khoản:</span> CÔNG TY
-                  TNHH USTUDY
-                </p>
-                <p>
-                  <span className="text-gray-600">Nội dung chuyển khoản:</span>{" "}
-                  {payment.invoiceNumber}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {selectedMethod === "qr_code" && (
-            <div className="bg-gray-50 p-4 rounded-lg mb-6 text-center">
-              <h4 className="font-medium mb-2">Quét mã QR để thanh toán</h4>
-              <div className="w-48 h-48 mx-auto bg-white p-2 border rounded-lg">
-                {/* Aquí iría una imagen real del código QR */}
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <FaQrcode className="text-gray-400 text-6xl" />
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Mở ứng dụng ngân hàng và quét mã để thanh toán
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Footer / Actions */}

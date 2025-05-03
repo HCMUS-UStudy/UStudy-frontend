@@ -1,9 +1,7 @@
-export type PaymentMethod =
-  | "VNPAY"
-  | "BANK_TRANSFER"
-  | "CREDIT_CARD"
-  | "QR_CODE"
-  | "MOMO";
+import { PaymentData } from "@/app/types";
+import axiosInstance from "../axios";
+
+export type PaymentMethod = "VNPAY" | "MOMO";
 
 export interface PaymentRequest {
   paymentId: string;
@@ -74,3 +72,30 @@ export const createVnPayPayment = async (
 //     };
 //   }
 // };
+
+export const getPaymentByStuId = async (
+  studentId: string,
+  currentPage: number,
+  limit: number,
+  status: string,
+): Promise<PaymentData> => {
+  try {
+    const response = await axiosInstance.get(`/payment/list/${studentId}`, {
+      params: {
+        page: currentPage,
+        limit: limit,
+        status: status,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createNewGrade = async (paymentId: string) => {
+  const response = await axiosInstance.post(
+    `/payment/submit-order/${paymentId}`,
+  );
+  return response.data;
+};

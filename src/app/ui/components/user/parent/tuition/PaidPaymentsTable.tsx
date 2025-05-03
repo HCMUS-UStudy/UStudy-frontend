@@ -10,14 +10,14 @@ import {
 import { Button } from "../../../_common/Button";
 import { FaUser, FaEye, FaDownload } from "react-icons/fa";
 import Pagination from "../../../_common/Pagination";
-import { TuitionPayment } from "@/app/types";
+import { PaymentItem } from "@/app/types";
 
 interface PaidPaymentsTableProps {
-  data: TuitionPayment[];
+  data: PaymentItem[];
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  onViewDetails: (payment: TuitionPayment) => void;
+  onViewDetails: (payment: PaymentItem) => void;
   formatCurrency: (amount: number) => string;
   formatDate: (date: string | Date) => string;
   getStatusName: (status: string) => string;
@@ -42,7 +42,7 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
           <Table>
             <TableHeader
               columns={[
-                "Mã hóa đơn",
+                "Mã thanh toán",
                 "Học sinh",
                 "Lớp học",
                 "Số tiền",
@@ -54,29 +54,28 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
             />
             <TableBody>
               {data.map((payment) => (
-                <TableRow key={payment.id}>
-                  <TableCell>{payment.invoiceNumber}</TableCell>
+                <TableRow key={payment.invoiceId}>
+                  <TableCell>{payment.invoiceId}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
                         <FaUser className="h-4 w-4" />
                       </div>
-                      <span>{payment.studentName}</span>
+                      <span>{payment.paymentPeriodDto.student.name}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="font-medium">{payment.className}</p>
-                      <p className="text-sm text-gray-500">
-                        {payment.semester}
+                      <p className="font-medium">
+                        {payment.paymentPeriodDto.enrolledClass.name}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-primary-darker">
-                    {formatCurrency(payment.amount)}
+                    {formatCurrency(payment.paymentPeriodDto.amount)}
                   </TableCell>
                   <TableCell>
-                    {payment.paidDate && formatDate(payment.paidDate)}
+                    {payment.paymentDate && formatDate(payment.paymentDate)}
                   </TableCell>
                   <TableCell>
                     <span
