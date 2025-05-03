@@ -26,7 +26,6 @@ export const getAllClasses = async (
         course: courseQuery,
         grade: gradeQuery,
       },
-      cache: false,
     });
     return response.data.data;
   } catch (error) {
@@ -50,22 +49,26 @@ export const getAllChooseClasses = async (
 };
 
 export const getAllStudentClasses = async (
-  nameQuery: string,
-  courseQuery: string,
-  gradeQuery: string,
   currentPage: number,
   limit: number,
+  name?: string,
+  courseId?: string,
+  gradeId?: string,
 ): Promise<UserClassData> => {
-  const response = await axiosInstance.get("/class/list", {
-    params: {
-      page: currentPage,
-      limit: limit,
-      name: nameQuery,
-      course: courseQuery,
-      grade: gradeQuery,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get("/class/list", {
+      params: {
+        page: currentPage,
+        limit,
+        name,
+        courseId,
+        gradeId,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const createNewClass = async (data: CreateClassInputs) => {

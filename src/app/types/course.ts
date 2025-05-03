@@ -25,13 +25,14 @@ export type CourseDto = {
     id: string;
     genId: string;
     email: string;
+    avatar: string;
     name: string;
   };
 };
 
 export type CourseItem = {
   totalGrades: number;
-  courseDto: CourseDto;
+  detailedCourseDto: CourseDto;
 };
 
 export type CourseSchema = {

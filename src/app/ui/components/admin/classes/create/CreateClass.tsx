@@ -1,7 +1,6 @@
 "use client";
 import { createNewClass } from "@/app/lib/services/class";
 import { RootState } from "@/app/store/store";
-import { GradeItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import ClassDescription from "@/app/ui/components/admin/classes/create/ClassDescription";
 import CourseSelector from "@/app/ui/components/admin/classes/create/CourseSelector";
@@ -10,8 +9,9 @@ import DurationSelector from "@/app/ui/components/admin/classes/create/DurationS
 import GradeSelector from "@/app/ui/components/admin/classes/create/GradeSelector";
 import NameSelector from "@/app/ui/components/admin/classes/create/NameSelector";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -67,7 +67,7 @@ const CreateClassSchema = z.object({
 
 export type CreateClassInputs = z.infer<typeof CreateClassSchema>;
 
-export default function CreateClass({ grades }: { grades: GradeItem[] }) {
+export default function CreateClass() {
   const { selectedBranchId } = useSelector((state: RootState) => state.branch);
   const methods = useForm<CreateClassInputs>({
     resolver: zodResolver(CreateClassSchema),
@@ -80,33 +80,63 @@ export default function CreateClass({ grades }: { grades: GradeItem[] }) {
     },
   });
   const router = useRouter();
-
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const onSubmit = async (data: CreateClassInputs) => {
-    try {
-      setLoading(true);
-      const response = await createNewClass(data);
-      console.log(response);
-      if (response.status === 200) {
-        toast.success("Tạo lớp học thành công ! Đang chuyển hướng...", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
-        router.push("/admin/classes");
-      }
-    } catch (error) {
-      console.log(error);
+  const queryClient = useQueryClient();
+  const useCreateClassMutation = useMutation({
+    mutationFn: (classData: CreateClassInputs) => createNewClass(classData),
+    onError: (error) => {
+      console.log(error.message);
       toast.error("Tạo lớp học thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } finally {
-      setLoading(false);
-    }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      toast.success("Tạo lớp học thành công", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      router.push("/admin/classes");
+    },
+  });
+
+  const onSubmit = (data: CreateClassInputs) => {
+    console.log(data);
+    useCreateClassMutation.mutate(data);
   };
+
+  useEffect(() => {
+    console.log(methods.formState.errors);
+  }, [methods]);
+
+  // const [loading, setLoading] = useState<boolean>(false);
+
+  // const onSubmit = async (data: CreateClassInputs) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await createNewClass(data);
+  //     console.log(response);
+  //     if (response.status === 200) {
+  //       toast.success("Tạo lớp học thành công ! Đang chuyển hướng...", {
+  //         position: "bottom-right",
+  //         autoClose: 3000,
+  //         pauseOnHover: false,
+  //       });
+  //       router.push("/admin/classes");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Tạo lớp học thất bại", {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   return (
     <div>
       <h1 className="font-bold text-center mb-5">TẠO LỚP HỌC MỚI</h1>
@@ -116,7 +146,7 @@ export default function CreateClass({ grades }: { grades: GradeItem[] }) {
           onSubmit={methods.handleSubmit(onSubmit)}
         >
           <NameSelector />
-          <GradeSelector grades={grades} />
+          <GradeSelector />
           <CourseSelector />
           {/* <SessionSelector /> */}
           <DurationSelector />
@@ -126,7 +156,11 @@ export default function CreateClass({ grades }: { grades: GradeItem[] }) {
           )} */}
           <DayRoomSessionSelector />
           <ClassDescription />
-          <Button isPending={loading} type="submit" className="w-full">
+          <Button
+            isPending={useCreateClassMutation.status === "pending"}
+            type="submit"
+            className="w-full"
+          >
             Tạo lớp học mới
           </Button>
         </form>

@@ -9,12 +9,12 @@ import {
 } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
 import { MdCreditCard } from "react-icons/md";
-import { TuitionPayment } from "@/app/types";
+import { PaymentItem } from "@/app/types";
 
 interface PaymentDetailsModalProps {
-  payment: TuitionPayment;
+  payment: PaymentItem;
   onClose: () => void;
-  onPayNow: (payment: TuitionPayment) => void;
+  onPayNow: (payment: PaymentItem) => void;
 }
 
 const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
@@ -22,7 +22,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
   onClose,
   onPayNow,
 }) => {
-  // Formatear la moneda (VND)
+  // Format currency (VND)
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -30,13 +30,13 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
     }).format(amount);
   };
 
-  // Formatear la fecha
+  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("vi-VN").format(date);
   };
 
-  // Manejar la tecla ESC para cerrar el modal
+  // Handle ESC key to close modal
   const handleEscKeyPress = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -46,20 +46,20 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
     [onClose],
   );
 
-  // Agregar listener para la tecla ESC
+  // Add listener for ESC key
   useEffect(() => {
     document.addEventListener("keydown", handleEscKeyPress);
 
-    // Limpiar el listener
+    // Clean up listener on component unmount
     return () => {
       document.removeEventListener("keydown", handleEscKeyPress);
     };
   }, [handleEscKeyPress]);
 
-  // Obtener el color según el estado del pago
+  // Get color based on payment status
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PAID":
+      case "COMPLETED":
         return "text-green-600 bg-green-100";
       case "PENDING":
         return "text-yellow-600 bg-yellow-100";
@@ -72,10 +72,10 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
     }
   };
 
-  // Traducir el estado de pago al vietnamita
+  // Translate payment status to Vietnamese
   const getStatusName = (status: string) => {
     switch (status) {
-      case "PAID":
+      case "COMPLETED":
         return "Đã thanh toán";
       case "PENDING":
         return "Chờ thanh toán";
@@ -101,13 +101,15 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
           <div className="border-b pb-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-gray-500">Mã hóa đơn</span>
-              <span className="font-medium">{payment.invoiceNumber}</span>
+              <span className="font-medium">{payment.invoiceId}</span>
             </div>
 
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-gray-500">Trạng thái</span>
               <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                  payment.status,
+                )}`}
               >
                 {getStatusName(payment.status)}
               </span>
@@ -116,7 +118,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-gray-500">Số tiền</span>
               <span className="text-xl font-bold text-primary-darker">
-                {formatCurrency(payment.amount)}
+                {formatCurrency(payment.paymentPeriodDto.amount)}
               </span>
             </div>
           </div>
@@ -131,7 +133,9 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Học sinh</p>
-                  <p className="font-medium">{payment.studentName}</p>
+                  <p className="font-medium">
+                    {payment.paymentPeriodDto.student.name}
+                  </p>
                 </div>
               </div>
 
@@ -141,7 +145,9 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Lớp học</p>
-                  <p className="font-medium">{payment.className}</p>
+                  <p className="font-medium">
+                    {payment.paymentPeriodDto.enrolledClass.name}
+                  </p>
                 </div>
               </div>
 
@@ -151,7 +157,10 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Kỳ học</p>
-                  <p className="font-medium">{payment.semester}</p>
+                  <p className="font-medium">
+                    {payment.paymentPeriodDto.startDate} -{" "}
+                    {payment.paymentPeriodDto.endDate}
+                  </p>
                 </div>
               </div>
 
@@ -161,19 +170,19 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">
-                    {payment.status === "PAID"
+                    {payment.status === "COMPLETED"
                       ? "Ngày thanh toán"
                       : "Hạn thanh toán"}
                   </p>
                   <p className="font-medium">
-                    {payment.status === "PAID" && payment.paidDate
-                      ? formatDate(payment.paidDate)
-                      : formatDate(payment.dueDate)}
+                    {payment.status === "COMPLETED" && payment.paymentDate
+                      ? formatDate(payment.paymentDate)
+                      : formatDate(payment.paymentPeriodDto.endDate)}
                   </p>
                 </div>
               </div>
 
-              {payment.status === "PAID" && (
+              {payment.status === "COMPLETED" && (
                 <div className="flex items-start md:col-span-2">
                   <div className="min-w-[30px] mr-4 mt-1">
                     <FaCheckCircle className="text-green-500" />
@@ -181,18 +190,18 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                   <div>
                     <p className="text-sm text-gray-500">Đã thanh toán vào</p>
                     <p className="font-medium">
-                      {payment.paidDate && formatDate(payment.paidDate)}
+                      {payment.paymentDate && formatDate(payment.paymentDate)}
                     </p>
                   </div>
                 </div>
               )}
             </div>
           </div>
-
+          {/* 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-md font-semibold mb-2">Mô tả</h3>
             <p className="text-gray-700">{payment.description}</p>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer / Actions */}

@@ -13,7 +13,6 @@ import {
   getRegister,
   rejectRegister,
 } from "@/app/lib/services/register";
-import { RegisterItem } from "@/app/types";
 import { FaCheck } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import { Button } from "../../_common/Button";
@@ -22,140 +21,125 @@ import { toast } from "react-toastify";
 import Tooltip from "../../_common/Tooltip";
 import SearchField from "../../_common/text-field/SearchField";
 import { useSearchParams } from "next/navigation";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 const MemoizedPagination = memo(Pagination);
 
 export default function StudentRegister() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [registerStudents, setRegisterStudents] = useState<RegisterItem[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [registerStudents, setRegisterStudents] = useState<RegisterItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  // const [totalPages, setTotalPages] = useState<number>(0);
   const [multiSelect, setMultiSelect] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<boolean>(false);
+  // const [trigger, setTrigger] = useState<boolean>(false);
   const searchParams = useSearchParams();
+  const [studentRoleId, setStudentRoleId] = useState<string>("");
 
+  const { data: registerStudents, status: registerStudentsStatus } = useQuery({
+    queryKey: [
+      "RegisterStudents",
+      currentPage - 1,
+      searchParams.get("AccountName") ?? "",
+    ],
+    queryFn: () =>
+      getRegister(
+        "STUDENT",
+        5,
+        currentPage - 1,
+        searchParams.get("AccountName") ?? "",
+      ),
+    placeholderData: keepPreviousData,
+  });
+
+  const { data: studentRoleIds } = useQuery({
+    queryKey: ["StudentRoleId"],
+    queryFn: () => getAllRolesByDefault("STUDENT"),
+  });
+  useEffect(() => {
+    setStudentRoleId(studentRoleIds?.at(0)?.id || "");
+  }, [studentRoleIds]);
   const nextPage = useCallback(() => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   }, [currentPage]);
   const prevPage = useCallback(() => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  }, [currentPage, totalPages]);
+    if (
+      registerStudents?.totalPages &&
+      currentPage < registerStudents.totalPages
+    )
+      setCurrentPage(currentPage + 1);
+  }, [currentPage, registerStudents]);
   const pageClick = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
+
   const handleSelection = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
   const handleApprove = async (userId?: string) => {
-    try {
-      setLoading(true);
-      const roleId = (await getAllRolesByDefault("STUDENT")).at(0)?.id;
-      if (!roleId) {
-        throw new Error("Không tìm thấy role id");
-      }
-      const response = await confirmRegister(
-        userId ? [userId] : selectedIds,
-        roleId,
-        "STUDENT",
-        currentPage,
-      );
-      setTrigger((prev) => !prev);
-      if (response.statusCode === "OK") {
-        toast.success("Duyệt tài khoản thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
-      } else {
-        toast.error("Duyệt tài khoản thất bại", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Duyệt tài khoản thất bại", {
+    useApproveMutation.mutate(userId);
+  };
+  const queryClient = useQueryClient();
+  const useApproveMutation = useMutation({
+    mutationFn: (userId?: string) =>
+      confirmRegister(userId ? [userId] : selectedIds, studentRoleId),
+    onError: (error) => {
+      console.log(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
+      toast.success("Duyệt tài khoản thành công", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
   const handleReject = async (userId?: string) => {
-    try {
-      setLoading(true);
-      const response = await rejectRegister(
-        userId ? [userId] : selectedIds,
-        "STUDENT",
-        currentPage,
-      );
-      setTrigger((prev) => !prev);
-      if (response.statusCode === "OK") {
-        toast.success("Từ chối tài khoản thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
-      } else {
-        toast.error("Từ chối tài khoản thất bại", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
-      }
-    } catch (error) {
-      console.log(error);
+    useRejectMutation.mutate(userId);
+  };
+  const useRejectMutation = useMutation({
+    mutationFn: (userId?: string) =>
+      rejectRegister(userId ? [userId] : selectedIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
+      toast.success("Từ chối tài khoản thành công", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+    },
+    onError: () => {
       toast.error("Từ chối tài khoản thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } finally {
-      setLoading(false);
-    }
-  };
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await getRegister(
-        "STUDENT",
-        5,
-        currentPage - 1,
-        searchParams.get("AccountName") ?? "",
-      );
-      setRegisterStudents(response.content);
-      setTotalPages(response.totalPages);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, searchParams]);
+    },
+  });
 
   useEffect(() => {
-    if (selectAll) {
-      setSelectedIds(registerStudents.map((item) => item.id));
+    if (selectAll && registerStudents) {
+      setSelectedIds(registerStudents?.content.map((item) => item.id));
     } else {
       setSelectedIds([]);
     }
   }, [selectAll, registerStudents]);
-  useEffect(() => {
-    fetchData();
-  }, [trigger, fetchData, searchParams]);
 
   return (
     <div>
       <div className="flex justify-between mb-3">
         <div className="flex gap-3 w-1/3">
           <SearchField queryKey="AccountName" placeholder="Tìm tài khoản..." />
-          {registerStudents.length !== 0 && (
+          {registerStudents?.content.length !== 0 && (
             <Button
               className="text-sm text-nowrap"
               onClick={() => setMultiSelect((prev) => !prev)}
@@ -164,7 +148,7 @@ export default function StudentRegister() {
             </Button>
           )}
         </div>
-        {registerStudents.length !== 0 && (
+        {registerStudents?.content.length !== 0 && (
           <div className="flex gap-3 text-sm">
             <Button
               className={`transition-all ${multiSelect ? "opacity-100" : "opacity-0"}`}
@@ -193,8 +177,8 @@ export default function StudentRegister() {
             "Hành động",
           ]}
         />
-        <TableBody isLoading={loading}>
-          {registerStudents.map((student) => (
+        <TableBody isLoading={registerStudentsStatus === "pending"}>
+          {registerStudents?.content.map((student) => (
             <TableRow key={student.id}>
               <TableCell>{student.name}</TableCell>
               <TableCell>{student.email}</TableCell>
@@ -244,7 +228,7 @@ export default function StudentRegister() {
       </Table>
       <MemoizedPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={registerStudents?.totalPages ?? 1}
         handlePageClick={pageClick}
         handlePreviousPage={prevPage}
         handleNextPage={nextPage}

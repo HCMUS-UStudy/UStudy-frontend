@@ -191,7 +191,7 @@ export default function StudentTuition() {
         </TabPanel>
       </Tabs>
 
-      {/* Modales */}
+      {/* Modales
       {selectedPayment && !showPaymentMethod && (
         <PaymentDetailsModal
           payment={selectedPayment}
@@ -206,7 +206,7 @@ export default function StudentTuition() {
           onClose={handleClosePaymentMethod}
           onPaymentComplete={handlePaymentComplete}
         />
-      )}
+      )} */}
     </div>
   );
 }

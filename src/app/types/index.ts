@@ -24,3 +24,5 @@ export * from "./tutition";
 export * from "./personal-material";
 export * from "./register";
 export * from "./class-material";
+export * from "./childClasses";
+export * from "./payment";

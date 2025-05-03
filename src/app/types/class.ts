@@ -92,6 +92,7 @@ export type ClassUserItem = {
 export type UserClassData = {
   content: ClassUserItem[];
   totalPages: number;
+  totalElements: number;
 };
 
 export type ClassScheduleItem = {

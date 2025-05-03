@@ -5,6 +5,20 @@ interface TooltipProps {
   children: React.ReactNode;
 }
 
+/**
+ * Tooltip component that displays a text label when the user hovers over the wrapped element.
+ * @param {string} props.text - The text content to display inside the tooltip.
+ * @param {'top' | 'bottom' | 'left' | 'right'} [props.position='top'] - The position of the tooltip relative to the child element.
+ * @param {React.ReactNode} props.children  - The child element that the tooltip is attached to.
+ * @returns {JSX.Element} A tooltip-wrapped React element.
+ * @example
+ * ```tsx
+ * <Tooltip text="Edit item" position="right">
+ *   <button>Edit</button>
+ * </Tooltip>
+ * ```
+ */
+
 const Tooltip: React.FC<TooltipProps> = ({
   text,
   position = "top",
