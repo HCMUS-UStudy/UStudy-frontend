@@ -7,6 +7,17 @@ export type DaysInWeek =
   | "SATURDAY"
   | "SUNDAY";
 
+export type SessionResponse = {
+  message: string;
+  statusCode: string;
+  data: Session | null;
+};
+
+export type SessionData = {
+  content: Session[];
+  totalPages: number;
+};
+
 export type Session = {
   id: string;
   name: string;

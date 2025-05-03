@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { Branch, BranchData, Session } from "@/app/types";
+import { Branch, BranchData } from "@/app/types";
 import { CreateBranchInputs } from "@/app/ui/components/admin/branches/AddBranchModal";
 
 type BranchUpdate = {
@@ -9,23 +9,17 @@ type BranchUpdate = {
   contactNumber: string;
 };
 
-type BranchRequest = {
-  name: string;
-  address: string;
-  contactNumber: string;
-  rooms: string;
-  sessions: Session[];
-};
-
 export const getAllBranches = async (
   page: number,
   limit: number,
+  filter?: string,
 ): Promise<BranchData> => {
   try {
     const response = await axiosInstance.get("/branch/list", {
       params: {
         page: page,
         limit: limit,
+        filter,
       },
     });
     return response.data.data;
