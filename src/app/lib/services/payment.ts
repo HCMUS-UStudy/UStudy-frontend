@@ -5,10 +5,6 @@ export type PaymentMethod = "VNPAY" | "MOMO";
 
 export interface PaymentRequest {
   paymentId: string;
-  amount: number;
-  description: string;
-  redirectUrl: string;
-  paymentMethod: PaymentMethod;
 }
 
 export interface PaymentResponse {
@@ -25,20 +21,19 @@ export const createVnPayPayment = async (
   data: PaymentRequest,
 ): Promise<PaymentResponse> => {
   try {
-    // In a real implementation, this would call your backend
-    // For now, we're simulating the API response
-
-    // Simulate API call
-    // const response = await axios.post('/api/payments/vnpay', data);
-    // return response.data;
-
-    // Simulate successful response for demo
-    return {
-      success: true,
-      message: "Payment URL generated successfully",
-      paymentUrl: `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?amount=${data.amount}&description=${encodeURIComponent(data.description)}&vnp_TxnRef=${Date.now()}_${data.paymentId}`,
-      transactionId: `VNP_${Date.now()}`,
-    };
+    const response = await axiosInstance.post("/payment/create-vnpay", data);
+    if (response.data.success) {
+      return {
+        success: true,
+        message: "Payment request created successfully",
+        paymentUrl: response.data.paymentUrl,
+      };
+    } else {
+      return {
+        success: false,
+        message: response.data.message || "Failed to create payment request",
+      };
+    }
   } catch (error) {
     console.error("Error creating VNPay payment:", error);
     return {
@@ -93,7 +88,7 @@ export const getPaymentByStuId = async (
   }
 };
 
-export const createNewGrade = async (paymentId: string) => {
+export const submitOrderPayment = async (paymentId: string) => {
   const response = await axiosInstance.post(
     `/payment/submit-order/${paymentId}`,
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import PaymentDetailsModal from "@/app/ui/components/user/parent/tuition/PaymentDetailsModal";
@@ -11,6 +11,7 @@ import PaidPaymentsTable from "@/app/ui/components/user/parent/tuition/PaidPayme
 import AllPaymentTable from "@/app/ui/components/user/parent/tuition/AllPaymentTable";
 import { PaymentItem } from "@/app/types";
 import { getPaymentByStuId } from "@/app/lib/services/payment";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ParentTuition() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,47 +22,26 @@ export default function ParentTuition() {
   );
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
-  const [pendingPayments, setPendingPayments] = useState<PaymentItem[]>([]);
-  const [completedPayments, setCompletedPayments] = useState<PaymentItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
+  const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
 
-  const fetchPayments = async () => {
-    setIsLoading(true);
-    try {
-      const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
-      const payments = await getPaymentByStuId(
+  const { data: paymentData, error } = useQuery({
+    queryKey: ["payments", activeTab, currentPage],
+    queryFn: () =>
+      getPaymentByStuId(
         "6619a4e4-b268-4b86-9b5f-929cbb69c871",
-        0,
-        10,
-        "",
-      );
+        currentPage - 1,
+        1,
+        statusParam,
+      ),
+    placeholderData: (prev) => prev,
+  });
 
-      console.log(payments);
+  const payments = paymentData?.content || [];
 
-      if (statusParam === "PENDING" || statusParam === "OVERDUE") {
-        setPendingPayments(payments.content);
-      } else if (statusParam === "COMPLETED") {
-        setCompletedPayments(payments.content);
-      } else {
-        // Nếu là "all", gán tất cả
-        setPendingPayments(
-          payments.content.filter((p) => p.status !== "COMPLETED"),
-        );
-        setCompletedPayments(
-          payments.content.filter((p) => p.status === "COMPLETED"),
-        );
-      }
-    } catch (error) {
-      console.error("Lỗi khi tải dữ liệu học phí:", error);
-    } finally {
-      console.log(isLoading);
-      setIsLoading(false);
-    }
-  };
+  const pendingPayments = payments.filter((p) => p.status !== "COMPLETED");
+  const completedPayments = payments.filter((p) => p.status === "COMPLETED");
+  const filteredAllPayments = [...pendingPayments, ...completedPayments];
 
   // Formatear la moneda (VND)
   const formatCurrency = (amount: number) => {
@@ -117,16 +97,17 @@ export default function ParentTuition() {
     setShowPaymentMethod(true);
   };
 
-  // Todas las facturas filtradas
-  const filteredAllPayments = [...pendingPayments, ...completedPayments];
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <div className="px-2">
-      {/* <Header
+      <Header
         pendingPayments={pendingPayments}
         paidPayments={completedPayments}
         formatCurrency={formatCurrency}
-      /> */}
+      />
 
       {/* Tabs para ver diferentes tipos de pagos */}
       <Tabs value={activeTab} onTabChange={setActiveTab}>
@@ -151,9 +132,6 @@ export default function ParentTuition() {
         <TabPanel value="completed">
           <PaidPaymentsTable
             data={completedPayments}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
             onViewDetails={handleViewDetails}
             formatCurrency={formatCurrency}
             formatDate={formatDate}
@@ -162,7 +140,6 @@ export default function ParentTuition() {
           />
         </TabPanel>
 
-        {/* Pestaña "Todos" */}
         <TabPanel value="all">
           <AllPaymentTable
             payments={filteredAllPayments}
@@ -173,21 +150,21 @@ export default function ParentTuition() {
             getStatusName={getStatusName}
             getStatusColor={getStatusColor}
           />
-
-          <div className="mt-4 flex justify-end">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              handlePageClick={(page) => setCurrentPage(page)}
-              handlePreviousPage={() =>
-                setCurrentPage((prev) => Math.max(prev - 1, 1))
-              }
-              handleNextPage={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-            />
-          </div>
         </TabPanel>
+
+        <div className="mt-4 flex justify-end">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={paymentData?.totalPages || 2}
+            handlePageClick={(page) => setCurrentPage(page)}
+            handlePreviousPage={() =>
+              setCurrentPage((prev) => Math.max(prev - 1, 1))
+            }
+            handleNextPage={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+          />
+        </div>
       </Tabs>
 
       {showPaymentDetails && selectedPayment && (
@@ -207,7 +184,6 @@ export default function ParentTuition() {
           onClose={() => setShowPaymentMethod(false)}
           onPaymentComplete={() => {
             setShowPaymentMethod(false);
-            // Aquí se actualizarían los datos después del pago
           }}
         />
       )}

@@ -9,14 +9,10 @@ import {
 } from "../../../_common/Table";
 import { Button } from "../../../_common/Button";
 import { FaUser, FaEye, FaDownload } from "react-icons/fa";
-import Pagination from "../../../_common/Pagination";
 import { PaymentItem } from "@/app/types";
 
 interface PaidPaymentsTableProps {
   data: PaymentItem[];
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
   onViewDetails: (payment: PaymentItem) => void;
   formatCurrency: (amount: number) => string;
   formatDate: (date: string | Date) => string;
@@ -26,9 +22,6 @@ interface PaidPaymentsTableProps {
 
 const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
   data,
-  currentPage,
-  totalPages,
-  onPageChange,
   onViewDetails,
   formatCurrency,
   formatDate,
@@ -113,18 +106,6 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
           </p>
         </div>
       )}
-
-      <div className="mt-4 flex justify-end">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageClick={(page) => onPageChange(page)}
-          handlePreviousPage={() => onPageChange(Math.max(currentPage - 1, 1))}
-          handleNextPage={() =>
-            onPageChange(Math.min(currentPage + 1, totalPages))
-          }
-        />
-      </div>
     </>
   );
 };

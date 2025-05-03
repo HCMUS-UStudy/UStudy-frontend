@@ -1,4 +1,5 @@
 export type PaymentItem = {
+  id: string;
   paymentPeriodDto: {
     id: string;
     enrolledClass: {

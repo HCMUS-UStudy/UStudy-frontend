@@ -4,10 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
 import { FaCheck, FaWallet } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
-import {
-  createVnPayPayment,
-  PaymentMethod as APIPaymentMethod,
-} from "@/app/lib/services/payment";
+import { submitOrderPayment } from "@/app/lib/services/payment";
 import { toast } from "react-toastify";
 import { PaymentItem } from "@/app/types";
 
@@ -81,18 +78,10 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
     try {
       if (selectedMethod === "vnpay") {
         // Call VNPay service
-        const response = await createVnPayPayment({
-          paymentId: payment.paymentPeriodDto.id,
-          amount: payment.paymentPeriodDto.amount,
-          description: `Thanh toán hóa đơn ${payment.invoiceId} - ${payment.paymentPeriodDto.enrolledClass.name}`,
-          redirectUrl: `${window.location.origin}/parent/tuition/payment-callback`,
-          paymentMethod: "VNPAY" as APIPaymentMethod,
-        });
+        const response = await submitOrderPayment(payment.id);
 
-        if (response.success && response.paymentUrl) {
-          // Redirect to VNPay payment portal
-          window.location.href = response.paymentUrl;
-          return;
+        if (response?.data) {
+          window.location.href = response.data;
         } else {
           toast.error(
             response.message || "Không thể kết nối tới cổng thanh toán VNPay",
