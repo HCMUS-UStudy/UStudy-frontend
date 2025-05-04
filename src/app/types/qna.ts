@@ -1,52 +1,27 @@
 export type QnA = {
   id: string;
-  title: string;
-  duration: number; //phút
-  aclass: {
+  description: string;
+  fileName?: string;
+  grade: {
     id: string;
     name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    grade: {
-      id: string;
-      name: string;
-    };
-    course: {
-      id: string;
-      name: string;
-      createdBy: {
-        id: string;
-        genId: string;
-        email: string;
-        name: string;
-      };
-    };
   };
-  startTime: string;
-  endTime: string;
-  questions: {
+  course: {
+    id: string;
+    name: string;
+  };
+  questionType: "MULTIPLE_CHOICE" | "MIXED" | "ESSAY";
+  createdAt: string;
+  options: {
     id: string;
     description: string;
-    grade: {
-      id: string;
-      name: string;
-    };
-    course: {
-      id: string;
-      name: string;
-      createdBy: {
-        id: string;
-        genId: string;
-        email: string;
-        name: string;
-      };
-    };
-    questionType: "MULTIPLE_CHOICE" | "SHORT_ANSWER" | "ESSAY"; // Có thể mở rộng loại câu hỏi
-    options?: {
-      id: string;
-      description: string;
-    }[];
-    createdAt: string;
+    isCorrect: boolean;
   }[];
+  files?: File[];
+};
+
+export type QnAData = {
+  content: QnA[];
+  totalPages: number;
+  totalElements: number;
 };
