@@ -13,23 +13,77 @@ export interface UpdateSubmissionSchema {
 
 export type SubmissionItem = {
   id: string;
-  submissionDate: string;
-  content: string;
-  files: {
+  student: {
     id: string;
-    fileName: string;
-    filePath: string;
-  }[];
+    genId: string;
+    email: string;
+    name: string;
+    gender: GenderType;
+  };
+  submissionDate: string;
   score: number;
   feedback: string;
   gradedBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
     gender: GenderType;
-    createdAt: string;
-    status: "ACTIVE" | "INACTIVE";
-    role: {
-      id: string;
-      name: string;
-      defaultRoute: "ADMIN" | "USER" | "TEACHER";
+  } | null;
+};
+
+export type SubmissionData = {
+  content: SubmissionItem[];
+  totalPages: number;
+  totalElements: number;
+};
+
+export type SubmitSumission = {
+  duration: number;
+  answers: {
+    questionId: string;
+    content: string;
+    files: File[];
+    optionId: string;
+  }[];
+};
+
+export type SubmissionDetail = {
+  assignmentId: string;
+  title: string;
+  score: number;
+  feedback: string;
+  questions: {
+    questionId: string;
+    questionType: "MULTIPLE_CHOICE" | "ESSAY";
+    description: string;
+    fileName: string | null;
+    score: number;
+
+    // MULTIPLE_CHOICE fields
+    isCorrect?: boolean;
+    selectedOption?: {
+      optionId: string;
+      description: string;
+      isCorrect: boolean;
     };
-  } | null; // Nếu bài chưa được chấm có thể không có `gradedBy`
+    correctOption?: {
+      optionId: string;
+      description: string;
+      isCorrect: boolean;
+    };
+    allOptions?: {
+      optionId: string;
+      description: string;
+      isCorrect: boolean;
+    }[];
+
+    // ESSAY fields
+    content?: string;
+    files?: {
+      id: string;
+      fileName: string;
+      filePath: string;
+    }[];
+  }[];
 };

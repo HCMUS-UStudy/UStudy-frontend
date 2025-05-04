@@ -4,6 +4,8 @@ export type AssignmentItem = {
   id: string;
   title: string;
   duration: number;
+  format: "MULTIPLE_CHOICE" | "MIXED" | "ESSAY";
+  numAttempts: number;
   startTime: string;
   endTime: string;
   createdBy: {
@@ -11,6 +13,7 @@ export type AssignmentItem = {
     genId: string;
     email: string;
     name: string;
+    avatar: string;
     gender: GenderType;
   };
   completed: boolean;

@@ -51,11 +51,19 @@ const ChatInput: React.FC<ChatInputProps> = ({
   // };
 
   useEffect(() => {
-    setMessage((prev) => ({ ...prev, [currentQuestionId]: initialMessage }));
-    setAttachments((prev) => ({
-      ...prev,
-      [currentQuestionId]: initialAttachments,
-    }));
+    setMessage((prev) => {
+      if (prev[currentQuestionId] === undefined) {
+        return { ...prev, [currentQuestionId]: initialMessage };
+      }
+      return prev;
+    });
+
+    setAttachments((prev) => {
+      if (prev[currentQuestionId] === undefined) {
+        return { ...prev, [currentQuestionId]: initialAttachments };
+      }
+      return prev;
+    });
   }, [initialMessage, initialAttachments, currentQuestionId]);
 
   useEffect(() => {
