@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 import { FaThLarge } from "react-icons/fa";
 import { FaList, FaSort } from "react-icons/fa6";
 
-export default function ClassExercise() {
+export default function ClassAssignment() {
   const { classId } = useParams<{ classId: string }>();
   const router = useRouter();
   const randomImages = [
@@ -42,9 +42,16 @@ export default function ClassExercise() {
   const [selectedAssignment, setSelectedAssignment] =
     useState<AssignmentItem | null>(null);
 
-  const handleStartExercise = (exerciseId: string) => {
-    router.push(`/member/classes/${classId}/exercise/${exerciseId}`);
+  const handleStartExercise = (
+    assignmentId: string,
+    duration: number,
+    format: "MULTIPLE_CHOICE" | "MIXED" | "ESSAY",
+  ) => {
+    router.push(
+      `/member/classes/${classId}/assignment/${assignmentId}?duration=${duration}&format=${format}`,
+    );
   };
+
   const handleOpenModal = (assignment: AssignmentItem) => {
     setSelectedAssignment(assignment); // Set the selected assignment
     setIsModalOpen(true); // Open the modal
@@ -230,52 +237,55 @@ export default function ClassExercise() {
                       {submissions.length} / {selectedAssignment.numAttempts}
                     </span>
                   </div>
-                  <Table className="w-full text-sm text-center">
-                    <TableHeader
-                      columns={["Lần thử", "Trạng thái", "Điểm", "Hành động"]}
-                    />
-                    <TableBody>
-                      {submissions.map((submission, index) => (
-                        <TableRow
-                          key={submission.id}
-                          className={
-                            index % 2 === 1 ? "bg-primary-lighter" : ""
-                          }
-                        >
-                          <TableCell className="font-semibold">
-                            {index + 1}
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              {submission.gradedBy
-                                ? "Đã hoàn thành"
-                                : "Chưa chấm điểm"}
-                            </div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              Nộp lúc{" "}
-                              {new Date(
-                                submission.submissionDate,
-                              ).toLocaleString()}
-                            </div>
-                          </TableCell>
-                          <TableCell
+
+                  <div className="max-h-[240px] overflow-y-auto border rounded-md shadow-inner">
+                    <Table className="w-full text-sm text-center">
+                      <TableHeader
+                        columns={["Lần thử", "Trạng thái", "Điểm", "Hành động"]}
+                      />
+                      <TableBody>
+                        {submissions.map((submission, index) => (
+                          <TableRow
+                            key={submission.id}
                             className={
-                              submission.score >= 90
-                                ? "font-semibold text-primary-darkest"
-                                : ""
+                              index % 2 === 1 ? "bg-primary-lighter" : ""
                             }
                           >
-                            {submission.score}
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-primary-darker hover:underline cursor-pointer">
-                              Xem lại
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                            <TableCell className="font-semibold">
+                              {index + 1}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                {submission.gradedBy
+                                  ? "Đã hoàn thành"
+                                  : "Chưa chấm điểm"}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1">
+                                Nộp lúc{" "}
+                                {new Date(
+                                  submission.submissionDate,
+                                ).toLocaleString()}
+                              </div>
+                            </TableCell>
+                            <TableCell
+                              className={
+                                submission.score >= 90
+                                  ? "font-semibold text-primary-darkest"
+                                  : ""
+                              }
+                            >
+                              {submission.score}
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-primary-darker hover:underline cursor-pointer">
+                                Xem lại
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </section>
 
                 {/* Điểm cuối cùng */}
@@ -302,7 +312,13 @@ export default function ClassExercise() {
                   {/* Nút làm lại hoặc bắt đầu nếu chưa nộp bài */}
                   {submissions.length === 0 ? (
                     <button
-                      onClick={() => handleStartExercise(selectedAssignment.id)}
+                      onClick={() =>
+                        handleStartExercise(
+                          selectedAssignment.id,
+                          selectedAssignment.duration,
+                          selectedAssignment.format,
+                        )
+                      }
                       className="bg-primary-darker hover:bg-primary-darkest transition-colors text-white font-semibold px-8 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-primary-darkest transform hover:scale-105"
                     >
                       Bắt đầu
@@ -311,7 +327,11 @@ export default function ClassExercise() {
                     submissions.length < selectedAssignment.numAttempts && (
                       <button
                         onClick={() =>
-                          handleStartExercise(selectedAssignment.id)
+                          handleStartExercise(
+                            selectedAssignment.id,
+                            selectedAssignment.duration,
+                            selectedAssignment.format,
+                          )
                         }
                         className="bg-primary-darker hover:bg-primary-darkest transition-colors text-white font-semibold px-8 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-primary-darkest transform hover:scale-105"
                       >

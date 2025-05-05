@@ -8,37 +8,34 @@ import {
 } from "react-icons/bs";
 import { FaRegCommentDots } from "react-icons/fa";
 import { Card } from "../../../_common/Card";
-import { useEffect, useState } from "react";
 import { ChildClass } from "@/app/types";
 import { getListChildClasses } from "@/app/lib/services/childClasses";
+import { useQuery } from "@tanstack/react-query";
+import CompletedSkeleton from "./CompletedSkeleton ";
 
 export default function CompletedClass() {
-  const [classes, setClasses] = useState<ChildClass[]>([]);
+  const {
+    data: classes = [],
+    isLoading,
+    error,
+  } = useQuery<ChildClass[]>({
+    queryKey: ["endedChildClasses", "6619a4e4-b268-4b86-9b5f-929cbb69c871"],
+    queryFn: async () => {
+      const data = await getListChildClasses(
+        "6619a4e4-b268-4b86-9b5f-929cbb69c871",
+        0,
+        10,
+        "",
+      );
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const data = await getListChildClasses(
-          "6619a4e4-b268-4b86-9b5f-929cbb69c871",
-          0,
-          10,
-          "",
-        );
-
-        const now = new Date();
-        const filteredClasses = data.content.filter((classItem: ChildClass) => {
-          const endDate = new Date(classItem.endDate);
-          return endDate < now;
-        });
-
-        setClasses(filteredClasses);
-      } catch (error) {
-        console.error("Error fetching classes", error);
-      }
-    };
-
-    fetchClasses();
-  }, []);
+      const now = new Date(); // phải đặt trong queryFn
+      return data.content.filter((classItem: ChildClass) => {
+        const endDate = new Date(classItem.endDate);
+        return endDate < now;
+      });
+    },
+    placeholderData: (prev) => prev,
+  });
 
   const dayOfWeekMapping: Record<string, string> = {
     MONDAY: "Thứ Hai",
@@ -85,6 +82,11 @@ export default function CompletedClass() {
     const progress = (daysPassed / totalDays) * 100;
     return progress;
   }
+
+  if (isLoading) return <CompletedSkeleton />;
+
+  if (error) return <div>Lỗi: {(error as Error).message}</div>;
+
   return (
     <div className="grid grid-cols-1 gap-6">
       {classes.map((classItem) => (

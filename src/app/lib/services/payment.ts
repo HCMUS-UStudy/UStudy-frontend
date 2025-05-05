@@ -1,16 +1,10 @@
-export type PaymentMethod =
-  | "VNPAY"
-  | "BANK_TRANSFER"
-  | "CREDIT_CARD"
-  | "QR_CODE"
-  | "MOMO";
+import { PaymentData } from "@/app/types";
+import axiosInstance from "../axios";
+
+export type PaymentMethod = "VNPAY" | "MOMO";
 
 export interface PaymentRequest {
   paymentId: string;
-  amount: number;
-  description: string;
-  redirectUrl: string;
-  paymentMethod: PaymentMethod;
 }
 
 export interface PaymentResponse {
@@ -27,20 +21,19 @@ export const createVnPayPayment = async (
   data: PaymentRequest,
 ): Promise<PaymentResponse> => {
   try {
-    // In a real implementation, this would call your backend
-    // For now, we're simulating the API response
-
-    // Simulate API call
-    // const response = await axios.post('/api/payments/vnpay', data);
-    // return response.data;
-
-    // Simulate successful response for demo
-    return {
-      success: true,
-      message: "Payment URL generated successfully",
-      paymentUrl: `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?amount=${data.amount}&description=${encodeURIComponent(data.description)}&vnp_TxnRef=${Date.now()}_${data.paymentId}`,
-      transactionId: `VNP_${Date.now()}`,
-    };
+    const response = await axiosInstance.post("/payment/create-vnpay", data);
+    if (response.data.success) {
+      return {
+        success: true,
+        message: "Payment request created successfully",
+        paymentUrl: response.data.paymentUrl,
+      };
+    } else {
+      return {
+        success: false,
+        message: response.data.message || "Failed to create payment request",
+      };
+    }
   } catch (error) {
     console.error("Error creating VNPay payment:", error);
     return {
@@ -74,3 +67,30 @@ export const createVnPayPayment = async (
 //     };
 //   }
 // };
+
+export const getPaymentByStuId = async (
+  studentId: string,
+  currentPage: number,
+  limit: number,
+  status: string,
+): Promise<PaymentData> => {
+  try {
+    const response = await axiosInstance.get(`/payment/list/${studentId}`, {
+      params: {
+        page: currentPage,
+        limit: limit,
+        status: status,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const submitOrderPayment = async (paymentId: string) => {
+  const response = await axiosInstance.post(
+    `/payment/submit-order/${paymentId}`,
+  );
+  return response.data;
+};
