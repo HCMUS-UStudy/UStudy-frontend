@@ -28,7 +28,6 @@ export default function ClassesTable({
     data: fetchClasses,
     status,
     error,
-    isFetching,
   } = useQuery<ClassData>({
     queryKey: ["Classes", query, currentPage],
     queryFn: () => getAllClasses(query, currentPage - 1, 5),

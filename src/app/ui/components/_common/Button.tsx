@@ -60,12 +60,13 @@ const Button: React.FC<ButtonProps> = ({
         {
           "cursor-progress": isPending,
           "cursor-pointer": !isPending,
-          "relative group bg-primary hover:bg-hover-primary hover:drop-shadow-sm transition-all duration-200 text-black text-[15px] disabled:from-disabled-dark disabled:to-disabled-dark disabled:text-disabled-light":
+          "cursor-not-allowed": disabled,
+          "relative group bg-primary hover:bg-hover-primary hover:drop-shadow-sm transition-all duration-200 text-black text-[15px] disabled:bg-primary-dark":
             variant === "primary",
           // "flex items-center justify-center transition duration-200 ease-in-out text-gray-400 hover:text-gray-600":
-          "transition duration-200 ease-in-out text-black hover:drop-shadow-sm hover:bg-primary-light disabled:text-disabled-dark disabled:hover:bg-transparent":
+          "transition duration-200 border-[1.5px] border-primary-darker ease-in-out text-black hover:drop-shadow-sm hover:bg-primary-light disabled:text-disabled-dark disabled:hover:bg-transparent":
             variant === "basic",
-          "tracking-widest hover:shadow-lg border-[1.5px] border-primary-darker bg-transparent hover:bg-primary-darker/10 text hover:shadow-button-primary/20 transition-all duration-200 disabled:border-disabled-dark disabled:text-disabled-dark disabled:hover:bg-transparent disabled:hover:shadow-none":
+          "tracking-widest border-[1.5px] border-primary-darker bg-transparent hover:bg-primary text transition-all duration-200 disabled:border-disabled-dark disabled:text-disabled-dark disabled:hover:bg-transparent disabled:hover:shadow-none":
             variant === "outlined",
         },
         "flex items-center justify-center font-medium px-3 py-2 rounded-lg disabled:cursor-auto",

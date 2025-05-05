@@ -198,7 +198,7 @@ const Select: React.FC<SelectProps> = ({
             </Label>
           )}
           {isOpen ? (
-            <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-[300px]">
+            <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
               {children}
             </div>
           ) : null}

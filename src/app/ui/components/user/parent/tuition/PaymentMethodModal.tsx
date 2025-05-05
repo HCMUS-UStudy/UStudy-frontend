@@ -218,7 +218,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           <Button
             variant="primary"
             onClick={handlePay}
-            disabled={!selectedMethod || isLoading}
+            disabled
             className="px-4 min-w-[120px]"
             isPending={isLoading}
           >

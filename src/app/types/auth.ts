@@ -8,6 +8,7 @@ export type AuthResponse = {
     screens: string[];
     refresh_token: string;
     access_token: string;
+    children: string[] | null;
   };
 };
 
