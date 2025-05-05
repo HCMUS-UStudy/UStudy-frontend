@@ -69,7 +69,7 @@ export default function PendingPaymentsList({
               <Button
                 variant="outlined"
                 onClick={() => handleOpenDetails(payment)}
-                className="text-sm px-3 py-2 flex items-center gap-1 text-gray-600 hover:bg-gray-100 rounded-md transition"
+                className="text-sm px-3 py-2 flex items-center gap-1 "
               >
                 <HiOutlineDocumentText className="text-lg" />
                 <span>Chi tiết</span>
@@ -78,7 +78,7 @@ export default function PendingPaymentsList({
               <Button
                 variant="primary"
                 onClick={() => handlePayNow(payment)}
-                className="text-sm px-3 py-2 flex items-center gap-1 text-white bg-primary hover:bg-primary-dark rounded-md transition"
+                className="text-sm px-3 py-2 flex items-center gap-1"
               >
                 <MdPayment className="text-lg" />
                 <span>Thanh toán</span>

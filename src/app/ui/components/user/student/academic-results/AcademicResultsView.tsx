@@ -26,7 +26,6 @@ import DetailedScoresTable from "./DetailedScoresTable";
 import { Select, SelectItem } from "../../../_common/Select";
 import { useQuery } from "@tanstack/react-query";
 import { getAllClasses } from "@/app/lib/services/class";
-import { getAcademicResult } from "@/app/lib/services/academicResult";
 
 // Đăng ký các components cho Chart.js
 ChartJS.register(
@@ -42,87 +41,86 @@ ChartJS.register(
 );
 
 export default function AcademicResultsView() {
-  const [selectedSemester, setSelectedSemester] = useState("HK1");
-  const [selectedYear, setSelectedYear] = useState("2023-2024");
+  // const [selectedSemester, setSelectedSemester] = useState("HK1");
+  // const [selectedYear, setSelectedYear] = useState("2023-2024");
   const [activeTab, setActiveTab] = useState("charts");
 
-  // Chi tiết điểm số
-  const detailedScores = [
-    {
-      subject: "Toán học",
-      midterm: 8.0,
-      final: 9.0,
-      average: 8.5,
-      grade: "A",
-      teacher: "Nguyễn Văn A",
-    },
-    {
-      subject: "Ngữ văn",
-      midterm: 7.5,
-      final: 8.0,
-      average: 7.8,
-      grade: "B+",
-      teacher: "Trần Thị B",
-    },
-    {
-      subject: "Tiếng Anh",
-      midterm: 8.0,
-      final: 8.5,
-      average: 8.2,
-      grade: "A-",
-      teacher: "Lê Văn C",
-    },
-    {
-      subject: "Vật lý",
-      midterm: 7.0,
-      final: 8.0,
-      average: 7.5,
-      grade: "B",
-      teacher: "Phạm Thị D",
-    },
-    {
-      subject: "Hóa học",
-      midterm: 7.5,
-      final: 8.5,
-      average: 8.0,
-      grade: "B+",
-      teacher: "Võ Văn E",
-    },
-    {
-      subject: "Sinh học",
-      midterm: 9.0,
-      final: 9.5,
-      average: 9.2,
-      grade: "A+",
-      teacher: "Nguyễn Thị F",
-    },
-    {
-      subject: "Lịch sử",
-      midterm: 7.0,
-      final: 8.0,
-      average: 7.6,
-      grade: "B",
-      teacher: "Trần Văn G",
-    },
-    {
-      subject: "Địa lý",
-      midterm: 8.0,
-      final: 8.5,
-      average: 8.4,
-      grade: "A-",
-      teacher: "Lê Thị H",
-    },
-    {
-      subject: "GDCD",
-      midterm: 8.5,
-      final: 9.0,
-      average: 8.8,
-      grade: "A",
-      teacher: "Phạm Văn I",
-    },
-  ];
+  // // Chi tiết điểm số
+  // const detailedScores = [
+  //   {
+  //     subject: "Toán học",
+  //     midterm: 8.0,
+  //     final: 9.0,
+  //     average: 8.5,
+  //     grade: "A",
+  //     teacher: "Nguyễn Văn A",
+  //   },
+  //   {
+  //     subject: "Ngữ văn",
+  //     midterm: 7.5,
+  //     final: 8.0,
+  //     average: 7.8,
+  //     grade: "B+",
+  //     teacher: "Trần Thị B",
+  //   },
+  //   {
+  //     subject: "Tiếng Anh",
+  //     midterm: 8.0,
+  //     final: 8.5,
+  //     average: 8.2,
+  //     grade: "A-",
+  //     teacher: "Lê Văn C",
+  //   },
+  //   {
+  //     subject: "Vật lý",
+  //     midterm: 7.0,
+  //     final: 8.0,
+  //     average: 7.5,
+  //     grade: "B",
+  //     teacher: "Phạm Thị D",
+  //   },
+  //   {
+  //     subject: "Hóa học",
+  //     midterm: 7.5,
+  //     final: 8.5,
+  //     average: 8.0,
+  //     grade: "B+",
+  //     teacher: "Võ Văn E",
+  //   },
+  //   {
+  //     subject: "Sinh học",
+  //     midterm: 9.0,
+  //     final: 9.5,
+  //     average: 9.2,
+  //     grade: "A+",
+  //     teacher: "Nguyễn Thị F",
+  //   },
+  //   {
+  //     subject: "Lịch sử",
+  //     midterm: 7.0,
+  //     final: 8.0,
+  //     average: 7.6,
+  //     grade: "B",
+  //     teacher: "Trần Văn G",
+  //   },
+  //   {
+  //     subject: "Địa lý",
+  //     midterm: 8.0,
+  //     final: 8.5,
+  //     average: 8.4,
+  //     grade: "A-",
+  //     teacher: "Lê Thị H",
+  //   },
+  //   {
+  //     subject: "GDCD",
+  //     midterm: 8.5,
+  //     final: 9.0,
+  //     average: 8.8,
+  //     grade: "A",
+  //     teacher: "Phạm Văn I",
+  //   },
+  // ];
   const [selectedClass, setSelectedClass] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const { data: classes, status } = useQuery({
     queryKey: ["Classes"],
     queryFn: () => getAllClasses("", 0, 100),
@@ -133,20 +131,20 @@ export default function AcademicResultsView() {
   }, [classes]);
 
   // Tính điểm trung bình tổng
-  const overallAverage =
-    detailedScores.reduce((sum, item) => sum + item.average, 0) /
-    detailedScores.length;
+  // const overallAverage =
+  //   detailedScores.reduce((sum, item) => sum + item.average, 0) /
+  //   detailedScores.length;
 
-  // Xếp loại học lực
-  const getAcademicRanking = (score: number) => {
-    if (score >= 9.0) return { label: "Xuất sắc", color: "text-red-600" };
-    if (score >= 8.0) return { label: "Giỏi", color: "text-green-600" };
-    if (score >= 7.0) return { label: "Khá", color: "text-blue-600" };
-    if (score >= 5.0) return { label: "Trung bình", color: "text-yellow-600" };
-    return { label: "Yếu", color: "text-gray-600" };
-  };
+  // // Xếp loại học lực
+  // const getAcademicRanking = (score: number) => {
+  //   if (score >= 9.0) return { label: "Xuất sắc", color: "text-red-600" };
+  //   if (score >= 8.0) return { label: "Giỏi", color: "text-green-600" };
+  //   if (score >= 7.0) return { label: "Khá", color: "text-blue-600" };
+  //   if (score >= 5.0) return { label: "Trung bình", color: "text-yellow-600" };
+  //   return { label: "Yếu", color: "text-gray-600" };
+  // };
 
-  const ranking = getAcademicRanking(overallAverage);
+  // const ranking = getAcademicRanking(overallAverage);
 
   return (
     <div className="space-y-6">

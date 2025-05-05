@@ -15,6 +15,7 @@ import {
 } from "../../../_common/Table";
 import { useQuery } from "@tanstack/react-query";
 import { getAcademicResult } from "@/app/lib/services/academicResult";
+import Pagination from "../../../_common/Pagination";
 
 // interface Score {
 //   subject: string;
@@ -81,51 +82,77 @@ export default function DetailedScoresTable({ classId }: { classId: string }) {
     queryFn: () => getAcademicResult(classId, currentPage - 1, 5),
     enabled: classId !== "",
   });
-
   return (
     <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
       <CardHeader>
         <CardTitle>Chi tiết điểm số</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader
-            columns={[
-              "Bài kiểm tra",
-              "Điểm",
-              "Điểm trung bình",
-              "Ngày làm bài",
-            ]}
-          />
-          <TableBody>
-            {academicRes?.assignmentScores.content.map((result) => (
-              <TableRow key={result.title}>
-                <TableCell>{result.title}</TableCell>
-                <TableCell>{result.studentScore}</TableCell>
-                <TableCell>{result.classAverageScore}</TableCell>
-                <TableCell>
-                  {new Date(result.submissionDate).toLocaleDateString("vi-VN")}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter
-            columns={[
-              "ID",
-              "Bài kiểm tra",
-              "Điểm",
-              "Điểm trung bình",
-              "Ngày làm bài",
-            ]}
-            footerData={[
-              "Điểm trung bình",
-              "",
-              "",
-              "",
-              academicRes?.averageScore.toString() || "",
-            ]}
-          />
-        </Table>
+        {classId ? (
+          <>
+            <Table>
+              <TableHeader
+                columns={[
+                  "Bài kiểm tra",
+                  "Điểm",
+                  "Điểm trung bình",
+                  "Ngày làm bài",
+                  "",
+                ]}
+              />
+              <TableBody isLoading={status === "pending"}>
+                {academicRes?.assignmentScores.content.map((result) => (
+                  <TableRow key={result.title}>
+                    <TableCell>{result.title}</TableCell>
+                    <TableCell>{result.studentScore}</TableCell>
+                    <TableCell>{result.classAverageScore}</TableCell>
+                    <TableCell>
+                      {new Date(result.submissionDate).toLocaleDateString(
+                        "vi-VN",
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter
+                columns={[
+                  "ID",
+                  "Bài kiểm tra",
+                  "Điểm",
+                  "Điểm trung bình",
+                  "Ngày làm bài",
+                ]}
+                footerData={[
+                  "Điểm trung bình",
+                  "",
+                  "",
+                  "",
+                  academicRes?.averageScore.toString() || "",
+                ]}
+              />
+            </Table>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={academicRes?.assignmentScores.totalPages || 1}
+              handlePageClick={(page) => setCurrentPage(page)}
+              handleNextPage={() =>
+                setCurrentPage((prev) =>
+                  Math.min(
+                    academicRes?.assignmentScores.totalPages || 1,
+                    prev + 1,
+                  ),
+                )
+              }
+              handlePreviousPage={() =>
+                setCurrentPage((prev) => Math.max(1, prev - 1))
+              }
+            />
+          </>
+        ) : (
+          <div className="text-primary-darkest">
+            Vui lòng chọn lớp học để xem chi tiết
+          </div>
+        )}
         {/* <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

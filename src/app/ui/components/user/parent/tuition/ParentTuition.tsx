@@ -11,10 +11,11 @@ import PaidPaymentsTable from "@/app/ui/components/user/parent/tuition/PaidPayme
 import AllPaymentTable from "@/app/ui/components/user/parent/tuition/AllPaymentTable";
 import { PaymentItem } from "@/app/types";
 import { getPaymentByStuId } from "@/app/lib/services/payment";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { RootState, useAppSelector } from "@/app/store/store";
 
 export default function ParentTuition() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages] = useState(5);
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(
@@ -24,17 +25,14 @@ export default function ParentTuition() {
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
 
   const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
-
+  const selectedChild = useAppSelector(
+    (state: RootState) => state.children.selectedId,
+  );
   const { data: paymentData, error } = useQuery({
-    queryKey: ["payments", activeTab, currentPage],
+    queryKey: ["payments", activeTab, selectedChild, currentPage - 1],
     queryFn: () =>
-      getPaymentByStuId(
-        "6619a4e4-b268-4b86-9b5f-929cbb69c871",
-        currentPage - 1,
-        1,
-        statusParam,
-      ),
-    placeholderData: (prev) => prev,
+      getPaymentByStuId(selectedChild, currentPage - 1, 1, statusParam),
+    placeholderData: keepPreviousData,
   });
 
   const payments = paymentData?.content || [];
