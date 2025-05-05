@@ -1,11 +1,6 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import { ClassItem } from "@/app/types/type";
-import { usePathname, useRouter } from "next/navigation";
+import React, { memo, useState } from "react";
 import { getAllClasses } from "@/app/lib/services/class";
-import { Button } from "@/app/ui/components/_common/Button";
-import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
   TableBody,
@@ -13,8 +8,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { ArrowRightCircle, Eye } from "lucide-react";
-import ClassRegisterModal from "./ClassRegisterModal";
+import { ArrowRight, Eye } from "lucide-react";
+import { ClassData } from "@/app/types";
+import ClassPagination from "./ClassPagination";
+import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
+import Tooltip from "../../_common/Tooltip";
+import { useQuery } from "@tanstack/react-query";
+
+const MemoizedClassPagination = memo(ClassPagination);
 
 export default function ClassesTable({
   query,
@@ -23,133 +24,85 @@ export default function ClassesTable({
   query: string;
   currentPage: number;
 }) {
-  const [classes, setClasses] = useState<ClassItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
-  // let displays: ClassItem[] = [];
-  useEffect(() => {
-    const fetchData = async () => {
-      let filteredData: ClassItem[] = [];
-      setIsLoading(true);
-      try {
-        const response = await getAllClasses(query, "", "", currentPage - 1, 5);
-        filteredData = response.content.map((item) => ({
-          id: item.id,
-          name: item.name,
-          course: {
-            name: item.course.name,
-          },
-          room: {
-            // name: item.room.name,
-            name: "",
-          },
-          // fee: item.fee,
-          fee: 0,
-          grade: {
-            name: item.grade.name,
-          },
-        }));
-        setTotalPages(response.totalPages);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setClasses(filteredData);
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [currentPage, query]);
-  // console.log(classes);
+  const {
+    data: fetchClasses,
+    status,
+    error,
+  } = useQuery<ClassData>({
+    queryKey: ["Classes", query, currentPage],
+    queryFn: () => getAllClasses(query, currentPage - 1, 5),
+    placeholderData: (prevData) => prevData,
+  });
 
-  const handlePrevClick = () => {
-    if (currentPage > 1) {
-      currentPage--;
-      const params = new URLSearchParams();
-      params.set("page", currentPage.toString());
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  };
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<string>("");
 
-  const handleNextClick = () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      const params = new URLSearchParams();
-      params.set("page", currentPage.toString());
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  };
-
-  const handlePageClick = (page: number) => {
-    currentPage = page;
-    const params = new URLSearchParams();
-    params.set("page", currentPage.toString());
-    router.replace(`${pathname}?${params.toString()}`);
-  };
-
-  const handleOpenModal = (id: string) => {
-    setSelectedClassId(id);
-    setIsModalOpen(true);
-  };
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <div>
       <Table>
         <TableHeader
-          columns={["ID", "Tên lớp", "Môn học", "Khối", "Phòng", "Học phí", ""]}
-          className="bg-gray-100"
+          columns={[
+            "ID",
+            "Tên lớp",
+            "Môn học",
+            "Khối",
+            "Học phí",
+            "Ngày bắt đầu",
+            "Ngày kết thúc",
+            "",
+          ]}
         />
-        <TableBody isLoading={isLoading}>
-          {classes.map((c, i) => (
+        <TableBody isLoading={status === "pending"}>
+          {fetchClasses?.content.map((c, i) => (
             <TableRow key={i}>
-              <TableCell className="w-20">{i + 1}</TableCell>
-              <TableCell>{c.name}</TableCell>
+              <TableCell>{i + 1}</TableCell>
+              <TableCell className="max-w-12">{c.name}</TableCell>
               <TableCell>{c.course.name}</TableCell>
               <TableCell>{c.grade.name}</TableCell>
-              <TableCell>{c.room.name}</TableCell>
               <TableCell>{c.fee} VNĐ</TableCell>
-              <TableCell className="p-0 w-5 flex items-center justify-center space-x-2 px-2 py-3">
+              <TableCell className="max-w-12">{c.startDate}</TableCell>
+              <TableCell className="max-w-10">{c.endDate}</TableCell>
+              <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
                 {/* Nút xem lớp */}
-                <Button
-                  onClick={() =>
-                    router.push(`/clerk/classes/${c.id}/class-management`)
-                  }
-                  type="button"
-                  variant="outlined"
-                  className="p-2 "
+                <Tooltip
+                  text="Xem lớp học"
+                  // onClick={() =>
+                  //   router.push(`/clerk/classes/${c.id}/class-management`)
+                  // }
                 >
-                  <Eye size={20} />
-                </Button>
-
-                {/* Nút duyệt thẳng vào lớp */}
-                <Button
-                  onClick={() => handleOpenModal(c.id)}
-                  type="button"
-                  variant="outlined"
-                  className="p-2"
-                >
-                  <ArrowRightCircle size={20} />
-                </Button>
+                  <Eye className="size-8 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
+                </Tooltip>
+                {/* <ClassEnrollment classId={c.id} /> */}
+                <Tooltip text="Duyệt tài khoản">
+                  <div
+                    onClick={() => {
+                      setIsOpen(true);
+                      setSelectedId(c.id);
+                    }}
+                  >
+                    <ArrowRight className="size-8 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
+                  </div>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handlePageClick={(page) => handlePageClick(page)}
-        handlePreviousPage={handlePrevClick}
-        handleNextPage={handleNextClick}
-      />
-      {isModalOpen && (
-        <ClassRegisterModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          classId={selectedClassId}
+      {status === "success" && (
+        <MemoizedClassPagination
+          currentPage={currentPage}
+          totalPages={fetchClasses?.totalPages || 1}
+        />
+      )}
+      {isOpen && (
+        <ClassEnrollmentModal
+          classId={selectedId}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
         />
       )}
     </div>

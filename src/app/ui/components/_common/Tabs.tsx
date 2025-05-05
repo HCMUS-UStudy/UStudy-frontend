@@ -120,17 +120,25 @@ const Tab: React.FC<TabProps> = ({ label, value, className }) => {
   return (
     <button
       className={cn(
-        "py-2 px-4 text-[16px]",
+        "relative py-2 px-4 text-[16px] transition-all font-semibold",
         {
-          "border-b-2 font-semibold border-primary text-primary-dark":
-            activeTab === value,
-          "text-gray-700": activeTab !== value,
+          "text-primary-dark": activeTab === value,
+          "text-gray-700 hover:text-primary-darker": activeTab !== value,
         },
         className,
       )}
       onClick={() => handleTabChange(value)}
     >
       {label}
+      <div
+        className={cn(
+          "absolute inset-0 border-b-2 border-primary-dark transition-all",
+          {
+            "scale-x-100": activeTab === value,
+            "scale-x-0": activeTab !== value,
+          },
+        )}
+      ></div>
     </button>
   );
 };

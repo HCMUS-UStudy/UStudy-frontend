@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 import { toast } from "react-toastify";
@@ -11,119 +11,94 @@ import {
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
 import { createNewGrade } from "@/app/lib/services/grade";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const CreateGradeSchema = z.object({
-  creator: z.string(),
   name: z
-    .string({ message: "(*) Đây là trường bắt buộc" })
-    .min(1, "(*) Đây là trường bắt buộc"),
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
 });
 
-type CreateGradeInputs = z.infer<typeof CreateGradeSchema>;
+export type CreateGradeInputs = z.infer<typeof CreateGradeSchema>;
 
-interface ModalGradeWrapperProps {
-  buttonLabel: string;
-}
-
-const AddGradeModal: React.FC<ModalGradeWrapperProps> = ({ buttonLabel }) => {
-  const [showModal, setShowModal] = useState(false);
+const AddGradeModal = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<CreateGradeInputs>({
     resolver: zodResolver(CreateGradeSchema),
-    defaultValues: { creator: localStorage.getItem("creator") ?? undefined },
+    // defaultValues: { creator: localStorage.getItem("creator") ?? undefined },
   });
-  const onSubmit = async (data: CreateGradeInputs) => {
-    try {
-      const response = await createNewGrade(data);
-      console.log(response);
-
-      if (response.statusCode === "OK") {
-        toast.success("Tạo khối học thành công!", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-
-        setShowModal(false);
-        router.push("/admin/grades");
-      }
-    } catch (err) {
-      console.error("Error fetching courses:", err);
-      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
+  const onSubmit = (data: CreateGradeInputs) => {
+    useCreateGradeMutation.mutate(data);
+  };
+  const queryClient = useQueryClient();
+  const useCreateGradeMutation = useMutation({
+    mutationFn: (data: CreateGradeInputs) => createNewGrade(data),
+    onError: (error) => {
+      console.log(error.message);
+      toast.error("Tạo khối học thất bại", {
         position: "bottom-right",
         autoClose: 3000,
+        pauseOnHover: false,
       });
-    }
-  };
-
-  const router = useRouter();
-
-  const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Grades"] });
+      toast.success("Tạo khối học thành công", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      onClose();
+    },
+  });
 
   return (
     <>
-      <Button onClick={handleOpenModal} className="pl-6 pr-6">
-        {buttonLabel}
-      </Button>
-
-      <Dialog
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        className="w-[50vw]"
-      >
+      <Dialog isOpen={isOpen} onClose={onClose}>
         <DialogHeader>Tạo khối học mới</DialogHeader>
         <DialogContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6"
-            id="add-course-admin-form"
-          >
+          <form id="add-course-admin-form" onSubmit={handleSubmit(onSubmit)}>
             {/*Creator*/}
-            <Input
+            {/* <Input
               type="text"
               readOnly
               placeholder="Người tạo"
               label="Người tạo *"
               disabled
               {...register("creator")}
-            />
+            /> */}
             {/*Name*/}
-            <div className="relative mb-4">
-              <Input
-                type="text"
-                placeholder="Nhập tên khối"
-                label="Tên khối *"
-                {...register("name")}
-              />
-              <span className="text-error text-sm">{errors.name?.message}</span>
-            </div>
+            <Input
+              type="text"
+              placeholder="Nhập tên khối"
+              label="Tên khối"
+              isError={!!errors.name}
+              errorMsg={errors.name?.message}
+              {...register("name")}
+            />
           </form>
         </DialogContent>
         <DialogFooter>
-          {/*Buttons*/}
-          <div className="flex justify-between">
-            <Button
-              variant="basic"
-              onClick={handleCloseModal}
-              className="bg-neutral hover:bg-neutral/80 text-primary-text w-[15%]"
-            >
-              Hủy
-            </Button>
-            <Button
-              form="add-course-admin-form"
-              type="submit"
-              className="w-[15%]"
-            >
-              Tạo
-            </Button>
-          </div>
+          <Button
+            isPending={useCreateGradeMutation.status === "pending"}
+            form="add-course-admin-form"
+            type="submit"
+            className="w-full"
+          >
+            Tạo khối mới
+          </Button>
         </DialogFooter>
       </Dialog>
     </>

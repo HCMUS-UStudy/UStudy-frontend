@@ -11,6 +11,7 @@ import React, {
 import { IoChevronDown } from "react-icons/io5";
 import { cn } from "@/app/lib/utils";
 import { Label } from "@/app/ui/components/_common/Label";
+import Loading from "./loading/Loading";
 
 interface SelectProps {
   children: ReactNode;
@@ -23,6 +24,7 @@ interface SelectProps {
   required?: boolean;
   id?: string;
   label?: string;
+  isLoading?: boolean;
   customStyle?: {
     labelBg?: string;
   };
@@ -81,6 +83,7 @@ const Select: React.FC<SelectProps> = ({
   id,
   label,
   customStyle,
+  isLoading = false,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | number>(
     defaultValue,
@@ -146,52 +149,61 @@ const Select: React.FC<SelectProps> = ({
         toggleOpen,
       }}
     >
-      <div
-        id={id}
-        className={cn("relative text-sm", className)}
-        ref={selectRef}
-      >
-        <input
-          type="hidden"
-          name={name}
-          defaultValue={selectedValue}
-          required={required}
-        />
-        <button
-          type="button"
-          className={cn(
-            "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring",
-            className,
-          )}
-          onClick={(e) => {
-            e.preventDefault();
-            toggleOpen();
-          }}
-          disabled={disabled}
+      {isLoading ? (
+        <div className="px-2 py-0.5 bg-primary-lighter flex justify-start border-2 border-slate-300 rounded-md">
+          <Loading
+            text={defaultLabel || "Đang tải..."}
+            customStyle={{ spinner: "size-8" }}
+          />
+        </div>
+      ) : (
+        <div
+          id={id}
+          className={cn("relative text-sm", className)}
+          ref={selectRef}
         >
-          {selectedLabel}
-          <IoChevronDown size={18} />
-        </button>
-        {label && (
-          <Label
+          <input
+            type="hidden"
+            name={name}
+            defaultValue={selectedValue}
+            required={required}
+          />
+          <button
+            type="button"
             className={cn(
-              "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-blue-500 px-1",
+              "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring",
+              className,
             )}
-            style={{
-              backgroundColor: customStyle?.labelBg
-                ? customStyle.labelBg
-                : "white",
+            onClick={(e) => {
+              e.preventDefault();
+              toggleOpen();
             }}
+            disabled={disabled}
           >
-            {label}
-          </Label>
-        )}
-        {isOpen ? (
-          <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-[300px]">
-            {children}
-          </div>
-        ) : null}
-      </div>
+            {selectedLabel}
+            <IoChevronDown size={18} />
+          </button>
+          {label && (
+            <Label
+              className={cn(
+                "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-primary-darkest px-1",
+              )}
+              style={{
+                backgroundColor: customStyle?.labelBg
+                  ? customStyle.labelBg
+                  : "white",
+              }}
+            >
+              {label}
+            </Label>
+          )}
+          {isOpen ? (
+            <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
+              {children}
+            </div>
+          ) : null}
+        </div>
+      )}
     </SelectContext.Provider>
   );
 };

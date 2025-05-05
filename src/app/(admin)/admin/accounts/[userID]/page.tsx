@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { getListUserDetail } from "@/app/lib/services/user";
-import { AccountDetailItem, ClassUserItem } from "@/app/types/type";
+import { AccountDetailItem, ClassUserItem } from "@/app/types";
 import { getListUserClass } from "@/app/lib/services/class";
 import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
 import Image from "next/image";
@@ -124,7 +124,7 @@ const AccountDetail = () => {
                   height={96}
                   src={user.avatar}
                   alt="Avatar"
-                  className="w-24 h-24 rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
+                  className="rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
                 />
                 <div className="text-3xl font-bold drop-shadow-lg">
                   {user.name}

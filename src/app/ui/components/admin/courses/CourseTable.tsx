@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
 import Pagination from "@/app/ui/components/_common/Pagination"; // Import Pagination
-import { CourseItem } from "@/app/types/type";
+import { CourseItem } from "@/app/types";
 import { getAllCourses } from "@/app/lib/services/course";
 import {
   Table,
@@ -121,8 +121,8 @@ const CourseTable: React.FC<CourseTableProps> = ({
               </TableRow>
             ) : courses.length > 0 ? (
               courses.map((course) => (
-                <TableRow key={course.courseDto.id}>
-                  <TableCell>{course.courseDto.name}</TableCell>
+                <TableRow key={course.detailedCourseDto.id}>
+                  <TableCell>{course.detailedCourseDto.name}</TableCell>
                   <TableCell>
                     <div className="flex justify-center items-center mx-auto">
                       {course.totalGrades}
@@ -130,7 +130,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
                     </div>
                   </TableCell>
                   <TableCell>
-                    {course.courseDto.createdBy?.name || "Trống"}
+                    {course.detailedCourseDto.createdBy?.name || "Trống"}
                   </TableCell>
                   <TableCell className="flex justify-center items-center space-x-3">
                     <button className="text-blue-600 hover:text-blue-800">

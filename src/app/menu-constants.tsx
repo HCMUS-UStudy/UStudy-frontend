@@ -1,4 +1,4 @@
-import { SideNavItem, SideNavItemGroup } from "@/app/types/type";
+import { SideNavItem } from "@/app/types";
 import {
   BsBook,
   BsCalendar,
@@ -13,6 +13,7 @@ import {
   // BsQuestionCircle,
   // BsWallet2,
 } from "react-icons/bs";
+import { MdOutlineFileCopy } from "react-icons/md";
 
 import { SiGoogleclassroom } from "react-icons/si";
 import { GiMoneyStack } from "react-icons/gi";
@@ -20,7 +21,12 @@ import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { HiOutlineDocumentText } from "react-icons/hi";
-import { FaClipboardList } from "react-icons/fa6";
+import { LuClipboardList } from "react-icons/lu";
+import { FaClipboardList, FaRegCommentDots } from "react-icons/fa6";
+import {
+  MdOutlineAssignment,
+  MdOutlineNotificationsActive,
+} from "react-icons/md";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -75,39 +81,6 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   },
 ];
 
-export const SIDENAV_ITEMS_CLERK: SideNavItemGroup[] = [
-  {
-    title: "Thống kê",
-    menuList: [
-      {
-        title: "Bảng thống kê",
-        path: "/clerk/dashboard",
-        icon: <BsHouseDoor size={20} />,
-      },
-    ],
-  },
-  {
-    title: "Quản lý",
-    menuList: [
-      {
-        title: "Quản lý tài khoản",
-        path: "/clerk/accounts",
-        icon: <BsPerson size={20} />,
-      },
-      {
-        title: "Quản lý môn học",
-        path: "/clerk/courses",
-        icon: <BsBook size={20} />,
-      },
-      {
-        title: "Quản lý lớp học",
-        path: "/clerk/classes",
-        icon: <SiGoogleclassroom size={20} />,
-      },
-    ],
-  },
-];
-
 export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
   {
     title: "Trang chủ",
@@ -127,12 +100,12 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
   {
     title: "Điểm danh",
     path: "/teacher/attendance",
-    icon: <FaClipboardList size={20} />,
+    icon: <LuClipboardList size={20} />,
   },
   {
-    title: "Học phí",
-    path: "/teacher/tuition",
-    icon: <BsCreditCard size={20} />,
+    title: "Tài liệu cá nhân",
+    path: "/teacher/personal-material",
+    icon: <MdOutlineFileCopy size={20} />,
   },
   {
     title: "Kết quả học tập",
@@ -144,27 +117,75 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
 export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
   {
     title: "Trang chủ",
-    path: "/student/home",
+    path: "/member/home",
     icon: <BsHouseDoor size={20} />,
   },
   {
     title: "Lớp học",
-    path: "/student/classes",
+    path: "/member/classes",
     icon: <SiGoogleclassroom size={20} />,
   },
   {
     title: "Lịch học",
-    path: "/student/schedule",
+    path: "/member/schedule",
     icon: <BsCalendar size={20} />,
   },
   {
     title: "Học phí",
-    path: "/student/tuition",
+    path: "/member/tuition",
     icon: <BsCreditCard size={20} />,
   },
   {
     title: "Kết quả học tập",
-    path: "/student/results",
+    path: "/member/academic-results",
     icon: <BsPersonWorkspace size={20} />,
+  },
+];
+
+export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
+  {
+    title: "Trang chủ",
+    path: "/member/home",
+    icon: <BsHouseDoor size={20} />,
+  },
+  {
+    title: "Lớp học",
+    path: "/member/classes",
+    icon: <SiGoogleclassroom size={20} />,
+  },
+  {
+    title: "Lịch học",
+    path: "/member/schedule",
+    icon: <BsCalendar size={20} />,
+  },
+  {
+    title: "Điểm danh",
+    path: "/member/attendance",
+    icon: <FaClipboardList size={20} />,
+  },
+  {
+    title: "Bài tập",
+    path: "/member/assignments",
+    icon: <MdOutlineAssignment size={20} />,
+  },
+  {
+    title: "Học phí",
+    path: "/member/tuition",
+    icon: <BsCreditCard size={20} />,
+  },
+  {
+    title: "Kết quả học tập",
+    path: "/member/academic-results",
+    icon: <BsPersonWorkspace size={20} />,
+  },
+  {
+    title: "Thông báo",
+    path: "/member/notifications",
+    icon: <MdOutlineNotificationsActive size={20} />,
+  },
+  {
+    title: "Liên hệ giáo vụ",
+    path: "/member/contact",
+    icon: <FaRegCommentDots size={20} />,
   },
 ];

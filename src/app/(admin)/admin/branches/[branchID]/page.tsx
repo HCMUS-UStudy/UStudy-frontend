@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { Branch } from "@/app/types/type";
+import { Branch } from "@/app/types";
 import { toast } from "react-toastify";
 import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
 import { RootState } from "@/app/store/store";

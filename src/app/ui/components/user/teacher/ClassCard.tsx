@@ -3,7 +3,7 @@ import React from "react";
 // import { MdMeetingRoom } from "react-icons/md";
 // import { MdPeopleOutline } from "react-icons/md";
 // import { GrScheduleNew } from "react-icons/gr";
-import { ClassTeacher } from "@/app/types/type";
+import { ClassTeacher } from "@/app/types";
 import { useRouter } from "next/navigation";
 
 export default function ClassCard({
@@ -36,7 +36,7 @@ export default function ClassCard({
               className="bg-primary-dark h-2.5 rounded-full"
               style={{
                 width: `${
-                  ((new Date(cls.endDate).getTime() - Date.now()) /
+                  ((Date.now() - new Date(cls.startDate).getTime()) /
                     (new Date(cls.endDate).getTime() -
                       new Date(cls.startDate).getTime())) *
                   100
@@ -47,7 +47,7 @@ export default function ClassCard({
           <div className="text-[12px] text-primary-darkest">
             {" "}
             {Math.round(
-              ((new Date(cls.endDate).getTime() - Date.now()) /
+              ((Date.now() - new Date(cls.startDate).getTime()) /
                 (new Date(cls.endDate).getTime() -
                   new Date(cls.startDate).getTime())) *
                 100,

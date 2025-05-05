@@ -8,6 +8,7 @@ interface DropdownProps {
   label: string;
   items: { key: string; label: string }[];
   selected?: string;
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }
 
 /**
@@ -18,7 +19,12 @@ interface DropdownProps {
  * @param selected - Currently selected key
  * @returns {React.JSX.Element}
  */
-export default function Dropdown({ label, items, selected }: DropdownProps) {
+export default function Dropdown({
+  label,
+  items,
+  selected,
+  position,
+}: DropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
@@ -53,25 +59,36 @@ export default function Dropdown({ label, items, selected }: DropdownProps) {
     setIsOpen(false);
   };
 
+  const positionClasses = {
+    "top-left": "bottom-full left-0 mb-2",
+    "top-right": "bottom-full right-0 mb-2",
+    "bottom-left": "top-full left-0 mt-2",
+    "bottom-right": "top-full right-0 mt-2",
+  }[position || "bottom-left"];
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-green-100"
+        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-primary-lighter transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
         <FiFilter className="w-5 h-5 text-gray-600" />
-        <span>{label}</span>
+        <span className="text-nowrap">
+          {items.find((item) => item.key === selected)?.label || label}
+        </span>
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10">
+        <div
+          className={`absolute ${positionClasses} bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10`}
+        >
           {items.map(({ key, label }) => (
             <button
               type="button"
               key={key}
-              className={`block w-full text-left px-4 py-2 hover:bg-green-100 ${
-                defaultSelected === key ? "bg-green-200" : ""
+              className={`block w-full text-left px-4 py-2 hover:bg-primary transition-colors ${
+                defaultSelected === key ? "bg-primary-lighter" : ""
               }`}
               onClick={() => handleSelect(key)}
             >

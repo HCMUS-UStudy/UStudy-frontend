@@ -11,6 +11,7 @@ import StudentCoursesSelector from "../ui/components/user/student/create/Student
 import { studentRegister } from "../lib/services/register";
 import { toast } from "react-toastify";
 import RegisterSuccessfully from "../ui/components/user/student/create/StudentRegisterSuccessfully";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const StudentRegisterSchema = z.object({
   name: z
@@ -78,29 +79,45 @@ export default function StudentRegister() {
       branchId: "",
     },
   });
-  const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
-  const [registerSuccessfully, setRegisterSuccessfully] =
-    useState<boolean>(false);
-
-  const onSubmit = async (data: StudentRegisterInputs) => {
-    console.log(data);
-    try {
-      setLoadingRegister(true);
-      const response = await studentRegister(data);
-      // console.log(response);
-      if (response.status === 200) {
-        setRegisterSuccessfully(true);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Đăng ký thất bại", {
+  const queryClient = useQueryClient();
+  const useRegisterMutation = useMutation({
+    mutationFn: (data: StudentRegisterInputs) => studentRegister(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
+      setRegisterSuccessfully(true);
+    },
+    onError: () => {
+      toast.error("Ghi danh thất bại", {
         position: "bottom-right",
         autoClose: 3000,
         pauseOnHover: false,
       });
-    } finally {
-      setLoadingRegister(false);
-    }
+    },
+  });
+  // const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
+  const [registerSuccessfully, setRegisterSuccessfully] =
+    useState<boolean>(false);
+
+  const onSubmit = async (data: StudentRegisterInputs) => {
+    useRegisterMutation.mutate(data);
+    // console.log(data);
+    // try {
+    //   setLoadingRegister(true);
+    //   const response = await studentRegister(data);
+    //   // console.log(response);
+    //   if (response.status === 200) {
+    //     setRegisterSuccessfully(true);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Đăng ký thất bại", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    // } finally {
+    //   setLoadingRegister(false);
+    // }
   };
   if (registerSuccessfully) {
     return <RegisterSuccessfully />;
@@ -112,21 +129,21 @@ export default function StudentRegister() {
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light">
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            className="bg-foreground py-10 px-20 rounded-3xl shadow-lg z-[100] flex flex-col gap-5 w-3/4"
+            className="bg-foreground py-10 px-10 lg:px-16 xl:px-20 rounded-3xl shadow-lg z-[100] flex flex-col gap-2 w-3/4"
           >
-            <div className="text-[#F48C06] text-3xl font-bold mb-3 flex justify-center">
+            <div className="text-highlight-text text-3xl font-bold mb-3 flex justify-center">
               Ghi danh
             </div>
-            <div className="grid grid-cols-5 divide-x-2 gap-10">
+            <div className="flex flex-col lg:grid grid-cols-5 lg:divide-x-2 gap-5">
               <StudentBasicInformation />
-              <div className="col-span-3 flex flex-col gap-4 pl-10">
+              <div className="col-span-3 flex flex-col gap-4 lg:pl-10">
                 <StudentGradeSelector />
                 <StudentBranchSelector />
                 <StudentCoursesSelector />
               </div>
             </div>
             <Button
-              isPending={loadingRegister}
+              isPending={useRegisterMutation.status === "pending"}
               className="mt-6 w-full"
               type="submit"
             >

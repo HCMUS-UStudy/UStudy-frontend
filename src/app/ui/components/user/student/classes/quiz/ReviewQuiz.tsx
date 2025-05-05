@@ -1,6 +1,6 @@
 "use client";
 
-import { QuizReview } from "@/app/types/type";
+import { QuizReviewData } from "@/app/types/quiz";
 import { Button } from "@/app/ui/components/_common/Button";
 import React, { useState } from "react";
 import {
@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 
 interface ReviewQuizProps {
-  reviewData: QuizReview;
+  reviewData: QuizReviewData;
   onClose: () => void;
 }
 

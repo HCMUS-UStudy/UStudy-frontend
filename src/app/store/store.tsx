@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import branchReducer from "./branch-slice";
+import permissionReducer from "./PermissionScreenSlice";
+import childrenReducer from "./ChildrenSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const store = configureStore({
   reducer: {
     branch: branchReducer,
+    permission: permissionReducer,
+    children: childrenReducer,
   },
 });
 

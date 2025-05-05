@@ -1,55 +1,81 @@
 import {
   RegisterAccountData,
   RegisterClassData,
+  RegisterResponse,
   TeacherRegister,
-} from "@/app/types/type";
+} from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { StudentRegisterInputs } from "@/app/register/page";
 
 export const getRegister = async (
-  role: string,
+  role: "STUDENT" | "TEACHER",
+  limit = 5,
   currentPage: number,
+  queryName: string | null,
 ): Promise<RegisterAccountData> => {
-  const response = await axiosInstance.get("/register/list-waiting", {
-    params: {
-      page: currentPage,
-      limit: 5,
-      role,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get("/register/list-waiting", {
+      params: {
+        page: currentPage,
+        limit,
+        role,
+        name: queryName,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getStuClassRegister = async (
   classId: string,
   currentPage: number,
+  limit = 5,
 ): Promise<RegisterClassData> => {
-  const response = await axiosInstance.get(
-    `/register/list-student-waiting/${classId}`,
-    {
-      params: {
-        page: currentPage,
-        limit: 5,
+  try {
+    const response = await axiosInstance.get(
+      `/register/list-student-waiting/${classId}`,
+      {
+        params: {
+          page: currentPage,
+          limit,
+        },
       },
-    },
-  );
-  return response.data.data;
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const confirmRegister = async (userIds: string[], roleId: string) => {
-  const response = await axiosInstance.put(
-    `/register/update/accept?roleId=${roleId}`,
-    userIds,
-  );
-  return response.data;
+export const confirmRegister = async (
+  userIds: string[],
+  roleId: string,
+): Promise<RegisterResponse> => {
+  try {
+    const response = await axiosInstance.put(
+      `/register/update/accept?roleId=${roleId}`,
+      userIds,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const rejectRegister = async (userIds: string[]) => {
-  const response = await axiosInstance.put(
-    `/register/update/reject`,
-    userIds, // Đưa registerId vào body
-  );
-  return response.data;
+export const rejectRegister = async (
+  userIds: string[],
+): Promise<RegisterResponse> => {
+  try {
+    const response = await axiosInstance.put(
+      `/register/update/reject`,
+      userIds, // Đưa registerId vào body
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const teacherRegister = async (data: TeacherRegister) => {

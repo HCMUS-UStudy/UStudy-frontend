@@ -3,16 +3,15 @@ import AddAccountModal from "@/app/ui/components/admin/accounts/AddAccountModal"
 import AccountTable from "@/app/ui/components/admin/accounts/AccountTable";
 import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-import { HiAdjustments } from "react-icons/hi";
 import Dropdown from "@/app/ui/components/_common/Dropdown";
+import AccountNumber from "@/app/ui/components/admin/accounts/AccountNumber";
 
 const roles = {
   All: "Tất cả",
-  Admin: "Admin",
-  Teacher: "Giáo viên",
-  Parent: "Phụ huynh",
-  Clerk: "Giáo vụ",
-  Student: "Học sinh",
+  ADMIN: "Admin",
+  TEACHER: "Giáo viên",
+  PARENT: "Phụ huynh",
+  STUDENT: "Học sinh",
 };
 
 export default async function AccountPage(props: {
@@ -29,8 +28,8 @@ export default async function AccountPage(props: {
   return (
     <div className="px-2">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Tổng số người dùng (14.050)</h2>
-        <div className="flex items-center space-x-2">
+        <AccountNumber searchQuery={query} roleQuery={role} />
+        <div className="flex items-center">
           <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
           <AddAccountModal buttonLabel="Tạo người dùng" />
         </div>
@@ -38,10 +37,10 @@ export default async function AccountPage(props: {
 
       <div className="flex items-center justify-between mt-2 gap-14">
         <SearchField
-          className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+          className="w-full bg-primary-lighter"
           placeholder="Tìm kiếm người dùng..."
         />
-        <div className="flex items-center gap-6 px-4">
+        <div className="flex items-center gap-6">
           <div className="flex items-center">
             <Dropdown
               label="Lọc"
@@ -50,10 +49,8 @@ export default async function AccountPage(props: {
                 label,
               }))}
               selected={role}
+              position="bottom-right"
             />
-          </div>
-          <div className="flex items-center">
-            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
           </div>
         </div>
       </div>

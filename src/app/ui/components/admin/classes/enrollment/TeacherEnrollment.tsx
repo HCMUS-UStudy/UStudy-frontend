@@ -1,0 +1,281 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../../_common/Table";
+import { Button } from "../../../_common/Button";
+import { FaCheck, FaPlus } from "react-icons/fa6";
+import {
+  addMembers,
+  getListAvailableTea,
+  getListMembers,
+} from "@/app/lib/services/class";
+import { toast } from "react-toastify";
+import Loading from "../../../_common/loading/Loading";
+import {
+  keepPreviousData,
+  useMutation,
+  useQueries,
+  useQueryClient,
+} from "@tanstack/react-query";
+import Pagination from "../../../_common/Pagination";
+
+export default function TeacherEnrollment({ classId }: { classId: string }) {
+  const [multiSelect, setMultiSelect] = useState<boolean>(false);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [registerPage, setRegisterPage] = useState<number>(1);
+  const [classPage, setClassPage] = useState<number>(1);
+
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [trigger, setTrigger] = useState<boolean>(false);
+  // const [registerStudents, setRegisterStudents] = useState<RegisterClassItem[]>(
+  //   [],
+  // );
+  // const [classTeachers, setClassStudents] = useState<MemberItem[]>([]);
+  const handleSelection = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    );
+  };
+  const queryClient = useQueryClient();
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["RegisterTeachers", classId, registerPage - 1],
+        queryFn: () => getListAvailableTea(classId, "", registerPage - 1, 5),
+        refetchOnWindowFocus: false,
+        placeholderData: keepPreviousData,
+      },
+      {
+        queryKey: ["ClassTeachers", classId, classPage - 1, "TEACHER"],
+        queryFn: () => getListMembers(classId, "", classPage - 1, 5, "TEACHER"),
+        refetchOnWindowFocus: false,
+        placeholderData: keepPreviousData,
+      },
+    ],
+  });
+  const [registerTeachers, classTeachers] = results;
+  const isLoading = results.some((item) => item.status === "pending");
+
+  useEffect(() => {
+    if (selectedIds.length === registerTeachers.data?.content.length) {
+      setSelectAll(true);
+    }
+  }, [selectedIds, registerTeachers]);
+
+  // const handleApprove = async (singleId?: string) => {
+  //   try {
+  //     setLoading(true);
+  //     const response: ApproveResponse = await addMembers(
+  //       singleId ? [singleId] : selectedIds,
+  //       classId,
+  //       "TEACHER",
+  //     );
+  //     if (response.failedCount > 0) {
+  //       const failedMembers = response.failedMembers
+  //         .map((member) => `ID: ${member.genId} - ${member.name}`)
+  //         .join("\n");
+  //       toast.error(`Duyệt không thành công: \n${failedMembers}`, {
+  //         position: "bottom-right",
+  //         autoClose: 5000,
+  //         pauseOnHover: true,
+  //       });
+  //     } else {
+  //       toast.success("Duyệt thành công", {
+  //         position: "bottom-right",
+  //         autoClose: 3000,
+  //         pauseOnHover: false,
+  //       });
+  //     }
+  //     setTrigger((prev) => !prev);
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Thêm không thành công", {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [trigger, fetchData]);
+
+  const useApproveMutation = useMutation({
+    mutationFn: (singleId?: string) => {
+      const ids = singleId ? [singleId] : selectedIds;
+      return addMembers(ids, classId, "TEACHER");
+    },
+    onSuccess: (response) => {
+      if (response.failedCount > 0) {
+        const failedMembers = response.failedMembers
+          .map((member) => `ID: ${member.genId} - ${member.name}`)
+          .join("\n");
+        toast.error(`Duyệt không thành công: \n${failedMembers}`, {
+          position: "bottom-right",
+          autoClose: 5000,
+          pauseOnHover: true,
+        });
+      } else {
+        toast.success("Duyệt thành công", {
+          position: "bottom-right",
+          autoClose: 3000,
+          pauseOnHover: false,
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ["RegisterTeachers"] });
+      queryClient.invalidateQueries({ queryKey: ["ClassTeachers"] });
+    },
+    onError: () => {
+      toast.error("Thêm không thành công", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+    },
+  });
+
+  const handleApprove = async (singleId?: string) => {
+    useApproveMutation.mutate(singleId);
+  };
+  return (
+    <div className="">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <div className="flex items-center justify-between gap-3 h-10">
+            <div className="flex items-center gap-3">
+              <div className="text-left font-bold">Danh sách chờ</div>
+              {registerTeachers.data?.content.length !== 0 && (
+                <Button
+                  className="text-sm"
+                  onClick={() => setMultiSelect((prev) => !prev)}
+                >
+                  {multiSelect ? "Chọn đơn lẻ" : "Chọn nhiều"}
+                </Button>
+              )}
+              {registerTeachers.isFetching && <Loading className="size-6" />}
+            </div>
+            <div className="flex gap-3 text-sm">
+              <Button
+                className={`transition-all ${multiSelect ? "opacity-100" : "opacity-0"}`}
+                onClick={() => setSelectAll((prev) => !prev)}
+              >
+                Chọn tất cả {selectAll && <FaCheck className="ml-2" />}
+              </Button>
+              <Button
+                className={`transition-all ${multiSelect ? "opacity-100" : "opacity-0"}`}
+                onClick={() => handleApprove()}
+              >
+                Duyệt vào lớp
+              </Button>
+            </div>
+          </div>
+
+          <Table>
+            <TableHeader columns={["Tên", "Email", "Giới tính", "Hành động"]} />
+            <TableBody isLoading={isLoading}>
+              {registerTeachers.data?.content.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.email}</TableCell>
+                  <TableCell>
+                    {item.gender === "MALE"
+                      ? "Nam"
+                      : item.gender === "FEMALE"
+                        ? "Nữ"
+                        : "Khác"}
+                  </TableCell>
+                  {multiSelect ? (
+                    <TableCell className="flex justify-center">
+                      <label className="relative w-5 h-5 border-2 rounded border-primary-darker flex items-center justify-center hover:cursor-pointer hover:bg-primary">
+                        <input
+                          className="hidden peer"
+                          type="checkbox"
+                          checked={selectedIds.includes(item.id)}
+                          onChange={() => handleSelection(item.id)}
+                        />
+                        <FaCheck className="absolute size-3 text-primary-darkest opacity-0 peer-checked:opacity-100 transition-all" />
+                      </label>
+                    </TableCell>
+                  ) : (
+                    <TableCell>
+                      <FaPlus
+                        onClick={() => handleApprove(item.id)}
+                        className="w-full size-5 text-primary-dark hover:text-primary-darkest hover:cursor-pointer transition-colors"
+                      />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            currentPage={registerPage}
+            totalPages={registerTeachers.data?.totalPages || 1}
+            handlePageClick={(page) => setRegisterPage(page)}
+            handlePreviousPage={() =>
+              setRegisterPage((page) => (page > 1 ? page-- : page))
+            }
+            handleNextPage={() =>
+              setRegisterPage((page) => {
+                if (registerTeachers.data?.totalPages) {
+                  return page < registerTeachers.data.totalPages
+                    ? page++
+                    : page;
+                }
+                return page;
+              })
+            }
+          />
+        </div>
+        <div>
+          <div className="flex items-center gap-3 text-left text-base font-bold h-10">
+            <div>Danh sách lớp</div>
+            {classTeachers.isFetching && <Loading className="size-6" />}
+          </div>
+          <Table>
+            <TableHeader columns={["Tên", "Email", "Giới tính"]} />
+            <TableBody isLoading={isLoading}>
+              {classTeachers.data?.content.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.email}</TableCell>
+                  <TableCell>
+                    {item.gender === "MALE"
+                      ? "Nam"
+                      : item.gender === "FEMALE"
+                        ? "Nữ"
+                        : "Khác"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            currentPage={classPage}
+            totalPages={classTeachers.data?.totalPages || 1}
+            handlePageClick={(page) => setClassPage(page)}
+            handlePreviousPage={() =>
+              setClassPage((page) => (page > 1 ? page-- : page))
+            }
+            handleNextPage={() =>
+              setClassPage((page) => {
+                if (classTeachers.data?.totalPages) {
+                  return page < classTeachers.data.totalPages ? page++ : page;
+                }
+                return page;
+              })
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

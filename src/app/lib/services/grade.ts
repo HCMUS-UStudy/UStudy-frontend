@@ -1,26 +1,31 @@
 import axiosInstance from "@/app/lib/axios";
-import { GradeData, GradeSchema } from "@/app/types/type";
+import { Grade, GradeData } from "@/app/types";
+import { CreateGradeInputs } from "@/app/ui/components/admin/grades/AddGradeModal";
 
 export const getAllGrades = async (
   query: string,
   limit: number,
   currentPage: number,
 ): Promise<GradeData> => {
-  const response = await axiosInstance.get("/grade/list", {
-    params: {
-      page: currentPage,
-      limit: limit,
-      filter: query,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get("/grade/list", {
+      params: {
+        page: currentPage,
+        limit: limit,
+        filter: query,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getGradesByCourseId = async (
   query: string,
   currentPage: number,
   courseId: string,
-) => {
+): Promise<GradeData> => {
   const response = await axiosInstance.get(`/grade/list/${courseId}`, {
     params: {
       page: currentPage,
@@ -36,7 +41,13 @@ export const getGradeById = async (gradeId: string) => {
   return response.data.data;
 };
 
-export const createNewGrade = async (data: GradeSchema) => {
-  const response = await axiosInstance.post("/grade/create", data);
-  return response.data;
+export const createNewGrade = async (
+  data: CreateGradeInputs,
+): Promise<Grade> => {
+  try {
+    const response = await axiosInstance.post("/grade/create", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };

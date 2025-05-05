@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
-import { AccountItem } from "@/app/types/type";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
@@ -12,8 +11,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { getAllAccount } from "@/app/lib/services/user";
+import { deleteUser, getAllAccount } from "@/app/lib/services/user";
 import { useRouter } from "next/navigation";
+import Tooltip from "../../_common/Tooltip";
+import { toast } from "react-toastify";
+import { accountStatus, roleMap } from "@/app/lib/utils";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { Eye } from "lucide-react";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -24,81 +33,121 @@ const AccountTable: React.FC<AccountTableProps> = ({
   searchQuery,
   roleQuery,
 }) => {
-  const [users, setUsers] = useState<AccountItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  // const [users, setUsers] = useState<AccountItem[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
   const router = useRouter();
+  // const [trigger, setTrigger] = useState<boolean>(false);
 
-  const getRoleDisplayName = (roleName: string) => {
-    const roleMapping: Record<string, string> = {
-      Admin: "Admin",
-      Teacher: "Giáo viên",
-      Parent: "Phụ huynh",
-      Clerk: "Giáo vụ",
-      Student: "Học sinh",
-    };
-
-    return roleMapping[roleName] || roleName;
-  };
-
-  const getStatusDisplayName = (statusName: string) => {
-    const roleMapping: Record<string, string> = {
-      ACTIVE: "Đang hoạt động",
-      DELETED: "Đã xóa",
-      LOCKED: "Đã khóa",
-    };
-
-    return roleMapping[statusName] || statusName;
-  };
-
-  const fetchUsers = async () => {
-    let filteredData: AccountItem[] = [];
-    setLoading(true);
-
-    try {
-      const roleQueryUp = (roleQuery || "All").toUpperCase();
-      const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
-
-      const response = await getAllAccount(
+  const {
+    data: fetchAccounts,
+    error,
+    status,
+  } = useQuery({
+    queryKey: [
+      "Accounts",
+      searchQuery,
+      currentPage - 1,
+      roleQuery.toUpperCase(),
+    ],
+    queryFn: () =>
+      getAllAccount(
         searchQuery,
-        defaultRole,
+        5,
+        roleQuery === "All" ? "" : roleQuery.toUpperCase(),
         currentPage - 1,
-      );
-
-      console.log(response);
-
-      filteredData = response.content.map((item) => ({
-        id: item.id,
-        name: item.name,
-        email: item.email,
-        genId: item.genId,
-        role: {
-          id: item.role.id,
-          name: getRoleDisplayName(item.role.name),
-        },
-        status: item.status,
-        createdAt: item.createdAt,
-      }));
-
-      setTotalPages(response.totalPages || 1);
-    } catch (error) {
-      console.log(error);
-      setError("Error fetching users.");
-    } finally {
-      setUsers(filteredData);
-      setLoading(false);
-    }
-  };
+      ),
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    fetchUsers();
-  }, [currentPage, searchQuery, roleQuery]); // Use searchQueryState in the dependency array
+    setTotalPages(fetchAccounts?.totalPages || 1);
+  }, [fetchAccounts]);
+
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const roleQueryUp = (roleQuery || "All").toUpperCase();
+  //       const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
+
+  //       const response = await getAllAccount(
+  //         searchQuery,
+  //         5,
+  //         defaultRole,
+  //         currentPage - 1,
+  //       );
+  //       // console.log(response.content);
+  //       setUsers(response.content);
+  //       setTotalPages(response.totalPages || 1);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setError("Error fetching users.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, [currentPage, searchQuery, roleQuery, trigger]); // Use searchQueryState in the dependency array
 
   const handleDetail = (userId: string) => {
     router.push(`/admin/accounts/${userId}`);
   };
+
+  const queryClient = useQueryClient();
+  const useDeleteAccountMutation = useMutation({
+    mutationFn: (userId: string) => deleteUser(userId),
+    onSuccess: () => {
+      toast.success("Xóa tài khoản thành công", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      queryClient.invalidateQueries({ queryKey: ["Accounts"] });
+    },
+    onError: () => {
+      toast.error("Xóa tài khoản thất bại", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+    },
+  });
+
+  const handleDeleteAccount = async (userId: string) => {
+    // try {
+    //   // setLoading(true);
+    //   await deleteUser(userId, searchQuery, 5, roleQuery, currentPage);
+    //   // setTrigger((prev) => !prev);
+    //   toast.success("Xóa tài khoản thành công", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Xóa tài khoản thất bại", {
+    //     position: "bottom-right",
+    //     autoClose: 3000,
+    //     pauseOnHover: false,
+    //   });
+    // } finally {
+    //   // setLoading(false);
+    // }
+    useDeleteAccountMutation.mutate(userId);
+  };
+
+  function formatDateToVN(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
 
   return (
     <div>
@@ -115,59 +164,65 @@ const AccountTable: React.FC<AccountTableProps> = ({
           ]}
           className="bg-gray-100"
         />
-        <TableBody isLoading={loading}>
+        <TableBody isLoading={status === "pending"}>
           {error ? (
             <TableRow>
               <TableCell colSpan={7} className="text-red-500">
-                {error}
+                {error.message}
               </TableCell>
             </TableRow>
-          ) : users.length > 0 ? (
-            users.map((user) => (
+          ) : (
+            fetchAccounts?.content.map((user) => (
               <TableRow
                 key={user.id}
                 className="hover:bg-primary-lighter cursor-pointer"
-                onClick={() => handleDetail(user.id)}
+                // onClick={() => handleDetail(user.id)}
               >
                 <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role.name}</TableCell>
+                <TableCell className="w-20">{user.email}</TableCell>
+                <TableCell>{roleMap[user.role.name]}</TableCell>
                 <TableCell>
                   <span
-                    className={
-                      user.status
-                        ? "text-green-600 font-semibold"
-                        : "text-gray-500"
-                    }
+                    className={`${accountStatus[user.status].color} font-bold`}
                   >
-                    {getStatusDisplayName(user.status)}
+                    {accountStatus[user.status].label}
                   </span>
                 </TableCell>
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell className="flex justify-center items-center space-x-3">
-                  <button className="text-blue-600 hover:text-blue-800">
-                    <FaEdit className="h-5 w-5" />
+                <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
+                <TableCell className="flex justify-center items-center gap-2">
+                  <button className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors">
+                    <Tooltip text="Chỉnh sửa tài khoản">
+                      <FaEdit className="size-5" />
+                    </Tooltip>
                   </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    <FaTrashAlt className="h-4 w-4" />
+                  <button
+                    onClick={() => handleDeleteAccount(user.id)}
+                    className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
+                  >
+                    <Tooltip text="Xóa tài khoản">
+                      <FaTrashAlt className="size-4" />
+                    </Tooltip>
                   </button>
-                  <button className="text-yellow-600 hover:text-yellow-800">
-                    <FiLock className="h-5 w-5" />
+                  <button className="flex justify-center items-center text-yellow-600 hover:text-yellow-800 transition-colors">
+                    <Tooltip text="Khóa tài khoản">
+                      <FiLock className="size-5" />
+                    </Tooltip>
+                  </button>
+                  <button
+                    onClick={() => handleDetail(user.id)}
+                    className="flex justify-center items-center text-primary-dark hover:text-primary-darkest transition-colors"
+                  >
+                    <Tooltip text="Xem chi tiết">
+                      <Eye className="size-6" />
+                    </Tooltip>
                   </button>
                 </TableCell>
               </TableRow>
             ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7}>Không có dữ liệu.</TableCell>
-            </TableRow>
           )}
         </TableBody>
       </Table>
-
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

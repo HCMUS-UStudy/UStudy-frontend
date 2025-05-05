@@ -1,30 +1,36 @@
 import {
   ClassData,
   RegisterClassData,
-  MemberData,
   ClassChooseData,
   UserClassData,
-} from "@/app/types/type";
+  ClassDetail,
+  ApproveResponse,
+} from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
-import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
+import { MemberData } from "@/app/types/member";
+import { CreateClassInputs } from "@/app/ui/components/admin/classes/create/CreateClass";
 
 export const getAllClasses = async (
   nameQuery: string,
-  courseQuery: string,
-  gradeQuery: string,
   currentPage: number,
   limit: number,
+  courseQuery?: string,
+  gradeQuery?: string,
 ): Promise<ClassData> => {
-  const response = await axiosInstance.get("/class/list", {
-    params: {
-      page: currentPage,
-      limit: limit,
-      name: nameQuery,
-      course: courseQuery,
-      grade: gradeQuery,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get("/class/list", {
+      params: {
+        page: currentPage,
+        limit: limit,
+        name: nameQuery,
+        course: courseQuery,
+        grade: gradeQuery,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getAllChooseClasses = async (
@@ -43,22 +49,26 @@ export const getAllChooseClasses = async (
 };
 
 export const getAllStudentClasses = async (
-  nameQuery: string,
-  courseQuery: string,
-  gradeQuery: string,
   currentPage: number,
   limit: number,
+  name?: string,
+  courseId?: string,
+  gradeId?: string,
 ): Promise<UserClassData> => {
-  const response = await axiosInstance.get("/class/list", {
-    params: {
-      page: currentPage,
-      limit: limit,
-      name: nameQuery,
-      course: courseQuery,
-      grade: gradeQuery,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get("/class/list", {
+      params: {
+        page: currentPage,
+        limit,
+        name,
+        courseId,
+        gradeId,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const createNewClass = async (data: CreateClassInputs) => {
@@ -70,9 +80,13 @@ export const createNewClass = async (data: CreateClassInputs) => {
   }
 };
 
-export const getClassById = async (classId: string) => {
-  const response = await axiosInstance.get(`/class/details/${classId}`);
-  return response.data;
+export const getClassById = async (classId: string): Promise<ClassDetail> => {
+  try {
+    const response = await axiosInstance.get(`/class/details/${classId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getClassesForTeacher = async () => {
@@ -106,53 +120,65 @@ export const getListMembers = async (
   query: string,
   currentPage: number,
   limit: number,
-  role: string,
+  role: "STUDENT" | "TEACHER",
 ): Promise<MemberData> => {
-  const response = await axiosInstance.get(`/class/list-members/${classId}`, {
-    params: {
-      page: currentPage,
-      limit: limit,
-      role: role,
-      filter: query,
-    },
-  });
-  return response.data.data;
+  try {
+    const response = await axiosInstance.get(`/class/list-members/${classId}`, {
+      params: {
+        page: currentPage,
+        limit: limit,
+        role: role,
+        filter: query,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getListAvailableTea = async (
   classId: string,
-  query: string,
+  query: "",
   currentPage: number,
   limit: number,
 ): Promise<RegisterClassData> => {
-  const response = await axiosInstance.get(
-    `/class/list-available-teachers/${classId}`,
-    {
-      params: {
-        page: currentPage,
-        limit: limit,
-        filter: query,
+  try {
+    const response = await axiosInstance.get(
+      `/class/list-available-teachers/${classId}`,
+      {
+        params: {
+          page: currentPage,
+          limit: limit,
+          filter: query,
+        },
       },
-    },
-  );
-  return response.data.data;
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const addMembers = async (
   userIds: string[],
   classId: string,
-  role: string,
-) => {
-  const response = await axiosInstance.post(
-    `/class/add-members/${classId}`,
-    userIds,
-    {
-      params: {
-        role: role,
+  role: "STUDENT" | "TEACHER" | "PARENT",
+): Promise<ApproveResponse> => {
+  try {
+    const response = await axiosInstance.post(
+      `/class/add-members/${classId}`,
+      userIds,
+      {
+        params: {
+          role: role,
+        },
       },
-    },
-  );
-  return response.data;
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getListUserClass = async (

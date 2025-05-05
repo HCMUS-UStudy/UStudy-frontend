@@ -1,15 +1,65 @@
 import axiosInstance from "@/app/lib/axios";
-import { SubmissionItem, SubmissionSchema } from "@/app/types/type";
+import {
+  SubmissionData,
+  SubmissionDetail,
+  UpdateSubmissionSchema,
+} from "@/app/types";
+
+// export const createNewSubmission = async (
+//   assignmentId: string,
+//   data: SubmissionSchema,
+// ) => {
+//   const formData = new FormData();
+//   formData.append("content", data.content);
+
+//   data.files.forEach((file) => {
+//     formData.append("files", file); // BE nhận danh sách files[]
+//   });
+
+//   const response = await axiosInstance.post(
+//     `/submission/create/${assignmentId}`,
+//     formData,
+//     {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     },
+//   );
+
+//   return response.data;
+// };
 
 export const createNewSubmission = async (
   assignmentId: string,
-  data: SubmissionSchema,
+  body: {
+    duration: number;
+    answers: {
+      content: string;
+      files: File[];
+      questionId: string;
+      optionId: string;
+    }[];
+  },
 ) => {
   const formData = new FormData();
-  formData.append("content", data.content);
+  formData.append("duration", body.duration.toString());
 
-  data.files.forEach((file) => {
-    formData.append("files", file); // BE nhận danh sách files[]
+  body.answers.forEach((answer, index) => {
+    formData.append(`answers[${index}].questionId`, answer.questionId);
+    formData.append(`answers[${index}].optionId`, answer.optionId);
+    formData.append(`answers[${index}].content`, answer.content);
+
+    // Nếu không có file, vẫn nên gửi rỗng
+    if (answer.files.length === 0) {
+      formData.append(
+        `answers[${index}].files`,
+        new Blob([], { type: "application/octet-stream" }),
+      );
+    } else {
+      answer.files.forEach((file) => {
+        formData.append(`answers[${index}].files`, file);
+      });
+    }
   });
 
   const response = await axiosInstance.post(
@@ -25,25 +75,51 @@ export const createNewSubmission = async (
   return response.data;
 };
 
-export const getSubmissionDetails = async (assignmentId: string) => {
+export const getSubmissionDetails = async (submissionId: string) => {
   const response = await axiosInstance.get(
-    `/submission/details/review/${assignmentId}`,
+    `/submission/details/${submissionId}`,
   );
 
-  return response.data.data as SubmissionItem;
+  return response.data.data as SubmissionDetail;
+};
+
+export const getSubmissionByAssignmentId = async (
+  assignmentId: string,
+  currentPage: number,
+  limit: number,
+): Promise<SubmissionData> => {
+  try {
+    const response = await axiosInstance.get(
+      `/submission/list/${assignmentId}`,
+      {
+        params: {
+          page: currentPage,
+          limit: limit,
+        },
+      },
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const updateSubmission = async (
   submissionId: string,
   assignmentId: string,
-  data: SubmissionSchema,
+  data: UpdateSubmissionSchema,
 ) => {
   const formData = new FormData();
   formData.append("content", data.content);
 
-  data.files.forEach((file) => {
-    formData.append("files", file); // BE nhận danh sách files[]
+  data.addedFiles.forEach((file) => {
+    formData.append("addedFiles", file);
   });
+
+  data.deletedFiles.forEach((file) => {
+    formData.append("deletedFiles", file);
+  });
+
   try {
     const response = await axiosInstance.patch(
       `/submission/update/${submissionId}?assignmentId=${assignmentId}`,

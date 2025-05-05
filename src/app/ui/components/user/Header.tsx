@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { UserData, SideNavItem } from "@/app/types/type";
+import { UserData, SideNavItem } from "@/app/types";
 import {
   SIDENAV_ITEMS_STUDENT,
   SIDENAV_ITEMS_TEACHER,
@@ -10,6 +10,9 @@ import { usePathname, useRouter } from "next/navigation";
 import DropdownProfile from "../_common/DropdownProfile";
 import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import { Select, SelectItem } from "../_common/Select";
+import { useAppDispatch, useAppSelector } from "@/app/store/store";
+import { setSelectedChild } from "@/app/store/ChildrenSlice";
 
 const Header = ({ role }: { role: string }) => {
   const pathname = usePathname();
@@ -20,11 +23,15 @@ const Header = ({ role }: { role: string }) => {
   const [toggleCollapse, setToggleCollapse] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
+  const { selectedId, children } = useAppSelector((state) => state.children);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
       setUserInfo(userInfo);
     };
+    console.log(children.at(0));
     fetchData();
   }, []);
 
@@ -60,13 +67,47 @@ const Header = ({ role }: { role: string }) => {
     };
   }, []);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className="h-header-height flex ml-from-sidebar px-12 justify-between items-center bg-foreground">
-      <div className="text-2xl font-bold mt-1">
+    <div
+      className={`h-header-height min-h-header-height flex px-10 justify-between items-center bg-foreground 
+        ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+    >
+      <div className="text-xl font-bold mt-1">
         {SIDENAV_ITEMS.find((item) => pathname.includes(item.path))?.title}
       </div>
       <div className="flex gap-6 items-center">
         <div className="flex gap-3 items-center" ref={dropdownRef}>
+          {userInfo?.role.defaultRoute === "PARENT" &&
+            pathname.includes("/member/tuition") && (
+              <Select
+                defaultValue={selectedId}
+                label="Chọn tài khoản"
+                defaultLabel={selectedId}
+                onValueChange={(id) => dispatch(setSelectedChild(id as string))}
+              >
+                {children.map((child) => (
+                  <SelectItem key={child} value={child}>
+                    {child}
+                  </SelectItem>
+                ))}
+              </Select>
+            )}
+
           <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
             <IoNotificationsOutline size={24} />
           </div>

@@ -2,11 +2,13 @@ import React from "react";
 import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
 import { StudentRegisterInputs } from "@/app/register/page";
+import { CustomDatePicker } from "../../../_common/text-field/CustomDatePicker";
 
 export default function StudentBasicInformation() {
   const {
     register,
     formState: { errors },
+    control,
   } = useFormContext<StudentRegisterInputs>();
   return (
     <div className="flex flex-col gap-4 col-span-2">
@@ -25,15 +27,16 @@ export default function StudentBasicInformation() {
         <Input
           className="text-[14px]"
           type="text"
-          placeholder="Email"
+          placeholder="abc@gmail.com..."
           label="Email"
           isError={errors.email !== undefined}
           errorMsg={errors.email?.message}
           {...register("email")}
         />
       </div>
-      <div>
-        <Input
+      <div className="w-full">
+        <CustomDatePicker label="Ngày sinh" control={control} name="birthday" />
+        {/* <Input
           className="text-[14px]"
           type="date"
           placeholder="Ngày sinh"
@@ -41,7 +44,7 @@ export default function StudentBasicInformation() {
           isError={errors.birthday !== undefined}
           errorMsg={errors.birthday?.message}
           {...register("birthday")}
-        />
+        /> */}
       </div>
       <div>
         <Input
@@ -69,7 +72,7 @@ export default function StudentBasicInformation() {
         <Input
           className="text-[14px]"
           type="text"
-          placeholder="Địa chỉ"
+          placeholder="227 Nguyễn Văn Cừ, P. Bến Thành, Quận 5, TP.HCM"
           label="Địa chỉ"
           isError={errors.address !== undefined}
           errorMsg={errors.address?.message}

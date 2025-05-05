@@ -2,6 +2,8 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { toast } from "react-toastify";
 
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { FaCheck, FaTimes } from "react-icons/fa";
+
 import {
   TbFolders,
   TbFileTypeDoc,
@@ -19,12 +21,13 @@ import {
   downloadSystemMaterial,
   downloadPersonalMaterial,
   uploadClassMaterial,
-  // createFolder,
+  createFolder,
   deleteClassMaterial,
 } from "@/app/lib/services/class-material"; // API này chắc chắn có
 import { useEffect, useState } from "react";
-import { MaterialItem, UserData } from "@/app/types/type";
+import { MaterialItem, UserData } from "@/app/types";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import { Input } from "../../_common/text-field/Input";
 
 const fileTypeIcons = [
   {
@@ -60,15 +63,19 @@ const fileTypeIcons = [
 const SingleMaterial = ({
   classId,
   material,
+  parentId,
   isExpanded,
   onToggleExpand,
-  onMaterialDeleted,
+  setFolderContents,
 }: {
   classId: string;
   material: MaterialItem;
+  parentId: string;
   isExpanded: boolean;
   onToggleExpand: () => void;
-  onMaterialDeleted: () => void;
+  setFolderContents: React.Dispatch<
+    React.SetStateAction<Map<string, MaterialItem[]>>
+  >;
 }) => {
   const type = material.name.split(".").pop();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -85,15 +92,25 @@ const SingleMaterial = ({
 
   const handleDelete = async () => {
     try {
-      await deleteClassMaterial(classId, material.id);
+      await deleteClassMaterial(classId, material.id, parentId || "");
       setShowDeleteModal(false);
-      onMaterialDeleted();
+
+      if (parentId) {
+        const response = await getMaterialsByParent(0, 100, classId, parentId);
+        setFolderContents(
+          (prev) => new Map(prev.set(parentId, response.content)),
+        );
+      }
       toast.success("Xóa tài liệu thành công", {
         autoClose: 2500,
         pauseOnHover: false,
       });
     } catch (error) {
       console.error("Error deleting material:", error);
+      toast.error("Không thể xóa tài liệu", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
     }
   };
 
@@ -130,13 +147,13 @@ const SingleMaterial = ({
           </div>
           <div
             className={`flex justify-center items-center text-black 
-            rounded-2xl h-fit transition-transform duration-300 w-fit group-hover:text-primary-darkest`}
+            rounded-2xl h-fit transition-all duration-500 w-fit group-hover:text-primary-darkest`}
           >
             <MdArrowForwardIos className={`${isExpanded ? "rotate-90" : ""}`} />
           </div>
         </div>
       ) : (
-        <div className="flex px-2 gap-20 mr-8">
+        <div className="flex px-2 gap-16 mr-8">
           <div
             className="flex cursor-pointer hover:text-primary-darkest w-fit"
             onClick={handleDownload} // Hàm xử lý tải tài liệu
@@ -144,7 +161,7 @@ const SingleMaterial = ({
             {fileTypeIcons.find((item) => item.type === type)?.icon}
             {material.name}
           </div>
-          {user?.genId === material.uploadedBy.genId && (
+          {user?.genId === material.uploadedBy?.genId && (
             <RiDeleteBin6Line
               className="text-red-600 text-[22px] cursor-pointer hover:text-red-800"
               onClick={() => setShowDeleteModal(true)} // Hàm xử lý xóa tài liệu
@@ -179,20 +196,15 @@ const SingleMaterial = ({
   );
 };
 
-const ClassMaterial = ({
-  classId,
-  showDetail,
-  setShowDetail,
-}: {
-  classId: string;
-  showDetail: boolean;
-  setShowDetail: (value: boolean) => void;
-}) => {
+const ClassMaterial = ({ classId }: { classId: string }) => {
   const [materials, setMaterials] = useState([] as MaterialItem[]);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]); // Lưu các thư mục mở
   const [folderContents, setFolderContents] = useState<
     Map<string, MaterialItem[]>
-  >(new Map()); // Lưu nội dung thư mục
+  >(new Map());
+
+  const [newFolder, setNewFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
 
   const toggleFolder = async (folderId: string) => {
     // Kiểm tra thư mục đã được mở chưa
@@ -225,6 +237,12 @@ const ClassMaterial = ({
   const fetchMaterials = async () => {
     try {
       const response = await getMaterialsByClassId("", 0, classId);
+      //sort by name
+      response.content.sort((a, b) => {
+        if (a.type === "FOLDER" && b.type !== "FOLDER") return -1;
+        if (a.type !== "FOLDER" && b.type === "FOLDER") return 1;
+        return a.name.localeCompare(b.name);
+      });
       setMaterials([...response.content]);
     } catch (error) {
       console.error("Error fetching materials:", error);
@@ -235,42 +253,53 @@ const ClassMaterial = ({
     fetchMaterials();
   }, [classId]);
 
-  const renderMaterials = (material: MaterialItem, classId: string) => {
+  const renderMaterials = (
+    material: MaterialItem,
+    classId: string,
+    parentId: string,
+  ) => {
     if (!material || !material.id) return null;
     return (
       <div className="ml-10 mr-2" key={material.id}>
         <SingleMaterial
           classId={classId}
           material={material}
+          parentId={parentId}
           isExpanded={expandedFolders.includes(material.id)} // Kiểm tra xem thư mục có mở không
           onToggleExpand={() => toggleFolder(material.id)} // Hàm xử lý nhấn vào thư mục
-          onMaterialDeleted={fetchMaterials}
+          setFolderContents={setFolderContents}
         />
         {/* Nếu thư mục được mở, hiển thị tài liệu con */}
-        {expandedFolders.includes(material.id) &&
-          folderContents.has(material.id) && (
-            <div className="ml-6">
-              {folderContents.get(material.id)?.length !== 0 &&
-                folderContents.get(material.id)?.map((child) => (
-                  <div key={child.id}>
-                    {renderMaterials(child, classId)}{" "}
-                    {/* Đệ quy để hiển thị tài liệu con */}
-                  </div>
-                ))}
-              <label
-                className="cursor-pointer ml-8 p-4 flex items-center text-[17px]
-                 hover:text-primary-darkest"
-              >
-                <TbFilePlus className="text-[22px] mr-2" />
-                <div className="flex items-center">Tải tài liệu lên</div>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(event) => handleFileUpload(event, material.id)}
-                />
-              </label>
-            </div>
-          )}
+        <div
+          className={`transition-transform duration-300 origin-top ease-in-out overflow-hidden ${
+            expandedFolders.includes(material.id) &&
+            folderContents.has(material.id)
+              ? "scale-y-100"
+              : "scale-y-0 h-0"
+          }`}
+        >
+          <div className="ml-6">
+            {folderContents.get(material.id)?.length !== 0 &&
+              folderContents.get(material.id)?.map((child) => (
+                <div key={child.id}>
+                  {renderMaterials(child, classId, material.id)}{" "}
+                  {/* Đệ quy để hiển thị tài liệu con */}
+                </div>
+              ))}
+            <label
+              className="cursor-pointer ml-8 p-4 flex items-center text-[17px]
+                 hover:text-primary-darkest w-fit"
+            >
+              <TbFilePlus className="text-[22px] mr-2" />
+              <div className="flex items-center">Tải tài liệu lên</div>
+              <input
+                type="file"
+                className="hidden"
+                onChange={(event) => handleFileUpload(event, material.id)}
+              />
+            </label>
+          </div>
+        </div>
       </div>
     );
   };
@@ -287,8 +316,15 @@ const ClassMaterial = ({
     formData.append("parentId", parentId);
 
     try {
-      await uploadClassMaterial(formData, classId);
-      await fetchMaterials();
+      await uploadClassMaterial(formData, parentId, classId);
+      if (parentId) {
+        const response = await getMaterialsByParent(0, 100, classId, parentId);
+        setFolderContents(
+          (prev) => new Map(prev.set(parentId, response.content)),
+        );
+      } else {
+        fetchMaterials();
+      }
       toast.success("Tải tài liệu lên thành công", {
         autoClose: 2500,
         pauseOnHover: false,
@@ -302,54 +338,96 @@ const ClassMaterial = ({
     }
   };
 
-  // const handleCreateFolder = async (name: string) => {
-  //   try {
-  //     await createFolder(classId, name);
-  //     await fetchMaterials();
-  //     toast.success("Tạo thư mục thành công", {
-  //       autoClose: 2500,
-  //       pauseOnHover: false,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error uploading material:", error);
-  //     toast.error("Tạo thư mục thất bại", {
-  //       autoClose: 2500,
-  //       pauseOnHover: false,
-  //     });
-  //   }
-  // };
+  const handleNewFolder = () => {
+    setNewFolder(true);
+  };
+
+  const handleCreateFolder = async (name: string) => {
+    try {
+      await createFolder(classId, name);
+      await fetchMaterials();
+      toast.success("Tạo thư mục thành công", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
+    } catch (error) {
+      console.error("Error uploading material:", error);
+      toast.error("Tạo thư mục thất bại", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
+    }
+  };
 
   return (
-    <div className="flex flex-col border border-gray-200 shadow-sm rounded-3xl p-2">
-      <div className="flex justify-between bg-white py-4 px-6">
-        <div className="flex items-center">
-          <h2 className="flex items-center text-[22px] font-bold">
-            📂 Tài liệu
-          </h2>
+    // <div className="flex flex-col border border-gray-200 shadow-sm rounded-3xl p-2">
+    //   <div className="flex justify-between bg-white py-4 px-6">
+    //     <div className="flex items-center">
+    //       <h2 className="flex items-center text-[22px] font-bold">
+    //         📂 Tài liệu
+    //       </h2>
+    //     </div>
+    //     <div
+    //       className={`flex justify-center items-center p-3 bg-gray-50 border border-gray-200 text-primary-darkest
+    //       rounded-2xl cursor-pointer h-fit hover:border-primary-darkest transition-transform duration-300 ${showDetail ? "rotate-90" : ""} `}
+    //       onClick={() => setShowDetail(!showDetail)}
+    //     >
+    //       <MdArrowForwardIos />
+    //     </div>
+    //   </div>
+    //   <div
+    //     className={`bg-white ease-in-out overflow-y-auto transition-transform origin-top duration-300 ${
+    //       showDetail ? "scale-y-100" : "scale-y-0 h-0"
+    //     }`}
+    //   >
+    <>
+      {materials.map((material) => renderMaterials(material, classId, ""))}{" "}
+      {newFolder && (
+        <div className="ml-8 mb-4 p-3 flex items-center text-[17px]">
+          <TbFolders className="text-[25px] text-yellow-500 mr-2" />
+          <Input
+            placeholder="Tên thư mục"
+            className="w-56"
+            value={newFolderName}
+            onChange={(event) => setNewFolderName(event.target.value)}
+            onEnter={() => {
+              handleCreateFolder(newFolderName);
+              setNewFolder(false);
+              setNewFolderName("");
+            }}
+          />
+          <div className="flex items-center gap-1 ml-4">
+            <FaCheck
+              className="text-green-600 text-[18px] cursor-pointer ml-2 hover:text-green-800"
+              onClick={() => {
+                handleCreateFolder(newFolderName);
+                setNewFolder(false);
+                setNewFolderName("");
+              }}
+            />
+            <FaTimes
+              className="text-red-600 text-[18px] cursor-pointer ml-2 hover:text-red-800"
+              onClick={() => {
+                setNewFolder(false);
+                setNewFolderName("");
+              }}
+            />
+          </div>
         </div>
-        <div
-          className={`flex justify-center items-center p-3 bg-gray-50 border border-gray-200 text-primary-darkest
-          rounded-2xl cursor-pointer h-fit hover:border-primary-darkest transition-transform duration-300 ${showDetail ? "rotate-90" : ""} `}
-          onClick={() => setShowDetail(!showDetail)}
-        >
-          <MdArrowForwardIos />
-        </div>
-      </div>
-      <div
-        className={`bg-white ease-in-out duration-300 overflow-hidden transition-max-height ${
-          showDetail ? "max-h-max" : "max-h-0"
-        }`}
-      >
-        {materials.map((material) => renderMaterials(material, classId))}{" "}
+      )}
+      {!newFolder && (
         <div
           className="cursor-pointer ml-8 mb-4 p-4 flex items-center text-[17px]
          hover:text-primary-darkest w-fit"
+          onClick={handleNewFolder}
         >
           <TbFolderPlus className="text-[22px] mr-2" />
-          <span>Tạo thư mục</span>
+          Tạo thư mục
         </div>
-      </div>
-    </div>
+      )}
+    </>
+    //   </div>
+    // </div>
   );
 };
 

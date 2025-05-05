@@ -6,12 +6,13 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaCheck } from "react-icons/fa6";
-import SelectorLoading from "../admin/classes/create/SelectorLoading";
-import { CourseItem, GradeItem } from "@/app/types/type";
+import SelectorLoading from "../_common/loading/SelectorLoading";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
-import { getAllCourses } from "@/app/lib/services/course";
+// import { getAllCourses } from "@/app/lib/services/course";
 import { teacherRegister } from "@/app/lib/services/register";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { getAllCourses } from "@/app/lib/services/course";
 
 const TeacherRegisterSchema = z.object({
   name: z
@@ -94,42 +95,57 @@ export default function CreateTeacher() {
 
   const selectedCourse = watch("courses");
 
-  const [grades, setGrades] = useState<GradeItem[]>([]);
-  const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
-  const [loadingGrades, setLoadingGrades] = useState<boolean>(false);
+  // const [grades, setGrades] = useState<GradeItem[]>([]);
+  // const [courses, setCourses] = useState<CourseItem[]>([]);
+  // const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
+  // const [loadingGrades, setLoadingGrades] = useState<boolean>(false);
   const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoadingCourses(true);
-        const response = await getAllCourses("", 15, 0);
-        setCourses(response.content);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoadingCourses(false);
-      }
-    };
-    fetchCourses();
-  }, []);
+  const { data: courses, status } = useQuery({
+    queryKey: ["Courses"],
+    queryFn: () => getAllCourses("", 15, 0),
+  });
+
+  // useEffect(() => {
+  //   const fetchCourses = async () => {
+  //     try {
+  //       setLoadingCourses(true);
+  //       const response = await getAllCourses("", 15, 0);
+  //       setCourses(response.content);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoadingCourses(false);
+  //     }
+  //   };
+  //   fetchCourses();
+  // }, []);
+
+  const { data: grades, status: gradesStatus } = useQuery({
+    queryKey: ["Grades", selectedCourse],
+    queryFn: () => getGradesByCourseId("", 0, selectedCourse),
+    enabled: !!selectedCourse,
+  });
 
   useEffect(() => {
-    const fetchGrades = async () => {
-      try {
-        setLoadingGrades(true);
-        const response = await getGradesByCourseId("", 0, selectedCourse);
-        setGrades(response.content);
-        setValue("grades", []);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoadingGrades(false);
-      }
-    };
-    fetchGrades();
-  }, [selectedCourse, setValue]);
+    setValue("grades", []);
+  }, [selectedCourse]);
+
+  // useEffect(() => {
+  //   const fetchGrades = async () => {
+  //     try {
+  //       setLoadingGrades(true);
+  //       const response = await getGradesByCourseId("", 0, selectedCourse);
+  //       setGrades(response.content);
+  //       setValue("grades", []);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoadingGrades(false);
+  //     }
+  //   };
+  //   fetchGrades();
+  // }, [selectedCourse, setValue]);
 
   return (
     <div>
@@ -138,7 +154,7 @@ export default function CreateTeacher() {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-[80vw] md:w-[500px] mt-4 flex flex-col gap-3 md:gap-5"
+        className="w-[75vw] lg:w-[500px] md:w-[550px] mt-4 flex flex-col gap-3 md:gap-5"
       >
         <div>
           <Input
@@ -234,7 +250,7 @@ export default function CreateTeacher() {
             {...register("address")}
           />
         </div>
-        {loadingCourses ? (
+        {status === "pending" ? (
           <SelectorLoading size="sm"></SelectorLoading>
         ) : (
           <>
@@ -243,19 +259,19 @@ export default function CreateTeacher() {
                 Bạn mong muốn dạy môn học nào ?
               </div>
               <div className="flex flex-wrap gap-3 mt-3">
-                {courses.map((course) => (
+                {courses?.content.map((course) => (
                   <label
-                    key={course.courseDto.id}
+                    key={course.detailedCourseDto.id}
                     className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
                   >
                     <input
                       type="radio"
                       className="hidden peer"
-                      value={course.courseDto.id}
+                      value={course.detailedCourseDto.id}
                       {...register("courses")}
                     />
                     <span className="peer-checked:text-primary-darkest text-gray-700 transition-colors text-sm">
-                      {course.courseDto.name}
+                      {course.detailedCourseDto.name}
                     </span>
                     <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
                   </label>
@@ -274,12 +290,12 @@ export default function CreateTeacher() {
               Bạn mong muốn dạy khối nào ?
             </div>
             <div className="mt-3">
-              {loadingGrades ? (
+              {gradesStatus === "pending" ? (
                 <SelectorLoading size="sm" numberOfItems={12}></SelectorLoading>
-              ) : grades.length !== 0 ? (
+              ) : grades?.content.length !== 0 ? (
                 <>
                   <div className="flex flex-wrap gap-3">
-                    {grades.map((grade) => (
+                    {grades?.content.map((grade) => (
                       <label
                         key={grade.id}
                         className="relative px-3 py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker flex items-center justify-center h-20 w-20 border-2 border-control-border text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"

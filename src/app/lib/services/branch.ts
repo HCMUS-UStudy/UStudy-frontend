@@ -1,5 +1,6 @@
 import axiosInstance from "@/app/lib/axios";
-import { BranchData, Session } from "@/app/types/type";
+import { Branch, BranchData } from "@/app/types";
+import { CreateBranchInputs } from "@/app/ui/components/admin/branches/AddBranchModal";
 
 type BranchUpdate = {
   id: string;
@@ -8,23 +9,17 @@ type BranchUpdate = {
   contactNumber: string;
 };
 
-type BranchRequest = {
-  name: string;
-  address: string;
-  contactNumber: string;
-  rooms: string;
-  sessions: Session[];
-};
-
 export const getAllBranches = async (
   page: number,
   limit: number,
+  filter?: string,
 ): Promise<BranchData> => {
   try {
     const response = await axiosInstance.get("/branch/list", {
       params: {
         page: page,
         limit: limit,
+        filter,
       },
     });
     return response.data.data;
@@ -33,14 +28,15 @@ export const getAllBranches = async (
   }
 };
 
-export const addBranch = async (branch: BranchRequest) => {
-  const response = await axiosInstance.post("/branch/create", {
-    ...branch,
-    sessions: branch.sessions
-      .filter((session) => session.id !== "")
-      .map((session) => session.id),
-  });
-  return response.data;
+export const addBranch = async (
+  branch: CreateBranchInputs,
+): Promise<Branch> => {
+  try {
+    const response = await axiosInstance.post("/branch/create", branch);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const assignClerks = async (branchId: string, clerkIds: string[]) => {

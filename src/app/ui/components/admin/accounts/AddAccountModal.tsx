@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createNewAccount } from "@/app/lib/services/user";
 import { useRouter } from "next/navigation";
 import { getAllRoles } from "@/app/lib/services/role";
+import { GenderType } from "@/app/types";
 
 interface AddAccountModalProps {
   buttonLabel: string;
@@ -121,7 +122,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
 
   return (
     <>
-      <Button onClick={handleOpenModal} className="pl-6 pr-6 rounded-2xl">
+      <Button onClick={handleOpenModal} className="pl-6 pr-6">
         {buttonLabel}
       </Button>
 
@@ -196,7 +197,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 defaultValue={"MALE"}
                 defaultLabel="Nam"
                 onValueChange={(value) => {
-                  setValue("gender", value as "MALE" | "FEMALE");
+                  setValue("gender", value as GenderType);
                 }}
               >
                 <SelectItem value="MALE">Nam</SelectItem>

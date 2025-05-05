@@ -5,7 +5,7 @@ import { FiMail, FiCalendar } from "react-icons/fi";
 // import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
 import { getUserDataFromCookies } from "@/app/lib/action";
-import { UserData } from "@/app/types/type";
+import { UserData } from "@/app/types";
 
 const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<UserData | null>(null);

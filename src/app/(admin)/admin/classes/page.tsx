@@ -1,6 +1,7 @@
+"use server";
 import React from "react";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-import CreateClassButton from "@/app/ui/components/admin/classes/CreateClassButton";
+import CreateClassButton from "@/app/ui/components/admin/classes/create/CreateClassButton";
 import ClassesTable from "@/app/ui/components/admin/classes/ClassesTable";
 
 export default async function Classes(props: {
@@ -12,16 +13,11 @@ export default async function Classes(props: {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex justify-between">
-        <SearchField
-          className="w-[200px] outline-none placeholder:text-gray-500 focus:ring-1 focus:ring-blue-800 rounded"
-          placeholder="Tìm theo tên lớp..."
-        />
+      <div className="flex justify-between gap-10">
+        <SearchField className="" placeholder="Tìm theo tên lớp..." />
         <div className="flex">
-          {/* <ClassRegisterModal buttonLabel="Duyệt đăng ký" /> */}
           <CreateClassButton />
         </div>
       </div>

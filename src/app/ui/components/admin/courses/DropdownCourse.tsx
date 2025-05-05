@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiFilter } from "react-icons/fi";
 import { getAllCourses } from "@/app/lib/services/course";
-import { CourseItem } from "@/app/types/type";
+import { CourseItem } from "@/app/types";
 
 interface DropdownCourseProps {
   label: string;

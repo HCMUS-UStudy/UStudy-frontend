@@ -1,35 +1,30 @@
 "use client";
 import { getReviewQuiz } from "@/app/lib/services/quiz";
-import { QuizReview } from "@/app/types/type";
 import React, { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import ReviewQuiz from "./ReviewQuiz";
 import { Button } from "@/app/ui/components/_common/Button";
+import { QuizReviewData } from "@/app/types";
 
 interface ScoreModalProps {
-  quizId: string;
+  assignmentId: string;
   isOpen: boolean;
-  score: number | null;
   onClose: () => void;
   onReview?: () => void;
 }
 
 const ScoreModal: React.FC<ScoreModalProps> = ({
-  quizId,
+  assignmentId,
   isOpen,
-  score,
   onClose,
 }) => {
-  const [reviewQuiz, setReviewQuiz] = useState<QuizReview>();
+  const [reviewQuiz, setReviewQuiz] = useState<QuizReviewData>();
   const [isReviewing, setIsReviewing] = useState(false);
   if (!isOpen) return null;
 
-  // Làm tròn điểm nếu không phải null
-  const roundedScore = score !== null ? Math.round(score) : null;
-
   const handleReviewQuiz = async () => {
     try {
-      const reviewData = await getReviewQuiz(quizId);
+      const reviewData = await getReviewQuiz(assignmentId);
 
       setReviewQuiz(reviewData);
       setIsReviewing(true);
@@ -43,7 +38,12 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
       {isReviewing ? (
         <ReviewQuiz
           reviewData={
-            reviewQuiz ?? { quizId: "", title: "", score: 0, questions: [] }
+            reviewQuiz ?? {
+              quizId: "",
+              title: "",
+              score: 0,
+              questions: [],
+            }
           }
           onClose={() => setIsReviewing(false)}
         />
@@ -55,9 +55,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               Kết Quả
             </h2>
             <p className="text-lg mb-6 text-gray-700">
-              {roundedScore !== null
-                ? `Nộp bài thành công! Điểm của bạn là: ${roundedScore}`
-                : "Đang tải..."}
+              {`Nộp bài thành công!  Chúc mừng bạn đã hoàn thành xuất sắc.`}
             </p>
             <div className="flex justify-center gap-4">
               <Button
@@ -70,7 +68,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
                 onClick={() => handleReviewQuiz()}
                 className="bg-gradient-to-r from-primary-darker to-primary-darkest text-white px-6 py-2 rounded-full hover:from-primary-dark hover:to-primary-darker transition-colors shadow-md"
               >
-                Xem Review
+                Xem lại
               </Button>
             </div>
           </div>

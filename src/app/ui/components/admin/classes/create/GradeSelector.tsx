@@ -1,41 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { getAllGrades } from "@/app/lib/services/grade";
-import { GradeItem } from "@/app/types/type";
+import React from "react";
 import { FaCheck } from "react-icons/fa6";
-import SelectorLoading from "./SelectorLoading";
 import { useFormContext } from "react-hook-form";
-import { CreateClassInputs } from "@/app/(admin)/admin/classes/create/page";
+import { CreateClassInputs } from "./CreateClass";
+import { useQuery } from "@tanstack/react-query";
+import { getAllGrades } from "@/app/lib/services/grade";
+import SelectorLoading from "../../../_common/loading/SelectorLoading";
 
 export default function GradeSelector() {
   const {
     register,
     formState: { errors },
   } = useFormContext<CreateClassInputs>();
-  const [grades, setGrades] = useState<GradeItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await getAllGrades("", 15, 0);
-        setGrades(response.content);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  // const [gradesTest, setGradesTest] = useState<GradeItem[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await getAllGrades("", 15, 0);
+  //       setGradesTest(response.content);
+  //       console.log(response.content);
+  //     } catch (error) {
+  //       console.log(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+  const { data: grades, status } = useQuery({
+    queryKey: ["Grades"],
+    queryFn: () => getAllGrades("", 15, 0),
+  });
   return (
     <div>
       <h1 className="font-bold">Chọn khối cho lớp học</h1>
       <div className="flex flex-wrap gap-4 w-2/3 mt-2">
-        {loading ? (
+        {status === "pending" ? (
           <SelectorLoading size="sm" numberOfItems={12} />
         ) : (
           <>
-            {grades.map((grade) => (
+            {grades?.content.map((grade) => (
               <label
                 htmlFor={grade.id}
                 key={grade.id}

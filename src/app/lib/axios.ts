@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { CustomError } from "../types/type";
+import { CustomError } from "../types";
 import { handleRefreshToken } from "@/app/lib/services/auth";
 import {
   getTokensFromCookies,
@@ -8,13 +8,13 @@ import {
   setTokensAndUserDataCookies,
 } from "./action";
 import { redirect } from "next/navigation";
-import { setupCache } from "axios-cache-interceptor";
+// import { setupCache } from "axios-cache-interceptor";
 
 const requestUrl = ["/auth/login"];
 
 // const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const instance = axios.create({
+const axiosInstance = axios.create({
   // baseURL: `${backendUrl}/api`,
   baseURL: "https://api.ustudy.io.vn/api",
   headers: {
@@ -22,10 +22,10 @@ const instance = axios.create({
   },
 });
 
-const axiosInstance = setupCache(instance, {
-  debug: console.log,
-  interpretHeader: false,
-});
+// const axiosInstance = setupCache(instance, {
+//   debug: console.log,
+//   interpretHeader: false,
+// });
 
 const decodeToken = (token: string) => {
   return JSON.parse(atob(token.split(".")[1]));
@@ -95,10 +95,8 @@ axiosInstance.interceptors.response.use(
   },
   function (error: AxiosError) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
-    console.log(error.response);
     if (error.response?.status === 403) {
       //handleLogout();
-      console.log("403 hoặc 401");
       // window.location.href = '/login';
     }
     const customError: CustomError = {
