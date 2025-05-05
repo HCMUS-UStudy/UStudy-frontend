@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import DetailedScoresTable from "./DetailedScoresTable";
 import { Select, SelectItem } from "../../../_common/Select";
 import { useQuery } from "@tanstack/react-query";
 import { getAllClasses } from "@/app/lib/services/class";
+import { getAcademicResult } from "@/app/lib/services/academicResult";
 
 // Đăng ký các components cho Chart.js
 ChartJS.register(
@@ -120,11 +121,16 @@ export default function AcademicResultsView() {
       teacher: "Phạm Văn I",
     },
   ];
-
+  const [selectedClass, setSelectedClass] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const { data: classes, status } = useQuery({
     queryKey: ["Classes"],
     queryFn: () => getAllClasses("", 0, 100),
   });
+
+  useEffect(() => {
+    console.log(classes?.content);
+  }, [classes]);
 
   // Tính điểm trung bình tổng
   const overallAverage =
@@ -175,6 +181,7 @@ export default function AcademicResultsView() {
           <Select
             defaultLabel="Chọn lớp học để xem kết quả"
             isLoading={status === "pending"}
+            onValueChange={(value) => setSelectedClass(value as string)}
           >
             {classes?.content.map((item) => (
               <SelectItem key={item.id} value={item.id}>
@@ -220,11 +227,7 @@ export default function AcademicResultsView() {
         </TabPanel>
 
         <TabPanel value="details">
-          <DetailedScoresTable
-            detailedScores={detailedScores}
-            overallAverage={overallAverage}
-            ranking={ranking}
-          />
+          <DetailedScoresTable classId={selectedClass} />
         </TabPanel>
       </Tabs>
 

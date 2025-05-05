@@ -2,11 +2,13 @@ import React from "react";
 import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
 import { StudentRegisterInputs } from "@/app/register/page";
+import { CustomDatePicker } from "../../../_common/text-field/CustomDatePicker";
 
 export default function StudentBasicInformation() {
   const {
     register,
     formState: { errors },
+    control,
   } = useFormContext<StudentRegisterInputs>();
   return (
     <div className="flex flex-col gap-4 col-span-2">
@@ -32,8 +34,9 @@ export default function StudentBasicInformation() {
           {...register("email")}
         />
       </div>
-      <div>
-        <Input
+      <div className="w-full">
+        <CustomDatePicker label="Ngày sinh" control={control} name="birthday" />
+        {/* <Input
           className="text-[14px]"
           type="date"
           placeholder="Ngày sinh"
@@ -41,7 +44,7 @@ export default function StudentBasicInformation() {
           isError={errors.birthday !== undefined}
           errorMsg={errors.birthday?.message}
           {...register("birthday")}
-        />
+        /> */}
       </div>
       <div>
         <Input
