@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { Grade, GradeData, GradeSchema } from "@/app/types";
+import { Grade, GradeData } from "@/app/types";
 import { CreateGradeInputs } from "@/app/ui/components/admin/grades/AddGradeModal";
 
 export const getAllGrades = async (
