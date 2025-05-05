@@ -18,6 +18,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaThLarge } from "react-icons/fa";
 import { FaList, FaSort } from "react-icons/fa6";
+import { FaEye, FaEdit } from "react-icons/fa";
 
 export default function ClassAssignment() {
   const { classId } = useParams<{ classId: string }>();
@@ -38,6 +39,7 @@ export default function ClassAssignment() {
   const [assignment, setAssignment] = useState<AssignmentItem[]>([]);
   const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingSubmission, setLoadingSubmission] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedAssignment, setSelectedAssignment] =
     useState<AssignmentItem | null>(null);
@@ -55,6 +57,15 @@ export default function ClassAssignment() {
   const handleOpenModal = (assignment: AssignmentItem) => {
     setSelectedAssignment(assignment); // Set the selected assignment
     setIsModalOpen(true); // Open the modal
+  };
+
+  const handleReview = (submissionId: string) => () => {
+    router.push(`/member/classes/${classId}/review/${submissionId}`);
+  };
+
+  const handleEdit = () => {
+    // TODO: Viết logic chỉnh sửa bài
+    console.log("Chỉnh sửa bài:", selectedAssignment?.id);
   };
 
   const closeModal = () => {
@@ -83,7 +94,7 @@ export default function ClassAssignment() {
       // Gọi API để lấy danh sách các lần nộp bài
       const fetchSubmissions = async () => {
         try {
-          setLoading(true);
+          setLoadingSubmission(true);
           const response = await getSubmissionByAssignmentId(
             selectedAssignment.id,
             0,
@@ -93,7 +104,7 @@ export default function ClassAssignment() {
         } catch (error) {
           console.error("Error fetching submissions:", error);
         } finally {
-          setLoading(false);
+          setLoadingSubmission(false);
         }
       };
       fetchSubmissions();
@@ -239,50 +250,81 @@ export default function ClassAssignment() {
                   </div>
 
                   <div className="max-h-[240px] overflow-y-auto border rounded-md shadow-inner">
-                    <Table className="w-full text-sm text-center">
+                    <Table
+                      className={`w-full text-sm text-center ${loading ? "animate-pulse" : ""}`}
+                    >
                       <TableHeader
                         columns={["Lần thử", "Trạng thái", "Điểm", "Hành động"]}
                       />
                       <TableBody>
-                        {submissions.map((submission, index) => (
-                          <TableRow
-                            key={submission.id}
-                            className={
-                              index % 2 === 1 ? "bg-primary-lighter" : ""
-                            }
-                          >
-                            <TableCell className="font-semibold">
-                              {index + 1}
-                            </TableCell>
-                            <TableCell>
-                              <div>
-                                {submission.gradedBy
-                                  ? "Đã hoàn thành"
-                                  : "Chưa chấm điểm"}
-                              </div>
-                              <div className="text-xs text-gray-500 mt-1">
-                                Nộp lúc{" "}
-                                {new Date(
-                                  submission.submissionDate,
-                                ).toLocaleString()}
-                              </div>
-                            </TableCell>
-                            <TableCell
+                        {loadingSubmission ? (
+                          // Skeleton loader or placeholder rows when loading
+                          <tr>
+                            <td
+                              colSpan={4}
+                              className="text-center text-gray-500 p-4"
+                            >
+                              Đang tải dữ liệu...
+                            </td>
+                          </tr>
+                        ) : (
+                          submissions.map((submission, index) => (
+                            <TableRow
+                              key={submission.id}
                               className={
-                                submission.score >= 90
-                                  ? "font-semibold text-primary-darkest"
-                                  : ""
+                                index % 2 === 1 ? "bg-primary-lighter" : ""
                               }
                             >
-                              {submission.score}
-                            </TableCell>
-                            <TableCell>
-                              <span className="text-primary-darker hover:underline cursor-pointer">
-                                Xem lại
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                              <TableCell className="font-semibold">
+                                {index + 1}
+                              </TableCell>
+                              <TableCell>
+                                <div>
+                                  {submission.gradedBy
+                                    ? "Đã hoàn thành"
+                                    : "Chưa chấm điểm"}
+                                </div>
+                                <div className="text-xs text-gray-500 mt-1">
+                                  Nộp lúc{" "}
+                                  {new Date(
+                                    submission.submissionDate,
+                                  ).toLocaleString()}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className={
+                                  submission.score >= 90
+                                    ? "font-semibold text-primary-darkest"
+                                    : ""
+                                }
+                              >
+                                {submission.score}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-2 justify-center">
+                                  <button
+                                    onClick={handleReview(submission.id)}
+                                    className="p-2 text-blue-600 hover:text-blue-800"
+                                    title="Xem lại"
+                                  >
+                                    <FaEye className="text-xl" />
+                                  </button>
+
+                                  {(selectedAssignment.format === "ESSAY" ||
+                                    selectedAssignment.format === "MIXED") && (
+                                    <button
+                                      onClick={handleEdit}
+                                      className="p-2 text-green-600 hover:text-green-800"
+                                      title="Chỉnh sửa"
+                                    >
+                                      <FaEdit className="text-xl" />
+                                    </button>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
                       </TableBody>
                     </Table>
                   </div>
