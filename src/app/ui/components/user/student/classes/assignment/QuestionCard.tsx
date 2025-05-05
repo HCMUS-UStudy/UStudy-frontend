@@ -135,6 +135,7 @@ interface QuestionCardProps {
       deletedFileIds?: string[];
     },
   ) => void;
+  downloadFile: (fileName: string, questionId: string) => Promise<void>;
   handleDeleteAnswer: (questionId: string) => void;
   setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   handleSubmitAssignment: () => void;
@@ -150,6 +151,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   optionLabels,
   handleAnswerSelect,
   handleAnswerChange,
+  downloadFile,
   handleDeleteAnswer,
   setCurrentQuestionIndex,
   handleSubmitAssignment,
@@ -234,7 +236,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   📄 Tệp bài tập
                 </h4>
                 <Button
-                  onClick={() => {} /* Add your file download logic here */}
+                  onClick={() =>
+                    downloadFile(
+                      currentQuestion?.fileName || "default.txt",
+                      currentQuestion?.id,
+                    )
+                  }
                   className="px-4 py-2 bg-primary-darker text-white font-medium rounded-md transition-all duration-300 ease-in-out shadow-md hover:bg-hover-primary hover:text-primary-darkest"
                 >
                   ⬇ Bấm vào đây để tải file về
@@ -293,7 +300,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   initialAttachments={answers[currentQuestion.id]?.files || []}
                   onSendMessage={(questionId, message) => {
                     handleAnswerChange(questionId, message);
-                    setIsEditing(false); // Exit editing mode after sending
+                    setIsEditing(false);
                   }}
                 />
               ) : (
@@ -315,7 +322,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         <button
           className="px-4 py-2 bg-primary-light text-primary-dark rounded-lg shadow-md hover:bg-hover-primary transition-all"
           onClick={() =>
-            // Navigate to the previous question if it's not the first question
             currentQuestionIndex > 0 &&
             setCurrentQuestionIndex((prev) => Math.max(prev - 1, 0))
           }

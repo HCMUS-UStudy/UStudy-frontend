@@ -1,5 +1,8 @@
 "use client";
-import { getQnAListByAssignmentId } from "@/app/lib/services/question";
+import {
+  getQnAListByAssignmentId,
+  handleDownloadFile,
+} from "@/app/lib/services/question";
 import { createNewSubmission } from "@/app/lib/services/submission";
 import { QnA } from "@/app/types";
 import QuizLoading from "@/app/ui/components/_common/loading/QuizLoading";
@@ -11,6 +14,7 @@ import ReviewAnswers from "@/app/ui/components/user/student/classes/assignment/R
 import ScoreModal from "@/app/ui/components/user/student/classes/quiz/ScoreModal";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const AssignmentPage = () => {
   const params = useParams();
@@ -171,6 +175,34 @@ const AssignmentPage = () => {
     setSubmittedAnswers((prev) => ({ ...prev, [questionId]: message }));
   };
 
+  const downloadFile = async (fileName: string, questionId: string) => {
+    try {
+      const response = await handleDownloadFile(questionId as string);
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName; // Sử dụng tên file được truyền vào
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Lỗi khi tải file:", error);
+      toast.error("Tải file thất bại!", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
+    }
+  };
+
   const handleDeleteAnswer = (questionId: string) => {
     setAnswers((prev) => {
       const updated = { ...prev };
@@ -252,6 +284,7 @@ const AssignmentPage = () => {
             optionLabels={optionLabels}
             handleAnswerSelect={handleAnswerSelect}
             handleAnswerChange={handleAnswerChange}
+            downloadFile={downloadFile}
             handleDeleteAnswer={handleDeleteAnswer}
             setCurrentQuestionIndex={setCurrentQuestionIndex}
             handleSubmitAssignment={handleSubmitAssignment}
