@@ -26,3 +26,4 @@ export * from "./register";
 export * from "./class-material";
 export * from "./childClasses";
 export * from "./payment";
+export * from "./question";

@@ -159,20 +159,23 @@ const Notification = () => {
               </div>
             </div>
           )}
-          {notifications.length > selectedIds.length && (
-            <span
-              className="text-primary-darker hover:text-primary-darkest cursor-pointer"
-              onClick={() => {
-                setSelectedIds(
-                  notifications
-                    .filter((item) => item.sender.genId === userData?.genId)
-                    .map((item) => item.id),
-                );
-              }}
-            >
-              Chọn tất cả
-            </span>
-          )}
+          {notifications.length > selectedIds.length &&
+            notifications.some(
+              (item) => item.sender.genId === userData?.genId,
+            ) && (
+              <span
+                className="text-primary-darker hover:text-primary-darkest cursor-pointer"
+                onClick={() => {
+                  setSelectedIds(
+                    notifications
+                      .filter((item) => item.sender.genId === userData?.genId)
+                      .map((item) => item.id),
+                  );
+                }}
+              >
+                Chọn tất cả
+              </span>
+            )}
         </div>
       </div>
       <table className="w-full border-collapse">
@@ -329,7 +332,6 @@ const Notification = () => {
       {isOpen && (
         <NotificationModal
           notification={updatingNotification}
-          returnButton={false}
           classId={classId}
           onClose={(value: boolean) => {
             setIsOpen(value);

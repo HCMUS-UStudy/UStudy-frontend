@@ -2,15 +2,16 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoDocumentAttachOutline } from "react-icons/io5";
 import { MdOutlineAssignment } from "react-icons/md";
 import { RiFileAddLine } from "react-icons/ri";
-import { MdOutlineQuiz } from "react-icons/md";
 import { Button } from "../../_common/Button";
 import { RxCross1 } from "react-icons/rx";
 import { useState } from "react";
-import QuizModal from "./QuizModal";
+import QuestionModal from "./QuestionModal";
 import NotificationModal from "./NotificationModal";
+import AssignmentModal from "./AssignmentModal";
 import { AnimatePresence } from "framer-motion"; // Import Framer Motion
 import { motion } from "framer-motion"; // Import Framer Motion
-import { ClassDetail } from "@/app/types";
+import { ClassTeacher } from "@/app/types";
+import Tooltip from "../../_common/Tooltip";
 
 const EachItem = ({
   Icon,
@@ -25,14 +26,14 @@ const EachItem = ({
 }) => {
   return (
     <div
-      className="border p-2 flex flex-col gap-2 rounded-lg cursor-pointer shadow-sm hover:bg-gray-100"
+      className="border p-2 flex flex-col gap-1 sm:gap-2 rounded-lg cursor-pointer shadow-sm hover:bg-gray-100"
       onClick={onClick}
     >
       <div className="flex gap-2 items-center p-1">
         {Icon}
-        <div className="text-[15px] font-bold">{title}</div>
+        <div className="text-[12px] sm:text-[14px] font-bold">{title}</div>
       </div>
-      <div className="text-[14px] mx-2">{desc}</div>
+      <div className="text-[12px] sm:text-[14px] mx-2">{desc}</div>
     </div>
   );
 };
@@ -41,10 +42,10 @@ const AddingModal = ({
   classDetail,
   setAddingModal,
 }: {
-  classDetail: ClassDetail;
+  classDetail: ClassTeacher;
   setAddingModal: (value: boolean) => void;
 }) => {
-  // const [addingQuiz, setAddingQuiz] = useState(false);
+  // const [addingQuestion, setAddingQuestion] = useState(false);
   const [activeModal, setActiveModal] = useState("main");
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
@@ -61,7 +62,7 @@ const AddingModal = ({
       <AnimatePresence>
         {activeModal === "main" && (
           <motion.div
-            className="flex flex-col gap-5 bg-foreground p-4 rounded-lg"
+            className="flex flex-col gap-5 bg-foreground p-4 rounded-lg max-w-[90%]"
             onClick={(e) => e.stopPropagation()}
             initial={isNavigatingBack ? { x: "-100%" } : { x: "0" }}
             animate={{ x: 0 }}
@@ -69,12 +70,14 @@ const AddingModal = ({
           >
             <div className="flex justify-between pb-3 border-b border-gray-200 items-center">
               <h1 className="text-lg font-bold ml-1"> Thêm nội dung mới </h1>
-              <RxCross1
-                className="w-4 h-4 cursor-pointer hover:h-5 hover:w-5"
-                onClick={() => setAddingModal(false)}
-              />
+              <Tooltip text="Đóng">
+                <RxCross1
+                  className="w-4 h-4 cursor-pointer hover:h-5 hover:w-5"
+                  onClick={() => setAddingModal(false)}
+                />
+              </Tooltip>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               <EachItem
                 Icon={
                   <div className="p-1 text-white rounded-lg bg-red-500">
@@ -103,26 +106,16 @@ const AddingModal = ({
                 }
                 title="Bài tập"
                 desc="Thêm bài tập mới cho học viên"
-                onClick={() => {}}
+                onClick={() => setActiveModal("assignment")}
               />
               <EachItem
                 Icon={
                   <div className="p-1 text-white rounded-lg bg-yellow-500">
-                    <MdOutlineQuiz />
-                  </div>
-                }
-                title="Quiz"
-                desc="Tạo quiz mới cho lớp học"
-                onClick={() => {}}
-              />
-              <EachItem
-                Icon={
-                  <div className="p-1 text-white rounded-lg bg-purple-500">
                     <RiFileAddLine />
                   </div>
                 }
                 title="Câu hỏi"
-                desc="Thêm câu hỏi quiz mới vào ngân hàng đề"
+                desc="Thêm câu hỏi mới vào ngân hàng đề"
                 onClick={() => setActiveModal("question")}
               />
             </div>
@@ -137,9 +130,9 @@ const AddingModal = ({
           </motion.div>
         )}
 
-        {/* {addingQuiz && <QuizModal setQuizModal={setAddingQuiz} />} */}
+        {/* {addingQuestion && <QuestionModal setQuestionModal={setAddingQuestion} />} */}
         {activeModal === "question" && (
-          <QuizModal
+          <QuestionModal
             classDetail={classDetail}
             onGoBack={handleGoBack}
             onClose={setAddingModal}
@@ -147,7 +140,18 @@ const AddingModal = ({
         )}
         {activeModal === "notification" && (
           <NotificationModal
+            returnButton={true}
             classId={classDetail.id}
+            onGoBack={handleGoBack}
+            onClose={setAddingModal}
+          />
+        )}
+        {activeModal === "assignment" && (
+          <AssignmentModal
+            returnButton={true}
+            classId={classDetail.id}
+            courseId={classDetail.course.id}
+            gradeId={classDetail.grade.id}
             onGoBack={handleGoBack}
             onClose={setAddingModal}
           />

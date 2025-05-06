@@ -10,6 +10,7 @@ import {
   updateClassNotification,
 } from "@/app/lib/services/notification";
 import TextArea from "../../_common/text-field/TextArea";
+import Tooltip from "../../_common/Tooltip";
 
 const NotificationModal = ({
   onGoBack,
@@ -100,17 +101,23 @@ const NotificationModal = ({
         transition={{ duration: 0.5 }}
       >
         <div className="flex justify-between pb-3 border-b">
-          <IoReturnUpBack
-            className={`cursor-pointer text-[25px] text-primary-dark hover:text-primary-darkest
-              ${!returnButton ? "invisible" : ""}
-            `}
-            onClick={onGoBack}
-          />
+          {returnButton ? (
+            <Tooltip text="Quay lại">
+              <IoReturnUpBack
+                className="cursor-pointer text-[25px] text-primary-dark hover:text-primary-darkest"
+                onClick={onGoBack}
+              />
+            </Tooltip>
+          ) : (
+            <div className="w-6"></div>
+          )}
           <h1 className="text-lg font-bold">Thêm thông báo</h1>
-          <RxCross1
-            className="cursor-pointer hover:text-primary-darkest"
-            onClick={() => onClose(false)}
-          />
+          <Tooltip text="Đóng">
+            <RxCross1
+              className="cursor-pointer hover:text-primary-darkest"
+              onClick={() => onClose(false)}
+            />
+          </Tooltip>
         </div>
         <div className="mt-3">
           <label className="font-medium">Tiêu đề</label>
