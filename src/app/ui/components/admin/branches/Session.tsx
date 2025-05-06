@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { getSession } from "@/app/lib/services/session";
 import { Session } from "@/app/types";

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosAdd } from "react-icons/io";
 import { PiFolderPlus } from "react-icons/pi";
+import { useParams } from "next/navigation";
 import {
   getListMaterial,
   createFolder,
@@ -10,8 +11,8 @@ import {
   downloadMaterial,
   uploadMaterial,
   deleteMaterial,
-} from "@/app/lib/services/personal-material";
-import { PersonalMaterialItem } from "@/app/types";
+} from "@/app/lib/services/class-material";
+import { ClassMaterialItem, UserData } from "@/app/types";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import {
@@ -38,6 +39,7 @@ import { LuTrash2 } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import UploadModal from "@/app/ui/components/user/teacher/UploadModal";
+import { getUserDataFromCookies } from "@/app/lib/action";
 
 const fileTypeIcons = [
   {
@@ -83,11 +85,9 @@ const fileTypeIcons = [
 ];
 
 export default function PersonalMaterial() {
-  const [material, setMaterial] = useState<PersonalMaterialItem[]>([]);
+  const [material, setMaterial] = useState<ClassMaterialItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFile, setActiveFile] = useState<PersonalMaterialItem | null>(
-    null,
-  );
+  const [activeFile, setActiveFile] = useState<ClassMaterialItem | null>(null);
   const activeFileRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<(HTMLDivElement | null)[]>([]);
   const createFolderRef = useRef<HTMLDivElement>(null);
@@ -104,6 +104,17 @@ export default function PersonalMaterial() {
   const buttonRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
 
+  const { classId } = useParams() as { classId: string };
+
+  const [user, setUser] = useState<UserData | null>(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const userInfo = await getUserDataFromCookies();
+      setUser(userInfo);
+    };
+    fetchData();
+  }, []);
+
   useEffect(() => {
     const checkScreen = () => {
       setIsMobile(window.innerWidth < 768);
@@ -119,14 +130,14 @@ export default function PersonalMaterial() {
     try {
       setMaterial([]);
       setLoading(true);
-      const data = await getListMaterial(currentFolderId || null);
+      const data = await getListMaterial(classId, currentFolderId || null);
       const sortedData = data.content.sort(
-        (a: PersonalMaterialItem, b: PersonalMaterialItem) => {
+        (a: ClassMaterialItem, b: ClassMaterialItem) => {
           if (a.material.type === "FOLDER" && b.material.type !== "FOLDER")
             return -1;
           if (a.material.type !== "FOLDER" && b.material.type === "FOLDER")
             return 1;
-          return 0;
+          return a.material.name.localeCompare(b.material.name);
         },
       );
       setMaterial(sortedData);
@@ -135,7 +146,7 @@ export default function PersonalMaterial() {
     } finally {
       setLoading(false);
     }
-  }, [currentFolderId]);
+  }, [currentFolderId, classId]);
 
   useEffect(() => {
     fetchMaterial();
@@ -157,7 +168,7 @@ export default function PersonalMaterial() {
   const handleSubmitNewFolder = useCallback(async () => {
     if (!newFolderName.trim()) return;
     try {
-      await createFolder(newFolderName, currentFolderId || null);
+      await createFolder(classId, newFolderName, currentFolderId || null);
       toast.success("Tạo thư mục thành công", {
         autoClose: 2500,
         pauseOnHover: false,
@@ -174,7 +185,7 @@ export default function PersonalMaterial() {
     } finally {
       setCreatingFolder(false);
     }
-  }, [newFolderName, currentFolderId, fetchMaterial]);
+  }, [newFolderName, currentFolderId, fetchMaterial, classId]);
 
   const handleViewFile = useCallback(
     async (id: string, canViewFile: boolean = false) => {
@@ -236,7 +247,7 @@ export default function PersonalMaterial() {
         formData.append("parentId", currentFolderId);
       }
       try {
-        await uploadMaterial(formData);
+        await uploadMaterial(classId, formData);
         fetchMaterial();
         toast.success("Tải tài liệu lên thành công", {
           autoClose: 2500,
@@ -250,12 +261,12 @@ export default function PersonalMaterial() {
         });
       }
     },
-    [currentFolderId, fetchMaterial],
+    [currentFolderId, fetchMaterial, classId],
   );
 
   const handleDelete = useCallback(async () => {
     try {
-      await deleteMaterial(deleteItem || "");
+      await deleteMaterial(classId, deleteItem || "");
       fetchMaterial();
       toast.success("Xóa tài liệu thành công", {
         autoClose: 2500,
@@ -268,7 +279,7 @@ export default function PersonalMaterial() {
         pauseOnHover: false,
       });
     }
-  }, [fetchMaterial, deleteItem]);
+  }, [fetchMaterial, deleteItem, classId]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
@@ -340,179 +351,183 @@ export default function PersonalMaterial() {
   }, []);
 
   return (
-    <div className="flex flex-col h-full justify-between">
+    <div className="flex flex-col h-full justify-between px-2">
       <div className="flex flex-col gap-1 p-3">
-        <div className="flex items-center gap-4 mb-2">
-          <div
-            onClick={() => {
-              setShowUploadModal(true);
-            }}
-            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
-            hover:bg-primary-lighter shadow-sm rounded-2xl"
-          >
-            {isMobile ? (
-              <Tooltip text="Tải tài liệu lên">
+        {currentFolderId && (
+          <div className="flex items-center gap-4 mb-2">
+            <div
+              onClick={() => {
+                setShowUploadModal(true);
+              }}
+              className="flex items-center justify-center flex-col gap-3 p-4 border cursor-pointer border-gray-200
+           hover:bg-primary-lighter shadow-sm rounded-2xl"
+            >
+              {isMobile ? (
+                <Tooltip text="Tải tài liệu lên">
+                  <IoIosAdd className="w-7 h-7" />
+                </Tooltip>
+              ) : (
                 <IoIosAdd className="w-7 h-7" />
-              </Tooltip>
-            ) : (
-              <IoIosAdd className="w-7 h-7" />
-            )}
-            <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[15px]">
-              Tải tài liệu lên
-            </span>
-          </div>
-          <div
-            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
-            hover:bg-primary-lighter shadow-sm rounded-2xl"
-            onClick={handleCreateFolder}
-          >
-            {isMobile ? (
-              <Tooltip text="Tạo thư mục mới">
+              )}
+              <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[15px]">
+                Tải tài liệu lên
+              </span>
+            </div>
+            <div
+              className="flex items-center justify-center flex-col gap-3 p-4 border cursor-pointer border-gray-200
+           hover:bg-primary-lighter shadow-sm rounded-2xl"
+              onClick={handleCreateFolder}
+            >
+              {isMobile ? (
+                <Tooltip text="Tạo thư mục mới">
+                  <PiFolderPlus className="w-7 h-7" />
+                </Tooltip>
+              ) : (
                 <PiFolderPlus className="w-7 h-7" />
-              </Tooltip>
-            ) : (
-              <PiFolderPlus className="w-7 h-7" />
-            )}
-            <span className="hidden md:inline md:text-[13px] lg:text-[15px]">
-              Tạo thư mục mới
-            </span>
+              )}
+              <span className="hidden md:inline md:text-[13px] lg:text-[15px]">
+                Tạo thư mục mới
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
+        {activeFile ? (
+          <div
+            className="flex justify-between items-center w-full px-2 py-1 bg-white border
+                rounded-full shadow-sm mb-2"
+            ref={activeFileRef}
+          >
+            <div className={`flex items-center gap-5 `}>
+              <Tooltip text="Hủy chọn">
+                <div
+                  className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
+                  onClick={() => setActiveFile(null)}
+                >
+                  <RxCross2 className="text-[20px] text-gray-700" />
+                </div>
+              </Tooltip>
+              <div className="flex items-center gap-[6px]">
+                <Tooltip text="Xem">
+                  <div
+                    className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
+                    onClick={() => {
+                      setActiveFile(null);
+                      if (activeFile.material.type === "FOLDER") {
+                        handleClickFolder(
+                          activeFile.id,
+                          activeFile.material.name,
+                        );
+                      } else {
+                        handleViewFile(
+                          activeFile.material.id,
+                          activeFile.material.name.endsWith("pdf"),
+                        );
+                      }
+                    }}
+                  >
+                    <GrView className="text-[20px] text-gray-700" />
+                  </div>
+                </Tooltip>
+                {activeFile.material.type !== "FOLDER" && (
+                  <Tooltip text="Tải xuống">
+                    <div
+                      className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
+                      onClick={() => {
+                        handleDownload(activeFile.material.id);
+                        setActiveFile(null);
+                      }}
+                    >
+                      <MdOutlineFileDownload className="text-[20px] text-gray-700" />
+                    </div>
+                  </Tooltip>
+                )}
+                {activeFile.material.uploadedBy.genId === user?.genId && (
+                  <Tooltip text="Đổi tên">
+                    <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
+                      <FiEdit3 className="text-[20px] text-gray-700" />
+                    </div>
+                  </Tooltip>
+                )}
+                {activeFile.material.uploadedBy.genId === user?.genId && (
+                  <Tooltip text="Xóa">
+                    <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
+                      <LuTrash2 className="text-[20px] text-gray-700" />
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-4 mr-2">
+              <div className="items-center gap-2 hidden md:inline text-[14px]">
+                <span className="hidden lg:inline"> Sửa đổi gần nhất </span>
+                <span className="text-primary-darker">
+                  {new Date(activeFile.material.uploadDate).toLocaleString(
+                    "vi-VN",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    },
+                  )}
+                </span>
+              </div>
+              <div className="items-center gap-2 hidden md:inline text-[14px]">
+                <span className="hidden lg:inline"> Đăng tải bởi </span>
+                <span className="text-primary-darker">
+                  {activeFile.material.uploadedBy.name}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3 mb-2">
+            {breadcrumb.length > 0 ? (
+              <div className="flex items-center gap-2 px-1 flex-wrap text-[17px]">
+                <span
+                  className="cursor-pointer hover:bg-primary-lighter rounded-xl px-2"
+                  onClick={() => {
+                    setBreadcrumb([]);
+                    setCurrentFolderId(null);
+                  }}
+                >
+                  Tất cả tài liệu
+                </span>
+                {breadcrumb.map((item, index) => (
+                  <div key={item.id} className="flex items-center gap-2">
+                    <MdOutlineArrowForwardIos className="text-gray-500" />
+                    <span
+                      className={`px-2 text-[17px] ${
+                        index === breadcrumb.length - 1
+                          ? "text-gray-700 font-semibold"
+                          : "cursor-pointer hover:bg-primary-lighter rounded-xl"
+                      }`}
+                      onClick={() => {
+                        const newBreadcrumb = breadcrumb.slice(0, index + 1);
+                        setBreadcrumb(newBreadcrumb);
+                        setCurrentFolderId(item.id);
+                      }}
+                    >
+                      {item.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-2 text-[17px]">
+                <span className="text-gray-700 font-semibold">
+                  Tất cả tài liệu
+                </span>
+              </div>
+            )}
+          </div>
+        )}
         {loading ? (
           <Loading />
         ) : (
           <>
-            {activeFile ? (
-              <div
-                className="flex justify-between items-center w-full px-2 py-1 bg-white border
-                rounded-full shadow-sm mb-2"
-                ref={activeFileRef}
-              >
-                <div className={`flex items-center gap-5 `}>
-                  <Tooltip text="Hủy chọn">
-                    <div
-                      className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
-                      onClick={() => setActiveFile(null)}
-                    >
-                      <RxCross2 className="text-[20px] text-gray-700" />
-                    </div>
-                  </Tooltip>
-                  <div className="flex items-center gap-[6px]">
-                    <Tooltip text="Xem">
-                      <div
-                        className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
-                        onClick={() => {
-                          setActiveFile(null);
-                          if (activeFile.material.type === "FOLDER") {
-                            handleClickFolder(
-                              activeFile.id,
-                              activeFile.material.name,
-                            );
-                          } else {
-                            handleViewFile(
-                              activeFile.id,
-                              activeFile.material.name.endsWith("pdf"),
-                            );
-                          }
-                        }}
-                      >
-                        <GrView className="text-[20px] text-gray-700" />
-                      </div>
-                    </Tooltip>
-                    {activeFile.material.type !== "FOLDER" && (
-                      <Tooltip text="Tải xuống">
-                        <div
-                          className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
-                          onClick={() => {
-                            handleDownload(activeFile.id);
-                            setActiveFile(null);
-                          }}
-                        >
-                          <MdOutlineFileDownload className="text-[20px] text-gray-700" />
-                        </div>
-                      </Tooltip>
-                    )}
-                    <Tooltip text="Đổi tên">
-                      <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-                        <FiEdit3 className="text-[20px] text-gray-700" />
-                      </div>
-                    </Tooltip>
-                    <Tooltip text="Xóa">
-                      <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-                        <LuTrash2 className="text-[20px] text-gray-700" />
-                      </div>
-                    </Tooltip>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 mr-2">
-                  <div className="items-center gap-2 hidden md:inline text-[14px]">
-                    <span className="hidden lg:inline"> Sửa đổi gần nhất </span>
-                    <span className="text-primary-darker">
-                      {new Date(activeFile.lastModified).toLocaleString(
-                        "vi-VN",
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        },
-                      )}
-                    </span>
-                  </div>
-                  <div className="items-center gap-2 hidden md:inline text-[14px]">
-                    <span className="hidden lg:inline"> Đăng tải bởi </span>
-                    <span className="text-primary-darker">
-                      {activeFile.material.uploadedBy.name}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-3 mb-2">
-                {breadcrumb.length > 0 ? (
-                  <div className="flex items-center gap-2 px-1 flex-wrap text-[17px]">
-                    <span
-                      className="cursor-pointer hover:bg-primary-lighter rounded-xl px-2"
-                      onClick={() => {
-                        setBreadcrumb([]);
-                        setCurrentFolderId(null);
-                      }}
-                    >
-                      Tất cả tài liệu
-                    </span>
-                    {breadcrumb.map((item, index) => (
-                      <div key={item.id} className="flex items-center gap-2">
-                        <MdOutlineArrowForwardIos className="text-gray-500" />
-                        <span
-                          className={`px-2 text-[17px] ${
-                            index === breadcrumb.length - 1
-                              ? "text-gray-700 font-semibold"
-                              : "cursor-pointer hover:bg-primary-lighter rounded-xl"
-                          }`}
-                          onClick={() => {
-                            const newBreadcrumb = breadcrumb.slice(
-                              0,
-                              index + 1,
-                            );
-                            setBreadcrumb(newBreadcrumb);
-                            setCurrentFolderId(item.id);
-                          }}
-                        >
-                          {item.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <span className="flex items-center px-2 text-gray-800 font-semibold text-[17px]">
-                    Tất cả tài liệu
-                  </span>
-                )}
-              </div>
-            )}
-
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {creatingFolder && (
                 <div
@@ -571,7 +586,7 @@ export default function PersonalMaterial() {
                           handleClickFolder(item.id, item.material.name);
                         } else {
                           handleViewFile(
-                            item.id,
+                            item.material.id,
                             item.material.name.endsWith("pdf"),
                           );
                         }
@@ -595,69 +610,71 @@ export default function PersonalMaterial() {
                       >
                         {item.material.name}
                       </span>
-                      <div className="ml-auto relative">
-                        <Tooltip text="Tùy chọn">
-                          <span
-                            ref={(el) => {
-                              buttonRefs.current[index] = el;
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleOptions(item.id, index);
-                              if (activeFile?.id !== item.id) {
-                                setActiveFile(null);
-                              }
-                            }}
-                            className={`py-1 px-3 rounded-full hover:bg-gray-200 
+                      {item.material.uploadedBy.genId === user?.genId && (
+                        <div className="ml-auto relative">
+                          <Tooltip text="Tùy chọn">
+                            <span
+                              ref={(el) => {
+                                buttonRefs.current[index] = el;
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleOptions(item.id, index);
+                                if (activeFile?.id !== item.id) {
+                                  setActiveFile(null);
+                                }
+                              }}
+                              className={`py-1 px-3 rounded-full hover:bg-gray-200 
                             text-lg ${activeFile?.id === item.id ? "hover:bg-primary-light" : ""}`}
-                          >
-                            ⋮
-                          </span>
-                        </Tooltip>
+                            >
+                              ⋮
+                            </span>
+                          </Tooltip>
 
-                        {openOptionsId === item.id && (
-                          <div
-                            className={`absolute ${popUpLeft ? "right-0" : "left-0"} top-7 z-10 bg-white border
+                          {openOptionsId === item.id && (
+                            <div
+                              className={`absolute ${popUpLeft ? "right-0" : "left-0"} top-7 z-10 bg-white border
                               shadow-lg rounded-lg py-2 w-36`}
-                            ref={popUpFolderRef}
-                          >
-                            {item.material.type !== "FOLDER" && (
+                              ref={popUpFolderRef}
+                            >
+                              {item.material.type !== "FOLDER" && (
+                                <button
+                                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                  onClick={() => {
+                                    handleDownload(item.material.id);
+                                    setOpenOptionsId(null);
+                                  }}
+                                >
+                                  <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
+                                  Tải xuống
+                                </button>
+                              )}
                               <button
                                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                                 onClick={() => {
-                                  handleDownload(item.id);
+                                  toast.info(
+                                    "Chức năng đổi tên chưa được cài đặt",
+                                  );
                                   setOpenOptionsId(null);
                                 }}
                               >
-                                <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
-                                Tải xuống
+                                <FiEdit3 className="w-4 h-4 text-gray-700" />
+                                Đổi tên
                               </button>
-                            )}
-                            <button
-                              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
-                              onClick={() => {
-                                toast.info(
-                                  "Chức năng đổi tên chưa được cài đặt",
-                                );
-                                setOpenOptionsId(null);
-                              }}
-                            >
-                              <FiEdit3 className="w-4 h-4 text-gray-700" />
-                              Đổi tên
-                            </button>
-                            <button
-                              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
-                              onClick={() => {
-                                setShowDeleteModal(item.id);
-                                setOpenOptionsId(null);
-                              }}
-                            >
-                              <LuTrash2 className="w-4 h-4 text-gray-700" />
-                              Xóa
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                              <button
+                                className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                onClick={() => {
+                                  setShowDeleteModal(item.id);
+                                  setOpenOptionsId(null);
+                                }}
+                              >
+                                <LuTrash2 className="w-4 h-4 text-gray-700" />
+                                Xóa
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))
                 : !creatingFolder && (

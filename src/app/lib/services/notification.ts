@@ -36,15 +36,46 @@ export const getNotificationDetails = async (notificationId: string) => {
   return response.data.data;
 };
 
-export const createClassNotification = async (body: {
-  receiverId: string;
-  title: string;
-  content: string;
-  type?: string;
-}) => {
+export const createClassNotification = async (
+  classId: string,
+  body: {
+    receiverId?: string;
+    title?: string;
+    content?: string;
+    type?: string;
+  },
+) => {
   const response = await axiosInstance.post("/notification/create-class-noti", {
     ...body,
     type: body.type ?? "ANNOUNCEMENT",
+  });
+  return response.data.data;
+};
+
+export const updateClassNotification = async (
+  classId: string,
+  notiId: string | undefined,
+  body: {
+    title?: string;
+    content?: string;
+    type?: string;
+  },
+) => {
+  const response = await axiosInstance.put(`/notification/update/${notiId}`, {
+    ...body,
+    type: body.type ?? "ANNOUNCEMENT",
+  });
+  return response.data.data;
+};
+
+export const deleteClassNotiForUser = async (
+  classId: string,
+  ids: string[],
+) => {
+  const response = await axiosInstance.delete("/notification/delete", {
+    data: {
+      ids: ids,
+    },
   });
   return response.data.data;
 };

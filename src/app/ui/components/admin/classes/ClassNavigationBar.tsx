@@ -8,7 +8,7 @@ export default function ClassNavigationBar() {
   const tabs = [
     { id: "overview", label: "Tổng quan" },
     { id: "participant", label: "Thành viên" },
-    { id: "content", label: "Nội dung" },
+    { id: "material", label: "Tài liệu" },
     // { id: "quiz", label: "Trắc nghiệm" },
     { id: "assignment", label: "Bài tập & Kiểm tra" },
   ];

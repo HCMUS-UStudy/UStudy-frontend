@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { NotificationItem } from "@/app/types";
 import { getNotificationDetails } from "@/app/lib/services/notification";
 import Loading from "@/app/ui/components/_common/loading/Loading";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { IoReturnUpBack } from "react-icons/io5";
 
 const SingleNotification = () => {
@@ -15,7 +15,6 @@ const SingleNotification = () => {
   const { classId } = useParams<{ classId: string }>();
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,13 +23,13 @@ const SingleNotification = () => {
       setLoading(false);
     };
     fetchData();
-  }, [notificationId]);
+  }, [notificationId, classId]);
 
   return (
-    <div>
+    <div className="p-6">
       <button
         onClick={() => {
-          router.push(`/teacher/classes/${classId}?${searchParams.toString()}`);
+          router.back();
         }}
         className="flex items-center space-x-2 text-primary-dark hover:text-primary-darkest mb-4"
       >
@@ -40,7 +39,7 @@ const SingleNotification = () => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="flex flex-col space-y-10 p-4">
+        <div className="flex flex-col space-y-8 p-4">
           <div className="flex flex-col space-y-2">
             <div className="text-primary-darkest text-[26px]">
               {notification?.title}
