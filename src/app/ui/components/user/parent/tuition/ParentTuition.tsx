@@ -11,10 +11,12 @@ import PaidPaymentsTable from "@/app/ui/components/user/parent/tuition/PaidPayme
 import AllPaymentTable from "@/app/ui/components/user/parent/tuition/AllPaymentTable";
 import { PaymentItem } from "@/app/types";
 import { getPaymentByStuId } from "@/app/lib/services/payment";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { RootState, useAppSelector } from "@/app/store/store";
+import PaymentLoadingSkeleton from "./PaymentLoadingSkeleton";
 
 export default function ParentTuition() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages] = useState(5);
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(
@@ -24,17 +26,19 @@ export default function ParentTuition() {
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
 
   const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
-
-  const { data: paymentData, error } = useQuery({
-    queryKey: ["payments", activeTab, currentPage],
+  const selectedChild = useAppSelector(
+    (state: RootState) => state.children.selectedId,
+  );
+  const {
+    data: paymentData,
+    error,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["payments", activeTab, selectedChild, currentPage - 1],
     queryFn: () =>
-      getPaymentByStuId(
-        "6619a4e4-b268-4b86-9b5f-929cbb69c871",
-        currentPage - 1,
-        1,
-        statusParam,
-      ),
-    placeholderData: (prev) => prev,
+      getPaymentByStuId(selectedChild, currentPage - 1, 1, statusParam),
+    placeholderData: keepPreviousData,
   });
 
   const payments = paymentData?.content || [];
@@ -101,92 +105,117 @@ export default function ParentTuition() {
     return <div>{error.message}</div>;
   }
 
+  if (isLoading) {
+    return (
+      <div className="space-y-4 p-4">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="animate-pulse flex items-center justify-between bg-gray-100 p-4 rounded shadow"
+          >
+            <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/6"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="px-2">
-      <Header
-        pendingPayments={pendingPayments}
-        paidPayments={completedPayments}
-        formatCurrency={formatCurrency}
-      />
+    <>
+      {isFetching ? (
+        <PaymentLoadingSkeleton />
+      ) : (
+        <>
+          <div className="px-2">
+            <Header
+              pendingPayments={pendingPayments}
+              paidPayments={completedPayments}
+              formatCurrency={formatCurrency}
+            />
 
-      {/* Tabs para ver diferentes tipos de pagos */}
-      <Tabs value={activeTab} onTabChange={setActiveTab}>
-        <TabList>
-          <Tab value="pending" label="Chờ thanh toán" />
-          <Tab value="completed" label="Đã thanh toán" />
-          <Tab value="all" label="Tất cả" />
-        </TabList>
+            <Tabs value={activeTab} onTabChange={setActiveTab}>
+              <TabList>
+                <Tab value="pending" label="Chờ thanh toán" />
+                <Tab value="completed" label="Đã thanh toán" />
+                <Tab value="all" label="Tất cả" />
+              </TabList>
 
-        <TabPanel value="pending">
-          <PendingPaymentsTable
-            filteredPendingPayments={pendingPayments}
-            formatCurrency={formatCurrency}
-            formatDate={formatDate}
-            getStatusName={getStatusName}
-            getStatusColor={getStatusColor}
-            handleViewDetails={handleViewDetails}
-            handlePayNow={handlePayNow}
-          />
-        </TabPanel>
+              <TabPanel value="pending">
+                <PendingPaymentsTable
+                  filteredPendingPayments={pendingPayments}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  getStatusName={getStatusName}
+                  getStatusColor={getStatusColor}
+                  handleViewDetails={handleViewDetails}
+                  handlePayNow={handlePayNow}
+                />
+              </TabPanel>
 
-        <TabPanel value="completed">
-          <PaidPaymentsTable
-            data={completedPayments}
-            onViewDetails={handleViewDetails}
-            formatCurrency={formatCurrency}
-            formatDate={formatDate}
-            getStatusName={getStatusName}
-            getStatusColor={getStatusColor}
-          />
-        </TabPanel>
+              <TabPanel value="completed">
+                <PaidPaymentsTable
+                  data={completedPayments}
+                  onViewDetails={handleViewDetails}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  getStatusName={getStatusName}
+                  getStatusColor={getStatusColor}
+                />
+              </TabPanel>
 
-        <TabPanel value="all">
-          <AllPaymentTable
-            payments={filteredAllPayments}
-            onViewDetails={handleViewDetails}
-            onPayNow={handlePayNow}
-            formatCurrency={formatCurrency}
-            formatDate={formatDate}
-            getStatusName={getStatusName}
-            getStatusColor={getStatusColor}
-          />
-        </TabPanel>
+              <TabPanel value="all">
+                <AllPaymentTable
+                  payments={filteredAllPayments}
+                  onViewDetails={handleViewDetails}
+                  onPayNow={handlePayNow}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  getStatusName={getStatusName}
+                  getStatusColor={getStatusColor}
+                />
+              </TabPanel>
 
-        <div className="mt-4 flex justify-end">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={paymentData?.totalPages || 2}
-            handlePageClick={(page) => setCurrentPage(page)}
-            handlePreviousPage={() =>
-              setCurrentPage((prev) => Math.max(prev - 1, 1))
-            }
-            handleNextPage={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-          />
-        </div>
-      </Tabs>
+              <div className="mt-4 flex justify-end">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={paymentData?.totalPages || 2}
+                  handlePageClick={(page) => setCurrentPage(page)}
+                  handlePreviousPage={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  handleNextPage={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                />
+              </div>
+            </Tabs>
+          </div>
 
-      {showPaymentDetails && selectedPayment && (
-        <PaymentDetailsModal
-          payment={selectedPayment}
-          onClose={() => setShowPaymentDetails(false)}
-          onPayNow={() => {
-            setShowPaymentDetails(false);
-            setShowPaymentMethod(true);
-          }}
-        />
+          {/* Modals ngoài Tabs */}
+          {showPaymentDetails && selectedPayment && (
+            <PaymentDetailsModal
+              payment={selectedPayment}
+              onClose={() => setShowPaymentDetails(false)}
+              onPayNow={() => {
+                setShowPaymentDetails(false);
+                setShowPaymentMethod(true);
+              }}
+            />
+          )}
+
+          {showPaymentMethod && selectedPayment && (
+            <PaymentMethodModal
+              payment={selectedPayment}
+              onClose={() => setShowPaymentMethod(false)}
+              onPaymentComplete={() => {
+                setShowPaymentMethod(false);
+              }}
+            />
+          )}
+        </>
       )}
-
-      {showPaymentMethod && selectedPayment && (
-        <PaymentMethodModal
-          payment={selectedPayment}
-          onClose={() => setShowPaymentMethod(false)}
-          onPaymentComplete={() => {
-            setShowPaymentMethod(false);
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }

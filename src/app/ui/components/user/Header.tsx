@@ -10,6 +10,9 @@ import { usePathname, useRouter } from "next/navigation";
 import DropdownProfile from "../_common/DropdownProfile";
 import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import { Select, SelectItem } from "../_common/Select";
+import { useAppDispatch, useAppSelector } from "@/app/store/store";
+import { setSelectedChild } from "@/app/store/ChildrenSlice";
 
 const Header = ({ role }: { role: string }) => {
   const pathname = usePathname();
@@ -20,11 +23,15 @@ const Header = ({ role }: { role: string }) => {
   const [toggleCollapse, setToggleCollapse] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
+  const { selectedId, children } = useAppSelector((state) => state.children);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
       setUserInfo(userInfo);
     };
+    console.log(children.at(0));
     fetchData();
   }, []);
 
@@ -85,6 +92,22 @@ const Header = ({ role }: { role: string }) => {
       </div>
       <div className="flex gap-6 items-center">
         <div className="flex gap-3 items-center" ref={dropdownRef}>
+          {userInfo?.role.defaultRoute === "PARENT" &&
+            pathname.includes("/member/tuition") && (
+              <Select
+                defaultValue={selectedId}
+                label="Chọn tài khoản"
+                defaultLabel={selectedId}
+                onValueChange={(id) => dispatch(setSelectedChild(id as string))}
+              >
+                {children.map((child) => (
+                  <SelectItem key={child} value={child}>
+                    {child}
+                  </SelectItem>
+                ))}
+              </Select>
+            )}
+
           <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
             <IoNotificationsOutline size={24} />
           </div>

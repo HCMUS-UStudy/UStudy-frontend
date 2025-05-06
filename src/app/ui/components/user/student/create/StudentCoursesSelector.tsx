@@ -180,7 +180,9 @@ export default function StudentCoursesSelector() {
         selectedBranch !== "" &&
         selectedCourses.length !== 0 && (
           <div>
-            <div className="text-gray-700 font-bold">Chọn ca học</div>
+            <div className="text-gray-700 font-bold">
+              Chọn các khung giờ có thể học
+            </div>
             <div>
               {loadingClassSession ? (
                 <SelectorLoading size="sm" numberOfItems={5}></SelectorLoading>

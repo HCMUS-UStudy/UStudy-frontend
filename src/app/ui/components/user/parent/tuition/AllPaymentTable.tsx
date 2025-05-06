@@ -97,12 +97,8 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center space-x-2">
-                    <Button
-                      onClick={() => onViewDetails(payment)}
-                      variant="outlined"
-                      className="rounded-full w-8 h-8 p-0 min-w-0 flex items-center justify-center"
-                    >
-                      <FaEye className="h-4 w-4" />
+                    <Button onClick={() => onViewDetails(payment)}>
+                      <FaEye className="size-5 text-primary hover:text-primary-darkest" />
                     </Button>
                     {payment.status === "PENDING" ? (
                       <Button

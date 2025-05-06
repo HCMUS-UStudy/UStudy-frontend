@@ -79,6 +79,9 @@ export default function CreateClass() {
       branchId: selectedBranchId ?? undefined,
     },
   });
+  useEffect(() => {
+    console.log(methods.formState.errors);
+  }, [methods.formState.errors]);
   const router = useRouter();
   const queryClient = useQueryClient();
   const useCreateClassMutation = useMutation({

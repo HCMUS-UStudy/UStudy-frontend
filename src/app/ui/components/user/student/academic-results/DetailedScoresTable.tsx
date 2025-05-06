@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,110 +13,146 @@ import {
   TableHeader,
   TableRow,
 } from "../../../_common/Table";
+import { useQuery } from "@tanstack/react-query";
+import { getAcademicResult } from "@/app/lib/services/academicResult";
+import Pagination from "../../../_common/Pagination";
 
-interface Score {
-  subject: string;
-  midterm: number;
-  final: number;
-  average: number;
-  grade: string;
-  teacher: string;
-}
+// interface Score {
+//   subject: string;
+//   midterm: number;
+//   final: number;
+//   average: number;
+//   grade: string;
+//   teacher: string;
+// }
 
-interface Ranking {
-  label: string;
-  color: string;
-}
+// interface Ranking {
+//   label: string;
+//   color: string;
+// }
 
-interface DetailedScoresTableProps {
-  detailedScores: Score[];
-  overallAverage: number;
-  ranking: Ranking;
-}
+// interface DetailedScoresTableProps {
+//   detailedScores: Score[];
+//   overallAverage: number;
+//   ranking: Ranking;
+// }
 
-const testResults = [
-  {
-    id: 1,
-    examName: "Toán học kỳ 1",
-    score: 8.5,
-    averageScore: 7.0,
-    examDate: "2025-04-10",
-  },
-  {
-    id: 2,
-    examName: "Văn học kỳ 1",
-    score: 7.2,
-    averageScore: 6.8,
-    examDate: "2025-04-12",
-  },
-  {
-    id: 3,
-    examName: "Tiếng Anh giữa kỳ",
-    score: 9.0,
-    averageScore: 7.5,
-    examDate: "2025-03-28",
-  },
-  {
-    id: 4,
-    examName: "Lý học kỳ 2",
-    score: 6.8,
-    averageScore: 7.1,
-    examDate: "2025-05-05",
-  },
-  {
-    id: 5,
-    examName: "Hóa học kỳ 2",
-    score: 7.5,
-    averageScore: 7.0,
-    examDate: "2025-05-08",
-  },
-];
+// const testResults = [
+//   {
+//     id: 1,
+//     examName: "Toán học kỳ 1",
+//     score: 8.5,
+//     averageScore: 7.0,
+//     examDate: "2025-04-10",
+//   },
+//   {
+//     id: 2,
+//     examName: "Văn học kỳ 1",
+//     score: 7.2,
+//     averageScore: 6.8,
+//     examDate: "2025-04-12",
+//   },
+//   {
+//     id: 3,
+//     examName: "Tiếng Anh giữa kỳ",
+//     score: 9.0,
+//     averageScore: 7.5,
+//     examDate: "2025-03-28",
+//   },
+//   {
+//     id: 4,
+//     examName: "Lý học kỳ 2",
+//     score: 6.8,
+//     averageScore: 7.1,
+//     examDate: "2025-05-05",
+//   },
+//   {
+//     id: 5,
+//     examName: "Hóa học kỳ 2",
+//     score: 7.5,
+//     averageScore: 7.0,
+//     examDate: "2025-05-08",
+//   },
+// ];
 
-export default function DetailedScoresTable({
-  detailedScores,
-  overallAverage,
-  ranking,
-}: DetailedScoresTableProps) {
+export default function DetailedScoresTable({ classId }: { classId: string }) {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { data: academicRes, status } = useQuery({
+    queryKey: ["AcademicResults", currentPage - 1, classId],
+    queryFn: () => getAcademicResult(classId, currentPage - 1, 5),
+    enabled: classId !== "",
+  });
   return (
     <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
       <CardHeader>
         <CardTitle>Chi tiết điểm số</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader
-            columns={[
-              "ID",
-              "Bài kiểm tra",
-              "Điểm",
-              "Điểm trung bình",
-              "Ngày làm bài",
-            ]}
-          />
-          <TableBody>
-            {testResults.map((result) => (
-              <TableRow key={result.id}>
-                <TableCell>{result.id}</TableCell>
-                <TableCell>{result.examName}</TableCell>
-                <TableCell>{result.score}</TableCell>
-                <TableCell>{result.averageScore}</TableCell>
-                <TableCell>
-                  {new Date(result.examDate).toLocaleDateString("vi-VN")}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter
-            columns={[
-              "ID",
-              "Bài kiểm tra",
-              "Điểm",
-              "Điểm trung bình",
-              "Ngày làm bài",
-            ]}
-            footerData={["Điểm trung bình", "", "", "", "8.2"]}
-          />
-        </Table>
+        {classId ? (
+          <>
+            <Table>
+              <TableHeader
+                columns={[
+                  "Bài kiểm tra",
+                  "Điểm",
+                  "Điểm trung bình",
+                  "Ngày làm bài",
+                  "",
+                ]}
+              />
+              <TableBody isLoading={status === "pending"}>
+                {academicRes?.assignmentScores.content.map((result) => (
+                  <TableRow key={result.title}>
+                    <TableCell>{result.title}</TableCell>
+                    <TableCell>{result.studentScore}</TableCell>
+                    <TableCell>{result.classAverageScore}</TableCell>
+                    <TableCell>
+                      {new Date(result.submissionDate).toLocaleDateString(
+                        "vi-VN",
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter
+                columns={[
+                  "ID",
+                  "Bài kiểm tra",
+                  "Điểm",
+                  "Điểm trung bình",
+                  "Ngày làm bài",
+                ]}
+                footerData={[
+                  "Điểm trung bình",
+                  "",
+                  "",
+                  "",
+                  academicRes?.averageScore.toString() || "",
+                ]}
+              />
+            </Table>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={academicRes?.assignmentScores.totalPages || 1}
+              handlePageClick={(page) => setCurrentPage(page)}
+              handleNextPage={() =>
+                setCurrentPage((prev) =>
+                  Math.min(
+                    academicRes?.assignmentScores.totalPages || 1,
+                    prev + 1,
+                  ),
+                )
+              }
+              handlePreviousPage={() =>
+                setCurrentPage((prev) => Math.max(1, prev - 1))
+              }
+            />
+          </>
+        ) : (
+          <div className="text-primary-darkest">
+            Vui lòng chọn lớp học để xem chi tiết
+          </div>
+        )}
         {/* <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

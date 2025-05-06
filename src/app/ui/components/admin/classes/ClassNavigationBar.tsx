@@ -9,8 +9,8 @@ export default function ClassNavigationBar() {
     { id: "overview", label: "Tổng quan" },
     { id: "participant", label: "Thành viên" },
     { id: "content", label: "Nội dung" },
-    { id: "quiz", label: "Trắc nghiệm" },
-    { id: "exercise", label: "Bài tập & Kiểm tra" },
+    // { id: "quiz", label: "Trắc nghiệm" },
+    { id: "assignment", label: "Bài tập & Kiểm tra" },
   ];
   const handleTabChange = (id: string) => {
     const classId = pathname.split("/")[3];

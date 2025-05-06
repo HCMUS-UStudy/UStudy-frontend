@@ -1,8 +1,8 @@
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { Card, CardContent } from "../../../_common/Card";
-import { Button } from "../../../_common/Button";
 import { FaCalendarAlt, FaHistory } from "react-icons/fa";
 import { TuitionPayment } from "@/app/types";
+import { Button } from "../../../_common/Button";
 
 interface HeaderProps {
   pendingPayments: TuitionPayment[];

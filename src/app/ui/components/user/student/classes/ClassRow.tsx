@@ -113,7 +113,9 @@ const ClassRow: React.FC<GradeTableProps> = ({ searchQuery }) => {
             ))}
           </>
         ) : (
-          <div className="text-center text-gray-500">Không có lớp học nào.</div>
+          <div className="text-center text-primary-darkest bg-primary-lighter p-2 rounded">
+            Không có lớp học nào.
+          </div>
         )}
       </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -15,6 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CustomError } from "@/app/types/common";
 import { useDispatch } from "react-redux";
 import { setPermissions } from "@/app/store/PermissionScreenSlice";
+import { useMutation } from "@tanstack/react-query";
+import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 
 const LogInSchema = z.object({
   genId: z
@@ -29,7 +31,7 @@ type LogInInputs = z.infer<typeof LogInSchema>;
 
 export default function Login() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const isUser = pathname === "/login";
   const dispatch = useDispatch();
@@ -40,18 +42,16 @@ export default function Login() {
     handleSubmit,
     setError,
   } = useForm<LogInInputs>({ resolver: zodResolver(LogInSchema) });
-  const onSubmit = async (data: LogInInputs) => {
-    try {
-      setIsLoading(true);
-      const response = await login(data.genId, data.password, isUser);
+
+  const useLoginMutation = useMutation({
+    mutationFn: (data: LogInInputs) => login(data.genId, data.password, isUser),
+    onError: (error) => {
+      const customError = error as CustomError;
+      setError("genId", { message: String(customError.data || "") });
+      setError("password", { message: String(customError.data || "") });
+    },
+    onSuccess: (response) => {
       const defaultRoute = response.data.user.role.defaultRoute;
-      if (
-        (isUser && defaultRoute === "ADMIN") ||
-        (!isUser && defaultRoute !== "ADMIN")
-      ) {
-        throw new Error("Đăng nhập không hợp lệ");
-      }
-      // setTokens(response.data.access_token, response.data.refresh_token);
       setTokensAndUserDataCookies(
         response.data.access_token,
         response.data.refresh_token,
@@ -59,6 +59,10 @@ export default function Login() {
         JSON.stringify(response.data.screens),
       );
       dispatch(setPermissions(response.data.screens));
+      if (defaultRoute === "PARENT") {
+        dispatch(setChildren(response.data.children ?? []));
+        dispatch(setSelectedChild(response.data.children?.at(0) ?? ""));
+      }
       toast.success("Đăng nhập thành công", {
         position: "bottom-right",
         autoClose: 5000,
@@ -79,13 +83,11 @@ export default function Login() {
         default:
           break;
       }
-    } catch (error) {
-      const customError = error as CustomError;
-      setError("genId", { message: String(customError.data || "") });
-      setError("password", { message: String(customError.data || "") });
-    } finally {
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = (data: LogInInputs) => {
+    useLoginMutation.mutate(data);
   };
 
   return (
@@ -191,7 +193,11 @@ export default function Login() {
                 </Link>
               </div>
             </div>
-            <Button isPending={isLoading} className="mt-6 w-full" type="submit">
+            <Button
+              isPending={useLoginMutation.status === "pending"}
+              className="mt-6 w-full"
+              type="submit"
+            >
               Đăng nhập
             </Button>
           </form>
