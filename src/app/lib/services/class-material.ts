@@ -1,5 +1,4 @@
 import axiosInstance from "@/app/lib/axios";
-import { ClassMaterialItem } from "@/app/types";
 
 export const getListMaterial = async (
   classId: string,
@@ -12,9 +11,6 @@ export const getListMaterial = async (
       limit: 100,
       filter: "",
     },
-    id: !folderId
-      ? `getListMaterial_${classId}`
-      : `getListMaterial_${classId}_${folderId}`,
   });
   return response.data.data;
 };
@@ -47,34 +43,12 @@ export const createFolder = async (
       name: name,
       parentId: parentId,
     },
-    {
-      cache: {
-        update: {
-          [parentId
-            ? `getListMaterial_${classId}_${parentId}`
-            : `getListMaterial_${classId}`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
-    },
   );
   console.log("response", response.data);
   return response.data;
 };
 
-export const uploadMaterial = async (
-  classId: string,
-  data: FormData,
-  parentId: string | null,
-) => {
+export const uploadMaterial = async (classId: string, data: FormData) => {
   const response = await axiosInstance.post(
     `/class-material/upload-file/${classId}`,
     data,
@@ -82,54 +56,14 @@ export const uploadMaterial = async (
       headers: {
         "Content-Type": "form-data",
       },
-      cache: {
-        update: {
-          [parentId
-            ? `getListMaterial_${classId}_${parentId}`
-            : `getListMaterial_${classId}`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
     },
   );
   return response.data;
 };
 
-export const deleteMaterial = async (
-  classId: string,
-  parentId: string | null,
-  materialId: string,
-) => {
+export const deleteMaterial = async (classId: string, materialId: string) => {
   const response = await axiosInstance.delete(
     `/class-material/delete/${classId}/${materialId}`,
-    {
-      cache: {
-        update: {
-          [parentId
-            ? `getListMaterial_${classId}_${parentId}`
-            : `getListMaterial_${classId}`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content =
-              cached.data.data.data.content.filter(
-                (material: ClassMaterialItem) => material.id !== materialId,
-              );
-            return cached;
-          },
-        },
-      },
-    },
   );
   return response.data;
 };

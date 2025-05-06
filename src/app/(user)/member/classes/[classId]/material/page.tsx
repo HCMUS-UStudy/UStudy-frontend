@@ -33,8 +33,7 @@ import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { getUserDataFromCookies } from "@/app/lib/action";
-
-export const fileTypeIcons = [
+const fileTypeIcons = [
   {
     type: "pdf",
     icon: <TbFileTypePdf className="text-[25px] text-red-700" />,

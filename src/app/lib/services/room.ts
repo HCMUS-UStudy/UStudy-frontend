@@ -18,11 +18,11 @@ export const getAvailableRooms = async (
     const response = await axiosInstance.post(
       `/room/list-available/${branchId}`,
       body,
-      {
-        cache: {
-          methods: ["post"],
-        },
-      },
+      // {
+      //   cache: {
+      //     methods: ["post"],
+      //   },
+      // },
     );
     return response.data.data;
   } catch (error) {

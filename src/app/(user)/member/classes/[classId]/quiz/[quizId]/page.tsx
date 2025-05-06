@@ -1,3 +1,9 @@
+import React from "react";
+
+export default function page() {
+  return <div>page</div>;
+}
+
 // "use client";
 // import { getQnAListByAssignmentId } from "@/app/lib/services/question";
 // import { getDetailQuiz, submitQuiz } from "@/app/lib/services/quiz";

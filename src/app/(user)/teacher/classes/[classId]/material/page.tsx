@@ -41,7 +41,7 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import UploadModal from "@/app/ui/components/user/teacher/UploadModal";
 import { getUserDataFromCookies } from "@/app/lib/action";
 
-export const fileTypeIcons = [
+const fileTypeIcons = [
   {
     type: "pdf",
     icon: <TbFileTypePdf className="text-[25px] text-red-700" />,
@@ -247,7 +247,7 @@ export default function PersonalMaterial() {
         formData.append("parentId", currentFolderId);
       }
       try {
-        await uploadMaterial(classId, formData, currentFolderId || null);
+        await uploadMaterial(classId, formData);
         fetchMaterial();
         toast.success("Tải tài liệu lên thành công", {
           autoClose: 2500,
@@ -266,7 +266,7 @@ export default function PersonalMaterial() {
 
   const handleDelete = useCallback(async () => {
     try {
-      await deleteMaterial(classId, currentFolderId || null, deleteItem || "");
+      await deleteMaterial(classId, deleteItem || "");
       fetchMaterial();
       toast.success("Xóa tài liệu thành công", {
         autoClose: 2500,
@@ -279,7 +279,7 @@ export default function PersonalMaterial() {
         pauseOnHover: false,
       });
     }
-  }, [currentFolderId, fetchMaterial, deleteItem, classId]);
+  }, [fetchMaterial, deleteItem, classId]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;

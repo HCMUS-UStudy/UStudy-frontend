@@ -143,14 +143,14 @@ const BranchDetail = () => {
   const getSessions = async () => {
     try {
       const response = await getSession(0, 100);
-      response.data.sort((a: Session, b: Session) =>
+      response.content.sort((a: Session, b: Session) =>
         a.startTime.localeCompare(b.startTime),
       );
 
       const selectedIds = new Set(
         selectedSessions.map((session) => session.id),
       );
-      const sortedSessions = response.data.sort((a: Session, b: Session) => {
+      const sortedSessions = response.content.sort((a: Session, b: Session) => {
         if (selectedIds.has(a.id) && !selectedIds.has(b.id)) return -1;
         if (!selectedIds.has(a.id) && selectedIds.has(b.id)) return 1;
         return 0;

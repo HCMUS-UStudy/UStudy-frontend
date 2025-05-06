@@ -8,7 +8,7 @@ import {
   FaUserGraduate,
   FaUserFriends,
 } from "react-icons/fa";
-import { RoleItem } from "@/app/types";
+import { DefaultRoute, RoleItem } from "@/app/types";
 
 const roleIcons = {
   ADMIN: <FaUserShield className="text-red-500 text-5xl drop-shadow-lg" />,
@@ -31,7 +31,7 @@ const RoleDisplay = () => {
       try {
         const roleTypes = ["ADMIN", "TEACHER", "STUDENT", "PARENT"];
         const responses = await Promise.all(
-          roleTypes.map((role) => getAllRolesByDefault(role)),
+          roleTypes.map((role) => getAllRolesByDefault(role as DefaultRoute)),
         );
 
         const roleData: { [key: string]: RoleItem[] } = {};
