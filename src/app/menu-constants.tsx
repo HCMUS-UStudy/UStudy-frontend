@@ -21,7 +21,6 @@ import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { HiOutlineDocumentText } from "react-icons/hi";
-import { LuClipboardList } from "react-icons/lu";
 import { FaClipboardList, FaRegCommentDots } from "react-icons/fa6";
 import {
   MdOutlineAssignment,
@@ -96,11 +95,6 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
     title: "Lịch học",
     path: "/teacher/schedule",
     icon: <BsCalendar size={20} />,
-  },
-  {
-    title: "Điểm danh",
-    path: "/teacher/attendance",
-    icon: <LuClipboardList size={20} />,
   },
   {
     title: "Tài liệu cá nhân",
