@@ -22,7 +22,7 @@ export type ClassTeacher = {
   endDate: string;
   grade: Grade;
   course: Course;
-  status: string | null; // Status can be null
+  status: string | null;
   classSessions: classSessions[];
 };
 

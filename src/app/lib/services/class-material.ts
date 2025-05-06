@@ -1,81 +1,82 @@
 import axiosInstance from "@/app/lib/axios";
-import { MaterialData, MaterialItem } from "@/app/types";
+import { ClassMaterialItem } from "@/app/types";
 
-// type CachedDataData = {
-//   data: MaterialData;
-//   messsage: string;
-//   statusCode: string;
-// };
-
-// type CachedData = {
-//   data: CachedDataData;
-//   status: number;
-// };
-
-// type Cached = {
-//   data: CachedData;
-//   state: string;
-//   createdAt: number;
-// };
-
-export const getMaterialsByClassId = async (
-  filter: string,
-  currentPage: number,
+export const getListMaterial = async (
   classId: string,
-): Promise<MaterialData> => {
-  const response = await axiosInstance.get(`/class-material/view/${classId}`, {
+  folderId: string | null,
+) => {
+  const response = await axiosInstance.get(`/class-material/list/${classId}`, {
     params: {
-      page: currentPage,
+      folderId: folderId,
+      page: 0,
       limit: 100,
-      filter: filter,
+      filter: "",
     },
-    id: `getMaterialsByClassId_${classId}`,
+    id: !folderId
+      ? `getListMaterial_${classId}`
+      : `getListMaterial_${classId}_${folderId}`,
   });
   return response.data.data;
 };
 
-export const getMaterialsByParent = async (
-  currentPage: number,
-  limit: number,
-  classId: string,
-  materialId: string,
-): Promise<MaterialData> => {
+export const getPreview = async (materialId: string) => {
+  const response = await axiosInstance.get(`/material/preview/${materialId}`, {
+    responseType: "blob",
+  });
+  return response.data;
+};
+
+export const downloadMaterial = async (materialId: string) => {
   const response = await axiosInstance.get(
-    `/class-material/view/${classId}/${materialId}`,
+    `/personal-material/download/${materialId}`,
     {
-      params: {
-        page: currentPage,
-        limit: limit,
-      },
-      id: `getMaterialsByParent_${classId}_${materialId}`,
+      responseType: "blob",
     },
   );
-  return response.data.data;
-};
-
-export const downloadPersonalMaterial = async (materialId: string) => {
-  const response = await axiosInstance.get(
-    `/material/download/personal/${materialId}`,
-    { responseType: "blob" },
-  );
   return response.data;
 };
 
-export const downloadSystemMaterial = async (materialId: string) => {
-  const response = await axiosInstance.get(
-    `/material/download/system/${materialId}`,
-    { responseType: "blob" },
-  );
-  return response.data;
-};
-
-export const uploadClassMaterial = async (
-  data: FormData,
-  parentId: string,
+export const createFolder = async (
   classId: string,
+  name: string,
+  parentId: string | null,
 ) => {
   const response = await axiosInstance.post(
-    `/class-material/upload/file/${classId}`,
+    `/class-material/create-folder/${classId}`,
+    {
+      name: name,
+      parentId: parentId,
+    },
+    {
+      cache: {
+        update: {
+          [parentId
+            ? `getListMaterial_${classId}_${parentId}`
+            : `getListMaterial_${classId}`]: (
+            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+            response,
+          ) => {
+            if (cached.state !== "cached") {
+              return "ignore";
+            }
+            cached.data.data.data.content.push(response.data.data);
+            return cached;
+          },
+        },
+      },
+    },
+  );
+  console.log("response", response.data);
+  return response.data;
+};
+
+export const uploadMaterial = async (
+  classId: string,
+  data: FormData,
+  parentId: string | null,
+) => {
+  const response = await axiosInstance.post(
+    `/class-material/upload-file/${classId}`,
     data,
     {
       headers: {
@@ -83,7 +84,9 @@ export const uploadClassMaterial = async (
       },
       cache: {
         update: {
-          [`getMaterialsByParent_${classId}_${parentId}`]: (
+          [parentId
+            ? `getListMaterial_${classId}_${parentId}`
+            : `getListMaterial_${classId}`]: (
             cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
             response,
           ) => {
@@ -100,46 +103,27 @@ export const uploadClassMaterial = async (
   return response.data;
 };
 
-export const createFolder = async (classId: string, name: string) => {
-  const response = await axiosInstance.post(
-    `/class-material/create/folder/${classId}`,
-    { name: name },
-    {
-      cache: {
-        update: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [`getMaterialsByClassId_${classId}`]: (cached: any, response) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
-    },
-  );
-  return response.data;
-};
-
-export const deleteClassMaterial = async (
+export const deleteMaterial = async (
   classId: string,
+  parentId: string | null,
   materialId: string,
-  parentId: string,
 ) => {
   const response = await axiosInstance.delete(
     `/class-material/delete/${classId}/${materialId}`,
     {
       cache: {
         update: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [`getMaterialsByParent_${classId}_${parentId}`]: (cached: any) => {
+          [parentId
+            ? `getListMaterial_${classId}_${parentId}`
+            : `getListMaterial_${classId}`]: (
+            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+          ) => {
             if (cached.state !== "cached") {
               return "ignore";
             }
             cached.data.data.data.content =
               cached.data.data.data.content.filter(
-                (material: MaterialItem) => material.id !== materialId,
+                (material: ClassMaterialItem) => material.id !== materialId,
               );
             return cached;
           },

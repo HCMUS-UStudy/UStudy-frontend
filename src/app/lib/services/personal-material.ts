@@ -1,39 +1,17 @@
 import axiosInstance from "@/app/lib/axios";
-import { MaterialData } from "@/app/types";
+import { PersonalMaterialItem } from "@/app/types";
 
-export const getListMaterial = async (): Promise<MaterialData> => {
-  const response = await axiosInstance.get(`/material/personal/list`, {
+export const getListMaterial = async (folderId: string | null) => {
+  const response = await axiosInstance.get(`/personal-material/list`, {
     params: {
+      folderId: folderId,
       page: 0,
       limit: 100,
+      filter: "",
     },
-    id: `getListMaterial`,
+    id: !folderId ? `getListMaterial` : `getListMaterial_${folderId}`,
   });
   return response.data.data;
-};
-
-export const getListMaterialByParent = async (
-  folderId: string,
-): Promise<MaterialData> => {
-  const response = await axiosInstance.get(
-    `/material/personal/list/${folderId}`,
-    {
-      params: {
-        page: 0,
-        limit: 100,
-        filter: "",
-      },
-      id: `getListMaterial_${folderId}`,
-    },
-  );
-  return response.data.data;
-};
-
-export const getMaterialFilePath = async (materialId: string) => {
-  const response = await axiosInstance.get(
-    `/material/get_file_path/${materialId}`,
-  );
-  return response.data;
 };
 
 export const getPreview = async (materialId: string) => {
@@ -43,45 +21,27 @@ export const getPreview = async (materialId: string) => {
   return response.data;
 };
 
-export const createFolder = async (name: string) => {
-  const response = await axiosInstance.post(
-    `/material/personal/create-folder`,
+export const downloadMaterial = async (materialId: string) => {
+  const response = await axiosInstance.get(
+    `/personal-material/download/${materialId}`,
     {
-      name: name,
-    },
-    {
-      cache: {
-        update: {
-          [`getListMaterial`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
+      responseType: "blob",
     },
   );
   return response.data;
 };
 
-export const createFolderByParent = async (
-  name: string,
-  parentId: string | null,
-) => {
+export const createFolder = async (name: string, parentId: string | null) => {
   const response = await axiosInstance.post(
-    `/material/personal/create-folder/${parentId}`,
+    `/personal-material/create-folder`,
     {
       name: name,
+      parentId: parentId,
     },
     {
       cache: {
         update: {
-          [`getListMaterial_${parentId}`]: (
+          [parentId ? `getListMaterial_${parentId}` : `getListMaterial`]: (
             cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
             response,
           ) => {
@@ -100,36 +60,10 @@ export const createFolderByParent = async (
 
 export const uploadMaterial = async (
   data: FormData,
-  // parentId: string | null,
-) => {
-  const response = await axiosInstance.post(`/material/personal/upload`, data, {
-    headers: {
-      "Content-Type": "form-data",
-    },
-    cache: {
-      update: {
-        [`getListMaterial`]: (
-          cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-          response,
-        ) => {
-          if (cached.state !== "cached") {
-            return "ignore";
-          }
-          cached.data.data.data.content.push(response.data.data);
-          return cached;
-        },
-      },
-    },
-  });
-  return response.data;
-};
-
-export const uploadMaterialByParent = async (
-  data: FormData,
   parentId: string | null,
 ) => {
   const response = await axiosInstance.post(
-    `/material/personal/upload/${parentId}`,
+    `/personal-material/upload-file`,
     data,
     {
       headers: {
@@ -137,7 +71,7 @@ export const uploadMaterialByParent = async (
       },
       cache: {
         update: {
-          [`getListMaterial_${parentId}`]: (
+          [parentId ? `getListMaterial_${parentId}` : `getListMaterial`]: (
             cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
             response,
           ) => {
@@ -145,6 +79,34 @@ export const uploadMaterialByParent = async (
               return "ignore";
             }
             cached.data.data.data.content.push(response.data.data);
+            return cached;
+          },
+        },
+      },
+    },
+  );
+  return response.data;
+};
+
+export const deleteMaterial = async (
+  parentId: string | null,
+  materialId: string,
+) => {
+  const response = await axiosInstance.delete(
+    `/personal-material/delete/${materialId}`,
+    {
+      cache: {
+        update: {
+          [parentId ? `getListMaterial_${parentId}` : `getListMaterial`]: (
+            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+          ) => {
+            if (cached.state !== "cached") {
+              return "ignore";
+            }
+            cached.data.data.data.content =
+              cached.data.data.data.content.filter(
+                (material: PersonalMaterialItem) => material.id !== materialId,
+              );
             return cached;
           },
         },
