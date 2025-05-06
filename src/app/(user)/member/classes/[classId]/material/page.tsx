@@ -440,7 +440,7 @@ export default function PersonalMaterial() {
                       >
                         {item.material.name}
                       </span>
-                      {item.material.uploadedBy.genId === user?.genId && (
+                      {item.material.type !== "FOLDER" && (
                         <div className="ml-auto relative">
                           <Tooltip text="Tùy chọn">
                             <span
@@ -467,18 +467,16 @@ export default function PersonalMaterial() {
                               shadow-lg rounded-lg py-2 w-36`}
                               ref={popUpFolderRef}
                             >
-                              {item.material.type !== "FOLDER" && (
-                                <button
-                                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
-                                  onClick={() => {
-                                    handleDownload(item.material.id);
-                                    setOpenOptionsId(null);
-                                  }}
-                                >
-                                  <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
-                                  Tải xuống
-                                </button>
-                              )}
+                              <button
+                                className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                onClick={() => {
+                                  handleDownload(item.material.id);
+                                  setOpenOptionsId(null);
+                                }}
+                              >
+                                <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
+                                Tải xuống
+                              </button>
                             </div>
                           )}
                         </div>
