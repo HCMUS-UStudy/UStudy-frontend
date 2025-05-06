@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { MaterialData, MaterialItem } from "@/app/types";
+import { MaterialData } from "@/app/types";
 
 // type CachedDataData = {
 //   data: MaterialData;
@@ -29,7 +29,7 @@ export const getMaterialsByClassId = async (
       limit: 100,
       filter: filter,
     },
-    id: `getMaterialsByClassId_${classId}`,
+    // id: `getMaterialsByClassId_${classId}`,
   });
   return response.data.data;
 };
@@ -47,7 +47,7 @@ export const getMaterialsByParent = async (
         page: currentPage,
         limit: limit,
       },
-      id: `getMaterialsByParent_${classId}_${materialId}`,
+      // id: `getMaterialsByParent_${classId}_${materialId}`,
     },
   );
   return response.data.data;
@@ -81,20 +81,20 @@ export const uploadClassMaterial = async (
       headers: {
         "Content-Type": "form-data",
       },
-      cache: {
-        update: {
-          [`getMaterialsByParent_${classId}_${parentId}`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
+      // cache: {
+      //   update: {
+      //     [`getMaterialsByParent_${classId}_${parentId}`]: (
+      //       cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      //       response,
+      //     ) => {
+      //       if (cached.state !== "cached") {
+      //         return "ignore";
+      //       }
+      //       cached.data.data.data.content.push(response.data.data);
+      //       return cached;
+      //     },
+      //   },
+      // },
     },
   );
   return response.data;
@@ -105,18 +105,18 @@ export const createFolder = async (classId: string, name: string) => {
     `/class-material/create/folder/${classId}`,
     { name: name },
     {
-      cache: {
-        update: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [`getMaterialsByClassId_${classId}`]: (cached: any, response) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
+      // cache: {
+      //   update: {
+      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //     [`getMaterialsByClassId_${classId}`]: (cached: any, response) => {
+      //       if (cached.state !== "cached") {
+      //         return "ignore";
+      //       }
+      //       cached.data.data.data.content.push(response.data.data);
+      //       return cached;
+      //     },
+      //   },
+      // },
     },
   );
   return response.data;
@@ -125,26 +125,26 @@ export const createFolder = async (classId: string, name: string) => {
 export const deleteClassMaterial = async (
   classId: string,
   materialId: string,
-  parentId: string,
+  // parentId: string,
 ) => {
   const response = await axiosInstance.delete(
     `/class-material/delete/${classId}/${materialId}`,
     {
-      cache: {
-        update: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [`getMaterialsByParent_${classId}_${parentId}`]: (cached: any) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content =
-              cached.data.data.data.content.filter(
-                (material: MaterialItem) => material.id !== materialId,
-              );
-            return cached;
-          },
-        },
-      },
+      // cache: {
+      //   update: {
+      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //     [`getMaterialsByParent_${classId}_${parentId}`]: (cached: any) => {
+      //       if (cached.state !== "cached") {
+      //         return "ignore";
+      //       }
+      //       cached.data.data.data.content =
+      //         cached.data.data.data.content.filter(
+      //           (material: MaterialItem) => material.id !== materialId,
+      //         );
+      //       return cached;
+      //     },
+      //   },
+      // },
     },
   );
   return response.data;

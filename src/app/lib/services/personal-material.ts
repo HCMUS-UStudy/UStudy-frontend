@@ -7,7 +7,7 @@ export const getListMaterial = async (): Promise<MaterialData> => {
       page: 0,
       limit: 100,
     },
-    id: `getListMaterial`,
+    // id: `getListMaterial`,
   });
   return response.data.data;
 };
@@ -23,7 +23,7 @@ export const getListMaterialByParent = async (
         limit: 100,
         filter: "",
       },
-      id: `getListMaterial_${folderId}`,
+      // id: `getListMaterial_${folderId}`,
     },
   );
   return response.data.data;
@@ -50,20 +50,20 @@ export const createFolder = async (name: string) => {
       name: name,
     },
     {
-      cache: {
-        update: {
-          [`getListMaterial`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
+      // cache: {
+      //   update: {
+      //     [`getListMaterial`]: (
+      //       cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      //       response,
+      //     ) => {
+      //       if (cached.state !== "cached") {
+      //         return "ignore";
+      //       }
+      //       cached.data.data.data.content.push(response.data.data);
+      //       return cached;
+      //     },
+      //   },
+      // },
     },
   );
   return response.data;
@@ -79,20 +79,20 @@ export const createFolderByParent = async (
       name: name,
     },
     {
-      cache: {
-        update: {
-          [`getListMaterial_${parentId}`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
+      // cache: {
+      //   update: {
+      //     [`getListMaterial_${parentId}`]: (
+      //       cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      //       response,
+      //     ) => {
+      //       if (cached.state !== "cached") {
+      //         return "ignore";
+      //       }
+      //       cached.data.data.data.content.push(response.data.data);
+      //       return cached;
+      //     },
+      //   },
+      // },
     },
   );
   return response.data;
@@ -106,20 +106,20 @@ export const uploadMaterial = async (
     headers: {
       "Content-Type": "form-data",
     },
-    cache: {
-      update: {
-        [`getListMaterial`]: (
-          cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-          response,
-        ) => {
-          if (cached.state !== "cached") {
-            return "ignore";
-          }
-          cached.data.data.data.content.push(response.data.data);
-          return cached;
-        },
-      },
-    },
+    // cache: {
+    //   update: {
+    //     [`getListMaterial`]: (
+    //       cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    //       response,
+    //     ) => {
+    //       if (cached.state !== "cached") {
+    //         return "ignore";
+    //       }
+    //       cached.data.data.data.content.push(response.data.data);
+    //       return cached;
+    //     },
+    //   },
+    // },
   });
   return response.data;
 };
@@ -135,20 +135,20 @@ export const uploadMaterialByParent = async (
       headers: {
         "Content-Type": "form-data",
       },
-      cache: {
-        update: {
-          [`getListMaterial_${parentId}`]: (
-            cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            response,
-          ) => {
-            if (cached.state !== "cached") {
-              return "ignore";
-            }
-            cached.data.data.data.content.push(response.data.data);
-            return cached;
-          },
-        },
-      },
+      // cache: {
+      //   update: {
+      //     [`getListMaterial_${parentId}`]: (
+      //       cached: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      //       response,
+      //     ) => {
+      //       if (cached.state !== "cached") {
+      //         return "ignore";
+      //       }
+      //       cached.data.data.data.content.push(response.data.data);
+      //       return cached;
+      //     },
+      //   },
+      // },
     },
   );
   return response.data;

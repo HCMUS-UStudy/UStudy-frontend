@@ -90,7 +90,7 @@ const CreateBranchModal = ({
 
   const { data: sessions, status } = useQuery({
     queryKey: ["Sessions"],
-    queryFn: () => getSession(),
+    queryFn: () => getSession(0, 100),
   });
 
   // Hàm xử lý khi chọn/bỏ chọn session
@@ -184,7 +184,7 @@ const CreateBranchModal = ({
               </div>
               {status === "success" && (
                 <div className="mt-2 max-h-40 overflow-y-auto border p-2 rounded-lg">
-                  {sessions?.map((item) => (
+                  {sessions.content.map((item) => (
                     <SmallCheckbox
                       key={item.id}
                       type="checkbox"

@@ -60,8 +60,6 @@ export default function TeacherRegister() {
       const response = await confirmRegister(
         userId ? [userId] : selectedIds,
         roleId,
-        "TEACHER",
-        currentPage,
       );
       setTrigger((prev) => !prev);
       if (response.statusCode === "OK") {
@@ -91,11 +89,7 @@ export default function TeacherRegister() {
   const handleReject = async (userId?: string) => {
     try {
       setLoading(true);
-      const response = await rejectRegister(
-        userId ? [userId] : selectedIds,
-        "TEACHER",
-        currentPage,
-      );
+      const response = await rejectRegister(userId ? [userId] : selectedIds);
       setTrigger((prev) => !prev);
       if (response.statusCode === "OK") {
         toast.success("Từ chối tài khoản thành công", {

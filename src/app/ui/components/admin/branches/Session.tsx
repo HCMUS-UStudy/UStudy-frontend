@@ -3,26 +3,27 @@ import { getSession } from "@/app/lib/services/session";
 import { Session } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { createSession } from "@/app/lib/services/session";
-import { toast } from "react-toastify";
+// import { createSession } from "@/app/lib/services/session";
+// import { toast } from "react-toastify";
 import SessionModal from "./SessionModal";
 
 const SessionManagement = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newSession, setNewSession] = useState({
-    name: "",
-    startTime: "",
-    endTime: "",
-  });
+  // const [newSession, setNewSession] = useState<Session>({
+  //   id: "",
+  //   name: "",
+  //   startTime: "",
+  //   endTime: "",
+  // });
   useEffect(() => {
     const fetchSessions = async () => {
       try {
         const response = await getSession(0, 100);
-        response.data.sort((a: Session, b: Session) =>
+        response.content.sort((a: Session, b: Session) =>
           a.startTime.localeCompare(b.startTime),
         );
-        setSessions(response.data);
+        setSessions(response.content);
       } catch (error) {
         console.error("Failed to fetch time:", error);
       }
@@ -34,42 +35,42 @@ const SessionManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setNewSession({ name: "", startTime: "", endTime: "" }); // Reset form
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalOpen(false);
+  //   setNewSession({ id: "", name: "", startTime: "", endTime: "" }); // Reset form
+  // };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewSession((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setNewSession((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await createSession(newSession);
-      setSessions((prev) => [...prev, response.data]);
-      setNewSession({ name: "", startTime: "", endTime: "" });
-      setIsModalOpen(false);
-      toast.success("Thêm ca học thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
-    } catch (error) {
-      console.error("Failed to create session:", error);
-      toast.error("Thêm ca học thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
-    }
-  };
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await createSession(newSession);
+  //     setSessions((prev) => [...prev, response]);
+  //     setNewSession({ id: "", name: "", startTime: "", endTime: "" });
+  //     setIsModalOpen(false);
+  //     toast.success("Thêm ca học thành công", {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //       closeOnClick: true,
+  //     });
+  //   } catch (error) {
+  //     console.error("Failed to create session:", error);
+  //     toast.error("Thêm ca học thất bại", {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //       closeOnClick: true,
+  //     });
+  //   }
+  // };
   return (
     <>
       <div className="p-2">
@@ -123,10 +124,12 @@ const SessionManagement = () => {
       </div>
       {isModalOpen && (
         <SessionModal
-          session={newSession}
-          handleInputChange={handleInputChange}
-          handleCloseModal={handleCloseModal}
-          handleSubmit={handleSubmit}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          // session={newSession}
+          // handleInputChange={handleInputChange}
+          // handleCloseModal={handleCloseModal}
+          // handleSubmit={handleSubmit}
         />
       )}
     </>
