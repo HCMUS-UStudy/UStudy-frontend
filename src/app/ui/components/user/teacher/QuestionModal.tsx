@@ -17,7 +17,16 @@ import { MdUploadFile } from "react-icons/md";
 import { FaCloudUploadAlt, FaCheck } from "react-icons/fa";
 import { LuTrash2 } from "react-icons/lu";
 import { FiEdit3 } from "react-icons/fi";
-import { fileTypeIcons } from "@/app/(user)/teacher/personal-material/page";
+import {
+  TbFileTypeDoc,
+  TbFileTypeDocx,
+  TbFileTypePdf,
+  TbFileTypePpt,
+  TbFileTypeTxt,
+  TbFileTypeZip,
+  TbFileTypePng,
+  TbFileTypeJpg,
+} from "react-icons/tb";
 import Tooltip from "../../_common/Tooltip";
 import { AnimatePresence } from "framer-motion";
 
@@ -26,6 +35,49 @@ type FormValues = {
   answers: { description: string; correct: boolean }[];
   isMultipleChoice: boolean;
 };
+
+const fileTypeIcons = [
+  {
+    type: "pdf",
+    icon: <TbFileTypePdf className="text-[25px] text-red-700" />,
+  },
+  {
+    type: "doc",
+    icon: <TbFileTypeDoc className="text-[25px] text-blue-600" />,
+  },
+  {
+    type: "docx",
+    icon: <TbFileTypeDocx className="text-[25px] text-blue-700" />,
+  },
+  {
+    type: "ppt",
+    icon: <TbFileTypePpt className="text-[25px] text-red-800" />,
+  },
+  {
+    type: "pptx",
+    icon: <TbFileTypePpt className="text-[25px] text-red-800" />,
+  },
+  {
+    type: "txt",
+    icon: <TbFileTypeTxt className="text-[25px] text-gray-700" />,
+  },
+  {
+    type: "zip",
+    icon: <TbFileTypeZip className="text-[25px] text-yellow-700" />,
+  },
+  {
+    type: "jpg",
+    icon: <TbFileTypeJpg className="text-[25px] text-slate-700" />,
+  },
+  {
+    type: "jpeg",
+    icon: <TbFileTypeJpg className="text-[25px] text-slate-700" />,
+  },
+  {
+    type: "png",
+    icon: <TbFileTypePng className="text-[25px] text-slate-700" />,
+  },
+];
 
 const QuestionModal = ({
   onGoBack,

@@ -1,6 +1,6 @@
 import { GenderType } from "./common";
 import { Course, CourseDto } from "./course";
-import { Grade, GradeItem } from "./grade";
+import { GradeItem } from "./grade";
 import { Room } from "./room";
 import { ClassSessionItem, Session } from "./session";
 
@@ -20,7 +20,7 @@ export type ClassTeacher = {
   description: string;
   startDate: string;
   endDate: string;
-  grade: Grade;
+  grade: GradeItem;
   course: Course;
   status: string | null;
   classSessions: classSessions[];

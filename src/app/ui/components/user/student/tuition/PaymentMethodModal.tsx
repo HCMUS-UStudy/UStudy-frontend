@@ -5,10 +5,7 @@ import { FaCreditCard, FaMoneyBillWave, FaQrcode } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
 import { Button } from "@/app/ui/components/_common/Button";
 import { toast } from "react-toastify";
-import {
-  createVnPayPayment,
-  PaymentMethod as APIPaymentMethod,
-} from "@/app/lib/services/payment";
+import { createVnPayPayment } from "@/app/lib/services/payment";
 import { TuitionPayment } from "@/app/types";
 
 interface PaymentMethodModalProps {
@@ -73,10 +70,10 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       if (selectedMethod === "VNPAY") {
         const response = await createVnPayPayment({
           paymentId: payment.id,
-          amount: payment.amount,
-          description: `Thanh toán hóa đơn ${payment.invoiceNumber} - ${payment.className}`,
-          redirectUrl: `${window.location.origin}/student/tuition/payment-callback`,
-          paymentMethod: "VNPAY" as APIPaymentMethod,
+          // amount: payment.amount,
+          // description: `Thanh toán hóa đơn ${payment.invoiceNumber} - ${payment.className}`,
+          // redirectUrl: `${window.location.origin}/student/tuition/payment-callback`,
+          // paymentMethod: "VNPAY" as APIPaymentMethod,
         });
 
         if (response.success && response.paymentUrl) {

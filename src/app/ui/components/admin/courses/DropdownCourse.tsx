@@ -29,17 +29,18 @@ export default function DropdownCourse({
         const response = await getAllCourses("", 100, 0);
 
         const filteredData = response.content.map((item: CourseItem) => ({
-          key: item.courseDto.id,
-          label: item.courseDto.name,
+          key: item.detailedCourseDto.id,
+          label: item.detailedCourseDto.name,
         }));
 
         const updatedItems: CourseItem[] = [
           {
             totalGrades: 0, // Giá trị mặc định
-            courseDto: {
+            detailedCourseDto: {
               id: "0",
               name: "All",
               createdBy: {
+                avatar: "",
                 id: "",
                 genId: "",
                 email: "",
@@ -49,10 +50,11 @@ export default function DropdownCourse({
           },
           ...filteredData.map((item) => ({
             totalGrades: 0, // Hoặc giá trị phù hợp
-            courseDto: {
+            detailedCourseDto: {
               id: item.key,
               name: item.label,
               createdBy: {
+                avatar: "",
                 id: "",
                 genId: "",
                 email: "",
@@ -118,22 +120,24 @@ export default function DropdownCourse({
       >
         <FiFilter className="w-5 h-5 text-gray-600" />
         <span>
-          {items.find((c) => c.courseDto.id === selected)?.courseDto.name ||
-            label}
+          {items.find((c) => c.detailedCourseDto.id === selected)
+            ?.detailedCourseDto.name || label}
         </span>
       </button>
 
       {isOpen && items.length > 0 && (
         <div className="absolute left-0 top-full mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10 max-h-60 overflow-y-auto">
-          {items.map(({ courseDto }) => (
+          {items.map(({ detailedCourseDto }) => (
             <button
-              key={courseDto.id}
+              key={detailedCourseDto.id}
               className={`block w-full text-left px-4 py-2 hover:bg-green-100 ${
-                selected === courseDto.id ? "bg-green-200" : ""
+                selected === detailedCourseDto.id ? "bg-green-200" : ""
               }`}
-              onClick={() => handleSelect(courseDto.id, courseDto.name)}
+              onClick={() =>
+                handleSelect(detailedCourseDto.id, detailedCourseDto.name)
+              }
             >
-              {courseDto.name}
+              {detailedCourseDto.name}
             </button>
           ))}
         </div>
