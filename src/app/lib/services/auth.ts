@@ -2,15 +2,15 @@ import axiosInstance from "@/app/lib/axios";
 import { AuthResponse } from "@/app/types";
 
 export const login = async (
-  genId: string,
+  username: string,
   password: string,
   isUser: boolean,
 ): Promise<AuthResponse> => {
   try {
     const response = await axiosInstance.post("/auth/login", {
-      genId: genId,
-      password: password,
-      isUser: isUser,
+      username,
+      password,
+      isUser,
     });
     return response.data;
   } catch (error) {

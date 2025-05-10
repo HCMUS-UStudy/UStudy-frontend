@@ -87,23 +87,23 @@ export const teacherRegister = async (data: TeacherRegister) => {
   }
 };
 
-export const studentRegister = async (data: StudentRegisterInputs) => {
+export const studentRegister = async (
+  data: StudentRegisterInputs,
+): Promise<RegisterResponse> => {
   try {
     // console.log(data);
-    const response = await axiosInstance.post("/register/create/student", {
+    const response = await axiosInstance.post("/register/create", {
+      username: data.username,
+      password: data.password,
       name: data.name,
       email: data.email,
       birthday: data.birthday,
       phone: data.phone,
       parentPhone: data.parentPhone,
       address: data.address,
-      courses: data.courses,
-      grades: [data.grades],
-      branchId: data.branchId,
       gender: data.gender,
-      classTimes: data.classTimes,
     });
-    return response;
+    return response.data;
   } catch (error) {
     throw error;
   }

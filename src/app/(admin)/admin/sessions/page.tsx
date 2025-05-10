@@ -1,4 +1,4 @@
-import SessionManagement from "@/app/ui/components/admin/branches/Session";
+import SessionManagement from "@/app/ui/components/admin/branches/SessionManagement";
 import React, { Suspense } from "react";
 
 export default function page() {
