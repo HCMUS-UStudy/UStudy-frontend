@@ -63,9 +63,8 @@ export default function ClassAssignment() {
     router.push(`/member/classes/${classId}/review/${submissionId}`);
   };
 
-  const handleEdit = () => {
-    // TODO: Viết logic chỉnh sửa bài
-    console.log("Chỉnh sửa bài:", selectedAssignment?.id);
+  const handleEdit = (submissionId: string) => () => {
+    router.push(`/member/classes/${classId}/editExercise/${submissionId}`);
   };
 
   const closeModal = () => {
@@ -311,15 +310,16 @@ export default function ClassAssignment() {
                                   </button>
 
                                   {(selectedAssignment.format === "ESSAY" ||
-                                    selectedAssignment.format === "MIXED") && (
-                                    <button
-                                      onClick={handleEdit}
-                                      className="p-2 text-green-600 hover:text-green-800"
-                                      title="Chỉnh sửa"
-                                    >
-                                      <FaEdit className="text-xl" />
-                                    </button>
-                                  )}
+                                    selectedAssignment.format === "MIXED") &&
+                                    selectedAssignment.duration === 0 && (
+                                      <button
+                                        onClick={handleEdit(submission.id)}
+                                        className="p-2 text-green-600 hover:text-green-800"
+                                        title="Chỉnh sửa"
+                                      >
+                                        <FaEdit className="text-xl" />
+                                      </button>
+                                    )}
                                 </div>
                               </TableCell>
                             </TableRow>
