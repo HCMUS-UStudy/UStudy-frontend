@@ -8,7 +8,7 @@ export const login = async (
 ): Promise<AuthResponse> => {
   try {
     const response = await axiosInstance.post("/auth/login", {
-      genId: genId,
+      username: genId,
       password: password,
       isUser: isUser,
     });

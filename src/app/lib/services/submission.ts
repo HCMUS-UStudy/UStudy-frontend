@@ -1,9 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import {
-  SubmissionData,
-  SubmissionDetail,
-  UpdateSubmissionSchema,
-} from "@/app/types";
+import { SubmissionData, SubmissionDetail } from "@/app/types";
 
 // export const createNewSubmission = async (
 //   assignmentId: string,
@@ -106,27 +102,47 @@ export const getSubmissionByAssignmentId = async (
 
 export const updateSubmission = async (
   submissionId: string,
-  assignmentId: string,
-  data: UpdateSubmissionSchema,
+  data: {
+    answers: {
+      questionId: string;
+      content: string;
+      addedFiles: File[]; // Array of strings for file IDs or URLs
+      deletedFiles: string[]; // Array of strings for file IDs or URLs
+    }[];
+  },
 ) => {
   const formData = new FormData();
-  formData.append("content", data.content);
 
-  data.addedFiles.forEach((file) => {
-    formData.append("addedFiles", file);
+  // Loop over each answer to append the necessary fields to FormData
+  data.answers.forEach((answer, index) => {
+    // Append questionId and content for each answer using dot notation
+    formData.append(`answers[${index}].questionId`, answer.questionId);
+    formData.append(`answers[${index}].content`, answer.content);
+
+    // Append addedFiles as strings (file IDs or URLs)
+    answer.addedFiles.forEach((fileId, fileIndex) => {
+      formData.append(`answers[${index}].addedFiles[${fileIndex}]`, fileId);
+    });
+
+    // Append deletedFiles as strings (file IDs or URLs)
+    answer.deletedFiles.forEach((fileId, fileIndex) => {
+      formData.append(`answers[${index}].deletedFiles[${fileIndex}]`, fileId);
+    });
   });
 
-  data.deletedFiles.forEach((file) => {
-    formData.append("deletedFiles", file);
-  });
+  // Log the FormData content for debugging
+  for (const pair of formData.entries()) {
+    console.log(pair[0] + ": " + pair[1]);
+  }
 
   try {
+    // Send the request with the FormData
     const response = await axiosInstance.patch(
-      `/submission/update/${submissionId}?assignmentId=${assignmentId}`,
-      formData,
+      `/submission/update/${submissionId}`,
+      formData, // Send the FormData
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "multipart/form-data", // The browser sets the correct content type for multipart/form-data
         },
       },
     );
