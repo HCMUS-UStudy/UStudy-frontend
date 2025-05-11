@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import clsx from "clsx";
 import { LiaTimesSolid } from "react-icons/lia";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DialogContextProps {
   isOpen: boolean;
@@ -74,29 +75,62 @@ export const Dialog: React.FC<DialogProps> = ({
   enableClickOutside = true,
   displayCloseButton = true,
 }: DialogProps) => {
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
+  // return (
+  //   <DialogProvider
+  //     isOpen={isOpen}
+  //     onClose={onClose}
+  //     displayCloseButton={displayCloseButton}
+  //   >
+  //     <div
+  //       className={clsx(
+  //         "fixed inset-0 flex justify-center items-center transition-colors duration-200 bg-black/20 z-10",
+  //       )}
+  //       onClick={enableClickOutside ? onClose : undefined}
+  //     >
+  //       <div
+  //         className={clsx(
+  //           "bg-white rounded-xl max-h-[calc(100vh-2rem)] overflow-auto",
+  //           className,
+  //         )}
+  //         onClick={(e) => e.stopPropagation()}
+  //       >
+  //         {children}
+  //       </div>
+  //     </div>
+  //   </DialogProvider>
+  // );
   return (
     <DialogProvider
       isOpen={isOpen}
       onClose={onClose}
       displayCloseButton={displayCloseButton}
     >
-      <div
-        className={clsx(
-          "fixed inset-0 flex justify-center items-center transition-colors duration-200 bg-black/20 z-10",
-        )}
-        onClick={enableClickOutside ? onClose : undefined}
-      >
-        <div
-          className={clsx(
-            "bg-white rounded-xl max-h-[calc(100vh-2rem)] overflow-auto",
-            className,
-          )}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {children}
-        </div>
-      </div>
+      <AnimatePresence>
+        {isOpen ? (
+          <motion.div
+            className="fixed inset-0 flex justify-center items-center bg-black/20 z-10"
+            onClick={enableClickOutside ? onClose : undefined}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={clsx(
+                "bg-white rounded-xl max-h-[calc(100vh-2rem)] overflow-auto",
+                className,
+              )}
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {children}
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </DialogProvider>
   );
 };

@@ -1,5 +1,5 @@
 import { GenderType } from "./common";
-import { Course, CourseDto } from "./course";
+import { Course, CourseDto, CourseInfo, CourseItem } from "./course";
 import { GradeItem } from "./grade";
 import { Room } from "./room";
 import { ClassSessionItem, Session } from "./session";
@@ -50,12 +50,8 @@ export type ClassItem = {
   id: string;
   name: string;
   course: CourseDto;
-  fee: number;
   startDate: string;
   endDate: string;
-  room: {
-    name: string;
-  };
   grade: GradeItem;
 };
 
@@ -185,4 +181,29 @@ export type ApproveResponse = {
     genId: string;
     name: string;
   }[];
+};
+
+export type ClassRegisterResponseItem = {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  grade: GradeItem;
+  course: CourseInfo;
+  teacher: [
+    {
+      id: string;
+      genId: string;
+      email: string;
+      name: string;
+      gender: "MALE" | "FEMALE";
+    },
+  ];
+};
+
+export type ClassRegisterResponse = {
+  content: ClassRegisterResponseItem[];
+  totalElements: number;
+  totalPages: number;
 };

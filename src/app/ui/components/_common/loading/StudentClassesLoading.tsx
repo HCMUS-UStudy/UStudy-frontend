@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ClassesLoading() {
+export default function StudentClassesLoading() {
   return (
     <>
       <div className="flex flex-col space-y-4">

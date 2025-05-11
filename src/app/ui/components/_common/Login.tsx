@@ -75,6 +75,12 @@ export default function Login() {
           router.push("/teacher/classes");
           break;
         case "STUDENT":
+          if (response.data.user.hadClass) {
+            router.push("/member/home");
+          } else {
+            router.push("/member/class-register");
+          }
+          break;
         case "PARENT":
           router.push("/member/home");
           break;

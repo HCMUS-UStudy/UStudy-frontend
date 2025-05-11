@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Button } from "@/app/ui/components/_common/Button";
+// import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
 import Footer from "@/app/ui/components/_common/landingPage/Footer";
 import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/user/CreateTeacher";
-import { IoLogInOutline } from "react-icons/io5";
+// import { IoLogInOutline } from "react-icons/io5";
 import Logo from "@/app/ui/components/_common/Logo";
 
 import Hero from "./ui/components/_common/landingPage/Hero";
@@ -88,11 +88,34 @@ export default async function Home() {
   };
   return (
     <div className=" bg-background">
-      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[570px] lg:h-[540px] rounded-b-[50px] lg:rounded-b-[140px] pt-10 px-12 lg:px-20">
+      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[570px] lg:h-[540px] pt-10 px-12 lg:px-20 relative">
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+          <svg
+            data-name="Layer 1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+            className="relative block w-[calc(100%+1.3px)] h-[120px]"
+          >
+            <path
+              d="M600,112.77C268.63,112.77,0,65.52,0,7.23V120H1200V7.23C1200,65.52,931.37,112.77,600,112.77Z"
+              className="fill-background"
+            />
+          </svg>
+        </div>
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
-          <Button
+          <button className="cursor-pointer transition-all bg-primary text-black text-[17px] px-10 py-3 rounded-lg border-primary-darker border-b-[4px] font-bold hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
+            <Link
+              href="/login"
+              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300"
+            >
+              Đăng nhập
+            </Link>
+          </button>
+
+          {/* <Button
             className="px-10 py-3 rounded-lg text-[17px] min-[320px]:hidden md:flex hover:scale-105 transition-all duration-300"
             type="submit"
           >
@@ -103,7 +126,7 @@ export default async function Home() {
               Đăng nhập
             </Link>
             <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
-          </Button>
+          </Button> */}
         </div>
         <Hero />
       </div>

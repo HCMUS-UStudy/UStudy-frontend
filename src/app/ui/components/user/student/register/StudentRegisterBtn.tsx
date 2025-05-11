@@ -10,7 +10,7 @@ export default function StudentRegisterBtn() {
   return (
     <Button
       onClick={() => router.push("/register")}
-      className="w-full rounded-lg overflow-hidden md:w-[240px] text-base lg:text-xl py-4 hover:scale-110"
+      className="w-full rounded-lg overflow-hidden md:w-[240px] text-base font-bold lg:text-xl py-4 hover:scale-110"
       type="submit"
     >
       Ghi danh

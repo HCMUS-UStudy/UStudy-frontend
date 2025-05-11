@@ -22,8 +22,8 @@ const DropdownProfile = ({
   return (
     <div className="flex items-center" ref={dropdownRef}>
       <div
-        className={`flex py-1 px-2 items-center border border-foreground gap-3 cursor-pointer
-        hover:shadow-md rounded-2xl hover:border hover:border-gray-100 ${
+        className={`flex py-1 px-2 items-center border-2 border-slate-200 gap-3 cursor-pointer
+        hover:bg-background rounded transition-colors ${
           toggleCollapse ? "shadow-md border-gray-100" : ""
         }`}
         onClick={handleToggle}
@@ -40,7 +40,7 @@ const DropdownProfile = ({
           <FaUserCircle size={40} className="rounded-full" />
         )}
         <div className="flex flex-col justify-center items-center">
-          <div className="text-[15px]">
+          <div className="text-[13px]">
             {userInfo?.name?.split(" ").slice(-2).join(" ")}
           </div>
           <div className="text-[13px] text-gray-600"> {userInfo?.genId}</div>
@@ -49,10 +49,10 @@ const DropdownProfile = ({
       {toggleCollapse && (
         <div
           className="absolute w-40 right-10 top-[60px] bg-white border border-gray-200
-            shadow-lg rounded-xl text-[15px] z-50"
+            shadow-lg rounded-lg text-[15px] z-50"
         >
           <div
-            className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-t-xl"
+            className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-t-lg"
             onClick={handleProfileClick}
           >
             <div className="flex gap-3 items-center">
@@ -60,7 +60,7 @@ const DropdownProfile = ({
             </div>
           </div>
           <div
-            className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-b-xl"
+            className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-b-lg"
             onClick={handleLogout}
           >
             <div className="flex gap-3 items-center">

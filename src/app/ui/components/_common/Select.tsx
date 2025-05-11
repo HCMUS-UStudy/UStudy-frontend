@@ -12,6 +12,7 @@ import { IoChevronDown } from "react-icons/io5";
 import { cn } from "@/app/lib/utils";
 import { Label } from "@/app/ui/components/_common/Label";
 import Loading from "./loading/Loading";
+import { XIcon } from "lucide-react";
 
 interface SelectProps {
   children: ReactNode;
@@ -34,6 +35,7 @@ interface SelectContextProps {
   selectedValue: string | number;
   handleSetSelectedValue: (value: string | number, label: string) => void;
   toggleOpen: () => void;
+  clearSelection: () => void;
 }
 
 const SelectContext = createContext<SelectContextProps | undefined>(undefined);
@@ -91,28 +93,12 @@ const Select: React.FC<SelectProps> = ({
   const [selectedLabel, setSelectedLabel] = useState<string>(defaultLabel);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const selectRef = useRef<HTMLDivElement>(null);
-  // const [parentBgColor, setParentBgColor] = React.useState<string>("");
 
   useEffect(() => {
     if (onValueChange) {
       onValueChange(selectedValue);
     }
   }, [selectedValue]);
-
-  // Get parent background color to set label background color
-  // useEffect(() => {
-  //   if (selectRef.current) {
-  //     let element = selectRef.current.parentElement;
-  //     while (element) {
-  //       const bgColor = window.getComputedStyle(element).backgroundColor;
-  //       if (bgColor !== "transparent" && bgColor !== "rgba(0, 0, 0, 0)") {
-  //         setParentBgColor(bgColor);
-  //         break;
-  //       }
-  //       element = element.parentElement;
-  //     }
-  //   }
-  // }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -141,16 +127,22 @@ const Select: React.FC<SelectProps> = ({
     setSelectedLabel(label);
   };
 
+  const clearSelection = () => {
+    setSelectedValue("");
+    setSelectedLabel(defaultLabel);
+  };
+
   return (
     <SelectContext.Provider
       value={{
         selectedValue,
         handleSetSelectedValue,
         toggleOpen,
+        clearSelection,
       }}
     >
       {isLoading ? (
-        <div className="px-2 py-0.5 bg-primary-lighter flex justify-start border-2 border-slate-300 rounded-md">
+        <div className="px-2 py-0.5 bg-primary-lighter flex justify-start border-2 border-slate-300 rounded-md text-nowrap">
           <Loading
             text={defaultLabel || "Đang tải..."}
             customStyle={{ spinner: "size-8" }}
@@ -171,7 +163,7 @@ const Select: React.FC<SelectProps> = ({
           <button
             type="button"
             className={cn(
-              "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring",
+              "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
               className,
             )}
             onClick={(e) => {
@@ -181,12 +173,28 @@ const Select: React.FC<SelectProps> = ({
             disabled={disabled}
           >
             {selectedLabel}
-            <IoChevronDown size={18} />
+            {selectedValue ? (
+              <>
+                <XIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearSelection();
+                  }}
+                  className="peer z-[1000] hover:text-primary-darkest transition-colors cursor-pointer"
+                  size={20}
+                />
+                <div className="absolute bottom-10 right-0 bg-gray-700 z-[999] text-white text-[12px] py-1 px-2 rounded opacity-0 peer-hover:opacity-100 transition-all">
+                  Xóa bộ lọc
+                </div>
+              </>
+            ) : (
+              <IoChevronDown size={18} />
+            )}
           </button>
           {label && (
             <Label
               className={cn(
-                "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-primary-darkest px-1",
+                "absolute left-4 transition-all transform duration-150 text-xs font-medium -top-2.5 text-primary-darkest px-1 truncate",
               )}
               style={{
                 backgroundColor: customStyle?.labelBg
@@ -244,7 +252,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   return (
     <div
       className={cn(
-        "px-3 py-2 cursor-pointer hover:bg-primary",
+        "px-3 py-2 cursor-pointer hover:bg-primary truncate",
         {
           "bg-primary": selectedValue === value,
         },

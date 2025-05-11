@@ -34,4 +34,5 @@ export type UserData = {
     name: string;
     updatedAt: string;
   };
+  hadClass: boolean;
 };
