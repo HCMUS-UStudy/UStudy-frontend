@@ -1,5 +1,5 @@
 import { GenderType } from "./common";
-import { Course, CourseDto, CourseInfo, CourseItem } from "./course";
+import { Course, CourseDto, CourseInfo } from "./course";
 import { GradeItem } from "./grade";
 import { Room } from "./room";
 import { ClassSessionItem, Session } from "./session";

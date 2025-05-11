@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 export default function ReviewAssignmentPage() {
   const params = useParams();
-  const submissionId = params.submissionId as string;
+  const submissionId = params?.submissionId as string;
 
   if (!submissionId) return <div>Không tìm thấy submission</div>;
 

@@ -71,14 +71,14 @@ const Header: React.FC = () => {
     >
       <div className="text-2xl font-bold mt-1">
         {
-          SIDENAV_ITEMS_ADMIN.find((item) => pathname.includes(item.path))
+          SIDENAV_ITEMS_ADMIN.find((item) => pathname?.includes(item.path))
             ?.title
         }
       </div>
       <div className="flex gap-6 items-center">
-        {!pathname.includes("/admin/branches") &&
-          !pathname.includes("/admin/sessions") &&
-          !pathname.includes("/admin/profile") && <BranchSelector />}
+        {!pathname?.includes("/admin/branches") &&
+          !pathname?.includes("/admin/sessions") &&
+          !pathname?.includes("/admin/profile") && <BranchSelector />}
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
             <IoNotificationsOutline size={24} />

@@ -9,7 +9,8 @@ import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 export default function QuizReview() {
-  const { quizId } = useParams<{ quizId: string }>();
+  const params = useParams<{ quizId: string }>();
+  const quizId = params?.quizId;
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<QuizReviewData>();
@@ -18,7 +19,7 @@ export default function QuizReview() {
     const fetchReviewQuiz = async () => {
       try {
         setLoading(true);
-        const reviewData = await getReviewQuiz(quizId);
+        const reviewData = await getReviewQuiz(quizId ?? "");
         setReviewData(reviewData);
       } catch (error) {
         console.log(error);

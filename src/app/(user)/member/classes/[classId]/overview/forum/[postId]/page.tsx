@@ -116,8 +116,8 @@ export default function PostDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
-  const classId = pathname.split("/")[3]; // Lấy classId từ URL
-  const postId = params.postId as string;
+  const classId = pathname?.split("/")[3]; // Lấy classId từ URL
+  const postId = params?.postId as string;
 
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
