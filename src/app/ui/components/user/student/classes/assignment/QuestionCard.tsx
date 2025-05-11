@@ -111,7 +111,7 @@
 "use client";
 import { QnA } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
-// import ChatInput from "@/app/ui/components/_common/ChatInput";
+import ChatInput from "@/app/ui/components/_common/ChatInput";
 import React from "react";
 import { FaFileAlt } from "react-icons/fa";
 
@@ -150,7 +150,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   answers,
   optionLabels,
   handleAnswerSelect,
-  // handleAnswerChange,
+  handleAnswerChange,
   downloadFile,
   handleDeleteAnswer,
   setCurrentQuestionIndex,
@@ -294,26 +294,24 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   </div>
                 </div>
               ) : isEditing ? (
-                <></>
+                <ChatInput
+                  currentQuestionId={currentQuestion.id}
+                  initialMessage={answers[currentQuestion.id]?.content || ""}
+                  initialAttachments={answers[currentQuestion.id]?.files || []}
+                  onSendMessage={(questionId, message) => {
+                    handleAnswerChange(questionId, message);
+                    setIsEditing(false);
+                  }}
+                />
               ) : (
-                // <ChatInput
-                //   currentQuestionId={currentQuestion.id}
-                //   initialMessage={answers[currentQuestion.id]?.content || ""}
-                //   initialAttachments={answers[currentQuestion.id]?.files || []}
-                //   onSendMessage={(questionId, message) => {
-                //     handleAnswerChange(questionId, message);
-                //     setIsEditing(false);
-                //   }}
-                // />
-                <></>
-                // <ChatInput
-                //   currentQuestionId={currentQuestion.id}
-                //   initialMessage=""
-                //   initialAttachments={[]}
-                //   onSendMessage={(questionId, message) =>
-                //     handleAnswerChange(questionId, message)
-                //   }
-                // />
+                <ChatInput
+                  currentQuestionId={currentQuestion.id}
+                  initialMessage=""
+                  initialAttachments={[]}
+                  onSendMessage={(questionId, message) =>
+                    handleAnswerChange(questionId, message)
+                  }
+                />
               )}
             </div>
           </div>
