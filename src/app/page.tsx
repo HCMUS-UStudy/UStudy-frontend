@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { Button } from "@/app/ui/components/_common/Button";
+// import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
-import Footer from "@/app/ui/components/_common/Footer";
+import Footer from "@/app/ui/components/_common/landingPage/Footer";
 import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageSideBar";
 import CreateTeacher from "./ui/components/user/CreateTeacher";
-import { IoLogInOutline } from "react-icons/io5";
+// import { IoLogInOutline } from "react-icons/io5";
 import Logo from "@/app/ui/components/_common/Logo";
-import StudentRegisterBtn from "./ui/components/user/student/register/StudentRegisterBtn";
+
+import Hero from "./ui/components/_common/landingPage/Hero";
+import WhyUs from "./ui/components/_common/landingPage/WhyUs";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -15,48 +17,69 @@ export default async function Home() {
         FeatureName: "Quản lý lớp học",
         Description:
           "Ứng dụng hỗ trợ giáo viên và giáo vụ quản lý lớp học một cách dễ dàng và hiệu quả. Bạn có thể tạo lớp học, phân công giảng viên, và theo dõi tiến độ học tập của học viên chỉ trong vài bước đơn giản.",
+        icon: "🎓",
+        color: "from-blue-500 to-blue-600",
       },
       {
         FeatureName: "Quản lý học sinh",
         Description:
           "Giúp giáo viên và giáo vụ theo dõi sự tiến bộ của từng học viên trong lớp học. Dễ dàng chấm điểm, điểm danh, và ghi nhận kết quả học tập của học viên để đánh giá sự tiến bộ trong suốt khóa học.",
+        icon: "👥",
+        color: "from-purple-500 to-purple-600",
       },
       {
         FeatureName: "Tính năng bài tập đa dạng",
         Description:
           "Ứng dụng hỗ trợ giáo viên tạo và giao bài tập cho học sinh, từ bài tập trắc nghiệm đến bài viết tự luận. Học sinh có thể làm bài tập trực tuyến và nhận kết quả ngay lập tức.",
+        icon: "📚",
+        color: "from-green-500 to-green-600",
       },
       {
         FeatureName: "Chấm điểm tự động và thống kê chi tiết",
         Description:
           "Hệ thống chấm điểm tự động giúp tiết kiệm thời gian cho giáo viên. Đồng thời, ứng dụng cung cấp các báo cáo thống kê chi tiết về điểm số và kết quả học tập của học sinh theo từng lớp và môn học.",
+        icon: "📊",
+        color: "from-red-500 to-red-600",
       },
       {
         FeatureName: "Điểm danh và quản lý thời gian học",
         Description:
           "Giáo viên có thể điểm danh học sinh một cách nhanh chóng và chính xác, đồng thời theo dõi thời gian học của học sinh. Các báo cáo điểm danh được lưu trữ và có thể tra cứu dễ dàng.",
+        icon: "⏰",
+        color: "from-yellow-500 to-yellow-600",
       },
       {
         FeatureName: "Hỗ trợ phụ huynh theo dõi học tập",
         Description:
           "Phụ huynh có thể theo dõi kết quả học tập và sự tiến bộ của con em mình thông qua báo cáo định kỳ. Ứng dụng giúp phụ huynh luôn nắm bắt được tình hình học tập của học sinh mọi lúc, mọi nơi.",
+        icon: "👨‍👩‍👧‍👦",
+        color: "from-pink-500 to-pink-600",
       },
     ];
+
     return (
       <>
         {contents.map((c, i) => {
           return (
             <div
               key={i}
-              className="lg:h-72 text-center py-6 px-5 md:px-10 flex flex-col justify-center items-center gap-1 md:gap-3 bg-white border border-slate-300 rounded-xl"
+              className="group relative overflow-hidden rounded-2xl bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
-              {/* <FaBook className="w-8 h-8 md:w-16 md:h-16 md:flex hidden" /> */}
-              <div className="text-xl xl:text-2xl font-bold">
-                {c.FeatureName}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${c.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
+              ></div>
+              <div className="relative z-10">
+                <div className="mb-4 flex items-center justify-center">
+                  <span className="text-4xl">{c.icon}</span>
+                </div>
+                <h3 className="mb-4 text-center text-xl font-bold text-gray-800 transition-colors duration-300 group-hover:text-primary-darkest">
+                  {c.FeatureName}
+                </h3>
+                <p className="text-center text-sm text-gray-600 md:text-base">
+                  {c.Description}
+                </p>
               </div>
-              <div className="text-secondary-text text-xs md:text-base">
-                {c.Description}
-              </div>
+              <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-primary-darkest to-primary-darker transition-all duration-300 group-hover:w-full"></div>
             </div>
           );
         })}
@@ -65,12 +88,35 @@ export default async function Home() {
   };
   return (
     <div className=" bg-background">
-      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[570px] lg:h-[540px] rounded-b-[50px] lg:rounded-b-[140px] pt-10 px-12 lg:px-20">
+      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[570px] lg:h-[540px] pt-10 px-12 lg:px-20 relative">
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+          <svg
+            data-name="Layer 1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+            className="relative block w-[calc(100%+1.3px)] h-[120px]"
+          >
+            <path
+              d="M600,112.77C268.63,112.77,0,65.52,0,7.23V120H1200V7.23C1200,65.52,931.37,112.77,600,112.77Z"
+              className="fill-background"
+            />
+          </svg>
+        </div>
         <div className="flex justify-between items-center">
           <Logo />
           <LandingPageSideBar />
-          <Button
-            className="px-10 py-3 rounded-[20px] text-[17px] min-[320px]:hidden md:flex hover:scale-105 transition-all duration-300"
+          <button className="cursor-pointer transition-all bg-primary text-black text-[17px] px-10 py-3 rounded-lg border-primary-darker border-b-[4px] font-bold hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
+            <Link
+              href="/login"
+              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300"
+            >
+              Đăng nhập
+            </Link>
+          </button>
+
+          {/* <Button
+            className="px-10 py-3 rounded-lg text-[17px] min-[320px]:hidden md:flex hover:scale-105 transition-all duration-300"
             type="submit"
           >
             <Link
@@ -80,59 +126,12 @@ export default async function Home() {
               Đăng nhập
             </Link>
             <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
-          </Button>
+          </Button> */}
         </div>
-        <div className="flex flex-col md:grid grid-cols-5 justify-between gap-5 px-3 md:px-5 lg:px-2 pt-10">
-          <div className="flex flex-col gap-6 md:col-span-3 text-[35px] lg:text-[40px] xl:text-[50px] md:mr-10 font-bold">
-            <div className="leading-tight md:leading-normal">
-              <div className=" tracking-tight md:tracking-normal">
-                <span className="text-highlight-text">Kết nối</span> tri thức
-              </div>
-              <div className=" tracking-tight md:tracking-normal">
-                <span className="text-highlight-text">Chinh phục</span> mọi mục
-                tiêu
-              </div>
-              <div className="text-secondary-text font-light text-sm md:text-sm lg:text-base mt-2">
-                UStudy giúp giáo viên, học viên và phụ huynh kết nối dễ dàng
-                trong môi trường học tập hiện đại. Với các công cụ hỗ trợ tạo
-                lớp học, giao bài tập, chấm điểm, theo dõi tiến độ và điểm danh,
-                UStudy mang đến trải nghiệm học tập hiệu quả và tiện lợi. Hãy
-                bắt đầu hành trình chinh phục tri thức của bạn ngay hôm nay!
-              </div>
-            </div>
-            <StudentRegisterBtn />
-          </div>
-          {/* <Image
-              className="object-cover border-4 border-primary-darker rounded-[24px] aspect-auto md:flex hidden"
-              src="/tutorSystem3.webp"
-              width={500}
-              height={450}
-              alt="tutorSystem"
-              loading="lazy"
-            /> */}
-          <div className="relative col-span-2 w-full md:h-[350px] lg:h-[300px]">
-            <Image
-              className="object-cover border-4 aspect-auto md:flex hidden border-primary-darker rounded-[24px]"
-              src="/tutorSystem3.webp"
-              alt="tutorSystem"
-              loading="lazy"
-              fill
-            />
-          </div>
-        </div>
+        <Hero />
       </div>
       <div className="md:px-10 xl:px-24 mx-auto flex flex-col justify-center">
-        <div className="mt-12 mx-9 md:mx-36 xl:mx-44 text-center">
-          <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[40px]">
-            <span className="text-highlight-text">Vì sao</span> nên chọn UStudy?
-          </div>
-          <div className="text-gray-700 text-sm md:text-base xl:text-lg font-thin mt-3">
-            UStudy mang đến giải pháp quản lý học tập toàn diện, giúp giáo viên,
-            học sinh, và phụ huynh kết nối dễ dàng và hiệu quả. Chúng tôi cung
-            cấp các công cụ giúp bạn theo dõi tiến độ học tập, đánh giá và cải
-            thiện chất lượng giảng dạy nhanh chóng và chính xác.
-          </div>
-        </div>
+        <WhyUs />
         <div className="mx-12 mt-10 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10">
           <RenderMainFeatures />
         </div>

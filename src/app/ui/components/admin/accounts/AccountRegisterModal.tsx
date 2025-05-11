@@ -25,7 +25,7 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({
   const pathname = usePathname();
 
   const onTabChange = () => {
-    router.replace(pathname);
+    router.replace(pathname ?? "");
   };
 
   return (

@@ -1,7 +1,6 @@
 export type GradeItem = {
   id: string;
   name: string;
-  description: string;
 };
 
 export type GradeSchema = {

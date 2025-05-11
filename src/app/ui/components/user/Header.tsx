@@ -88,12 +88,12 @@ const Header = ({ role }: { role: string }) => {
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       <div className="text-xl font-bold mt-1">
-        {SIDENAV_ITEMS.find((item) => pathname.includes(item.path))?.title}
+        {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex gap-6 items-center">
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           {userInfo?.role.defaultRoute === "PARENT" &&
-            pathname.includes("/member/tuition") && (
+            pathname?.includes("/member/tuition") && (
               <Select
                 defaultValue={selectedId}
                 label="Chọn tài khoản"

@@ -13,9 +13,9 @@ import Image from "next/image";
 
 const AccountDetail = () => {
   const params = useParams();
-  const userId = Array.isArray(params.userID)
+  const userId = Array.isArray(params?.userID)
     ? params.userID[0]
-    : params.userID;
+    : params?.userID;
   const [user, setUser] = useState<AccountDetailItem>();
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const router = useRouter();

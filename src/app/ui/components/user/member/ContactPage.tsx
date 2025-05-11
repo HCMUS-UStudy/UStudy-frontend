@@ -27,7 +27,7 @@ export default function ParentContactPage() {
   const teacherParam = searchParams?.get("teacher");
 
   const [selectedTeacher, setSelectedTeacher] = useState<string | null>(
-    teacherParam,
+    teacherParam ?? "",
   );
   const [messageInput, setMessageInput] = useState("");
 

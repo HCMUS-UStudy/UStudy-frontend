@@ -45,3 +45,8 @@ export type CourseData = {
   totalPages: number;
   totalElements: number;
 };
+
+export type CourseInfo = {
+  id: string;
+  name: string;
+};

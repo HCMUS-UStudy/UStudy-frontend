@@ -32,7 +32,7 @@ const GradeNumber: React.FC<GradeNumberProps> = ({
       const filteredData: GradeItem[] = response.content.map((item) => ({
         id: item.id,
         name: item.name,
-        description: item.description,
+        // description: item.description,
       }));
 
       setGrades(filteredData);

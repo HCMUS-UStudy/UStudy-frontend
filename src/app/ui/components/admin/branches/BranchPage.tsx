@@ -37,9 +37,9 @@ const BranchPage = () => {
   const searchParams = useSearchParams();
 
   const { data: fetchBranches, status } = useQuery({
-    queryKey: ["Branches", currentPage - 1, searchParams.get("name") || ""],
+    queryKey: ["Branches", currentPage - 1, searchParams?.get("name") || ""],
     queryFn: () =>
-      getAllBranches(currentPage - 1, 5, searchParams.get("name") || ""),
+      getAllBranches(currentPage - 1, 5, searchParams?.get("name") || ""),
     placeholderData: keepPreviousData,
   });
   useEffect(() => {
@@ -49,130 +49,11 @@ const BranchPage = () => {
     }
   }, [fetchBranches, dispatch]);
 
-  // useEffect(() => {
-  //   const fetchBranches = async () => {
-  //     if (branches.length > 0) return;
-  //     try {
-  //       const response = await getAllBranches(0, 100);
-  //       const modifiedData = [...response.content].sort(
-  //         (a: Branch, b: Branch) => a.name.localeCompare(b.name),
-  //       );
-  //       setBranches_(modifiedData);
-  //       dispatch(setBranches(modifiedData));
-  //       setFilteredBranches(modifiedData);
-
-  //       if (modifiedData.length > 0) {
-  //         dispatch(setSelectedBranch(modifiedData[0].id));
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to fetch branches:", error);
-  //     }
-  //   };
-  //   fetchBranches();
-  // }, [branches.length, dispatch]);
-
-  // const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState<boolean>(false);
-
-  // const [newSession] = useState<Session>({
-  //   id: "",
-  //   name: "",
-  //   startTime: "",
-  //   endTime: "",
-  // });
-  // const [newBranch, setNewBranch] = useState({
-  //   name: "",
-  //   address: "",
-  //   contactNumber: "",
-  //   rooms: "",
-  //   sessions: [newSession],
-  // });
-
-  // useEffect(() => {
-  //   const filtered = branches_.filter(
-  //     (branch) =>
-  //       branch.name &&
-  //       branch.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  //   );
-  //   setFilteredBranches(filtered);
-  //   setCurrentPage(1); // Reset to page 1 after filtering
-  // }, [searchQuery, branches_]);
-
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const branchesPerPage = 5;
-
-  // const [totalPages, setTotalPages] = useState(0);
-  // useEffect(() => {
-  //   setTotalPages(Math.ceil(filteredBranches.length / branchesPerPage));
-  // }, [filteredBranches]);
-  // const [paginatedBranches, setPaginatedBranches] = useState<Branch[]>([]);
-  // useEffect(() => {
-  //   const startIndex = (currentPage - 1) * branchesPerPage;
-  //   setPaginatedBranches(
-  //     filteredBranches.slice(startIndex, startIndex + branchesPerPage),
-  //   );
-  // }, [filteredBranches, currentPage]);
-
-  // const handleSearch = (term: string) => {
-  //   setSearchQuery(term);
-  // };
 
   const onCreateBranch = () => {
     setShowModal(true);
   };
-
-  // const handleModalInputChange = (
-  //   event: React.ChangeEvent<HTMLInputElement>,
-  // ) => {
-  //   const { name, value } = event.target;
-  //   setNewBranch((prev) => ({ ...prev, [name]: value }));
-  // };
-
-  // const handleSubmitModal = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await addBranch(newBranch);
-  //     // setBranches_((prevBranches) => [...prevBranches, response.data.branch]);
-  //     setFilteredBranches((prevBranches) => [...prevBranches, response.data]);
-  //     toast.success("Thêm chi nhánh thành công", {
-  //       position: "top-right",
-  //       autoClose: 3000,
-  //       pauseOnHover: false,
-  //       closeOnClick: true,
-  //     });
-  //     setTimeout(() => {
-  //       router.push(`/admin/branches`);
-  //     }, 3000);
-  //   } catch (error) {
-  //     console.error("Failed to create branch:", error);
-  //     toast.error("Thêm chi nhánh thất bại", {
-  //       position: "top-right",
-  //       autoClose: 3000,
-  //       pauseOnHover: false,
-  //       closeOnClick: true,
-  //     });
-  //   }
-
-  //   setNewBranch({
-  //     name: "",
-  //     address: "",
-  //     contactNumber: "",
-  //     rooms: "",
-  //     sessions: [newSession],
-  //   });
-  //   setShowModal(false);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setNewBranch({
-  //     name: "",
-  //     address: "",
-  //     contactNumber: "",
-  //     rooms: "",
-  //     sessions: [newSession],
-  //   });
-  //   setShowModal(false);
-  // };
 
   const handleDetail = (branch: Branch) => {
     router.push(`/admin/branches/${branch.id}`);
@@ -256,65 +137,6 @@ const BranchPage = () => {
                 ))}
             </TableBody>
           </Table>
-          {/* <table className="min-w-full table-auto border-collapse rounded-lg">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="pl-8 pr-3 py-3 text-left text-sm font-semibold text-gray-600">
-                  Tên chi nhánh
-                </th>
-                <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600">
-                  Địa chỉ
-                </th>
-                <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600">
-                  Số điện thoại
-                </th>
-                <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
-                  Số phòng học
-                </th>
-                <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
-                  Hành động
-                </th>
-                <th className="px-3 py-3 text-center text-sm font-semibold text-gray-600">
-                  <div></div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedBranches.map((branch: Branch) => (
-                <tr
-                  key={branch.id || branch.name}
-                  className="border-b bg-white"
-                >
-                  <td className="pl-8 pr-3 py-4 text-sm text-gray-700">
-                    {branch.name}
-                  </td>
-                  <td className="px-3 py-4 text-sm text-gray-700">
-                    {branch.address}
-                  </td>
-                  <td className="px-3 py-4 text-sm text-gray-700">
-                    {branch.contactNumber}
-                  </td>
-                  <td className="px-3 py-4 text-sm text-center text-gray-700">
-                    {branch.rooms}
-                  </td>
-
-                  /* <td className="px-3 py-4">
-                    <div className="flex justify-center items-center space-x-3">
-                      <button className="text-blue-600 hover:text-blue-800">
-                        <FaEdit className="h-5 w-5" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-800">
-                        <FaTrashAlt className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td> *
-                  <td className="pl-3 py-4 text-sm underline text-center cursor-pointer text-primary-darker">
-                    <div onClick={() => handleDetail(branch)}>Xem chi tiết</div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table> */}
         </div>
 
         <Pagination
@@ -332,12 +154,12 @@ const BranchPage = () => {
         />
 
         {/* Modal for Adding Branch */}
-        {showModal && (
-          <CreateBranchModal
-            isOpen={showModal}
-            onClose={() => setShowModal(false)}
-          />
-        )}
+        {/* {showModal && ( */}
+        <CreateBranchModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+        />
+        {/* )} */}
       </div>
     </Suspense>
   );

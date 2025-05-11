@@ -91,10 +91,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
   return (
     <div>
       <div className="flex items-center justify-between mt-2 gap-14">
-        <SearchField
-          className="w-full bg-primary-lighter py-[2px] rounded-2xl"
-          placeholder="Tìm kiếm môn học..."
-        />
+        <SearchField className="w-full" placeholder="Tìm kiếm môn học..." />
         <div className="flex items-center gap-6 px-4">
           <div className="flex items-center">
             {/* <DropdownCourse label="Lọc" onSelectCourse={setSelectedCourse} /> */}

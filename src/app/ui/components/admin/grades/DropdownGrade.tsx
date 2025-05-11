@@ -65,7 +65,7 @@ export default function DropdownGrade({ label }: DropdownGradeProps) {
 
   // 🟡 Chọn môn học và cập nhật URL query params
   const handleSelect = (key: string, label: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams ?? "");
     if (key !== "0") {
       params.set("grade", label); // Thay vì key (id), dùng label (tên môn học)
     } else {

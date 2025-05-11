@@ -136,7 +136,8 @@ import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 
 export default function Assignment() {
   const router = useRouter();
-  const { classId } = useParams();
+  const params = useParams();
+  const classId = params?.classId;
   const handleExerciseClick = (assignmentId: string) => {
     router.push(`/teacher/classes/${classId}/assignment/${assignmentId}`);
   };

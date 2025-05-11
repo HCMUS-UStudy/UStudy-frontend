@@ -30,5 +30,5 @@ type Authority = {
 };
 
 export type Permission = {
-  [key: string]: string[];
+  data: string[];
 };

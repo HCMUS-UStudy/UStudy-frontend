@@ -46,6 +46,9 @@ const SearchField = ({
   const handleSearch = useDebouncedCallback((term: string) => {
     onSearch?.(term);
     // console.log(term);
+    if (!searchParams) {
+      return null;
+    }
     const params = new URLSearchParams(searchParams);
     if (term) {
       params.set(queryKey, term);

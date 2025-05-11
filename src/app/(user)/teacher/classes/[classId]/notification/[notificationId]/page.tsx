@@ -11,8 +11,11 @@ const SingleNotification = () => {
   const [notification, setNotification] = useState<NotificationItem | null>(
     null,
   );
-  const { notificationId } = useParams<{ notificationId: string }>();
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams();
+  const notificationId = params?.notificationId ?? "";
+  const classId = params?.classId ?? "";
+  // const { notificationId } = useParams<{ notificationId: string }>();
+  // const { classId } = useParams<{ classId: string }>();
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 

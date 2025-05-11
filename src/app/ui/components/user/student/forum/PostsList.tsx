@@ -43,7 +43,7 @@ const PostsList: React.FC<PostsListProps> = ({
   setCurrentPage,
 }) => {
   const pathname = usePathname();
-  const classId = pathname.split("/")[3]; // Lấy classId từ URL
+  const classId = pathname?.split("/")[3]; // Lấy classId từ URL
 
   return (
     <div className="space-y-6">

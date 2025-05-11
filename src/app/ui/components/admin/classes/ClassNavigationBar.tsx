@@ -13,7 +13,7 @@ export default function ClassNavigationBar() {
     { id: "assignment", label: "Bài tập & Kiểm tra" },
   ];
   const handleTabChange = (id: string) => {
-    const classId = pathname.split("/")[3];
+    const classId = pathname?.split("/")[3];
     router.push(`/member/classes/${classId}/${id}`);
   };
   return (
@@ -30,7 +30,7 @@ export default function ClassNavigationBar() {
             name="ClassTabs"
             className="hidden peer"
             onChange={() => handleTabChange(tab.id)}
-            checked={pathname.split("/").at(-1) === tab.id}
+            checked={pathname?.split("/").at(-1) === tab.id}
           />
           {tab.label}
           <span className="absolute inset-0 border-b-2 border-primary scale-x-0 group-hover:scale-x-100 transition-all duration-300 peer-checked:border-primary-darkest peer-checked:scale-x-100"></span>
