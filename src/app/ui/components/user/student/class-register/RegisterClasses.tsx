@@ -13,10 +13,12 @@ import {
 import RegisterClassesGrid from "../classes/RegisterClassesGrid";
 import { Button } from "../../../_common/Button";
 import StudentConfirmRegisterClass from "./StudentConfirmRegisterClass";
-import { ClassRegisterResponseItem } from "@/app/types";
 import { studentRegisterClass } from "@/app/lib/services/register-class";
 import { toast } from "react-toastify";
-import { RegisterClassResponse } from "@/app/types/register-class";
+import {
+  ClassToRegisterItem,
+  RegisterClassResponse,
+} from "@/app/types/register-class";
 
 interface ClassRegisterProps {
   searchQuery: string;
@@ -28,7 +30,11 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   const searchParams = useSearchParams();
   const gradeQuery = searchParams?.get("gradeQuery") || "";
   const courseQuery = searchParams?.get("courseQuery") || "";
+  const statusQuery = searchParams?.get("statusQuery") || "";
   const [confirmRegister, setConfirmRegsiter] = useState<boolean>(false);
+  const [registeringClassId, setRegisteringClassId] = useState<string | null>(
+    null,
+  );
 
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
@@ -40,6 +46,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
       searchQuery,
       courseQuery,
       gradeQuery,
+      statusQuery,
     ],
     queryFn: () =>
       getListClassToRegister(
@@ -65,16 +72,20 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         autoClose: 3000,
         pauseOnHover: false,
       });
+      setRegisteringClassId(null);
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["Classes"] });
       setRegistrationSuccess(res);
       setConfirmRegsiter(true);
+      setRegisteringClassId(null);
     },
   });
 
-  const handleRegisterClass = (selectedClass: ClassRegisterResponseItem) => {
-    registerClassMutation.mutate(selectedClass.id);
+  console.log(classes);
+  const handleRegisterClass = (selectedClass: ClassToRegisterItem) => {
+    setRegisteringClassId(selectedClass.classDto.id);
+    registerClassMutation.mutate(selectedClass.classDto.id);
   };
 
   return (
@@ -85,7 +96,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         renderAction={(item) => (
           <Button
             onClick={() => handleRegisterClass(item)}
-            isPending={registerClassMutation.status === "pending"}
+            isPending={registeringClassId === item.classDto.id}
           >
             Đăng ký học
           </Button>

@@ -4,6 +4,7 @@ import {
   BaseCourseInfo,
   UserSummary,
   GenderType,
+  BasePaginationResponse,
 } from "./common";
 
 export type RegisterClassRequest = {
@@ -26,3 +27,19 @@ export type RegisterClassResponse = {
     teacher: RegisterClassTeacher[];
   };
 };
+
+export type ClassToRegisterItem = {
+  classDto: BaseClassInfo & {
+    grade: BaseGradeInfo;
+    course: BaseCourseInfo;
+    teacher: RegisterClassTeacher[];
+  };
+  status: "WAITING" | "ACCEPTED" | null;
+};
+
+export type ClassToRegisterResponse =
+  BasePaginationResponse<ClassToRegisterItem> & {
+    pageNumber: number;
+    pageSize: number;
+    last: boolean;
+  };
