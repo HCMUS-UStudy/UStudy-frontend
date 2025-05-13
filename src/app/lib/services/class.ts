@@ -211,7 +211,7 @@ export const getListClassToRegister = async (
   try {
     const response = await axiosInstance.get("/class/list-class", {
       params: {
-        filter: query,
+        name: query,
         page,
         limit,
         courseId,

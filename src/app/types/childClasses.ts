@@ -1,29 +1,16 @@
-export type ChildClass = {
-  id: string;
-  name: string;
-  description: string | null;
-  startDate: string;
-  endDate: string;
+import {
+  BaseClassInfo,
+  BaseGradeInfo,
+  BaseCourseInfo,
+  BaseScheduleInfo,
+  UserSummary,
+} from "./common";
+
+export type ChildClass = BaseClassInfo & {
   teacherName: string;
-  scheduleInfo: {
-    dayOfWeek: string;
-    roomName: string;
-    startTime: string;
-    endTime: string;
-  }[];
-  grade: {
-    id: string;
-    name: string;
-  };
-  course: {
-    id: string;
-    name: string;
-    createdBy: {
-      id: string;
-      genId: string;
-      email: string;
-      name: string;
-      avatar: string;
-    };
+  scheduleInfo: BaseScheduleInfo[];
+  grade: BaseGradeInfo;
+  course: BaseCourseInfo & {
+    createdBy: Pick<UserSummary, "id" | "genId" | "email" | "name" | "avatar">;
   };
 };
