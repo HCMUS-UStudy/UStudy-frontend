@@ -30,7 +30,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   const searchParams = useSearchParams();
   const gradeQuery = searchParams?.get("gradeQuery") || "";
   const courseQuery = searchParams?.get("courseQuery") || "";
-  const statusQuery = searchParams?.get("statusQuery") || "";
+  const statusQuery = searchParams?.get("statusQuery") ?? "";
   const [confirmRegister, setConfirmRegsiter] = useState<boolean>(false);
   const [registeringClassId, setRegisteringClassId] = useState<string | null>(
     null,
@@ -55,6 +55,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         6,
         courseQuery,
         gradeQuery,
+        statusQuery as "ACCEPTED" | "WAITING" | "",
       ),
     placeholderData: keepPreviousData,
   });
