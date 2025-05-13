@@ -1,4 +1,4 @@
-import { GenderType } from "./common";
+import { GenderType, UserSummary } from "./common";
 
 export interface SubmissionSchema {
   content: string;
@@ -13,23 +13,11 @@ export interface UpdateSubmissionSchema {
 
 export type SubmissionItem = {
   id: string;
-  student: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    gender: GenderType;
-  };
+  student: UserSummary & { gender: GenderType };
   submissionDate: string;
   score: number;
   feedback: string;
-  gradedBy: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    gender: GenderType;
-  } | null;
+  gradedBy: (UserSummary & { gender: GenderType }) | null;
 };
 
 export type SubmissionData = {

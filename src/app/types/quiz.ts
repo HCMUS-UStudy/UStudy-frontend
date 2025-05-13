@@ -1,4 +1,4 @@
-import { DefaultRoute, GenderType } from "./common";
+import { DefaultRoute, GenderType, UserSummary } from "./common";
 import { CourseDto } from "./course";
 import { GradeItem } from "./grade";
 
@@ -21,12 +21,7 @@ export type QuizItem = {
   };
   startTime: string;
   endTime: string;
-  createdBy: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    avatar: string;
+  createdBy: UserSummary & {
     gender: GenderType;
     createdAt: string;
     status: "ACTIVE" | "INACTIVE" | "BANNED";

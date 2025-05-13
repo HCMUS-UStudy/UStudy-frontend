@@ -10,7 +10,7 @@ import Loading from "../loading/Loading";
 interface SearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   onSearch?: (term: string) => void;
-  queryKey?: string;
+  queryKey?: string | string[];
   isLoading?: boolean;
 }
 
@@ -19,16 +19,16 @@ interface SearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
  *
  * @param className - SearchField classes name
  * @param onSearch - Function to handle search
- * @param queryKey - Custom query key to use in URL (default: 'query')
+ * @param queryKey - Custom query key(s) to use in URL (default: 'query'). Can be a single string or array of strings
  * @param props - Other input props
  * @returns {React.JSX.Element}
- *s
+ *
  * @example
  * ```tsx
  * <SearchField
  *   className="w-full"
  *   placeholder="Search..."
- *   queryKey="searchTerm..."
+ *   queryKey={["searchTerm", "filter"]}
  *   onSearch={(term) => console.log(term)}
  * />
  * ```
@@ -45,16 +45,23 @@ const SearchField = ({
   const { replace } = useRouter();
   const handleSearch = useDebouncedCallback((term: string) => {
     onSearch?.(term);
-    // console.log(term);
     if (!searchParams) {
       return null;
     }
     const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set(queryKey, term);
-    } else {
-      params.delete(queryKey);
-    }
+
+    // Convert queryKey to array if it's a single string
+    const queryKeys = Array.isArray(queryKey) ? queryKey : [queryKey];
+
+    // Set or delete the term for each query key
+    queryKeys.forEach((key) => {
+      if (term) {
+        params.set(key, term);
+      } else {
+        params.delete(key);
+      }
+    });
+
     replace(`${pathname}?${params.toString()}`);
   }, 500);
   return (

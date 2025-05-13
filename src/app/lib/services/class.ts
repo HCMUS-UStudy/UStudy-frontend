@@ -5,7 +5,7 @@ import {
   UserClassData,
   ClassTeacher,
   ApproveResponse,
-  ClassRegisterResponse,
+  ClassToRegisterResponse,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
@@ -207,13 +207,15 @@ export const getListClassToRegister = async (
   limit: number,
   courseId?: string,
   gradeId?: string,
-): Promise<ClassRegisterResponse> => {
+  status?: "ACCEPTED" | "WAITING" | "",
+): Promise<ClassToRegisterResponse> => {
   try {
-    const response = await axiosInstance.get("/class/list-class", {
+    const response = await axiosInstance.get("/register-class/list-class", {
       params: {
-        filter: query,
+        name: query,
         page,
         limit,
+        status,
         courseId,
         gradeId,
       },

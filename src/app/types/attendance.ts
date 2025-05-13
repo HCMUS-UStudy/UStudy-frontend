@@ -1,13 +1,7 @@
-import { GenderType } from "./common";
+import { GenderType, UserSummary } from "./common";
 
 export type AttendanceItem = {
-  user: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    gender: GenderType;
-  };
+  user: UserSummary & { gender: GenderType };
   status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED"; // Tuỳ chỉnh nếu có nhiều trạng thái
   recordedAt: string; // ISO Date string (YYYY-MM-DDTHH:mm:ss.sssZ)
 };

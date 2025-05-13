@@ -1,15 +1,12 @@
+import { UserSummary } from "./common";
+
 export type Course = {
   id: string;
   name: string;
   description: string;
   totalGrades: number;
   status: boolean;
-  createdBy: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    avatar: string;
+  createdBy: UserSummary & {
     role: string;
     gender: string;
     createdAt: string;
@@ -21,13 +18,7 @@ export type Course = {
 export type CourseDto = {
   id: string;
   name: string;
-  createdBy: {
-    id: string;
-    genId: string;
-    email: string;
-    avatar: string;
-    name: string;
-  };
+  createdBy: UserSummary;
 };
 
 export type CourseItem = {

@@ -1,8 +1,10 @@
 import React from "react";
 import RegisterClassesLoading from "../../../_common/loading/RegisterClassesLoading";
 import EmptyListOrTable from "../../../_common/EmptyListOrTable";
-import { ClassRegisterResponse, ClassRegisterResponseItem } from "@/app/types";
+import { ClassToRegisterItem, ClassToRegisterResponse } from "@/app/types";
 import { SiGoogleclassroom } from "react-icons/si";
+import { Button } from "../../../_common/Button";
+import { CheckCircle, ChevronRight } from "lucide-react";
 
 export interface Course {
   name?: string;
@@ -18,9 +20,9 @@ export interface Teacher {
 
 export interface ClassListProps {
   status: "pending" | "success" | "error";
-  classes?: ClassRegisterResponse;
+  classes?: ClassToRegisterResponse;
   onDetailClick?: (id: string) => void;
-  renderAction?: (classItem: ClassRegisterResponseItem) => React.ReactNode;
+  renderAction?: (classItem: ClassToRegisterItem) => React.ReactNode;
 }
 
 const RegisterClassesGrid: React.FC<ClassListProps> = ({
@@ -37,13 +39,13 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {classes.content.map((classItem) => (
           <div
-            key={classItem.id}
+            key={classItem.classDto.id}
             className="relative overflow-hidden bg-white border-2 border-slate-200 flex flex-col justify-between gap-3 px-9 py-5 space-y-3 rounded-lg"
           >
             <div className="flex flex-col gap-2">
               <div className="w-24 h-24 flex justify-center items-center bg-primary-dark rounded-full absolute -right-5 -top-7">
                 <p className="absolute bottom-6 left-7 text-white text-2xl font-bold">
-                  {classItem.grade?.name.split(" ")[1] ?? "?"}
+                  {classItem.classDto.grade.name.split(" ")[1] ?? "?"}
                 </p>
               </div>
               {/* <div className="w-12 fill-primary-dark">
@@ -53,19 +55,51 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
               </div> */}
               <SiGoogleclassroom className="size-12 text-primary-dark" />
               <h1 className="font-bold text-xl">
-                {classItem.course?.name ?? "Không tên"} -{" "}
-                {classItem.grade?.name ?? ""}
+                {classItem.classDto.name} -{" "}
+                {classItem.classDto.course?.name ?? "Không tên"} -{" "}
+                {classItem.classDto.grade?.name ?? ""}
               </h1>
               <p className="text-sm text-zinc-500 leading-6 truncate">
-                Lớp học thuộc khóa {classItem.course?.name}.{" "}
-                {classItem.description}
+                Lớp học thuộc khóa {classItem.classDto.course?.name}.{" "}
+                {classItem.classDto.description}
               </p>
               {/* <p className="text-sm text-zinc-500 leading-6">
                 {classItem.description}
               </p> */}
             </div>
-
-            {renderAction && renderAction(classItem)}
+            {classItem.status === "WAITING" ? (
+              <div className="flex flex-col gap-2">
+                <Button
+                  className="text-sm text-primary-darkest group relative overflow-hidden"
+                  onClick={() => {
+                    // TODO: Implement payment flow
+                    console.log("Payment for class:", classItem.classDto.id);
+                  }}
+                  variant="outlined"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="absolute inset-0 flex items-center justify-center bg-white">
+                      <p className="text-primary-darkest text-sm transform -translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        Thanh toán ngay
+                      </p>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <p className="text-primary-darkest text-sm transform translate-x-0 opacity-100 group-hover:-translate-x-full group-hover:opacity-0 transition-all duration-300 ease-in-out">
+                        Đã đăng ký - Chờ thanh toán
+                      </p>
+                      <ChevronRight className="size-5 transform translate-x-0 group-hover:translate-x-5 transition-transform duration-300 ease-in-out" />
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            ) : classItem.status === "ACCEPTED" ? (
+              <div className="flex gap-2 items-center text-green-600">
+                <CheckCircle className="size-8" />
+                <p className=" font-medium">Đã đăng ký thành công</p>
+              </div>
+            ) : (
+              renderAction && renderAction(classItem)
+            )}
           </div>
         ))}
       </div>

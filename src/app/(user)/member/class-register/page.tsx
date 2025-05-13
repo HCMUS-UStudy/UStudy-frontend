@@ -1,7 +1,23 @@
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { SearchParamsRadioGroup } from "@/app/ui/components/_common/text-field/SearchParamsRadioGroup";
 import ClassFilter from "@/app/ui/components/user/student/class-register/ClassFilter";
 import RegisterClasses from "@/app/ui/components/user/student/class-register/RegisterClasses";
 import React from "react";
+
+const options = [
+  {
+    value: "",
+    label: "Tất cả",
+  },
+  {
+    value: "WAITING",
+    label: "Chưa thanh toán",
+  },
+  {
+    value: "ACCEPTED",
+    label: "Đã thanh toán",
+  },
+];
 
 export default async function ClassRegister(props: {
   searchParams?: Promise<{
@@ -21,7 +37,14 @@ export default async function ClassRegister(props: {
 
       <div className="flex items-center justify-between mt-2 gap-14">
         <SearchField className="w-full " placeholder="Tìm kiếm lớp học..." />
-        <ClassFilter />
+        <div className="flex gap-5 items-center">
+          <SearchParamsRadioGroup
+            className="text-sm text-nowrap"
+            options={options}
+            queryKey="statusQuery"
+          />
+          <ClassFilter />
+        </div>
       </div>
 
       <div className="relative mt-4 max-h-[400px]">

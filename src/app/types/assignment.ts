@@ -1,4 +1,4 @@
-import { GenderType } from "./common";
+import { GenderType, UserSummary } from "./common";
 
 export type AssignmentItem = {
   id: string;
@@ -8,14 +8,7 @@ export type AssignmentItem = {
   numAttempts: number;
   startTime: string;
   endTime: string;
-  createdBy: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    avatar: string;
-    gender: GenderType;
-  };
+  createdBy: UserSummary & { gender: GenderType };
   completed: boolean;
   aclass: {
     id: string;
