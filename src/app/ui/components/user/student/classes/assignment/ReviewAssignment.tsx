@@ -3,9 +3,12 @@ import { getSubmissionDetails } from "@/app/lib/services/submission";
 import { SubmissionDetail } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import ReviewQuizLoading from "@/app/ui/components/_common/loading/ReviewQuizLoading";
+import Tooltip from "@/app/ui/components/_common/Tooltip";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { HiSparkles } from "react-icons/hi";
+import AIExplainModal from "./AIExplainModal";
 
 interface ReviewAssignmentProps {
   submissionId: string;
@@ -18,7 +21,11 @@ export default function ReviewAssignment({
   const [loading, setLoading] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<SubmissionDetail>();
 
+  const [questionId, setQuestionId] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   useEffect(() => {
+    console.log("Đã chuyển");
     const fetchReviewAssignment = async () => {
       try {
         setLoading(true);
@@ -40,13 +47,41 @@ export default function ReviewAssignment({
   const isMultipleChoice = currentQuestion.questionType === "MULTIPLE_CHOICE";
   const isEssay = currentQuestion.questionType === "ESSAY";
 
+  const handleExplainAnswer = async (questionId: string) => {
+    try {
+      setQuestionId(questionId);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching AI explanation:", error);
+    }
+  };
+
   return (
     <div className="flex w-full gap-6">
       {/* Nội dung chính */}
       <div className="bg-white shadow-lg rounded-3xl w-full p-8 border border-gray-300">
-        <h3 className="text-3xl font-bold mb-6 text-center text-primary-darkest">
-          {reviewData?.title}
-        </h3>
+        <div className="flex items-center mb-6 relative">
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <h3 className="text-3xl font-bold text-primary-darkest text-center">
+              {reviewData?.title}
+            </h3>
+          </div>
+
+          {isMultipleChoice && (
+            <div className="ml-auto">
+              <Tooltip text="Giải thích đáp án bằng AI">
+                <Button
+                  className="p-3 bg-highlight-text text-white font-semibold rounded-full shadow-md flex items-center justify-center transition duration-300 ease-in-out hover:bg-opacity-90"
+                  onClick={() =>
+                    handleExplainAnswer(currentQuestion.questionId)
+                  }
+                >
+                  <HiSparkles className="w-5 h-5" />
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-between items-center mb-4">
           <span className="text-sm text-gray-500">
@@ -206,6 +241,12 @@ export default function ReviewAssignment({
           })}
         </div>
       </div>
+
+      <AIExplainModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        questionId={questionId}
+      />
     </div>
   );
 }

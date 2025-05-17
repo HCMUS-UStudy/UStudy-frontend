@@ -27,4 +27,5 @@ export * from "./childClasses";
 export * from "./academicResult";
 export * from "./payment";
 export * from "./question";
+export * from "./AI";
 export * from "./register-class";
