@@ -10,9 +10,7 @@ export default function AddGrade() {
       <Button onClick={() => setIsOpen(true)} className="pl-6 pr-6">
         Tạo khối học
       </Button>
-      {isOpen && (
-        <AddGradeModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      )}
+      <AddGradeModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </div>
   );
 }

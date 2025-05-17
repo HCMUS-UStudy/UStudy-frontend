@@ -1,3 +1,5 @@
+import { UserSummary } from "./common";
+
 export type ClassMaterialItem = {
   id: string;
   cl: {
@@ -13,25 +15,13 @@ export type ClassMaterialItem = {
     course: {
       id: string;
       name: string;
-      createdBy: {
-        id: string;
-        genId: string;
-        email: string;
-        name: string;
-        avatar: string;
-      };
+      createdBy: UserSummary;
     };
   };
   material: {
     id: string;
     name: string;
-    uploadedBy: {
-      id: string;
-      genId: string;
-      email: string;
-      name: string;
-      avatar: string;
-    };
+    uploadedBy: UserSummary;
     type: "FILE" | "FOLDER";
     uploadDate: string;
     filePath: string;

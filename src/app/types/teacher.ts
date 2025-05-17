@@ -1,17 +1,8 @@
-import { GenderType } from "./common";
+import { GenderType, UserSummary } from "./common";
 
-export type TeacherItem = {
-  email: string;
-  genId: string;
-  id: string;
-  name: string;
-};
+export type TeacherItem = Pick<UserSummary, "email" | "genId" | "id" | "name">;
 
-export type TeacherAvalItem = {
-  email: string;
-  genId: string;
-  id: string;
-  name: string;
+export type TeacherAvalItem = TeacherItem & {
   gender: string;
 };
 
@@ -20,12 +11,7 @@ export type TeacherData = {
   totalPages: number;
 };
 
-export type Teacher = {
-  id: string;
-  genId: string;
-  email: string;
-  name: string;
-  avatar: string;
+export type Teacher = UserSummary & {
   role: string;
   gender: GenderType;
   createdAt: string;

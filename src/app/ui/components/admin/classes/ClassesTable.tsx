@@ -63,7 +63,7 @@ export default function ClassesTable({
               <TableCell className="max-w-12">{c.name}</TableCell>
               <TableCell>{c.course.name}</TableCell>
               <TableCell>{c.grade.name}</TableCell>
-              <TableCell>{c.fee} VNĐ</TableCell>
+              <TableCell>{} VNĐ</TableCell>
               <TableCell className="max-w-12">{c.startDate}</TableCell>
               <TableCell className="max-w-10">{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">

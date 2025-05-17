@@ -75,12 +75,9 @@ const SessionManagement = () => {
   return (
     <>
       <div className="p-2">
-        <div className="flex items-center justify-between mt-20 mb-6">
+        <div className="flex items-center justify-between mt-2">
           <h3 className="text-xl font-semibold mb-4">Ca học</h3>
-          <Button
-            className="px-8 py-3 rounded-2xl text-[15px]"
-            onClick={handleOpenModal}
-          >
+          <Button className="px-8  text-base" onClick={handleOpenModal}>
             Thêm ca học
           </Button>
         </div>

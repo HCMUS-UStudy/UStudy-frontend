@@ -13,7 +13,7 @@ import {
   // BsQuestionCircle,
   // BsWallet2,
 } from "react-icons/bs";
-import { MdOutlineFileCopy } from "react-icons/md";
+import { MdAppRegistration, MdOutlineFileCopy } from "react-icons/md";
 
 import { SiGoogleclassroom } from "react-icons/si";
 import { GiMoneyStack } from "react-icons/gi";
@@ -134,6 +134,11 @@ export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [
     path: "/member/academic-results",
     icon: <BsPersonWorkspace size={20} />,
   },
+  {
+    title: "Đăng ký lớp học",
+    path: "/member/class-register",
+    icon: <MdAppRegistration size={20} />,
+  },
 ];
 
 export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
@@ -183,3 +188,24 @@ export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
     icon: <FaRegCommentDots size={20} />,
   },
 ];
+
+const allNavItems: SideNavItem[] = [
+  ...SIDENAV_ITEMS_ADMIN,
+  ...SIDENAV_ITEMS_TEACHER,
+  ...SIDENAV_ITEMS_STUDENT,
+  ...SIDENAV_ITEMS_PARENT,
+];
+
+export const routeMap: Record<
+  string,
+  {
+    title: string;
+    icon: JSX.Element;
+  }
+> = allNavItems.reduce(
+  (acc, item) => {
+    acc[item.path] = { title: item.title, icon: item.icon ?? <div></div> };
+    return acc;
+  },
+  {} as Record<string, { title: string; icon: JSX.Element }>,
+);

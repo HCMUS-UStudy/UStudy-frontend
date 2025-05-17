@@ -25,7 +25,7 @@ import { useBreadcrumbContext } from "@/app/context/BreadcrumbContext";
  */
 export default function Breadcrumb() {
   const paths = usePathname();
-  const pathnames = paths.split("/").filter((path) => path);
+  const pathnames = paths?.split("/").filter((path) => path);
 
   const { dynamicBreadcrumbs } = useBreadcrumbContext();
 
@@ -59,9 +59,8 @@ export default function Breadcrumb() {
     }
   };
 
-  const displayedPathnames = pathnames.filter(
-    (pathname) => translate(pathname) !== null,
-  );
+  const displayedPathnames =
+    pathnames?.filter((pathname) => translate(pathname) !== null) ?? [];
 
   const renderPaths = () => {
     const renderedPaths: React.ReactNode[] = [];
@@ -78,7 +77,7 @@ export default function Breadcrumb() {
       </li>,
     );
     let dynamicIdx = 0;
-    pathnames.map((pathname, i) => {
+    pathnames?.map((pathname, i) => {
       console.log(pathname, i);
       const href = `/${pathnames.slice(0, i + 1).join("/")}`;
       let label = translate(pathname);

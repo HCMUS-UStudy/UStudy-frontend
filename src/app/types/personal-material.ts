@@ -1,15 +1,11 @@
+import { UserSummary } from "./common";
+
 export type PersonalMaterialItem = {
   id: string;
   material: {
     id: string;
     name: string;
-    uploadedBy: {
-      id: string;
-      genId: string;
-      email: string;
-      name: string;
-      avatar: string;
-    };
+    uploadedBy: UserSummary;
     type: string;
     uploadDate: string;
     filePath: string;

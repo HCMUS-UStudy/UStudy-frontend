@@ -13,7 +13,8 @@ import { FaList, FaSort } from "react-icons/fa6";
 
 const QuizList: React.FC = () => {
   const router = useRouter();
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId;
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");

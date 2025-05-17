@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 export default function ClassOverview() {
   const router = useRouter();
   const pathname = usePathname();
-  const classId = pathname.split("/")[3]; // Lấy classId từ URL
+  const classId = pathname?.split("/")[3]; // Lấy classId từ URL
 
   const sections = [
     {

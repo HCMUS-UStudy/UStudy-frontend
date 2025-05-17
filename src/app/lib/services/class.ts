@@ -5,6 +5,7 @@ import {
   UserClassData,
   ClassTeacher,
   ApproveResponse,
+  ClassToRegisterResponse,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
@@ -198,6 +199,31 @@ export const getListUserClass = async (
     },
   );
   return response.data.data;
+};
+
+export const getListClassToRegister = async (
+  query: string,
+  page: number,
+  limit: number,
+  courseId?: string,
+  gradeId?: string,
+  status?: "ACCEPTED" | "WAITING" | "",
+): Promise<ClassToRegisterResponse> => {
+  try {
+    const response = await axiosInstance.get("/register-class/list-class", {
+      params: {
+        name: query,
+        page,
+        limit,
+        status,
+        courseId,
+        gradeId,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // export const getOneClass = async (classId: string): Promise<ClassTeacher> => {

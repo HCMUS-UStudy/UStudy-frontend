@@ -21,7 +21,8 @@ import { FaList, FaSort } from "react-icons/fa6";
 import { FaEye, FaEdit } from "react-icons/fa";
 
 export default function ClassAssignment() {
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId;
   const router = useRouter();
   const randomImages = [
     "https://storage.googleapis.com/a1aa/image/etK-TPGHJCUFTdDL1RCjvPVzYEME-6M-4WM0R6qL1r4.jpg",
@@ -93,7 +94,7 @@ export default function ClassAssignment() {
     const fetchExercise = async () => {
       try {
         setLoading(true);
-        const response = await getAssignmentByClassId(0, 10, classId);
+        const response = await getAssignmentByClassId(0, 10, classId ?? "");
         setAssignment(response.content);
       } catch (error) {
         console.log(error);

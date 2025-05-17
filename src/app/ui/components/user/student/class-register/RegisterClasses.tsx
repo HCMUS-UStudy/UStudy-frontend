@@ -1,0 +1,133 @@
+"use client";
+
+import React, { useState } from "react";
+import Pagination from "@/app/ui/components/_common/Pagination";
+import { getListClassToRegister } from "@/app/lib/services/class";
+import { useSearchParams } from "next/navigation";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import RegisterClassesGrid from "../classes/RegisterClassesGrid";
+import { Button } from "../../../_common/Button";
+import StudentConfirmRegisterClass from "./StudentConfirmRegisterClass";
+import { studentRegisterClass } from "@/app/lib/services/register-class";
+import { toast } from "react-toastify";
+import {
+  ClassToRegisterItem,
+  RegisterClassResponse,
+} from "@/app/types/register-class";
+
+interface ClassRegisterProps {
+  searchQuery: string;
+  classQuery?: string;
+}
+
+const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const searchParams = useSearchParams();
+  const gradeQuery = searchParams?.get("gradeQuery") || "";
+  const courseQuery = searchParams?.get("courseQuery") || "";
+  const statusQuery = searchParams?.get("statusQuery") ?? "";
+  const [confirmRegister, setConfirmRegsiter] = useState<boolean>(false);
+  const [registeringClassId, setRegisteringClassId] = useState<string | null>(
+    null,
+  );
+
+  const [registrationSuccess, setRegistrationSuccess] =
+    useState<RegisterClassResponse>();
+
+  const { data: classes, status } = useQuery({
+    queryKey: [
+      "Classes",
+      currentPage - 1,
+      searchQuery,
+      courseQuery,
+      gradeQuery,
+      statusQuery,
+    ],
+    queryFn: () =>
+      getListClassToRegister(
+        searchQuery,
+        currentPage - 1,
+        6,
+        courseQuery,
+        gradeQuery,
+        statusQuery as "ACCEPTED" | "WAITING" | "",
+      ),
+    placeholderData: keepPreviousData,
+  });
+
+  const queryClient = useQueryClient();
+
+  const registerClassMutation = useMutation({
+    mutationFn: (classId: string) =>
+      studentRegisterClass({
+        classId,
+      }),
+    onError: () => {
+      toast.error("Đăng ký lớp học thất bại", {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      setRegisteringClassId(null);
+    },
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      setRegistrationSuccess(res);
+      setConfirmRegsiter(true);
+      setRegisteringClassId(null);
+    },
+  });
+
+  console.log(classes);
+  const handleRegisterClass = (selectedClass: ClassToRegisterItem) => {
+    setRegisteringClassId(selectedClass.classDto.id);
+    registerClassMutation.mutate(selectedClass.classDto.id);
+  };
+
+  return (
+    <div>
+      <RegisterClassesGrid
+        status={status}
+        classes={classes}
+        renderAction={(item) => (
+          <Button
+            onClick={() => handleRegisterClass(item)}
+            isPending={registeringClassId === item.classDto.id}
+          >
+            Đăng ký học
+          </Button>
+        )}
+      />
+      {classes?.totalElements !== 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={classes?.totalPages || 1}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, classes?.totalPages || 1),
+            )
+          }
+        />
+      )}
+      <StudentConfirmRegisterClass
+        isOpen={confirmRegister}
+        onClose={() => {
+          setConfirmRegsiter(false);
+          setRegistrationSuccess(undefined);
+        }}
+        selectedClass={registrationSuccess}
+      />
+    </div>
+  );
+};
+
+export default RegisterClasses;

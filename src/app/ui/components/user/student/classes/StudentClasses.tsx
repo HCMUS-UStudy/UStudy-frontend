@@ -1,39 +1,45 @@
-import React from "react";
-import ClassRow from "@/app/ui/components/user/student/classes/ClassRow";
-import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+"use client";
 
-export default async function StudentClasses(props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-    classQuery?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-  const query = searchParams?.query || "";
-  // const classQuery = searchParams?.classQuery || "All";
+import React, { useState } from "react";
+import Pagination from "@/app/ui/components/_common/Pagination";
+import { getAllStudentClasses } from "@/app/lib/services/class";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import ClassList from "./ClassList";
+
+interface StudentClassesProps {
+  searchQuery: string;
+  classQuery?: string;
+}
+
+const StudentClasses: React.FC<StudentClassesProps> = ({ searchQuery }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const { data: classes, status } = useQuery({
+    queryKey: ["Classes", currentPage - 1, searchQuery],
+    queryFn: () => getAllStudentClasses(currentPage - 1, 5, searchQuery),
+    placeholderData: keepPreviousData,
+  });
 
   return (
-    <div className="p-4 bg-foreground">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Danh sách lớp học</h2>
-      </div>
-
-      <div className="flex items-center justify-between mt-2 gap-14">
-        <SearchField className="w-full " placeholder="Tìm kiếm lớp học..." />
-        {/* <div className="flex items-center gap-6 px-4">
-          <div className="flex items-center">
-            <DropdownGrade label="Lọc" />
-          </div>
-          <div className="flex items-center">
-            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
-          </div>
-        </div> */}
-      </div>
-
-      <div className="relative mt-6 max-h-[400px]">
-        <ClassRow searchQuery={query} />
-      </div>
+    <div>
+      <ClassList status={status} classes={classes} />
+      {classes?.totalElements !== 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={classes?.totalPages || 1}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, classes?.totalPages || 1),
+            )
+          }
+        />
+      )}
     </div>
   );
-}
+};
+
+export default StudentClasses;

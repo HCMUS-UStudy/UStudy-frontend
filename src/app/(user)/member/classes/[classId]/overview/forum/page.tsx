@@ -74,7 +74,7 @@ const MOCK_FORUM_POSTS = [
 export default function ForumPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const classId = pathname.split("/")[3]; // Lấy classId từ URL
+  const classId = pathname?.split("/")[3]; // Lấy classId từ URL
   const [searchQuery] = useState("");
   const [posts, setPosts] = useState(MOCK_FORUM_POSTS);
   const [sortOrder, setSortOrder] = useState("desc");
