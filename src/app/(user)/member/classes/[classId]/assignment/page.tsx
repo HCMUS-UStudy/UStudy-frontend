@@ -54,13 +54,30 @@ export default function ClassAssignment() {
     );
   };
 
+  const isExpired = (endTime: string): boolean => {
+    const currentTime = new Date();
+    const endTimeDate = new Date(endTime); // Assuming `endTime` is in string format
+
+    return currentTime < endTimeDate; // Check if current time is greater than the end time
+  };
+
   const handleOpenModal = (assignment: AssignmentItem) => {
     setSelectedAssignment(assignment); // Set the selected assignment
     setIsModalOpen(true); // Open the modal
   };
 
-  const handleReview = (submissionId: string) => () => {
-    router.push(`/member/classes/${classId}/review/${submissionId}`);
+  const handleReviewClick = (submissionId: string) => {
+    if (selectedAssignment) {
+      if (isExpired(selectedAssignment.endTime)) {
+        console.log("Đang chuyển");
+        console.log("Đang chuyển 2");
+        router.push(`/member/classes/${classId}/review/${submissionId}`);
+      } else {
+        console.log("Assignment is not yet expired.");
+      }
+    } else {
+      console.log("Selected assignment is not available.");
+    }
   };
 
   const handleEdit = (submissionId: string) => () => {
@@ -99,6 +116,7 @@ export default function ClassAssignment() {
             0,
             10,
           );
+          console.log(response);
           setSubmissions(response.content); // Lưu dữ liệu trả về vào state
         } catch (error) {
           console.error("Error fetching submissions:", error);
@@ -301,13 +319,21 @@ export default function ClassAssignment() {
                               </TableCell>
                               <TableCell>
                                 <div className="flex gap-2 justify-center">
-                                  <button
-                                    onClick={handleReview(submission.id)}
-                                    className="p-2 text-blue-600 hover:text-blue-800"
-                                    title="Xem lại"
-                                  >
-                                    <FaEye className="text-xl" />
-                                  </button>
+                                  {isExpired(selectedAssignment.endTime) ? (
+                                    <button
+                                      type="button"
+                                      onClick={(event) => {
+                                        event.preventDefault(); // Prevent default behavior
+                                        handleReviewClick(submission.id); // Call your custom handler
+                                      }}
+                                      className="p-2 text-blue-600 hover:text-blue-800"
+                                      title="Xem lại"
+                                    >
+                                      <FaEye className="text-xl" />
+                                    </button>
+                                  ) : (
+                                    <span>Assignment not expired yet.</span>
+                                  )}
 
                                   {(selectedAssignment.format === "ESSAY" ||
                                     selectedAssignment.format === "MIXED") &&

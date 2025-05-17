@@ -19,6 +19,7 @@ export default function ReviewAssignment({
   const [reviewData, setReviewData] = useState<SubmissionDetail>();
 
   useEffect(() => {
+    console.log("Đã chuyển");
     const fetchReviewAssignment = async () => {
       try {
         setLoading(true);
@@ -39,6 +40,18 @@ export default function ReviewAssignment({
 
   const isMultipleChoice = currentQuestion.questionType === "MULTIPLE_CHOICE";
   const isEssay = currentQuestion.questionType === "ESSAY";
+
+  const handleExplainAnswer = async (questionId: string) => {
+    try {
+      // Call the AI explanation API here
+      // This is just a placeholder for the AI explanation call
+      // const explanation = await fetchExplanationFromAI(questionId);
+      // alert(`AI Explanation for Question ${questionId}: ${explanation}`);
+      console.log(questionId);
+    } catch (error) {
+      console.error("Error fetching AI explanation:", error);
+    }
+  };
 
   return (
     <div className="flex w-full gap-6">
@@ -156,6 +169,31 @@ export default function ReviewAssignment({
             )}
           </div>
         )}
+
+        {/* Giải thích đáp án bằng AI */}
+        {/* Giải thích đáp án bằng AI */}
+        <div className="flex justify-end mb-6">
+          <Button
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition duration-300 ease-in-out"
+            onClick={() => handleExplainAnswer(currentQuestion.questionId)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11 11V9a4 4 0 018 0v2a4 4 0 01-8 0zm-5 0V9a4 4 0 118 0v2a4 4 0 01-8 0zm7 6v1a2 2 0 01-2 2H9m6-3v1a2 2 0 01-2 2h-1"
+              />
+            </svg>
+            Giải thích đáp án bằng AI
+          </Button>
+        </div>
 
         {/* Điều hướng */}
         <div className="flex justify-between">
