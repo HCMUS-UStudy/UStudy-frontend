@@ -3,12 +3,17 @@ import { RoleItem } from "./role";
 
 export type AccountItem = {
   id: string;
-  name: string;
-  email: string;
   genId: string;
-  role: RoleItem;
-  status: string;
+  email: string;
+  name: string;
+  avatar: string;
+  gender: GenderType;
   createdAt: string;
+  status: AccountStatus;
+  role: RoleItem;
+  address: string;
+  phone: string;
+  birthday: string;
 };
 
 export type AccountDetailItem = {
@@ -21,16 +26,9 @@ export type AccountDetailItem = {
   createdAt: string;
   status: AccountStatus;
   role: RoleItem;
-};
-
-export type AccountSchema = {
-  email: string;
-  name: string;
-  phone: string;
   address: string;
+  phone: string;
   birthday: string;
-  gender: GenderType;
-  roleId: string;
 };
 
 export type AccountData = {

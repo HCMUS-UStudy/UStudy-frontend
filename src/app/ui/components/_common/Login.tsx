@@ -19,7 +19,7 @@ import { useMutation } from "@tanstack/react-query";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 
 const LogInSchema = z.object({
-  genId: z
+  username: z
     .string({ message: "(*) Vui lòng nhập ID" })
     .min(1, { message: "(*) Vui lòng nhập ID" }),
   password: z
@@ -44,10 +44,11 @@ export default function Login() {
   } = useForm<LogInInputs>({ resolver: zodResolver(LogInSchema) });
 
   const useLoginMutation = useMutation({
-    mutationFn: (data: LogInInputs) => login(data.genId, data.password, isUser),
+    mutationFn: (data: LogInInputs) =>
+      login(data.username, data.password, isUser),
     onError: (error) => {
       const customError = error as CustomError;
-      setError("genId", { message: String(customError.data || "") });
+      setError("username", { message: String(customError.data || "") });
       setError("password", { message: String(customError.data || "") });
     },
     onSuccess: (response) => {
@@ -158,9 +159,9 @@ export default function Login() {
                 type="text"
                 placeholder="Nhập mã người dùng"
                 label="Mã người dùng"
-                isError={errors.genId?.message !== undefined}
-                errorMsg={errors.genId?.message}
-                {...register("genId")}
+                isError={errors.username?.message !== undefined}
+                errorMsg={errors.username?.message}
+                {...register("username")}
               />
             </div>
             <div>

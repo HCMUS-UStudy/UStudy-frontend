@@ -107,7 +107,10 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
     <thead className={`${className} bg-slate-100`}>
       <tr className="border-b-2 border-slate-200">
         {columns.map((col, index) => (
-          <th key={index} className="py-3">
+          <th
+            key={index}
+            className={`${index === 0 ? "pl-4" : "pl-2"} py-3 text-[14px] text-left`}
+          >
             {col}
           </th>
         ))}
@@ -119,6 +122,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
 interface TableBodyProps {
   children: React.ReactNode;
   isLoading?: boolean;
+  noDataMessage?: boolean;
 }
 
 /**
@@ -150,6 +154,7 @@ interface TableBodyProps {
 export const TableBody: React.FC<TableBodyProps> = ({
   children,
   isLoading = false,
+  noDataMessage = true,
 }: TableBodyProps) => {
   const { columns } = useTableContext();
 
@@ -178,7 +183,7 @@ export const TableBody: React.FC<TableBodyProps> = ({
     <tbody>
       {hasData ? (
         children
-      ) : (
+      ) : noDataMessage ? (
         <TableRow>
           <TableCell
             className="text-primary-darkest bg-primary-lighter"
@@ -187,6 +192,8 @@ export const TableBody: React.FC<TableBodyProps> = ({
             Không có dữ liệu
           </TableCell>
         </TableRow>
+      ) : (
+        <></>
       )}
     </tbody>
   );
@@ -223,7 +230,7 @@ export const TableRow: React.FC<TableRowProps> = ({
     <tr
       className={cn(
         "transition-all duration-200 border-b-2 border-slate-100",
-        isFetching ? "bg-primary animate-pulse" : "hover:bg-primary-light",
+        isFetching ? "bg-primary animate-pulse" : "hover:bg-primary-lighter",
         className,
       )}
       {...props}

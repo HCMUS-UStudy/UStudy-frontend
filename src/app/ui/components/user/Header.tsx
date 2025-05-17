@@ -13,6 +13,7 @@ import { getUserDataFromCookies } from "@/app/lib/action";
 import { Select, SelectItem } from "../_common/Select";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setSelectedChild } from "@/app/store/ChildrenSlice";
+import Tooltip from "../_common/Tooltip";
 
 const Header = ({ role }: { role: string }) => {
   const pathname = usePathname();
@@ -33,7 +34,7 @@ const Header = ({ role }: { role: string }) => {
     };
     console.log(children.at(0));
     fetchData();
-  }, []);
+  }, [children]);
 
   useEffect(() => {
     if (role === "student") {
@@ -87,7 +88,7 @@ const Header = ({ role }: { role: string }) => {
       className={`h-header-height min-h-header-height flex px-10 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
-      <div className="text-xl font-bold mt-1">
+      <div className="text-[14px] sm:text-lg font-bold mt-1">
         {SIDENAV_ITEMS.find((item) => pathname.includes(item.path))?.title}
       </div>
       <div className="flex gap-6 items-center">
@@ -107,10 +108,11 @@ const Header = ({ role }: { role: string }) => {
                 ))}
               </Select>
             )}
-
-          <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
-            <IoNotificationsOutline size={24} />
-          </div>
+          <Tooltip text="Thông báo" position="bottom">
+            <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
+              <IoNotificationsOutline size={24} />
+            </div>
+          </Tooltip>
           <DropdownProfile
             userInfo={userInfo}
             handleToggle={handleToggle}

@@ -1,4 +1,5 @@
 import { GenderType } from "./common";
+import { Branch } from "./branch";
 
 export type AuthResponse = {
   message: string;
@@ -27,4 +28,5 @@ export type UserData = {
     name: string;
     updatedAt: string;
   };
+  branch: Branch[];
 };

@@ -11,7 +11,9 @@ export type ClassDetail = {
   startDate: string;
   endDate: string;
   grade: GradeItem;
-  course: CourseDto;
+  course: Course;
+  status: string | null;
+  classSessions: classSessions[];
 };
 
 export type ClassTeacher = {
@@ -49,13 +51,11 @@ export type ClassSchema = {
 export type ClassItem = {
   id: string;
   name: string;
+  description: string;
   course: CourseDto;
   fee: number;
   startDate: string;
   endDate: string;
-  room: {
-    name: string;
-  };
   grade: GradeItem;
 };
 

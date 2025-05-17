@@ -1,5 +1,8 @@
 "use client";
-import React, { memo, useState } from "react";
+import React, {
+  memo,
+  // useState
+} from "react";
 import { getAllClasses } from "@/app/lib/services/class";
 import {
   Table,
@@ -8,12 +11,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { ArrowRight, Eye } from "lucide-react";
+import {
+  //  ArrowRight,
+  Eye,
+} from "lucide-react";
 import { ClassData } from "@/app/types";
 import ClassPagination from "./ClassPagination";
-import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
+// import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
 import Tooltip from "../../_common/Tooltip";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 const MemoizedClassPagination = memo(ClassPagination);
 
@@ -34,8 +41,10 @@ export default function ClassesTable({
     placeholderData: (prevData) => prevData,
   });
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedId, setSelectedId] = useState<string>("");
+  const router = useRouter();
+
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [selectedId, setSelectedId] = useState<string>("");
 
   if (error) {
     return <div>{error.message}</div>;
@@ -59,34 +68,33 @@ export default function ClassesTable({
         <TableBody isLoading={status === "pending"}>
           {fetchClasses?.content.map((c, i) => (
             <TableRow key={i}>
-              <TableCell>{i + 1}</TableCell>
-              <TableCell className="max-w-12">{c.name}</TableCell>
-              <TableCell>{c.course.name}</TableCell>
-              <TableCell>{c.grade.name}</TableCell>
-              <TableCell>{c.fee} VNĐ</TableCell>
-              <TableCell className="max-w-12">{c.startDate}</TableCell>
-              <TableCell className="max-w-10">{c.endDate}</TableCell>
+              <TableCell className="text-left pl-4">{i + 1}</TableCell>
+              <TableCell className="text-left pl-4 max-w-12">
+                {c.name}
+              </TableCell>
+              <TableCell className="text-left pl-4">{c.course.name}</TableCell>
+              <TableCell className="text-left pl-4">{c.grade.name}</TableCell>
+              <TableCell className="text-left pl-4">{c.fee} VNĐ</TableCell>
+              <TableCell className="text-left pl-4">{c.startDate}</TableCell>
+              <TableCell className="text-left pl-4">{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
                 {/* Nút xem lớp */}
-                <Tooltip
-                  text="Xem lớp học"
-                  // onClick={() =>
-                  //   router.push(`/clerk/classes/${c.id}/class-management`)
-                  // }
-                >
-                  <Eye className="size-8 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
-                </Tooltip>
+                <div onClick={() => router.push(`/admin/classes/${c.id}`)}>
+                  <Tooltip text="Xem lớp học">
+                    <Eye className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
+                  </Tooltip>
+                </div>
                 {/* <ClassEnrollment classId={c.id} /> */}
-                <Tooltip text="Duyệt tài khoản">
+                {/* <Tooltip text="Duyệt tài khoản">
                   <div
                     onClick={() => {
                       setIsOpen(true);
                       setSelectedId(c.id);
                     }}
                   >
-                    <ArrowRight className="size-8 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
+                    <ArrowRight className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
                   </div>
-                </Tooltip>
+                </Tooltip> */}
               </TableCell>
             </TableRow>
           ))}
@@ -98,13 +106,13 @@ export default function ClassesTable({
           totalPages={fetchClasses?.totalPages || 1}
         />
       )}
-      {isOpen && (
+      {/* {isOpen && (
         <ClassEnrollmentModal
           classId={selectedId}
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
         />
-      )}
+      )} */}
     </div>
   );
 }

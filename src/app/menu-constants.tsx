@@ -9,6 +9,8 @@ import {
   BsPerson,
   BsPersonWorkspace,
   BsShieldLock,
+  BsList,
+  BsDoorOpen,
   // BsFillPeopleFill,
   // BsQuestionCircle,
   // BsWallet2,
@@ -34,25 +36,34 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <RiDashboard2Line size={20} />,
   },
   {
-    title: "Quản lý chi nhánh",
-    path: "/admin/branches",
-    icon: <GrMapLocation size={20} />,
-  },
-  {
-    title: "Quản lý ca học",
-    path: "/admin/sessions",
-    icon: <AiOutlineSchedule size={20} />,
+    title: "Quản lý chung",
+    path: "/admin/general",
+    submenu: true,
+    icon: <BsList size={20} />,
+    subMenuItems: [
+      {
+        title: "Quản lý chi nhánh",
+        path: "/admin/branches",
+        icon: <GrMapLocation size={20} />,
+      },
+      {
+        title: "Quản lý ca học",
+        path: "/admin/sessions",
+        icon: <AiOutlineSchedule size={20} />,
+      },
+      {
+        title: "Quản lý chức vụ",
+        path: "/admin/roles",
+        icon: <BsShieldLock size={20} />,
+      },
+    ],
   },
   {
     title: "Quản lý tài khoản",
     path: "/admin/accounts",
     icon: <BsPerson size={20} />,
   },
-  {
-    title: "Quản lý chức vụ",
-    path: "/admin/roles",
-    icon: <BsShieldLock size={20} />,
-  },
+
   {
     title: "Quản lý môn học",
     path: "/admin/courses",
@@ -67,6 +78,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý lớp học",
     path: "/admin/classes",
     icon: <SiGoogleclassroom size={20} />,
+  },
+  {
+    title: "Quản lý phòng học",
+    path: "/admin/rooms",
+    icon: <BsDoorOpen size={20} />,
   },
   {
     title: "Quản lý tài liệu",

@@ -3,7 +3,7 @@ import {
   RegisterClassData,
   ClassChooseData,
   UserClassData,
-  ClassTeacher,
+  ClassDetail,
   ApproveResponse,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
@@ -80,7 +80,7 @@ export const createNewClass = async (data: CreateClassInputs) => {
   }
 };
 
-export const getClassById = async (classId: string): Promise<ClassTeacher> => {
+export const getClassById = async (classId: string): Promise<ClassDetail> => {
   try {
     const response = await axiosInstance.get(`/class/details/${classId}`);
     return response.data.data;
@@ -200,7 +200,19 @@ export const getListUserClass = async (
   return response.data.data;
 };
 
-// export const getOneClass = async (classId: string): Promise<ClassTeacher> => {
-//   const response = await axiosInstance.get(`/classes/all/get-one/${classId}`);
-//   return response.data.data;
-// };
+export const addMembersToClass = async (
+  userIds: string[],
+  classId: string,
+  role: "STUDENT" | "TEACHER" | "PARENT",
+) => {
+  const response = await axiosInstance.post(
+    `/class/add-members/${classId}`,
+    userIds,
+    {
+      params: {
+        role: role,
+      },
+    },
+  );
+  return response.data.data;
+};
