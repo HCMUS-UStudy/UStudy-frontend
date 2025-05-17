@@ -59,7 +59,7 @@ export default function ClassAssignment() {
     const currentTime = new Date();
     const endTimeDate = new Date(endTime); // Assuming `endTime` is in string format
 
-    return currentTime < endTimeDate; // Check if current time is greater than the end time
+    return currentTime > endTimeDate; // Check if current time is greater than the end time
   };
 
   const handleOpenModal = (assignment: AssignmentItem) => {
@@ -70,8 +70,6 @@ export default function ClassAssignment() {
   const handleReviewClick = (submissionId: string) => {
     if (selectedAssignment) {
       if (isExpired(selectedAssignment.endTime)) {
-        console.log("Đang chuyển");
-        console.log("Đang chuyển 2");
         router.push(`/member/classes/${classId}/review/${submissionId}`);
       } else {
         console.log("Assignment is not yet expired.");
@@ -324,21 +322,22 @@ export default function ClassAssignment() {
                                     <button
                                       type="button"
                                       onClick={(event) => {
-                                        event.preventDefault(); // Prevent default behavior
-                                        handleReviewClick(submission.id); // Call your custom handler
+                                        event.preventDefault();
+                                        handleReviewClick(submission.id);
                                       }}
                                       className="p-2 text-blue-600 hover:text-blue-800"
                                       title="Xem lại"
                                     >
                                       <FaEye className="text-xl" />
                                     </button>
-                                  ) : (
-                                    <span>Assignment not expired yet.</span>
-                                  )}
+                                  ) : selectedAssignment.format ===
+                                    "MULTIPLE_CHOICE" ? (
+                                    <div>Bài tập chưa hết hạn</div>
+                                  ) : null}
 
                                   {(selectedAssignment.format === "ESSAY" ||
                                     selectedAssignment.format === "MIXED") &&
-                                    selectedAssignment.duration === 0 && (
+                                    !isExpired(selectedAssignment.endTime) && (
                                       <button
                                         onClick={handleEdit(submission.id)}
                                         className="p-2 text-green-600 hover:text-green-800"

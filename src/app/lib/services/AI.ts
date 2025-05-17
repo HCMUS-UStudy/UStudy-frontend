@@ -6,7 +6,7 @@ export const getAIAssignment = async (
 ): Promise<AIAssignment> => {
   try {
     const response = await axiosInstance.post(`/ai/questions/${questionId}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw error;
   }

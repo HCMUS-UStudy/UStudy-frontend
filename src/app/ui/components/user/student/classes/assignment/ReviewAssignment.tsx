@@ -3,9 +3,12 @@ import { getSubmissionDetails } from "@/app/lib/services/submission";
 import { SubmissionDetail } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import ReviewQuizLoading from "@/app/ui/components/_common/loading/ReviewQuizLoading";
+import Tooltip from "@/app/ui/components/_common/Tooltip";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { HiSparkles } from "react-icons/hi";
+import AIExplainModal from "./AIExplainModal";
 
 interface ReviewAssignmentProps {
   submissionId: string;
@@ -17,6 +20,9 @@ export default function ReviewAssignment({
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [reviewData, setReviewData] = useState<SubmissionDetail>();
+
+  const [questionId, setQuestionId] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("Đã chuyển");
@@ -43,11 +49,8 @@ export default function ReviewAssignment({
 
   const handleExplainAnswer = async (questionId: string) => {
     try {
-      // Call the AI explanation API here
-      // This is just a placeholder for the AI explanation call
-      // const explanation = await fetchExplanationFromAI(questionId);
-      // alert(`AI Explanation for Question ${questionId}: ${explanation}`);
-      console.log(questionId);
+      setQuestionId(questionId);
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching AI explanation:", error);
     }
@@ -57,9 +60,28 @@ export default function ReviewAssignment({
     <div className="flex w-full gap-6">
       {/* Nội dung chính */}
       <div className="bg-white shadow-lg rounded-3xl w-full p-8 border border-gray-300">
-        <h3 className="text-3xl font-bold mb-6 text-center text-primary-darkest">
-          {reviewData?.title}
-        </h3>
+        <div className="flex items-center mb-6 relative">
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <h3 className="text-3xl font-bold text-primary-darkest text-center">
+              {reviewData?.title}
+            </h3>
+          </div>
+
+          {isMultipleChoice && (
+            <div className="ml-auto">
+              <Tooltip text="Giải thích đáp án bằng AI">
+                <Button
+                  className="p-3 bg-highlight-text text-white font-semibold rounded-full shadow-md flex items-center justify-center transition duration-300 ease-in-out hover:bg-opacity-90"
+                  onClick={() =>
+                    handleExplainAnswer(currentQuestion.questionId)
+                  }
+                >
+                  <HiSparkles className="w-5 h-5" />
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-between items-center mb-4">
           <span className="text-sm text-gray-500">
@@ -170,31 +192,6 @@ export default function ReviewAssignment({
           </div>
         )}
 
-        {/* Giải thích đáp án bằng AI */}
-        {/* Giải thích đáp án bằng AI */}
-        <div className="flex justify-end mb-6">
-          <Button
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-md flex items-center gap-2 transition duration-300 ease-in-out"
-            onClick={() => handleExplainAnswer(currentQuestion.questionId)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11 11V9a4 4 0 018 0v2a4 4 0 01-8 0zm-5 0V9a4 4 0 118 0v2a4 4 0 01-8 0zm7 6v1a2 2 0 01-2 2H9m6-3v1a2 2 0 01-2 2h-1"
-              />
-            </svg>
-            Giải thích đáp án bằng AI
-          </Button>
-        </div>
-
         {/* Điều hướng */}
         <div className="flex justify-between">
           <Button
@@ -244,6 +241,12 @@ export default function ReviewAssignment({
           })}
         </div>
       </div>
+
+      <AIExplainModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        questionId={questionId}
+      />
     </div>
   );
 }
