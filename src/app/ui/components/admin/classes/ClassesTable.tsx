@@ -74,7 +74,7 @@ export default function ClassesTable({
               </TableCell>
               <TableCell className="text-left pl-4">{c.course.name}</TableCell>
               <TableCell className="text-left pl-4">{c.grade.name}</TableCell>
-              <TableCell className="text-left pl-4">{c.fee} VNĐ</TableCell>
+              {/* <TableCell className="text-left pl-4">{c.fee} VNĐ</TableCell> */}
               <TableCell className="text-left pl-4">{c.startDate}</TableCell>
               <TableCell className="text-left pl-4">{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
