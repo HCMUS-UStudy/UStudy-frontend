@@ -20,8 +20,8 @@ import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 
 const LogInSchema = z.object({
   username: z
-    .string({ message: "(*) Vui lòng nhập ID" })
-    .min(1, { message: "(*) Vui lòng nhập ID" }),
+    .string({ message: "(*) Vui lòng nhập tên tài khoản" })
+    .min(1, { message: "(*) Vui lòng nhập tên tài khoản" }),
   password: z
     .string({ message: "(*) Vui lòng nhập mật khẩu" })
     .min(1, { message: "(*) Vui lòng nhập mật khẩu" }),
@@ -75,6 +75,12 @@ export default function Login() {
           router.push("/teacher/classes");
           break;
         case "STUDENT":
+          if (response.data.user.hadClass) {
+            router.push("/member/home");
+          } else {
+            router.push("/member/class-register");
+          }
+          break;
         case "PARENT":
           router.push("/member/home");
           break;
@@ -157,8 +163,8 @@ export default function Login() {
               <Input
                 className="text-base md:text-[14px]"
                 type="text"
-                placeholder="Nhập mã người dùng"
-                label="Mã người dùng"
+                placeholder="Nhập tên tài khoản"
+                label="Tên tài khoản"
                 isError={errors.username?.message !== undefined}
                 errorMsg={errors.username?.message}
                 {...register("username")}

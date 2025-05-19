@@ -1,36 +1,15 @@
+import { UserSummary, BaseClassInfo, BaseGradeInfo } from "./common";
+import { CourseDto } from "./course";
+
 export type PaymentItem = {
   id: string;
   paymentPeriodDto: {
     id: string;
-    enrolledClass: {
-      id: string;
-      name: string;
-      description: string;
-      startDate: string;
-      endDate: string;
-      grade: {
-        id: string;
-        name: string;
-      };
-      course: {
-        id: string;
-        name: string;
-        createdBy: {
-          id: string;
-          genId: string;
-          email: string;
-          name: string;
-          avatar: string;
-        };
-      };
+    enrolledClass: BaseClassInfo & {
+      grade: BaseGradeInfo;
+      course: CourseDto;
     };
-    student: {
-      id: string;
-      genId: string;
-      email: string;
-      name: string;
-      avatar: string;
-    };
+    student: UserSummary;
     startDate: string;
     endDate: string;
     amount: number;

@@ -24,7 +24,7 @@ const config: Config = {
 
         background: "#f1f5f9", // slate-50: #f8fafc, #f9fbfc, slate-100: #f1f5f9
         // background: "#F6F5F5",
-        hero: "#DDEFE6", // #D5E9F6, blue-100: #dbeafe
+        hero: "#d7f5e6", // #D5E9F6, blue-100: #dbeafe
         foreground: "#feffff", // white
 
         "disabled-dark": "#9ca3af", // gray-400

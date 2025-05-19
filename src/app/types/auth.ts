@@ -1,3 +1,4 @@
+import { StudentRegisterInputs } from "../register/page";
 import { GenderType } from "./common";
 import { Branch } from "./branch";
 
@@ -11,6 +12,12 @@ export type AuthResponse = {
     access_token: string;
     children: string[] | null;
   };
+};
+
+export type RegisterResponse = {
+  message: string;
+  statusCode: string;
+  data: StudentRegisterInputs;
 };
 
 export type UserData = {
@@ -29,4 +36,5 @@ export type UserData = {
     updatedAt: string;
   };
   branch: Branch[];
+  hadClass: boolean;
 };

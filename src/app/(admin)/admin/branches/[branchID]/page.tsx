@@ -45,7 +45,8 @@ type Session = {
 const BranchDetail = () => {
   const { branches } = useSelector((state: RootState) => state.branch);
   const [branches_, setBranches_] = useState<Branch[]>(branches);
-  const { branchID } = useParams();
+  const params = useParams();
+  const branchID = (params?.branchID ?? "") as string;
   const [branch, setBranch] = useState<Branch>();
   const router = useRouter();
   const dispatch = useDispatch();

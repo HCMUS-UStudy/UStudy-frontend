@@ -1,16 +1,33 @@
 "use client";
 import React, { useState } from "react";
-import DatePicker from "react-datepicker";
+import DatePicker, { DatePickerProps } from "react-datepicker";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
+import clsx from "clsx";
+import { FaCalendar } from "react-icons/fa6";
 
-interface DatePickerProps<T extends FieldValues> {
+type CustomDatePickerProps<T extends FieldValues> = DatePickerProps & {
   name: Path<T>;
   control: Control<T>;
   label: string;
   placeholder?: string;
+  isError?: boolean;
   errorMsg?: string;
-}
+} & {
+  selectsRange?: never;
+  selectsMultiple?: never;
+};
+// type CustomDatePickerProps<T extends FieldValues> = Omit<
+//   DatePickerProps,
+//   "onChange" | "name" | "selectsMultiple"
+// > & {
+//   name: Path<T>;
+//   control: Control<T>;
+//   label: string;
+//   placeholder?: string;
+//   isError?: boolean;
+//   errorMsg?: string;
+// };
 
 /**
  * A reusable DatePicker component integrated with React Hook Form.
@@ -51,37 +68,55 @@ export const CustomDatePicker = <T extends FieldValues>({
   name,
   control,
   label,
+  isError = false,
   errorMsg = "",
   placeholder = "dd/mm/yyyy",
-}: DatePickerProps<T>) => {
+  ...datePickerProps
+}: CustomDatePickerProps<T>) => {
   const [date, setDate] = useState<Date | null>(null);
   return (
-    <div className="w-full">
-      <div className="flex gap-2 items-center w-full">
-        <label
-          htmlFor="startDate"
-          className="after:content-['*'] after:text-red-500"
-        >
+    <div className="w-full text-sm">
+      <label
+        htmlFor={name}
+        className={clsx(
+          `flex gap-2 items-center w-full px-3 h-[40px] rounded-md cursor-pointer`,
+          {
+            "border border-control-border": !isError,
+            "border-2 border-error": isError,
+          },
+        )}
+      >
+        <div className="text-gray-700 flex items-center">
           {label}
-        </label>
-        <div className="flex-1 w-full">
-          <div className="w-full">
+          <div className="flex-1 w-full">
             <Controller
               control={control}
               name={name}
               render={({ field }) => {
                 return (
                   <DatePicker
+                    {...datePickerProps}
                     placeholderText={placeholder}
-                    id="startDate"
+                    id={name}
                     dateFormat="dd/MM/yyyy"
-                    className="border w-full border-control-border px-2 py-2 rounded outline-none cursor-pointer text-sm"
+                    className="w-full px-2  rounded outline-none cursor-pointer text-sm"
                     selected={date}
-                    onChange={(date) => {
-                      setDate(date);
-                      field.onChange(
-                        date ? new Date(date).toISOString().split("T")[0] : "",
-                      );
+                    icon={<FaCalendar className="text-gray-500" />}
+                    showIcon
+                    onChange={(dateValue) => {
+                      setDate(dateValue);
+                      const isoDate = dateValue
+                        ? new Date(
+                            Date.UTC(
+                              dateValue.getFullYear(),
+                              dateValue.getMonth(),
+                              dateValue.getDate(),
+                            ),
+                          )
+                            .toISOString()
+                            .split("T")[0]
+                        : "";
+                      field.onChange(isoDate);
                     }}
                   />
                 );
@@ -89,8 +124,8 @@ export const CustomDatePicker = <T extends FieldValues>({
             />
           </div>
         </div>
-      </div>
-      <div className="text-[13px] text-error mt-2">{errorMsg}</div>
+      </label>
+      <span className="text-[13px] text-error mt-2">{errorMsg}</span>
     </div>
   );
 };

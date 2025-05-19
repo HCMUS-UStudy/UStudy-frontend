@@ -19,7 +19,8 @@ export default function TeacherNavigation({
   ];
 
   const router = useRouter();
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId;
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);

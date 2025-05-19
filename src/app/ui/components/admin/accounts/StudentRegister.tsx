@@ -46,14 +46,14 @@ export default function StudentRegister() {
     queryKey: [
       "RegisterStudents",
       currentPage - 1,
-      searchParams.get("AccountName") ?? "",
+      searchParams?.get("AccountName") ?? "",
     ],
     queryFn: () =>
       getRegister(
         "STUDENT",
         5,
         currentPage - 1,
-        searchParams.get("AccountName") ?? "",
+        searchParams?.get("AccountName") ?? "",
       ),
     placeholderData: keepPreviousData,
   });

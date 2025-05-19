@@ -36,7 +36,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       {children}
       <span
         className={`absolute hidden group-hover:block bg-gray-700 text-white text-[12px] rounded py-1 px-2 
-          z-10 whitespace-nowrap ${positionClasses[position]}`}
+          z-[999] whitespace-nowrap ${positionClasses[position]}`}
       >
         {text}
         {/* <span

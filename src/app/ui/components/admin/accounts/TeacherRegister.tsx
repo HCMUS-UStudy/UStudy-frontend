@@ -122,7 +122,7 @@ export default function TeacherRegister() {
         "TEACHER",
         5,
         currentPage - 1,
-        searchParams.get("AccountName") ?? "",
+        searchParams?.get("AccountName") ?? "",
       );
       setRegisterStudents(response.content);
       setTotalPages(response.totalPages);

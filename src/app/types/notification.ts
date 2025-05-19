@@ -1,15 +1,11 @@
+import { UserSummary } from "./common";
+
 export type NotificationItem = {
   id: string;
   title: string;
   content: string;
   sendDate: string;
   read: boolean;
-  sender: {
-    id: string;
-    genId: string;
-    email: string;
-    name: string;
-    avatar: string;
-  };
+  sender: UserSummary;
   type: string;
 };

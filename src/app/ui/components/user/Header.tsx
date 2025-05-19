@@ -94,7 +94,7 @@ const Header = ({ role }: { role: string }) => {
       <div className="flex gap-6 items-center">
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           {userInfo?.role.defaultRoute === "PARENT" &&
-            pathname.includes("/member/tuition") && (
+            pathname?.includes("/member/tuition") && (
               <Select
                 defaultValue={selectedId}
                 label="Chọn tài khoản"

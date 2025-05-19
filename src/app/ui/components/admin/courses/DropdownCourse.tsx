@@ -95,7 +95,7 @@ export default function DropdownCourse({
   };
 
   const handleSelect = (key: string, label: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams ?? "");
     const normalizedLabel = removeVietnameseAccents(label); // Xóa dấu tiếng Việt
 
     if (key !== "0") {

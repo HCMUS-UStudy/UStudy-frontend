@@ -1,27 +1,24 @@
-import { GenderType } from "./common";
-import { Course, CourseDto } from "./course";
+import {
+  GenderType,
+  UserSummary,
+  BaseClassInfo,
+  BaseGradeInfo,
+  BaseCourseInfo,
+  BasePaginationResponse,
+} from "./common";
+import { Course, CourseDto, CourseInfo } from "./course";
 import { GradeItem } from "./grade";
 import { Room } from "./room";
 import { ClassSessionItem, Session } from "./session";
 
-export type ClassDetail = {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
+export type ClassDetail = BaseClassInfo & {
   grade: GradeItem;
   course: Course;
   status: string | null;
   classSessions: classSessions[];
 };
 
-export type ClassTeacher = {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
+export type ClassTeacher = BaseClassInfo & {
   grade: GradeItem;
   course: Course;
   status: string | null;
@@ -48,52 +45,43 @@ export type ClassSchema = {
   roomId: string;
 };
 
-export type ClassItem = {
-  id: string;
-  name: string;
-  description: string;
+// export type ClassItem = {
+//   id: string;
+//   name: string;
+//   description: string;
+//   course: CourseDto;
+//   fee: number;
+//   startDate: string;
+//   endDate: string;
+//   grade: GradeItem;
+// };
+
+export type ClassItem = Pick<
+  BaseClassInfo,
+  "id" | "name" | "startDate" | "endDate"
+> & {
   course: CourseDto;
-  fee: number;
-  startDate: string;
-  endDate: string;
   grade: GradeItem;
 };
 
-export type ClassData = {
-  content: ClassItem[];
-  totalPages: number;
+export type ClassData = BasePaginationResponse<ClassItem>;
+
+export type ClassChooseData = BasePaginationResponse<ClassChooseItem>;
+
+export type ClassChooseItem = Pick<
+  BaseClassInfo,
+  "id" | "name" | "description"
+>;
+
+export type ClassUserItem = Pick<
+  BaseClassInfo,
+  "id" | "name" | "description"
+> & {
+  course: BaseCourseInfo;
+  grade: BaseGradeInfo;
 };
 
-export type ClassChooseData = {
-  content: ClassChooseItem[];
-  totalPages: number;
-};
-
-export type ClassChooseItem = {
-  id: string;
-  name: string;
-  description: string;
-};
-
-export type ClassUserItem = {
-  id: string;
-  name: string;
-  description: string;
-  course: {
-    id: string;
-    name: string;
-  };
-  grade: {
-    id: string;
-    name: string;
-  };
-};
-
-export type UserClassData = {
-  content: ClassUserItem[];
-  totalPages: number;
-  totalElements: number;
-};
+export type UserClassData = BasePaginationResponse<ClassUserItem>;
 
 export type ClassScheduleItem = {
   id: string;
@@ -135,26 +123,14 @@ export type Classroom = {
     name: string;
   };
   status: boolean;
-  teacher: {
-    avatar: string;
-    email: string;
-    genId: string;
-    gender: GenderType;
-    id: string;
-    name: string;
-  } | null;
+  teacher: (UserSummary & { gender: GenderType }) | null;
   students: null;
   course: {
     createdAt: string;
-    createdBy: {
+    createdBy: UserSummary & {
       active: boolean;
-      avatar: string;
       createdAt: string;
-      email: string;
-      genId: string;
       gender: GenderType;
-      id: string;
-      name: string;
       role: string;
     };
     description: string;
@@ -165,18 +141,10 @@ export type Classroom = {
   };
 };
 
-export type RegisterClassData = {
-  content: RegisterClassItem[];
-  totalPages: number;
-};
+export type RegisterClassData = BasePaginationResponse<RegisterClassItem>;
 
-export type RegisterClassItem = {
-  id: string;
-  name: string;
-  email: string;
-  genId: string;
+export type RegisterClassItem = UserSummary & {
   gender: GenderType;
-  avatar: string;
 };
 
 export type ApproveResponse = {
@@ -186,3 +154,12 @@ export type ApproveResponse = {
     name: string;
   }[];
 };
+
+export type ClassRegisterResponseItem = BaseClassInfo & {
+  grade: GradeItem;
+  course: CourseInfo;
+  teacher: (UserSummary & { gender: GenderType })[];
+};
+
+export type ClassRegisterResponse =
+  BasePaginationResponse<ClassRegisterResponseItem>;

@@ -20,7 +20,8 @@ import { getUserDataFromCookies } from "@/app/lib/action";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId ?? "";
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);

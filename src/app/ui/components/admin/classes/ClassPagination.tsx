@@ -16,7 +16,7 @@ export default function ClassPagination({
   const handlePrevClick = () => {
     if (currentPage > 1) {
       currentPage--;
-      const params = new URLSearchParams(searchParams);
+      const params = new URLSearchParams(searchParams ?? "");
       params.set("page", currentPage.toString());
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -25,7 +25,7 @@ export default function ClassPagination({
   const handleNextClick = () => {
     if (currentPage < totalPages) {
       currentPage++;
-      const params = new URLSearchParams(searchParams);
+      const params = new URLSearchParams(searchParams ?? "");
       params.set("page", currentPage.toString());
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -33,7 +33,7 @@ export default function ClassPagination({
 
   const handlePageClick = (page: number) => {
     currentPage = page;
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams ?? "");
     params.set("page", currentPage.toString());
     router.replace(`${pathname}?${params.toString()}`);
   };

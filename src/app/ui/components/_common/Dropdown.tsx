@@ -49,7 +49,7 @@ export default function Dropdown({
   }, []);
 
   const handleSelect = (key: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams ?? "");
     if (key) {
       params.set("role", key);
     } else {

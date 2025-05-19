@@ -8,9 +8,9 @@ export const login = async (
 ): Promise<AuthResponse> => {
   try {
     const response = await axiosInstance.post("/auth/login", {
-      username: username,
-      password: password,
-      isUser: isUser,
+      username,
+      password,
+      isUser,
     });
     return response.data;
   } catch (error) {

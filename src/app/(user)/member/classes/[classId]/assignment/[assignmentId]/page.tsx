@@ -19,9 +19,9 @@ import { toast } from "react-toastify";
 const AssignmentPage = () => {
   const params = useParams();
   const router = useRouter();
-  const { assignmentId } = params;
+  const assignmentId = params?.assignmentId;
   const searchParams = useSearchParams();
-  const duration = searchParams.get("duration");
+  const duration = searchParams?.get("duration");
 
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);

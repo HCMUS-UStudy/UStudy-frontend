@@ -21,7 +21,8 @@ import { FaList, FaSort } from "react-icons/fa6";
 import { FaEye, FaEdit } from "react-icons/fa";
 
 export default function ClassAssignment() {
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId;
   const router = useRouter();
   const randomImages = [
     "https://storage.googleapis.com/a1aa/image/etK-TPGHJCUFTdDL1RCjvPVzYEME-6M-4WM0R6qL1r4.jpg",
@@ -54,18 +55,32 @@ export default function ClassAssignment() {
     );
   };
 
+  const isExpired = (endTime: string): boolean => {
+    const currentTime = new Date();
+    const endTimeDate = new Date(endTime); // Assuming `endTime` is in string format
+
+    return currentTime > endTimeDate; // Check if current time is greater than the end time
+  };
+
   const handleOpenModal = (assignment: AssignmentItem) => {
     setSelectedAssignment(assignment); // Set the selected assignment
     setIsModalOpen(true); // Open the modal
   };
 
-  const handleReview = (submissionId: string) => () => {
-    router.push(`/member/classes/${classId}/review/${submissionId}`);
+  const handleReviewClick = (submissionId: string) => {
+    if (selectedAssignment) {
+      if (isExpired(selectedAssignment.endTime)) {
+        router.push(`/member/classes/${classId}/review/${submissionId}`);
+      } else {
+        console.log("Assignment is not yet expired.");
+      }
+    } else {
+      console.log("Selected assignment is not available.");
+    }
   };
 
-  const handleEdit = () => {
-    // TODO: Viết logic chỉnh sửa bài
-    console.log("Chỉnh sửa bài:", selectedAssignment?.id);
+  const handleEdit = (submissionId: string) => () => {
+    router.push(`/member/classes/${classId}/editExercise/${submissionId}`);
   };
 
   const closeModal = () => {
@@ -77,7 +92,7 @@ export default function ClassAssignment() {
     const fetchExercise = async () => {
       try {
         setLoading(true);
-        const response = await getAssignmentByClassId(0, 10, classId);
+        const response = await getAssignmentByClassId(0, 10, classId ?? "");
         setAssignment(response.content);
       } catch (error) {
         console.log(error);
@@ -100,6 +115,7 @@ export default function ClassAssignment() {
             0,
             10,
           );
+          console.log(response);
           setSubmissions(response.content); // Lưu dữ liệu trả về vào state
         } catch (error) {
           console.error("Error fetching submissions:", error);
@@ -302,24 +318,34 @@ export default function ClassAssignment() {
                               </TableCell>
                               <TableCell>
                                 <div className="flex gap-2 justify-center">
-                                  <button
-                                    onClick={handleReview(submission.id)}
-                                    className="p-2 text-blue-600 hover:text-blue-800"
-                                    title="Xem lại"
-                                  >
-                                    <FaEye className="text-xl" />
-                                  </button>
+                                  {isExpired(selectedAssignment.endTime) ? (
+                                    <button
+                                      type="button"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        handleReviewClick(submission.id);
+                                      }}
+                                      className="p-2 text-blue-600 hover:text-blue-800"
+                                      title="Xem lại"
+                                    >
+                                      <FaEye className="text-xl" />
+                                    </button>
+                                  ) : selectedAssignment.format ===
+                                    "MULTIPLE_CHOICE" ? (
+                                    <div>Bài tập chưa hết hạn</div>
+                                  ) : null}
 
                                   {(selectedAssignment.format === "ESSAY" ||
-                                    selectedAssignment.format === "MIXED") && (
-                                    <button
-                                      onClick={handleEdit}
-                                      className="p-2 text-green-600 hover:text-green-800"
-                                      title="Chỉnh sửa"
-                                    >
-                                      <FaEdit className="text-xl" />
-                                    </button>
-                                  )}
+                                    selectedAssignment.format === "MIXED") &&
+                                    !isExpired(selectedAssignment.endTime) && (
+                                      <button
+                                        onClick={handleEdit(submission.id)}
+                                        className="p-2 text-green-600 hover:text-green-800"
+                                        title="Chỉnh sửa"
+                                      >
+                                        <FaEdit className="text-xl" />
+                                      </button>
+                                    )}
                                 </div>
                               </TableCell>
                             </TableRow>
