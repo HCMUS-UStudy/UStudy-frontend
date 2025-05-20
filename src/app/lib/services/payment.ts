@@ -88,9 +88,15 @@ export const getPaymentByStuId = async (
   }
 };
 
-export const submitOrderPayment = async (paymentId: string) => {
-  const response = await axiosInstance.post(
-    `/payment/submit-order/${paymentId}`,
-  );
-  return response.data;
+export const submitOrderPayment = async (
+  paymentId: string,
+): Promise<string> => {
+  try {
+    const response = await axiosInstance.post(
+      `/payment/submit-order/${paymentId}`,
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };

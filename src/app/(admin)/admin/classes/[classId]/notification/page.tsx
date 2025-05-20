@@ -22,7 +22,8 @@ import Loading from "@/app/ui/components/_common/loading/Loading";
 const Notification = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);

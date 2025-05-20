@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import { FaThLarge } from "react-icons/fa";
 import { FaList, FaSort } from "react-icons/fa6";
 import { FaEye, FaEdit } from "react-icons/fa";
+import Tooltip from "@/app/ui/components/_common/Tooltip";
 
 export default function ClassAssignment() {
   const params = useParams<{ classId: string }>();
@@ -319,17 +320,19 @@ export default function ClassAssignment() {
                               <TableCell>
                                 <div className="flex gap-2 justify-center">
                                   {isExpired(selectedAssignment.endTime) ? (
-                                    <button
-                                      type="button"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        handleReviewClick(submission.id);
-                                      }}
-                                      className="p-2 text-blue-600 hover:text-blue-800"
-                                      title="Xem lại"
-                                    >
-                                      <FaEye className="text-xl" />
-                                    </button>
+                                    <Tooltip text="Xem lại">
+                                      <button
+                                        type="button"
+                                        onClick={(event) => {
+                                          event.preventDefault();
+                                          handleReviewClick(submission.id);
+                                        }}
+                                        className="p-2 text-primary-dark hover:text-primary-darkest transition-colors"
+                                        title="Xem lại"
+                                      >
+                                        <FaEye className="text-xl" />
+                                      </button>
+                                    </Tooltip>
                                   ) : selectedAssignment.format ===
                                     "MULTIPLE_CHOICE" ? (
                                     <div>Bài tập chưa hết hạn</div>
@@ -370,12 +373,13 @@ export default function ClassAssignment() {
                 {/* Các hành động dưới cùng */}
                 <div className="mt-8 flex justify-center gap-4">
                   {/* Nút quay lại khóa học */}
-                  <button
+                  <Button
                     onClick={closeModal}
-                    className="bg-primary-light hover:bg-primary-dark transition-colors text-white font-semibold px-8 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-secondary-dark transform hover:scale-105"
+                    variant="outlined"
+                    className="text-sm"
                   >
                     Quay lại khóa học
-                  </button>
+                  </Button>
 
                   {/* Nút làm lại hoặc bắt đầu nếu chưa nộp bài */}
                   {submissions.length === 0 ? (
@@ -393,7 +397,7 @@ export default function ClassAssignment() {
                     </button>
                   ) : (
                     submissions.length < selectedAssignment.numAttempts && (
-                      <button
+                      <Button
                         onClick={() =>
                           handleStartExercise(
                             selectedAssignment.id,
@@ -401,10 +405,10 @@ export default function ClassAssignment() {
                             selectedAssignment.format,
                           )
                         }
-                        className="bg-primary-darker hover:bg-primary-darkest transition-colors text-white font-semibold px-8 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-primary-darkest transform hover:scale-105"
+                        className="px-8 py-3 hover:bg-primary-dark font-semibold"
                       >
                         Làm lại
-                      </button>
+                      </Button>
                     )
                   )}
                 </div>
@@ -525,12 +529,12 @@ export default function ClassAssignment() {
                   }`}
                 >
                   <div className="flex space-x-2">
-                    <button
-                      className="bg-primary-darkest text-white hover:bg-hover-primary text-sm px-3 py-1 rounded-lg font-semibold transition"
+                    <Button
+                      className="px-3 py-1 text-sm bg-primary-darkest hover:bg-white text-white hover:text-primary-darkest border border-primary-darkest transition-all"
                       onClick={() => handleOpenModal(assignment)}
                     >
                       Bắt đầu
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

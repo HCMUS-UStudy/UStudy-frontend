@@ -15,7 +15,8 @@ export default function AdminNavigation({ activeTab }: { activeTab: string }) {
   ];
 
   const router = useRouter();
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);

@@ -80,12 +80,10 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
         // Call VNPay service
         const response = await submitOrderPayment(payment.id);
 
-        if (response?.data) {
-          window.location.href = response.data;
+        if (response) {
+          window.location.href = response;
         } else {
-          toast.error(
-            response.message || "Không thể kết nối tới cổng thanh toán VNPay",
-          );
+          toast.error("Không thể kết nối tới cổng thanh toán VNPay");
           setIsLoading(false);
           return;
         }

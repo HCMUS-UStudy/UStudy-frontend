@@ -14,8 +14,8 @@ import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createNewAccount } from "@/app/lib/services/user";
-import { useRouter } from "next/navigation";
+// import { createNewAccount } from "@/app/lib/services/user";
+// import { useRouter } from "next/navigation";
 import { getAllRoles } from "@/app/lib/services/role";
 import { GenderType } from "@/app/types";
 
@@ -67,7 +67,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
 
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
-  const router = useRouter();
+  // const router = useRouter();
 
   // Gọi API để lấy danh sách roles khi component render
   useEffect(() => {
@@ -91,22 +91,22 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   const onSubmit = async (data: CreateUserInputs) => {
     try {
       console.log(data);
-      const response = await createNewAccount(data);
-      console.log(response);
+      // const response = await createNewAccount(data);
+      // console.log(response);
 
-      if (response.statusCode === "OK") {
-        toast.success("Tạo tài khoản thành công!", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-        setShowModal(false);
-        router.push("/admin/accounts");
-      } else {
-        toast.error("Đã xảy ra lỗi khi tạo tài khoản.", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-      }
+      // if (response.statusCode === "OK") {
+      //   toast.success("Tạo tài khoản thành công!", {
+      //     position: "bottom-right",
+      //     autoClose: 3000,
+      //   });
+      //   setShowModal(false);
+      //   router.push("/admin/accounts");
+      // } else {
+      //   toast.error("Đã xảy ra lỗi khi tạo tài khoản.", {
+      //     position: "bottom-right",
+      //     autoClose: 3000,
+      //   });
+      // }
     } catch (error) {
       console.error("API error:", error);
       toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {

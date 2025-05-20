@@ -5,6 +5,9 @@ import { ClassToRegisterItem, ClassToRegisterResponse } from "@/app/types";
 import { SiGoogleclassroom } from "react-icons/si";
 import { Button } from "../../../_common/Button";
 import { CheckCircle, ChevronRight } from "lucide-react";
+// import { useMutation } from "@tanstack/react-query";
+// import { submitOrderPayment } from "@/app/lib/services/payment";
+// import { toast } from "react-toastify";
 
 export interface Course {
   name?: string;
@@ -30,6 +33,27 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
   classes,
   renderAction,
 }) => {
+  // const handlePaymentMutation = useMutation({
+  //   mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
+  //   onSuccess: (response) => {
+  //     console.log(response);
+  //     toast.success(response, {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     toast.error(error.message, {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //     });
+  //   },
+  // });
+  // const handlePayment = () => {
+  //   handlePaymentMutation.mutate(selectedClass: ClassToReg);
+  // };
   if (status === "pending") {
     return <RegisterClassesLoading />;
   }

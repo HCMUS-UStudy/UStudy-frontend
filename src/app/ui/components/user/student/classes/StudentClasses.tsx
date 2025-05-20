@@ -22,7 +22,7 @@ const StudentClasses: React.FC<StudentClassesProps> = ({ searchQuery }) => {
 
   return (
     <div>
-      <ClassList status={status} classes={classes} />
+      <ClassList status={status} classes={classes} type="row" />
       {classes?.totalElements !== 0 && (
         <Pagination
           currentPage={currentPage}

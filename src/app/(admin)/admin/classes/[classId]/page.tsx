@@ -11,7 +11,9 @@ const ClassAdmin = () => {
   // const [currentPage, setCurrentPage] = useState(0);
   // const [totalPages, setTotalPages] = useState<number>(0);
 
-  const { classId } = useParams();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
+
   // const { data: classQuery, isLoading } = useQuery<ClassDetail>({
   //   queryKey: ["ClassDetail", classId],
   //   queryFn: () => getClassById(classId as string),

@@ -19,7 +19,8 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 
 const MemberPage = () => {
   const searchParams = useSearchParams();
-  const { classId } = useParams();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -30,7 +31,7 @@ const MemberPage = () => {
     queryFn: () =>
       getListMembers(
         classId,
-        searchParams.get("AccountName") ?? "",
+        searchParams?.get("AccountName") ?? "",
         currentPage,
         12,
       ),

@@ -26,19 +26,20 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false); // Trạng thái tải thêm
   const [searchKeyword, setSearchKeyword] = useState<string>(""); // Từ khóa tìm kiếm
   const searchParams = useSearchParams();
-  const { classId } = useParams();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
   const queryClient = useQueryClient();
 
   const { data: studentList } = useQuery({
     queryKey: [
       "ListStudentsToAdd",
       currentPage,
-      searchParams.get("AccountName") ?? "",
+      searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
     queryFn: () =>
       getAllAccount(
-        searchParams.get("AccountName") ?? "",
+        searchParams?.get("AccountName") ?? "",
         6,
         "STUDENT",
         currentPage,
