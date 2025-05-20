@@ -32,7 +32,7 @@ const MemberPage = () => {
         classId,
         searchParams.get("AccountName") ?? "",
         currentPage,
-        10,
+        12,
       ),
   });
 
@@ -176,17 +176,19 @@ const MemberPage = () => {
         </TableBody>
       </Table>
       <div className="flex justify-end mt-2">
-        <Pagination
-          currentPage={currentPage + 1}
-          totalPages={totalPages}
-          handlePageClick={(page) => setCurrentPage(page - 1)}
-          handlePreviousPage={() =>
-            setCurrentPage((prev) => Math.max(prev - 1, 0))
-          }
-          handleNextPage={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
-          }
-        />
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage + 1}
+            totalPages={totalPages}
+            handlePageClick={(page) => setCurrentPage(page - 1)}
+            handlePreviousPage={() =>
+              setCurrentPage((prev) => Math.max(prev - 1, 0))
+            }
+            handleNextPage={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
+            }
+          />
+        )}
       </div>
     </div>
   );

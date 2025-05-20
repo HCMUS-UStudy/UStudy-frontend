@@ -31,8 +31,12 @@ const ClassDetailPage = () => {
   const { data: classDetail, isLoading } = classQuery;
   const { data: classSchedule } = classScheduleQuery;
 
-  const completed = classSchedule.filter((s: ClassScheduleItem) => s.isPassed);
-  const upcoming = classSchedule.filter((s: ClassScheduleItem) => !s.isPassed);
+  const completed = Array.isArray(classSchedule)
+    ? classSchedule.filter((s: ClassScheduleItem) => s.isPassed)
+    : [];
+  const upcoming = Array.isArray(classSchedule)
+    ? classSchedule.filter((s: ClassScheduleItem) => !s.isPassed)
+    : [];
 
   const lastCompleted = completed
     .slice()
