@@ -9,8 +9,9 @@ import {
 } from "@/app/ui/components/_common/Dialog";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
 import StudentList from "./StudentList";
-// import TeacherRegister from "./TeacherRegister";
+import TeacherList from "./TeacherList";
 import { usePathname, useRouter } from "next/navigation";
+import AdminList from "./AdminList";
 
 interface AddMemberProps {
   buttonLabel: string;
@@ -40,15 +41,20 @@ const AddMember: React.FC<AddMemberProps> = ({ buttonLabel }) => {
             <TabList>
               <Tab label="Học viên" value="students" />
               <Tab label="Giáo viên" value="teachers" />
+              <Tab label="Giáo vụ" value="admins" />
             </TabList>
 
             <TabPanel value="students">
-              <StudentList />
+              <StudentList onClose={() => setShowModalRe(false)} />
             </TabPanel>
 
-            {/* <TabPanel value="teachers">
-              <TeacherRegister />
-            </TabPanel> */}
+            <TabPanel value="teachers">
+              <TeacherList onClose={() => setShowModalRe(false)} />
+            </TabPanel>
+
+            <TabPanel value="admins">
+              <AdminList onClose={() => setShowModalRe(false)} />
+            </TabPanel>
           </Tabs>
         </DialogContent>
       </Dialog>

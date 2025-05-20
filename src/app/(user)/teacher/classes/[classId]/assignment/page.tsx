@@ -181,7 +181,7 @@ export default function Assignment() {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto p-6">
+      <div className="mx-2 p-6">
         <div className="flex items-center mb-4 justify-between">
           <h1 className="text-2xl font-bold text-primary-darker">
             Danh sách bài tập

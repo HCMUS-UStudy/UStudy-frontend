@@ -55,7 +55,6 @@ export default function ClassesTable({
       <Table>
         <TableHeader
           columns={[
-            "ID",
             "Tên lớp",
             "Môn học",
             "Khối",
@@ -68,15 +67,12 @@ export default function ClassesTable({
         <TableBody isLoading={status === "pending"}>
           {fetchClasses?.content.map((c, i) => (
             <TableRow key={i}>
-              <TableCell className="text-left pl-4">{i + 1}</TableCell>
-              <TableCell className="text-left pl-4 max-w-12">
-                {c.name}
-              </TableCell>
-              <TableCell className="text-left pl-4">{c.course.name}</TableCell>
-              <TableCell className="text-left pl-4">{c.grade.name}</TableCell>
-              {/* <TableCell className="text-left pl-4">{c.fee} VNĐ</TableCell> */}
-              <TableCell className="text-left pl-4">{c.startDate}</TableCell>
-              <TableCell className="text-left pl-4">{c.endDate}</TableCell>
+              <TableCell>{c.name}</TableCell>
+              <TableCell>{c.course.name}</TableCell>
+              <TableCell>{c.grade.name}</TableCell>
+              <TableCell>{c.fee} VNĐ</TableCell>
+              <TableCell>{c.startDate}</TableCell>
+              <TableCell>{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
                 {/* Nút xem lớp */}
                 <div onClick={() => router.push(`/admin/classes/${c.id}`)}>

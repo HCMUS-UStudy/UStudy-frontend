@@ -117,14 +117,14 @@ export const addTeacherToClass = async (classId: string, teacherId: string) => {
 };
 
 export const getListMembers = async (
-  classId: string,
+  classId: string | string[] | undefined,
   query: string,
   currentPage: number,
   limit: number,
-  role: "STUDENT" | "TEACHER",
+  role?: "STUDENT" | "TEACHER" | "PARENT" | "ADMIN",
 ): Promise<MemberData> => {
   try {
-    const response = await axiosInstance.get(`/class/list-members/${classId}`, {
+    const response = await axiosInstance.get(`/class-member/list/${classId}`, {
       params: {
         page: currentPage,
         limit: limit,
@@ -163,12 +163,12 @@ export const getListAvailableTea = async (
 
 export const addMembers = async (
   userIds: string[],
-  classId: string,
-  role: "STUDENT" | "TEACHER" | "PARENT",
+  classId: string | string[] | undefined,
+  role: "STUDENT" | "TEACHER" | "PARENT" | "ADMIN",
 ): Promise<ApproveResponse> => {
   try {
     const response = await axiosInstance.post(
-      `/class/add-members/${classId}`,
+      `/class-member/add/${classId}`,
       userIds,
       {
         params: {
@@ -195,23 +195,6 @@ export const getListUserClass = async (
         page: currentPage,
         limit: limit,
         filter: query,
-      },
-    },
-  );
-  return response.data.data;
-};
-
-export const addMembersToClass = async (
-  userIds: string[],
-  classId: string,
-  role: "STUDENT" | "TEACHER" | "PARENT",
-) => {
-  const response = await axiosInstance.post(
-    `/class/add-members/${classId}`,
-    userIds,
-    {
-      params: {
-        role: role,
       },
     },
   );

@@ -107,10 +107,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
     <thead className={`${className} bg-slate-100`}>
       <tr className="border-b-2 border-slate-200">
         {columns.map((col, index) => (
-          <th
-            key={index}
-            className={`${index === 0 ? "pl-4" : "pl-2"} py-3 text-[14px] text-left`}
-          >
+          <th key={index} className={`pl-5 py-3 text-[14px] text-left`}>
             {col}
           </th>
         ))}
@@ -263,7 +260,7 @@ export const TableCell: React.FC<TableCellProps> = ({
   ...props
 }: TableCellProps) => {
   return (
-    <td className={cn("px-2 py-3 text-sm text-center", className)} {...props}>
+    <td className={cn(`pl-5 py-4 text-sm left`, className)} {...props}>
       {children}
     </td>
   );

@@ -60,6 +60,7 @@ export type ClassItem = Pick<
   BaseClassInfo,
   "id" | "name" | "startDate" | "endDate"
 > & {
+  fee: number;
   course: CourseDto;
   grade: GradeItem;
 };
@@ -107,6 +108,7 @@ export type ClassScheduleItem = {
       name: string;
     };
   };
+  isPassed: boolean;
 };
 
 export type Classroom = {

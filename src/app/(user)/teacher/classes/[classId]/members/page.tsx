@@ -1,6 +1,5 @@
 "use client";
 
-import AddMember from "@/app/ui/components/admin/classes/addMember/AddMember";
 import { getListMembers } from "@/app/lib/services/class";
 import { useState, useEffect } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
@@ -25,66 +24,20 @@ const MemberPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-  const memberQuery = useQuery(
-    {
-      queryKey: ["ListMembers", currentPage],
-      refetchOnWindowFocus: false,
-      queryFn: () =>
-        getListMembers(
-          classId,
-          searchParams.get("AccountName") ?? "",
-          currentPage,
-          10,
-        ),
-    },
-    // {
-    //   queryKey: ["ListTeachers"],
-    //   refetchOnWindowFocus: false,
-    //   queryFn: () =>
-    //     getListMembers(
-    //       classId,
-    //       searchParams.get("AccountName") ?? "",
-    //       0,
-    //       20,
-    //       "TEACHER",
-    //     ),
-    // },
-    // {
-    //   queryKey: ["ListStudents", currentStudentPage],
-    //   refetchOnWindowFocus: false,
-    //   queryFn: () =>
-    //     getListMembers(
-    //       classId,
-    //       searchParams.get("AccountName") ?? "",
-    //       currentStudentPage,
-    //       8,
-    //       "STUDENT",
-    //     ),
-    // },
-  );
+  const memberQuery = useQuery({
+    queryKey: ["ListMembers", currentPage],
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      getListMembers(
+        classId,
+        searchParams.get("AccountName") ?? "",
+        currentPage,
+        10,
+      ),
+  });
 
   const members = memberQuery.data;
   const isLoading = memberQuery.isLoading;
-
-  // const [adminQuery, teacherQuery, studentQuery] = results;
-  // const adminList = adminQuery.data?.content ?? [];
-  // const teacherList = teacherQuery.data?.content ?? [];
-  // const studentList = studentQuery.data?.content ?? [];
-  // const isLoading = results.some((item) => item.status === "pending");
-
-  // const adminListWithRole = adminList.map((member) => ({
-  //   ...member,
-  //   role: "Giáo vụ",
-  // }));
-
-  // const teacherListWithRole = teacherList.map((member) => ({
-  //   ...member,
-  //   role: "Giáo viên",
-  // }));
-  // const studentListWithRole = studentList.map((member) => ({
-  //   ...member,
-  //   role: "Học sinh",
-  // }));
 
   const memberListWithRole = members?.content
     ?.map((member) => ({
@@ -113,14 +66,11 @@ const MemberPage = () => {
 
   return (
     <div className="flex flex-col gap-5 px-4 mt-4">
-      <div className="flex justify-between gap-10">
-        <div className="flex w-1/3">
-          <SearchField
-            queryKey="AccountName"
-            placeholder="Tìm tên thành viên..."
-          />
-        </div>
-        <AddMember buttonLabel="Thêm thành viên" />
+      <div className="flex w-1/3">
+        <SearchField
+          queryKey="AccountName"
+          placeholder="Tìm tên thành viên..."
+        />
       </div>
 
       <Table>

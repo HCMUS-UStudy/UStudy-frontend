@@ -136,7 +136,8 @@ import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 
 export default function Assignment() {
   const router = useRouter();
-  const { classId } = useParams();
+  const params = useParams();
+  const classId = params?.classId;
   const handleExerciseClick = (assignmentId: string) => {
     router.push(`/teacher/classes/${classId}/assignment/${assignmentId}`);
   };
@@ -180,18 +181,11 @@ export default function Assignment() {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto p-6">
+      <div className="mx-2 p-6">
         <div className="flex items-center mb-4 justify-between">
           <h1 className="text-2xl font-bold text-primary-darker">
             Danh sách bài tập
           </h1>
-
-          <button
-            onClick={() => setAdding(true)}
-            className="px-4 py-2 rounded-lg text-sm hover:bg-primary-light border border-gray-300"
-          >
-            + Thêm bài tập mới
-          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

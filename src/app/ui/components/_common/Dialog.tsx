@@ -162,7 +162,7 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({
   return (
     <div
       className={clsx(
-        "sticky top-0 left-0 z-10 py-4 px-8 border-b-2 bg-white font-bold text-xl",
+        "sticky top-0 left-0 z-10 pt-4 pb-3 px-8 border-b-2 bg-white font-bold text-xl",
         className,
       )}
     >

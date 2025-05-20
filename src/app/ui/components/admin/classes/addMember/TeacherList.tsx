@@ -19,19 +19,19 @@ import { addMembers } from "@/app/lib/services/class";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 
-export default function StudentList({ onClose }: { onClose: () => void }) {
+export default function TeacherList({ onClose }: { onClose: () => void }) {
   const [currentPage, setCurrentPage] = useState<number>(0); // Bắt đầu từ trang 0
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [students, setStudents] = useState<AccountItem[]>([]); // Danh sách học sinh
+  const [teachers, setTeachers] = useState<AccountItem[]>([]); // Danh sách giáo viên
   const [isLoadingMore, setIsLoadingMore] = useState(false); // Trạng thái tải thêm
   const [searchKeyword, setSearchKeyword] = useState<string>(""); // Từ khóa tìm kiếm
   const searchParams = useSearchParams();
   const { classId } = useParams();
   const queryClient = useQueryClient();
 
-  const { data: studentList } = useQuery({
+  const { data: teacherList } = useQuery({
     queryKey: [
-      "ListStudentsToAdd",
+      "ListTeachersToAdd",
       currentPage,
       searchParams.get("AccountName") ?? "",
     ],
@@ -40,20 +40,20 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
       getAllAccount(
         searchParams.get("AccountName") ?? "",
         6,
-        "STUDENT",
+        "TEACHER",
         currentPage,
       ),
   });
 
   useEffect(() => {
-    if (studentList) {
+    if (teacherList) {
       if (currentPage === 0) {
-        setStudents(studentList.content); // Nếu là trang đầu tiên, thay thế danh sách
+        setTeachers(teacherList.content); // Nếu là trang đầu tiên, thay thế danh sách
       } else {
-        setStudents((prev) => [...prev, ...studentList.content]); // Nếu không, thêm vào danh sách hiện tại
+        setTeachers((prev) => [...prev, ...teacherList.content]); // Nếu không, thêm vào danh sách hiện tại
       }
     }
-  }, [studentList, currentPage]);
+  }, [teacherList, currentPage]);
 
   const handleSelection = (id: string) => {
     setSelectedIds((prev) =>
@@ -62,31 +62,31 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
   };
 
   const loadMore = async () => {
-    if (studentList?.totalPages && currentPage < studentList.totalPages - 1) {
+    if (teacherList?.totalPages && currentPage < teacherList.totalPages - 1) {
       setIsLoadingMore(true);
       setCurrentPage((prev) => prev + 1); // Tăng trang hiện tại
       setIsLoadingMore(false);
     }
   };
 
-  const selectedStudents = students.filter((student) =>
-    selectedIds.includes(student.id),
+  const selectedTeachers = teachers.filter((teacher) =>
+    selectedIds.includes(teacher.id),
   );
 
-  const unselectedStudents = students.filter(
-    (student) => !selectedIds.includes(student.id),
+  const unselectedTeachers = teachers.filter(
+    (teacher) => !selectedIds.includes(teacher.id),
   );
 
-  const filteredUnselectedStudents = unselectedStudents.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchKeyword.toLowerCase()),
+  const filteredUnselectedTeachers = unselectedTeachers.filter(
+    (teacher) =>
+      teacher.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      teacher.email.toLowerCase().includes(searchKeyword.toLowerCase()),
   );
 
   const useAddMembersMutation = useMutation({
-    mutationFn: (ids: string[]) => addMembers(ids, classId, "STUDENT"),
+    mutationFn: (ids: string[]) => addMembers(ids, classId, "TEACHER"),
     onSuccess: () => {
-      toast.success("Thêm học viên thành công", {
+      toast.success("Thêm giáo viên thành công", {
         autoClose: 2000,
         pauseOnHover: false,
         pauseOnFocusLoss: false,
@@ -94,10 +94,10 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
       });
       onClose();
       queryClient.invalidateQueries({ queryKey: ["ListMembers"] });
-      queryClient.invalidateQueries({ queryKey: ["ListStudentsToAdd"] });
+      queryClient.invalidateQueries({ queryKey: ["ListTeachersToAdd"] });
     },
     onError: () => {
-      toast.error("Thêm học viên thất bại", {
+      toast.error("Thêm giáo viên thất bại", {
         autoClose: 2000,
         pauseOnHover: false,
         pauseOnFocusLoss: false,
@@ -118,7 +118,7 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
         <div className="flex gap-3 w-1/3">
           <SearchField
             queryKey="AccountName"
-            placeholder="Tìm tên học viên..."
+            placeholder="Tìm tên giáo viên..."
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
@@ -148,56 +148,56 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
             ]}
           />
           <TableBody noDataMessage={false}>
-            {[...selectedStudents, ...filteredUnselectedStudents].map(
-              (student) => (
-                <TableRow key={student.id}>
-                  <TableCell>{student.genId}</TableCell>
+            {[...selectedTeachers, ...filteredUnselectedTeachers].map(
+              (teacher) => (
+                <TableRow key={teacher.id}>
+                  <TableCell>{teacher.genId}</TableCell>
                   <TableCell>
-                    {student.name.length > 18 ? (
+                    {teacher.name.length > 18 ? (
                       <button>
-                        <Tooltip text={student.name}>
-                          {student.name.slice(0, 18)}...
+                        <Tooltip text={teacher.name}>
+                          {teacher.name.slice(0, 18)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      student.name
+                      teacher.name
                     )}
                   </TableCell>
                   <TableCell>
-                    {student.email.length > 25 ? (
+                    {teacher.email.length > 25 ? (
                       <button>
-                        <Tooltip text={student.email}>
-                          {student.email.slice(0, 25)}...
+                        <Tooltip text={teacher.email}>
+                          {teacher.email.slice(0, 25)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      student.email
+                      teacher.email
                     )}
                   </TableCell>
                   <TableCell>
-                    {student.address.length > 30 ? (
+                    {teacher.address.length > 30 ? (
                       <button>
-                        <Tooltip text={student.address}>
-                          {student.address.slice(0, 30)}...
+                        <Tooltip text={teacher.address}>
+                          {teacher.address.slice(0, 30)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      student.address
+                      teacher.address
                     )}
                   </TableCell>
                   <TableCell>
-                    {new Date(student.birthday).toLocaleDateString("vi-VN")}
+                    {new Date(teacher.birthday).toLocaleDateString("vi-VN")}
                   </TableCell>
-                  <TableCell>{student.phone}</TableCell>
+                  <TableCell>{teacher.phone}</TableCell>
                   <TableCell>
-                    {student.gender === "MALE" ? "Nam" : "Nữ"}
+                    {teacher.gender === "MALE" ? "Nam" : "Nữ"}
                   </TableCell>
                   <TableCell className="pl-7">
                     <Checkbox
                       className="w-5 h-5"
                       tickClassName="w-3 h-3"
-                      checked={selectedIds.includes(student.id)}
-                      onChange={() => handleSelection(student.id)}
+                      checked={selectedIds.includes(teacher.id)}
+                      onChange={() => handleSelection(teacher.id)}
                     />
                   </TableCell>
                 </TableRow>
@@ -205,8 +205,8 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
             )}
           </TableBody>
         </Table>
-        {studentList?.totalPages &&
-          currentPage < studentList.totalPages - 1 && (
+        {teacherList?.totalPages &&
+          currentPage < teacherList.totalPages - 1 && (
             <div className="flex justify-center mt-4">
               <button
                 className="text-[16px] text-primary-darker hover:text-primary-darkest underline"
