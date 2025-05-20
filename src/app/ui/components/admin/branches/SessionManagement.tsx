@@ -7,6 +7,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 // import { createSession } from "@/app/lib/services/session";
 // import { toast } from "react-toastify";
 import SessionModal from "./SessionModal";
+import Tooltip from "../../_common/Tooltip";
 
 const SessionManagement = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -75,50 +76,55 @@ const SessionManagement = () => {
   return (
     <>
       <div className="p-2">
-        <div className="flex items-center justify-between mt-2">
-          <h3 className="text-xl font-semibold mb-4">Ca học</h3>
-          <Button className="px-8  text-base" onClick={handleOpenModal}>
+        <div className="flex items-center justify-between ml-2 mb-3">
+          <h3 className="text-xl font-semibold">Ca học</h3>
+          <Button
+            className="px-7 py-2 rounded-xl text-[15px]"
+            onClick={handleOpenModal}
+          >
             Thêm ca học
           </Button>
         </div>
-        <div className="overflow-x-auto rounded-lg">
-          <table className="min-w-full table-auto border-collapse rounded-lg">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="px-8 py-3 text-left text-sm font-semibold text-gray-600">
-                  Tên ca học
-                </th>
-                <th className="px-8 py-3 text-left text-sm font-semibold text-gray-600">
-                  Thời gian
-                </th>
-                <th className="px-8 py-3 text-center text-sm font-semibold text-gray-600">
-                  Hành động
-                </th>
+        <table className="min-w-full table-auto border-collapse">
+          <thead className="bg-slate-100">
+            <tr>
+              <th className="px-8 py-3 rounded-tl-xl text-left text-sm font-semibold text-gray-600">
+                Tên ca học
+              </th>
+              <th className="px-8 py-3 text-left text-sm font-semibold text-gray-600">
+                Thời gian
+              </th>
+              <th className="px-8 py-3 rounded-tr-xl text-center text-sm font-semibold text-gray-600">
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {sessions.map((session) => (
+              <tr key={session.id} className="border-b border-gray-200">
+                <td className="px-8 py-4 text-sm text-gray-700">
+                  {session.name}
+                </td>
+                <td className="px-8 py-4 text-sm text-gray-700">
+                  {session.startTime.slice(0, 5)} -{" "}
+                  {session.endTime.slice(0, 5)}
+                </td>
+                <td className="px-8 py-4 flex justify-center items-center space-x-3">
+                  <button className="text-primary-dark hover:text-primary-darker">
+                    <Tooltip text="Chỉnh sửa" position="bottom">
+                      <FaEdit className="h-4 w-4" />
+                    </Tooltip>
+                  </button>
+                  <button className="text-red-600 hover:text-red-800">
+                    <Tooltip text="Xóa" position="bottom">
+                      <FaTrashAlt className="h-4 w-4" />
+                    </Tooltip>
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {sessions.map((session) => (
-                <tr key={session.id} className="border-b border-gray-200">
-                  <td className="px-8 py-4 text-sm text-gray-700">
-                    {session.name}
-                  </td>
-                  <td className="px-8 py-4 text-sm text-gray-700">
-                    {session.startTime.slice(0, 5)} -{" "}
-                    {session.endTime.slice(0, 5)}
-                  </td>
-                  <td className="px-8 py-4 flex justify-center items-center space-x-3">
-                    <button className="text-blue-600 hover:text-blue-800">
-                      <FaEdit className="h-5 w-5" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-800">
-                      <FaTrashAlt className="h-5 w-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
       {isModalOpen && (
         <SessionModal

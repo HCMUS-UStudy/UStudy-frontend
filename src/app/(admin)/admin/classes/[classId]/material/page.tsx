@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { IoIosAdd } from "react-icons/io";
+import { PiFolderPlus } from "react-icons/pi";
 import { useParams } from "next/navigation";
 import {
   getListMaterial,
+  createFolder,
   getPreview,
   downloadMaterial,
+  uploadMaterial,
+  deleteMaterial,
 } from "@/app/lib/services/class-material";
 import { ClassMaterialItem, UserData } from "@/app/types";
 import Loading from "@/app/ui/components/_common/loading/Loading";
@@ -32,7 +37,10 @@ import { GrView } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
 import { toast } from "react-toastify";
+import { FaCheck, FaTimes } from "react-icons/fa";
+import UploadModal from "@/app/ui/components/user/teacher/UploadModal";
 import { getUserDataFromCookies } from "@/app/lib/action";
+
 const fileTypeIcons = [
   {
     type: "pdf",
@@ -84,13 +92,17 @@ export default function PersonalMaterial() {
   const fileRef = useRef<(HTMLDivElement | null)[]>([]);
   const createFolderRef = useRef<HTMLDivElement>(null);
   const popUpFolderRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [creatingFolder, setCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
   const [breadcrumb, setBreadcrumb] = useState<{ id: string; name: string }[]>(
     [],
   );
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const buttonRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
 
   const { classId } = useParams() as { classId: string };
 
@@ -101,6 +113,17 @@ export default function PersonalMaterial() {
       setUser(userInfo);
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
   const fetchMaterial = useCallback(async () => {
@@ -136,6 +159,33 @@ export default function PersonalMaterial() {
     },
     [],
   );
+
+  const handleCreateFolder = useCallback(() => {
+    setCreatingFolder(true);
+    setNewFolderName("");
+  }, []);
+
+  const handleSubmitNewFolder = useCallback(async () => {
+    if (!newFolderName.trim()) return;
+    try {
+      await createFolder(classId, newFolderName, currentFolderId || null);
+      toast.success("Tạo thư mục thành công", {
+        autoClose: 2500,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
+      fetchMaterial();
+    } catch (error) {
+      toast.error("Tạo thư mục thất bại", {
+        autoClose: 2500,
+        pauseOnHover: false,
+        closeOnClick: true,
+      });
+      console.error("Error creating folder:", error);
+    } finally {
+      setCreatingFolder(false);
+    }
+  }, [newFolderName, currentFolderId, fetchMaterial, classId]);
 
   const handleViewFile = useCallback(
     async (id: string, canViewFile: boolean = false) => {
@@ -186,6 +236,50 @@ export default function PersonalMaterial() {
     },
     [material],
   );
+
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      if (!file) return;
+      const formData = new FormData();
+      formData.append("description", "Tài liệu mới");
+      formData.append("file", file);
+      if (currentFolderId) {
+        formData.append("parentId", currentFolderId);
+      }
+      try {
+        await uploadMaterial(classId, formData);
+        fetchMaterial();
+        toast.success("Tải tài liệu lên thành công", {
+          autoClose: 2500,
+          pauseOnHover: false,
+        });
+      } catch (error) {
+        console.error("Error uploading material:", error);
+        toast.error("Tải tài liệu lên thất bại", {
+          autoClose: 2500,
+          pauseOnHover: false,
+        });
+      }
+    },
+    [currentFolderId, fetchMaterial, classId],
+  );
+
+  const handleDelete = useCallback(async () => {
+    try {
+      await deleteMaterial(classId, deleteItem || "");
+      fetchMaterial();
+      toast.success("Xóa tài liệu thành công", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      toast.error("Xóa tài liệu thất bại", {
+        autoClose: 2500,
+        pauseOnHover: false,
+      });
+    }
+  }, [fetchMaterial, deleteItem, classId]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
@@ -259,6 +353,45 @@ export default function PersonalMaterial() {
   return (
     <div className="flex flex-col h-full justify-between px-2">
       <div className="flex flex-col gap-1 p-3">
+        {currentFolderId && (
+          <div className="flex items-center gap-4 mb-2">
+            <div
+              onClick={() => {
+                setShowUploadModal(true);
+              }}
+              className="flex items-center justify-center flex-col gap-3 p-4 border cursor-pointer border-gray-200
+           hover:bg-primary-lighter shadow-sm rounded-2xl"
+            >
+              {isMobile ? (
+                <Tooltip text="Tải tài liệu lên">
+                  <IoIosAdd className="w-7 h-7" />
+                </Tooltip>
+              ) : (
+                <IoIosAdd className="w-7 h-7" />
+              )}
+              <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[15px]">
+                Tải tài liệu lên
+              </span>
+            </div>
+            <div
+              className="flex items-center justify-center flex-col gap-3 p-4 border cursor-pointer border-gray-200
+           hover:bg-primary-lighter shadow-sm rounded-2xl"
+              onClick={handleCreateFolder}
+            >
+              {isMobile ? (
+                <Tooltip text="Tạo thư mục mới">
+                  <PiFolderPlus className="w-7 h-7" />
+                </Tooltip>
+              ) : (
+                <PiFolderPlus className="w-7 h-7" />
+              )}
+              <span className="hidden md:inline md:text-[13px] lg:text-[15px]">
+                Tạo thư mục mới
+              </span>
+            </div>
+          </div>
+        )}
+
         {activeFile ? (
           <div
             className="flex justify-between items-center w-full px-2 py-1 bg-white border
@@ -396,6 +529,45 @@ export default function PersonalMaterial() {
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {creatingFolder && (
+                <div
+                  className="flex w-full items-center py-3 pl-4 pr-3 border rounded-xl 
+                  shadow-md border-primary-light bg-primary-lighter"
+                  ref={createFolderRef}
+                >
+                  <TbFolders className="w-7 h-7 text-primary-darker" />
+                  <input
+                    autoFocus
+                    value={newFolderName}
+                    placeholder="Tên thư mục"
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSubmitNewFolder();
+                      else if (e.key === "Escape") setCreatingFolder(false);
+                    }}
+                    className="flex w-full mx-4 text-sm border-b border-primary-darker
+                      focus:outline-none bg-transparent"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Tooltip text="Xác nhận">
+                      <FaCheck
+                        className="cursor-pointer text-green-600 hover:text-green-700"
+                        onClick={() => {
+                          handleSubmitNewFolder();
+                        }}
+                      />
+                    </Tooltip>
+                    <Tooltip text="Hủy">
+                      <FaTimes
+                        className="cursor-pointer text-red-600 hover:text-red-700"
+                        onClick={() => {
+                          setCreatingFolder(false);
+                        }}
+                      />
+                    </Tooltip>
+                  </div>
+                </div>
+              )}
               {material.length > 0
                 ? material.map((item, index) => (
                     <div
@@ -439,7 +611,7 @@ export default function PersonalMaterial() {
                       >
                         {item.material.name}
                       </span>
-                      {item.material.type !== "FOLDER" && (
+                      {item.material.uploadedBy.genId === user?.genId && (
                         <div className="ml-auto relative">
                           <Tooltip text="Tùy chọn">
                             <span
@@ -466,15 +638,39 @@ export default function PersonalMaterial() {
                               shadow-lg rounded-lg py-2 w-36`}
                               ref={popUpFolderRef}
                             >
+                              {item.material.type !== "FOLDER" && (
+                                <button
+                                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                  onClick={() => {
+                                    handleDownload(item.material.id);
+                                    setOpenOptionsId(null);
+                                  }}
+                                >
+                                  <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
+                                  Tải xuống
+                                </button>
+                              )}
                               <button
                                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                                 onClick={() => {
-                                  handleDownload(item.material.id);
+                                  toast.info(
+                                    "Chức năng đổi tên chưa được cài đặt",
+                                  );
                                   setOpenOptionsId(null);
                                 }}
                               >
-                                <MdOutlineFileDownload className="w-4 h-4 text-gray-700" />
-                                Tải xuống
+                                <FiEdit3 className="w-4 h-4 text-gray-700" />
+                                Đổi tên
+                              </button>
+                              <button
+                                className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                onClick={() => {
+                                  setShowDeleteModal(item.id);
+                                  setOpenOptionsId(null);
+                                }}
+                              >
+                                <LuTrash2 className="w-4 h-4 text-gray-700" />
+                                Xóa
                               </button>
                             </div>
                           )}
@@ -491,6 +687,37 @@ export default function PersonalMaterial() {
           </>
         )}
       </div>
+      {showUploadModal && (
+        <UploadModal
+          onClose={() => setShowUploadModal(false)}
+          onUpload={handleFileUpload}
+        />
+      )}
+      {deleteItem && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa tài liệu này không?</p>
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                onClick={() => setShowDeleteModal(null)}
+              >
+                Hủy
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                onClick={() => {
+                  handleDelete();
+                  setShowDeleteModal(null);
+                }}
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

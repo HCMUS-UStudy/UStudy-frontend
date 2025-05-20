@@ -11,6 +11,10 @@ import { getPermissions } from "@/app/lib/services/permission";
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { data: permissions, status } = useQuery({
+    queryKey: ["Permissions"],
+    queryFn: () => getPermissions(),
+  });
   // const permissions = useAppSelector(
   //   (state: RootState) => state.permission.screens,
   // );
@@ -29,12 +33,27 @@ const Sidebar = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [permissions]);
 
-  const { data: permissions, status } = useQuery({
-    queryKey: ["Permissions"],
-    queryFn: () => getPermissions(),
-  });
+  // const mergedItems = isMobile
+  //   ? SIDENAV_ITEMS.flatMap((item) =>
+  //       item.submenu && item.subMenuItems
+  //         ? [
+  //             { ...item, submenu: false, subMenuItems: undefined }, // item chính
+  //             ...item.subMenuItems, // gộp các submenu
+  //           ]
+  //         : [item],
+  //     )
+  //   : SIDENAV_ITEMS;
+
+  // useEffect(() => {
+  //   const merged = isMobile
+  //     ? SIDENAV_ITEMS.flatMap((item) =>
+  //         item.submenu && item.subMenuItems ? item.subMenuItems : [item],
+  //       )
+  //     : SIDENAV_ITEMS;
+  //   setMergedItems(merged);
+  // }, [isMobile, SIDENAV_ITEMS]);
 
   return (
     <div
@@ -42,11 +61,11 @@ const Sidebar = () => {
         ${isMobile ? "w-sidebar-mobile" : "w-sidebar-width"}`}
     >
       {!isMobile ? (
-        <div className="flex items-center justify-center py-10">
+        <div className="flex items-center justify-center pt-8 pb-6">
           <Image src="/logo.png" alt="Logo" width={135} height={135} />
         </div>
       ) : (
-        <div className="flex items-center justify-center py-10">
+        <div className="flex items-center justify-center pt-8 pb-6">
           <Image src="/UstudyIcon.png" alt="Logo" width={30} height={30} />
         </div>
       )}

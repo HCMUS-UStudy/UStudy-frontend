@@ -10,7 +10,7 @@ import NotificationModal from "./NotificationModal";
 import AssignmentModal from "./AssignmentModal";
 import { AnimatePresence } from "framer-motion"; // Import Framer Motion
 import { motion } from "framer-motion"; // Import Framer Motion
-import { ClassTeacher } from "@/app/types";
+import { ClassDetail } from "@/app/types";
 import Tooltip from "../../_common/Tooltip";
 
 const EachItem = ({
@@ -42,7 +42,7 @@ const AddingModal = ({
   classDetail,
   setAddingModal,
 }: {
-  classDetail: ClassTeacher;
+  classDetail: ClassDetail;
   setAddingModal: (value: boolean) => void;
 }) => {
   // const [addingQuestion, setAddingQuestion] = useState(false);

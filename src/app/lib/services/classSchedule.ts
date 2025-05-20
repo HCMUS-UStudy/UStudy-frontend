@@ -17,3 +17,20 @@ export const getAllClassSchedule = async (
   );
   return response.data.data;
 };
+
+export const getClassSchedule = async (
+  classId: string,
+  page: number,
+  limit: number,
+) => {
+  const response = await axiosInstance.get(
+    `/class-schedule/get-class-schedule/${classId}`,
+    {
+      params: {
+        page: page,
+        limit: limit,
+      },
+    },
+  );
+  return response.data.data.content;
+};

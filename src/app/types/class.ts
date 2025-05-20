@@ -13,7 +13,9 @@ import { ClassSessionItem, Session } from "./session";
 
 export type ClassDetail = BaseClassInfo & {
   grade: GradeItem;
-  course: CourseDto;
+  course: Course;
+  status: string | null;
+  classSessions: classSessions[];
 };
 
 export type ClassTeacher = BaseClassInfo & {
@@ -43,10 +45,22 @@ export type ClassSchema = {
   roomId: string;
 };
 
+// export type ClassItem = {
+//   id: string;
+//   name: string;
+//   description: string;
+//   course: CourseDto;
+//   fee: number;
+//   startDate: string;
+//   endDate: string;
+//   grade: GradeItem;
+// };
+
 export type ClassItem = Pick<
   BaseClassInfo,
   "id" | "name" | "startDate" | "endDate"
 > & {
+  fee: number;
   course: CourseDto;
   grade: GradeItem;
 };
@@ -94,6 +108,7 @@ export type ClassScheduleItem = {
       name: string;
     };
   };
+  isPassed: boolean;
 };
 
 export type Classroom = {

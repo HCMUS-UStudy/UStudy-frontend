@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
-import BranchSelector from "./BranchSelector";
+// import BranchSelector from "./BranchSelector";
 import { UserData } from "@/app/types";
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
 import { usePathname, useRouter } from "next/navigation";
 import DropdownProfile from "../_common/DropdownProfile";
 import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import Tooltip from "../_common/Tooltip";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -66,23 +67,26 @@ const Header: React.FC = () => {
 
   return (
     <div
-      className={`h-header-height flex px-10 justify-between items-center bg-foreground 
+      className={`h-header-height flex px-2 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
-      <div className="text-2xl font-bold mt-1">
-        {
-          SIDENAV_ITEMS_ADMIN.find((item) => pathname?.includes(item.path))
-            ?.title
-        }
+      <div className="text-[15px] sm:text-lg font-bold mt-1">
+        {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
+          (subItem) => pathname.includes(subItem.path),
+        )?.title ||
+          SIDENAV_ITEMS_ADMIN.find((item) => pathname.includes(item.path))
+            ?.title}
       </div>
       <div className="flex gap-6 items-center">
-        {!pathname?.includes("/admin/branches") &&
-          !pathname?.includes("/admin/sessions") &&
-          !pathname?.includes("/admin/profile") && <BranchSelector />}
+        {/* {!pathname.includes("/admin/branches") &&
+          !pathname.includes("/admin/sessions") &&
+          !pathname.includes("/admin/profile") && <BranchSelector />} */}
         <div className="flex gap-3 items-center" ref={dropdownRef}>
-          <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
-            <IoNotificationsOutline size={24} />
-          </div>
+          <Tooltip text="Thông báo" position="bottom">
+            <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
+              <IoNotificationsOutline size={24} />
+            </div>
+          </Tooltip>
           <DropdownProfile
             userInfo={userInfo}
             handleToggle={handleToggle}

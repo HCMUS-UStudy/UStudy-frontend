@@ -186,13 +186,6 @@ export default function Assignment() {
           <h1 className="text-2xl font-bold text-primary-darker">
             Danh sách bài tập
           </h1>
-
-          <button
-            onClick={() => setAdding(true)}
-            className="px-4 py-2 rounded-lg text-sm hover:bg-primary-light border border-gray-300"
-          >
-            + Thêm bài tập mới
-          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

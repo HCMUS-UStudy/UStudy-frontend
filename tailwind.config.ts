@@ -14,6 +14,7 @@ const config: Config = {
         "primary-light": "#d5e9e1",
         "primary-lighter": "#EBF8F4",
         // "primary-dark": "#1e40af", // blue-800
+        "hover-primary": "#9dc9b2",
         "primary-dark": "#78AE91",
         "primary-darker": "#4ea677",
         "primary-darkest": "#1F845A",
@@ -31,8 +32,6 @@ const config: Config = {
 
         "button-primary": "#2563eb", // sky-600: #2563eb, blue-600: #2563eb
         "button-primary-dark": "#1e40af", // blue-800: #1e40af
-
-        "hover-primary": "#ADD7C1",
 
         "highlight-text": "#F48C06", // sky-800: #1e40af, blue-800: #1e40af
         "primary-text": "var(--color-text-primary)",

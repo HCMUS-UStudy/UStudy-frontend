@@ -5,6 +5,9 @@ export type MemberItem = {
   genId: string;
   name: string;
   email: string;
+  address: string;
+  birthday: string;
+  phone: string;
   gender: GenderType;
 };
 
