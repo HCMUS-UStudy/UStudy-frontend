@@ -72,9 +72,9 @@ const Header: React.FC = () => {
     >
       <div className="text-[15px] sm:text-lg font-bold mt-1">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
-          (subItem) => pathname.includes(subItem.path),
+          (subItem) => pathname?.includes(subItem.path),
         )?.title ||
-          SIDENAV_ITEMS_ADMIN.find((item) => pathname.includes(item.path))
+          SIDENAV_ITEMS_ADMIN.find((item) => pathname?.includes(item.path))
             ?.title}
       </div>
       <div className="flex gap-6 items-center">

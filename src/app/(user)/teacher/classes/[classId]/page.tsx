@@ -10,9 +10,10 @@ import { Button } from "@/app/ui/components/_common/Button";
 import AddingModal from "@/app/ui/components/user/teacher/AddingModal";
 
 const ClassDetailPage = () => {
-  const [addingModal, setAddingModal] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-  const { classId } = useParams();
+  const [addingModal, setAddingModal] = useState<boolean>(false);
+  const [showAll, setShowAll] = useState<boolean>(false);
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
 
   const [classQuery, classScheduleQuery] = useQueries({
     queries: [

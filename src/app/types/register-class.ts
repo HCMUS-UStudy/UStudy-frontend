@@ -18,9 +18,18 @@ export type RegisterClassTeacher = Pick<
   gender: GenderType;
 };
 
+export type PaymentInfo = {
+  id: string;
+  status: "PENDING";
+  paymentDate: string;
+  invoiceId: string;
+};
+
 export type RegisterClassResponse = {
   id: string;
   user: Pick<UserSummary, "id" | "genId" | "email" | "name" | "avatar">;
+  payment: PaymentInfo;
+  registerClassStatus: "WAITING" | "ACCEPTED" | null;
   aclass: BaseClassInfo & {
     grade: BaseGradeInfo;
     course: BaseCourseInfo;

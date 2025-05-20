@@ -83,7 +83,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     },
   });
 
-  console.log(classes);
+  // console.log(classes);
   const handleRegisterClass = (selectedClass: ClassToRegisterItem) => {
     setRegisteringClassId(selectedClass.classDto.id);
     registerClassMutation.mutate(selectedClass.classDto.id);

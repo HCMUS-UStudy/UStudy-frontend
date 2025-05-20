@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname?.split("/").filter(Boolean);
 
   let activeTab = "";
-  if (segments.length >= 4) {
+  if (segments && segments.length >= 4) {
     activeTab = segments[3];
   }
 

@@ -24,7 +24,9 @@ const AddMember: React.FC<AddMemberProps> = ({ buttonLabel }) => {
   const pathname = usePathname();
 
   const onTabChange = () => {
-    router.replace(pathname);
+    if (pathname) {
+      router.replace(pathname);
+    }
   };
 
   return (

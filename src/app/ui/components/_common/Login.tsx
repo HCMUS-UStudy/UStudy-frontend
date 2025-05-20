@@ -59,6 +59,7 @@ export default function Login() {
         JSON.stringify(response.data.user),
         JSON.stringify(response.data.screens),
       );
+      console.log(response.data.screens);
       dispatch(setPermissions(response.data.screens));
       if (defaultRoute === "PARENT") {
         dispatch(setChildren(response.data.children ?? []));
