@@ -15,7 +15,7 @@ import { deleteUser, getAllAccount } from "@/app/lib/services/user";
 import { useRouter } from "next/navigation";
 import Tooltip from "../../_common/Tooltip";
 import { toast } from "react-toastify";
-import { accountStatus, roleMap } from "@/app/lib/utils";
+import { accountStatus } from "@/app/lib/utils";
 import {
   keepPreviousData,
   useMutation,
@@ -180,8 +180,8 @@ const AccountTable: React.FC<AccountTableProps> = ({
               >
                 <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
-                <TableCell className="w-20">{user.email}</TableCell>
-                <TableCell>{roleMap[user.role.name]}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.role.name}</TableCell>
                 <TableCell>
                   <span
                     className={`${accountStatus[user.status].color} font-bold`}

@@ -1,7 +1,7 @@
 import React from "react";
 import AddAccountModal from "@/app/ui/components/admin/accounts/AddAccountModal";
 import AccountTable from "@/app/ui/components/admin/accounts/AccountTable";
-import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
+// import AccountRegisterModal from "@/app/ui/components/admin/accounts/AccountRegisterModal";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Dropdown from "@/app/ui/components/_common/Dropdown";
 import AccountNumber from "@/app/ui/components/admin/accounts/AccountNumber";
@@ -30,7 +30,7 @@ export default async function AccountPage(props: {
       <div className="flex items-center justify-between mb-6">
         <AccountNumber searchQuery={query} roleQuery={role} />
         <div className="flex items-center">
-          <AccountRegisterModal buttonLabel="Duyệt đăng ký" />
+          {/* <AccountRegisterModal buttonLabel="Duyệt đăng ký" /> */}
           <AddAccountModal buttonLabel="Tạo người dùng" />
         </div>
       </div>

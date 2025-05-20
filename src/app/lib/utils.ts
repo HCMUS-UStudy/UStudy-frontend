@@ -13,7 +13,7 @@ export const roleMap: Record<string, string> = {
 };
 
 export const accountStatus: Record<string, { label: string; color: string }> = {
-  ACTIVE: { label: "Đang hoạt động", color: "text-green-500" },
-  DELETED: { label: "Đã xóa", color: "text-red-500" },
-  LOCKED: { label: "Đã khóa", color: "text-yellow-500" },
+  ACTIVE: { label: "Đang hoạt động", color: "text-green-600" },
+  DELETED: { label: "Đã xóa", color: "text-red-600" },
+  LOCKED: { label: "Đã khóa", color: "text-yellow-600" },
 };

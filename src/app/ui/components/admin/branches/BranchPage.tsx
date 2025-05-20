@@ -113,7 +113,7 @@ const BranchPage = () => {
                     <TableCell>{item.address}</TableCell>
                     <TableCell>{item.contactNumber}</TableCell>
                     <TableCell>{item.rooms}</TableCell>
-                    <TableCell className="flex gap-2 justify-center">
+                    <TableCell className="flex gap-2">
                       <Tooltip text="Chỉnh sửa chi nhánh">
                         <button className="text-blue-600 hover:text-blue-800 transition-all">
                           <FaEdit className="h-5 w-5" />
