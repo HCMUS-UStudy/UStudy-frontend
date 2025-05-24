@@ -19,12 +19,14 @@ import { useState, useEffect } from "react";
 import { FaBell, FaBook, FaRegClipboard } from "react-icons/fa6";
 import { getPersonalClassSchedule } from "@/app/lib/services/classSchedule";
 import { ClassSchedule } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 interface ScheduleData {
   dates: Record<string, ScheduleRecord[]>;
 }
 
 interface ScheduleRecord {
+  classId: string;
   class: string;
   subject: string;
   title?: string;
@@ -40,9 +42,10 @@ interface TileProps {
   view: string;
 }
 
-export default function ParentSchedule() {
+export default function StudentSchedule() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleData>({ dates: {} });
+
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,6 +54,8 @@ export default function ParentSchedule() {
       setActiveStartDate(args.activeStartDate);
     }
   };
+
+  const router = useRouter();
 
   const fetchSchedule = async (month: number, year: number) => {
     try {
@@ -70,6 +75,7 @@ export default function ParentSchedule() {
           const { clazz, session, room } = item.classSession;
 
           newScheduleData.dates[dateStr].push({
+            classId: clazz.id,
             class: clazz.name,
             subject: `${clazz.course.name} - ${clazz.grade.name}`,
             time: `${session.startTime} - ${session.endTime}`,
@@ -92,6 +98,7 @@ export default function ParentSchedule() {
           const formattedDate = localDate.toLocaleDateString("vi-VN");
 
           newScheduleData.dates[dateStr].push({
+            classId: clazz.id,
             class: clazz.name,
             subject: `${clazz.course.name} - ${clazz.grade.name}`,
             title: title,
@@ -235,7 +242,7 @@ export default function ParentSchedule() {
   };
 
   return (
-    <div className="flex gap-8 p-4 h-[750px]">
+    <div className="flex gap-8 p-4">
       {/* Calendar Section */}
       <Card className="flex-[2] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
@@ -248,7 +255,7 @@ export default function ParentSchedule() {
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="p-6 pt-0">
+        <CardContent className="p-6 pt-0 overflow-visible">
           <Calendar
             onChange={handleDateChange}
             value={selectedDate}
@@ -259,6 +266,7 @@ export default function ParentSchedule() {
             tileClassName={getTileClassName}
             tileContent={renderTileContent}
           />
+
           <div className="text-sm text-gray-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-center mt-4">
             <div className="flex items-center gap-1">
               <span className="text-[14px]">📘</span>
@@ -378,6 +386,35 @@ export default function ParentSchedule() {
                       </span>
                     </div>
                   )}
+
+                  {/* Nút xem chi tiết */}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() =>
+                        router.push(
+                          record.type === "Task"
+                            ? `/member/classes/${record.classId}/assignment`
+                            : `/member/classes/${record.classId}/overview`,
+                        )
+                      }
+                      className="group inline-flex items-center gap-2 bg-primary-darkest text-white px-4 py-2 rounded-xl hover:bg-primary transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md"
+                    >
+                      <span className="text-sm font-medium">Xem chi tiết</span>
+                      <svg
+                        className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

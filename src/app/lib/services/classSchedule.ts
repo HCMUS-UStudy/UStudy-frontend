@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { ClassScheduleItem } from "@/app/types";
+import { ClassSchedule, ClassScheduleItem } from "@/app/types";
 
 export const getAllClassSchedule = async (
   classId: string,
@@ -33,4 +33,61 @@ export const getClassSchedule = async (
     },
   );
   return response.data.data.content;
+};
+
+// PUT: Update class schedule date
+export const updateClassScheduleDate = (
+  classScheduleId: string,
+  newDate: string,
+) => {
+  return axiosInstance.put(
+    `/class-schedule/update/${classScheduleId}`,
+    newDate,
+    {
+      headers: { "Content-Type": "application/json" },
+    },
+  );
+};
+
+// GET: Personal schedule for a given month and year
+export const getPersonalClassSchedule = (month: number, year: number) => {
+  return axiosInstance.get<{
+    message: string;
+    statusCode: string;
+    data: ClassSchedule[];
+  }>(`/class-schedule/list/personal`, { params: { month, year } });
+};
+
+// GET: Class schedule for a given class, month and year
+export const getClassSchedule2 = (
+  classId: string,
+  month: number,
+  year: number,
+) => {
+  return axiosInstance.get<{
+    message: string;
+    statusCode: string;
+    data: ClassSchedule[];
+  }>(`/class-schedule/list/class/${classId}`, { params: { month, year } });
+};
+
+// GET: Paginated list of class schedule (past and future)
+export const getPaginatedClassSchedule = (
+  classId: string,
+  page: number,
+  limit: number,
+  sortBy: string = "ASC",
+) => {
+  return axiosInstance.get(`/class-schedule/get-class-schedule/${classId}`, {
+    params: { page, limit, sortBy },
+  });
+};
+
+// GET: Count past lessons of a class
+export const countPastLessons = (classId: string) => {
+  return axiosInstance.get<{
+    message: string;
+    statusCode: string;
+    data: { totalLessons: number; pastLessons: number };
+  }>(`/class-schedule/count-past-lessons/${classId}`);
 };
