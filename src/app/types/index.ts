@@ -29,3 +29,4 @@ export * from "./payment";
 export * from "./question";
 export * from "./AI";
 export * from "./register-class";
+export * from "./classSchedule";
