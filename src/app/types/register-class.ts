@@ -20,7 +20,7 @@ export type RegisterClassTeacher = Pick<
 
 export type PaymentInfo = {
   id: string;
-  status: "PENDING";
+  status: "PENDING" | "OVERDUE" | "COMPLETED";
   paymentDate: string;
   invoiceId: string;
 };
@@ -43,6 +43,7 @@ export type ClassToRegisterItem = {
     course: BaseCourseInfo;
     teacher: RegisterClassTeacher[];
   };
+  payment: PaymentInfo;
   status: "WAITING" | "ACCEPTED" | null;
 };
 

@@ -77,6 +77,7 @@ export async function setTokensAndUserDataCookies(
   creator?: string,
 ) {
   const cookieStore = await cookies();
+  const encryptionKey = process.env.COOKIES_SECRET_KEY || "";
   if (accessToken) {
     cookieStore.set("accessToken", accessToken, {
       secure: true,
@@ -94,17 +95,24 @@ export async function setTokensAndUserDataCookies(
     });
   }
   if (userData) {
-    cookieStore.set("userData", userData, {
-      secure: true,
-      httpOnly: true,
-      sameSite: "strict",
-    });
+    try {
+      const { encryptedData, iv } = await encrypt(userData, encryptionKey);
+      cookieStore.set("userData", encryptedData, {
+        secure: true,
+        httpOnly: true,
+        sameSite: "strict",
+      });
+      cookieStore.set("userData_iv", iv, {
+        secure: true,
+        httpOnly: true,
+        sameSite: "strict",
+      });
+    } catch (error) {
+      throw error;
+    }
   }
   if (permissions) {
     try {
-      const encryptionKey =
-        process.env.COOKIES_SECRET_KEY || "your-fallback-encryption-key";
-      console.log(encryptionKey);
       const { encryptedData, iv } = await encrypt(permissions, encryptionKey);
       cookieStore.set("permissions", encryptedData, {
         secure: true,
@@ -140,9 +148,19 @@ export async function getTokensFromCookies(): Promise<{
 }
 
 export async function getUserDataFromCookies(): Promise<UserData | null> {
-  const cookieStore = await cookies();
-  const userData = cookieStore.get("userData")?.value ?? null;
-  return userData !== null ? JSON.parse(userData) : null;
+  try {
+    const cookieStore = await cookies();
+    const encryptionKey = process.env.COOKIES_SECRET_KEY || "";
+    const encryptedData = cookieStore.get("userData")?.value;
+    const iv = cookieStore.get("userData_iv")?.value;
+    if (encryptedData && iv) {
+      const decryptedData = await decrypt(encryptedData, iv, encryptionKey);
+      return decryptedData !== undefined ? JSON.parse(decryptedData) : null;
+    }
+    return null;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getCreatorFromCookies(): Promise<string | null> {
@@ -174,8 +192,7 @@ export async function getPermissions(): Promise<string[]> {
 
   if (encryptedPermissions && iv) {
     try {
-      const encryptionKey =
-        process.env.COOKIES_SECRET_KEY || "your-fallback-encryption-key";
+      const encryptionKey = process.env.COOKIES_SECRET_KEY || "";
       const decryptedPermissions = await decrypt(
         encryptedPermissions,
         iv,

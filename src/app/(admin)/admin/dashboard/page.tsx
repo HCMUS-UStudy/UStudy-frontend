@@ -1,83 +1,309 @@
-import Image from "next/image";
+"use client";
+import {
+  Users,
+  GraduationCap,
+  Bell,
+  MessageSquare,
+  AlertTriangle,
+  BookOpen,
+  TrendingUp,
+} from "lucide-react";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Card } from "@/app/ui/components/_common/Card";
 
-const Card = ({
-  title,
-  description,
-  img,
-}: {
-  title: string;
-  description: string;
-  img: { src: string; width: string; height: string };
-}) => {
-  return (
-    <div className="flex w-full bg-white rounded-2xl shadow-md justify-between">
-      <div className="flex flex-col gap-4 p-6 justify-center">
-        <div className="text-2xl text-primary-darker">{description}</div>
-        <div className="text-md text-gray-500">{title}</div>
-      </div>
-      <div className="flex items-center p-3 w-1/2 h-full">
-        <Image
-          className={`w-[${img.width}] h-[${img.height}]`}
-          src={`/${img.src}`}
-          width={100}
-          height={100}
-          alt={title}
-        />
-      </div>
-    </div>
-  );
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+);
+
+// Mock data for charts
+const studentRegistrationData = {
+  labels: [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+  ],
+  datasets: [
+    {
+      label: "Học viên đăng ký",
+      data: [45, 52, 38, 45, 58, 62, 55, 48, 65, 70, 75, 80],
+      borderColor: "rgb(59, 130, 246)",
+      backgroundColor: "rgba(59, 130, 246, 0.1)",
+      tension: 0.4,
+    },
+  ],
 };
 
-const DashboardPage: React.FC = () => {
+const classCompletionData = {
+  labels: ["Hoàn thành", "Đang học", "Chưa bắt đầu"],
+  datasets: [
+    {
+      data: [65, 25, 10],
+      backgroundColor: [
+        "rgba(16, 185, 129, 0.8)",
+        "rgba(59, 130, 246, 0.8)",
+        "rgba(245, 158, 11, 0.8)",
+      ],
+    },
+  ],
+};
+
+const studentLevelData = {
+  labels: ["Tiểu học", "THCS", "THPT", "Đại học", "Khác"],
+  datasets: [
+    {
+      label: "Số học viên",
+      data: [150, 280, 420, 180, 50],
+      backgroundColor: [
+        "rgba(59, 130, 246, 0.8)",
+        "rgba(16, 185, 129, 0.8)",
+        "rgba(245, 158, 11, 0.8)",
+        "rgba(239, 68, 68, 0.8)",
+        "rgba(139, 92, 246, 0.8)",
+      ],
+    },
+  ],
+};
+
+// Mock data for recent notifications
+const recentNotifications = [
+  {
+    type: "registration",
+    title: "Đơn đăng ký mới",
+    content: "Học viên Nguyễn Văn D đăng ký khóa học Toán 10",
+    time: "5 phút trước",
+    icon: Bell,
+  },
+  {
+    type: "message",
+    title: "Tin nhắn từ giáo viên",
+    content: "Giáo viên Trần Thị B gửi báo cáo tuần",
+    time: "30 phút trước",
+    icon: MessageSquare,
+  },
+  {
+    type: "error",
+    title: "Báo lỗi hệ thống",
+    content: "Lỗi kết nối database",
+    time: "1 giờ trước",
+    icon: AlertTriangle,
+  },
+  {
+    type: "class",
+    title: "Lớp mới",
+    content: "Lớp Vật lý 11D được tạo",
+    time: "2 giờ trước",
+    icon: BookOpen,
+  },
+];
+
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  trend,
+}: {
+  title: string;
+  value: string;
+  icon: React.ElementType;
+  trend?: { value: number; isPositive: boolean };
+}) => (
+  <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <h3 className="text-2xl font-bold mt-2">{value}</h3>
+        {trend && (
+          <div className="flex items-center mt-2">
+            <span
+              className={`text-sm ${trend.isPositive ? "text-green-600" : "text-red-600"}`}
+            >
+              {trend.isPositive ? "+" : "-"}
+              {trend.value}%
+            </span>
+            <TrendingUp
+              className={`w-4 h-4 ml-1 ${trend.isPositive ? "text-green-600" : "text-red-600"}`}
+            />
+          </div>
+        )}
+      </div>
+      <div className="p-3 bg-blue-50 rounded-full transition-all duration-300 group-hover:bg-blue-100">
+        <Icon className="w-6 h-6 text-blue-600" />
+      </div>
+    </div>
+  </Card>
+);
+
+const DashboardPage = () => {
   return (
-    <div className="flex flex-col gap-4 ">
-      <div className="flex justify-between gap-4 items-center h-[120px]">
-        <Card
-          title="Số học sinh"
-          description="100"
-          img={{ src: "student.png", width: "100px", height: "100px" }}
+    <div className="p-6 space-y-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Tổng học viên"
+          value="1,234"
+          icon={Users}
+          trend={{ value: 12, isPositive: true }}
         />
-        <Card
-          title="Số giáo viên"
-          description="10"
-          img={{ src: "teacher.png", width: "110px", height: "110px" }}
+        <StatCard
+          title="Tổng giáo viên"
+          value="89"
+          icon={GraduationCap}
+          trend={{ value: 5, isPositive: true }}
         />
-        <Card
-          title="Số chi nhánh"
-          description="10"
-          img={{ src: "branch.png", width: "110px", height: "110px" }}
+        <StatCard
+          title="Tổng lớp học"
+          value="45"
+          icon={BookOpen}
+          trend={{ value: 8, isPositive: true }}
         />
-        <Card
-          title="Số tài liệu"
-          description="10"
-          img={{ src: "files.png", width: "110px", height: "110px" }}
+        <StatCard
+          title="Đơn chờ duyệt"
+          value="23"
+          icon={Bell}
+          trend={{ value: 5, isPositive: false }}
         />
       </div>
 
-      <div className="flex gap-6">
-        <div className="flex flex-col gap-4 w-1/3 h-full">
-          <div className="bg-foreground flex flex-col gap-4 h-40 rounded-2xl shadow-md p-1">
-            <div className="flex justify-center">Học phí</div>
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Student Registration Chart */}
+        <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
+          <h3 className="text-lg font-semibold mb-4">
+            Học viên đăng ký theo tháng
+          </h3>
+          <div className="h-[300px]">
+            <Line
+              data={studentRegistrationData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+              }}
+            />
           </div>
+        </Card>
 
-          <div className="bg-foreground flex flex-col gap-4 h-64 rounded-2xl shadow-md p-1">
-            <div className="flex justify-center">Giáo viên tiêu biểu</div>
+        {/* Class Completion Rate */}
+        <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
+          <h3 className="text-lg font-semibold mb-4">
+            Tỷ lệ hoàn thành lớp học
+          </h3>
+          <div className="h-[300px]">
+            <Doughnut
+              data={classCompletionData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: "bottom",
+                  },
+                },
+              }}
+            />
           </div>
-        </div>
-        <div className="flex flex-col gap-4 w-2/3 h-full">
-          <div className="bg-foreground flex flex-col gap-4 h-52 rounded-2xl shadow-md p-1">
-            <div className="flex justify-center">Doanh thu</div>
-          </div>
+        </Card>
+      </div>
 
-          <div className="flex gap-4 h-52">
-            <div className="flex justify-center bg-foreground p-2 rounded-2xl shadow-md w-1/3">
-              Truy cập mỗi ngày
-            </div>
-            <div className="flex justify-center bg-foreground p-2 rounded-2xl shadow-md w-2/3">
-              Ngày nghỉ
-            </div>
+      {/* Bottom Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Student Level Distribution */}
+        <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
+          <h3 className="text-lg font-semibold mb-4">
+            Phân bố học viên theo cấp học
+          </h3>
+          <div className="h-[300px]">
+            <Bar
+              data={studentLevelData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "Số học viên",
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Cấp học",
+                    },
+                  },
+                },
+              }}
+            />
           </div>
-        </div>
+        </Card>
+
+        {/* Recent Notifications */}
+        <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
+          <h3 className="text-lg font-semibold mb-4">Thông báo gần đây</h3>
+          <div className="space-y-4">
+            {recentNotifications.map((notification, index) => (
+              <div
+                key={index}
+                className="flex items-start space-x-4 p-2 rounded-lg transition-all duration-300 hover:bg-primary-lighter"
+              >
+                <div className="p-2 bg-blue-50 rounded-full">
+                  <notification.icon className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium">{notification.title}</p>
+                    <span className="text-sm text-gray-500">
+                      {notification.time}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {notification.content}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
     </div>
   );

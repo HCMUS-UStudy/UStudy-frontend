@@ -1,4 +1,9 @@
-import { CourseData, CourseDto, CourseSchema } from "@/app/types";
+import {
+  CourseData,
+  CourseDto,
+  CourseSchema,
+  CreateCourseResponse,
+} from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
 export const getAllCourses = async (
@@ -41,9 +46,15 @@ export const getCoursesByGradeId = async (
   }
 };
 
-export const createNewCourse = async (data: CourseSchema) => {
-  const response = await axiosInstance.post("/course/create", data);
-  return response.data;
+export const createNewCourse = async (
+  data: CourseSchema,
+): Promise<CreateCourseResponse> => {
+  try {
+    const response = await axiosInstance.post("/course/create", data);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getCourseById = async (courseId: string) => {

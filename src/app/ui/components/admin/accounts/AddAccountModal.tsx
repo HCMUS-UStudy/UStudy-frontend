@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
 import { toast } from "react-toastify";
@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import { useRouter } from "next/navigation";
 import { getAllRoles } from "@/app/lib/services/role";
 import { GenderType } from "@/app/types";
+import { useQuery } from "@tanstack/react-query";
 
 interface AddAccountModalProps {
   buttonLabel: string;
@@ -65,28 +66,33 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
     resolver: zodResolver(CreateUserSchema),
   });
 
-  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
+  // const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
   // const router = useRouter();
 
   // Gọi API để lấy danh sách roles khi component render
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await getAllRoles();
-        if (response.statusCode === "OK") {
-          setRoles(response.data); // Lưu danh sách roles
-        } else {
-          toast.error("Lỗi khi tải danh sách quyền");
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy roles:", error);
-        toast.error("Không thể lấy danh sách quyền");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     try {
+  //       const response = await getAllRoles();
+  //       if (response.statusCode === "OK") {
+  //         setRoles(response.data); // Lưu danh sách roles
+  //       } else {
+  //         toast.error("Lỗi khi tải danh sách quyền");
+  //       }
+  //     } catch (error) {
+  //       console.error("Lỗi khi lấy roles:", error);
+  //       toast.error("Không thể lấy danh sách quyền");
+  //     }
+  //   };
 
-    fetchRoles();
-  }, []);
+  //   fetchRoles();
+  // }, []);
+
+  const { data: roles, status: rolesStatus } = useQuery({
+    queryKey: ["Roles"],
+    queryFn: () => getAllRoles(),
+  });
 
   const onSubmit = async (data: CreateUserInputs) => {
     try {
@@ -118,7 +124,6 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
 
   return (
     <>
@@ -145,11 +150,10 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 placeholder="Nhập địa chỉ email"
                 label="Email *"
                 alwaysShowLabel={true}
+                isError={errors.email !== undefined}
+                errorMsg={errors.email?.message}
                 {...register("email")}
               />
-              <span className="text-error text-sm">
-                {errors.email?.message}
-              </span>
             </div>
             {/*Name*/}
             <div className="relative mb-4">
@@ -158,9 +162,10 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 placeholder="Nhập tên người dùng"
                 label="Tên người dùng *"
                 alwaysShowLabel={true}
+                isError={errors.name !== undefined}
+                errorMsg={errors.name?.message}
                 {...register("name")}
               />
-              <span className="text-error text-sm">{errors.name?.message}</span>
             </div>
             {/*Phone*/}
             <div className="relative mb-4">
@@ -169,11 +174,10 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 placeholder="Nhập số điện thoại"
                 label="Số điện thoại *"
                 alwaysShowLabel={true}
+                isError={errors.phone !== undefined}
+                errorMsg={errors.phone?.message}
                 {...register("phone")}
               />
-              <span className="text-error text-sm">
-                {errors.phone?.message}
-              </span>
             </div>
             {/*Address*/}
             <div className="relative mb-4">
@@ -182,11 +186,10 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 placeholder="Nhập địa chỉ"
                 label="Địa chỉ *"
                 alwaysShowLabel={true}
+                isError={errors.address !== undefined}
+                errorMsg={errors.address?.message}
                 {...register("address")}
               />
-              <span className="text-error text-sm">
-                {errors.address?.message}
-              </span>
             </div>
             {/*Gender*/}
             <div className="relative mb-4">
@@ -203,9 +206,11 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 <SelectItem value="MALE">Nam</SelectItem>
                 <SelectItem value="FEMALE">Nữ</SelectItem>
               </Select>
-              <span className="text-error text-sm">
-                {errors.gender?.message}
-              </span>
+              {errors.gender && (
+                <span className="text-error text-sm mt-1 block">
+                  {errors.gender.message}
+                </span>
+              )}
             </div>
             {/*Role*/}
             <div className="relative mb-4">
@@ -213,30 +218,23 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 id="role"
                 name="role"
                 label="Chức vụ"
+                isLoading={rolesStatus === "pending"}
                 onValueChange={(value) => {
-                  setValue("roleId", String(value)); // Lưu ID của roleId
+                  setValue("roleId", String(value));
                   clearErrors("roleId");
                 }}
               >
-                {roles.map((role) => (
+                {roles?.map((role) => (
                   <SelectItem key={role.id} value={role.id}>
-                    {role.name === "Teacher"
-                      ? "Giáo Viên"
-                      : role.name === "Admin"
-                        ? "Quản Trị Viên"
-                        : role.name === "Clerk"
-                          ? "Giáo Vụ"
-                          : role.name === "Parent"
-                            ? "Phụ Huynh"
-                            : role.name === "Student"
-                              ? "Học Viên"
-                              : role.name}
+                    {role.name}
                   </SelectItem>
                 ))}
               </Select>
-              <span className="text-error text-sm">
-                {errors.roleId?.message}
-              </span>
+              {errors.roleId && (
+                <span className="text-error text-sm mt-1 block">
+                  {errors.roleId.message}
+                </span>
+              )}
             </div>
 
             {/*birthday*/}
@@ -244,31 +242,22 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
               <Input
                 type="date"
                 label="Ngày sinh *"
+                isError={errors.birthday !== undefined}
+                errorMsg={errors.birthday?.message}
                 {...register("birthday")}
               />
-              <span className="text-error text-sm">
-                {errors.birthday?.message}
-              </span>
             </div>
           </form>
         </DialogContent>
         <DialogFooter>
           <div className="flex justify-between">
             <Button
-              variant="basic"
-              type="button"
-              onClick={handleCloseModal}
-              className="bg-neutral hover:bg-neutral/80 text-primary-text w-[15%]"
-            >
-              Hủy
-            </Button>
-            <Button
               variant="primary"
               form="add-account-admin-form"
               type="submit"
-              className="w-[15%]"
+              className="w-full"
             >
-              Tạo
+              Tạo người dùng mới
             </Button>
           </div>
         </DialogFooter>

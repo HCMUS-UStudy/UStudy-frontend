@@ -35,6 +35,6 @@ export type UserData = {
     name: string;
     updatedAt: string;
   };
-  branch: Branch[];
+  branches: Branch[];
   hadClass: boolean;
 };

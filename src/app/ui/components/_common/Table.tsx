@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { cn } from "@/app/lib/utils";
+import EmptyListOrTable from "./EmptyListOrTable";
 
 // custom table
 interface TableContextProps {
@@ -183,10 +184,10 @@ export const TableBody: React.FC<TableBodyProps> = ({
       ) : noDataMessage ? (
         <TableRow>
           <TableCell
-            className="text-primary-darkest bg-primary-lighter"
+            className="text-primary-darkest bg-primary-lighter text-center"
             colSpan={columns.length}
           >
-            Không có dữ liệu
+            <EmptyListOrTable message="Không có dữ liệu" />
           </TableCell>
         </TableRow>
       ) : (
@@ -260,7 +261,7 @@ export const TableCell: React.FC<TableCellProps> = ({
   ...props
 }: TableCellProps) => {
   return (
-    <td className={cn(`pl-5 py-4 text-sm left`, className)} {...props}>
+    <td className={cn(`px-5 py-4 text-sm left`, className)} {...props}>
       {children}
     </td>
   );

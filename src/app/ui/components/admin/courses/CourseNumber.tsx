@@ -1,54 +1,31 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { CourseItem } from "@/app/types";
+import React from "react";
 import { getAllCourses } from "@/app/lib/services/course";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 interface CourseNumberProps {
   searchQuery: string;
-  subjectQuery: string;
 }
 
-const CourseNumber: React.FC<CourseNumberProps> = ({
-  searchQuery,
-  subjectQuery,
-}) => {
-  const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const defaultSubject = subjectQuery === "All" ? "" : subjectQuery;
-
-  const fetchCourses = async () => {
-    setLoading(true);
-
-    try {
-      const searchParam =
-        searchQuery && defaultSubject
-          ? `${defaultSubject} ${searchQuery}`
-          : defaultSubject || searchQuery || "";
-
-      const response = await getAllCourses(searchParam, 10000, 0);
-
-      setCourses(response.content);
-    } catch (err) {
-      console.error("Error fetching courses:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCourses();
-  }, [searchQuery, subjectQuery]);
+const CourseNumber: React.FC<CourseNumberProps> = ({ searchQuery }) => {
+  const { data: courses, status } = useQuery({
+    queryKey: ["Courses"],
+    queryFn: () => getAllCourses(searchQuery, 10000, 0),
+    placeholderData: keepPreviousData,
+  });
 
   return (
     <h2
       className={`text-2xl font-bold ${
-        loading ? "animate-pulse text-gray-400" : ""
+        status === "pending" ? "animate-pulse text-gray-400" : ""
       }`}
     >
       Tổng số môn học (
-      {loading ? "Đang tải..." : courses.length.toLocaleString("vi-VN")})
+      {status === "pending"
+        ? "Đang tải..."
+        : courses?.totalElements.toLocaleString("vi-VN")}
+      )
     </h2>
   );
 };

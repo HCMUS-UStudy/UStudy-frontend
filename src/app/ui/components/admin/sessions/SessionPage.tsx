@@ -112,7 +112,7 @@ const SessionManagement = () => {
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.startTime}</TableCell>
                   <TableCell>{item.endTime}</TableCell>
-                  <TableCell className="flex gap-2 justify-center">
+                  <TableCell className="flex gap-2">
                     <Tooltip text="Chỉnh sửa ca học">
                       <button
                         onClick={() => handleUpdateSession(item)}
