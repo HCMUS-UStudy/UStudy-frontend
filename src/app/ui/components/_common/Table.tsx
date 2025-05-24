@@ -183,7 +183,7 @@ export const TableBody: React.FC<TableBodyProps> = ({
       ) : noDataMessage ? (
         <TableRow>
           <TableCell
-            className="text-primary-darkest bg-primary-lighter"
+            className="text-primary-darkest bg-primary-lighter text-center"
             colSpan={columns.length}
           >
             Không có dữ liệu

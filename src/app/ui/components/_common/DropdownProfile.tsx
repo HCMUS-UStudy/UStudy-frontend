@@ -23,7 +23,7 @@ const DropdownProfile = ({
     <div className="flex items-center" ref={dropdownRef}>
       <div
         className={`flex py-1 px-2 items-center border-2 border-slate-200 gap-3 cursor-pointer
-          rounded-lg transition-colors select-none ${
+          rounded-lg transition-all select-none ${
             toggleCollapse ? "shadow-md border-slate-200" : "hover:shadow-md"
           }`}
         onClick={handleToggle}
@@ -52,7 +52,7 @@ const DropdownProfile = ({
             shadow-lg rounded-lg text-[15px] z-50"
         >
           <div
-            className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-t-lg"
+            className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-t-lg transition-all"
             onClick={handleProfileClick}
           >
             <div className="flex gap-3 items-center">

@@ -19,6 +19,7 @@ import {
   ClassToRegisterItem,
   RegisterClassResponse,
 } from "@/app/types/register-class";
+import { submitOrderPayment } from "@/app/lib/services/payment";
 
 interface ClassRegisterProps {
   searchQuery: string;
@@ -35,6 +36,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   const [registeringClassId, setRegisteringClassId] = useState<string | null>(
     null,
   );
+  const [paymentPendingId, setPaymentPendingId] = useState<string | null>(null);
 
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
@@ -83,10 +85,33 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     },
   });
 
-  // console.log(classes);
+  const paymentMutation = useMutation({
+    mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
+    onSuccess: (response) => {
+      // Mở link thanh toán trong tab mới
+      window.open(response, "_blank");
+      queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      setPaymentPendingId(null);
+    },
+    onError: (error) => {
+      toast.error(error.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      setPaymentPendingId(null);
+    },
+  });
+
   const handleRegisterClass = (selectedClass: ClassToRegisterItem) => {
     setRegisteringClassId(selectedClass.classDto.id);
     registerClassMutation.mutate(selectedClass.classDto.id);
+  };
+
+  const handlePayment = (classItem: ClassToRegisterItem) => {
+    console.log(classItem.payment.id);
+    setPaymentPendingId(classItem.classDto.id);
+    paymentMutation.mutate(classItem.payment.id);
   };
 
   return (
@@ -102,6 +127,8 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
             Đăng ký học
           </Button>
         )}
+        onPaymentClick={handlePayment}
+        paymentPendingId={paymentPendingId}
       />
       {classes?.totalElements !== 0 && (
         <Pagination
