@@ -10,6 +10,7 @@ export const roleMap: Record<string, string> = {
   Teacher: "Giáo viên",
   Parent: "Phụ huynh",
   Admin: "Admin",
+  Clerk: "Giáo vụ",
 };
 
 export const accountStatus: Record<string, { label: string; color: string }> = {

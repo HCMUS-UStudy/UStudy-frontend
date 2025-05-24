@@ -2,8 +2,12 @@ import { AccountData, AccountItem, DeleteAccountResponse } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
 export const createNewAccount = async (data: AccountItem) => {
-  const response = await axiosInstance.post("/user/create", data);
-  return response.data;
+  try {
+    const response = await axiosInstance.post("/user/create", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getAllAccount = async (
@@ -21,7 +25,6 @@ export const getAllAccount = async (
         filterNameOrGenId: query,
       },
     });
-    console.log("response", response);
     return response.data.data;
   } catch (error) {
     throw error;
