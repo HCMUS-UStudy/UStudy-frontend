@@ -28,7 +28,7 @@ export default function ReviewAssignment({
     const fetchReviewAssignment = async () => {
       try {
         setLoading(true);
-        const reviewData = await getSubmissionDetails(submissionId);
+        const reviewData = await getSubmissionDetails(submissionId, true);
         setReviewData(reviewData);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu bài nộp:", error);

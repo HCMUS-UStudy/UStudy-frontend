@@ -71,9 +71,17 @@ export const createNewSubmission = async (
   return response.data;
 };
 
-export const getSubmissionDetails = async (submissionId: string) => {
+export const getSubmissionDetails = async (
+  submissionId: string,
+  showDetails: boolean,
+) => {
   const response = await axiosInstance.get(
     `/submission/details/${submissionId}`,
+    {
+      params: {
+        showDetails: showDetails,
+      },
+    },
   );
 
   return response.data.data as SubmissionDetail;
