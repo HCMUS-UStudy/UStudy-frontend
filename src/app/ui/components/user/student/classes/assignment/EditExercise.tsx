@@ -37,7 +37,7 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
   const fetchEditExercise = async () => {
     try {
       setLoading(true);
-      const reviewData = await getSubmissionDetails(submissionId);
+      const reviewData = await getSubmissionDetails(submissionId, true);
       setReviewData(reviewData);
 
       // Build the initial submitted answers from the fetched review data
