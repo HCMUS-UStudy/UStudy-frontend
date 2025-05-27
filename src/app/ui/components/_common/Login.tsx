@@ -20,11 +20,11 @@ import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 
 const LogInSchema = z.object({
   username: z
-    .string({ message: "(*) Vui lòng nhập tên tài khoản" })
-    .min(1, { message: "(*) Vui lòng nhập tên tài khoản" }),
+    .string({ message: "Vui lòng nhập tên tài khoản" })
+    .min(1, { message: "Vui lòng nhập tên tài khoản" }),
   password: z
-    .string({ message: "(*) Vui lòng nhập mật khẩu" })
-    .min(1, { message: "(*) Vui lòng nhập mật khẩu" }),
+    .string({ message: "Vui lòng nhập mật khẩu" })
+    .min(1, { message: "Vui lòng nhập mật khẩu" }),
 });
 
 type LogInInputs = z.infer<typeof LogInSchema>;
@@ -59,6 +59,7 @@ export default function Login() {
         JSON.stringify(response.data.user),
         JSON.stringify(response.data.screens),
       );
+      console.log(response.data.screens);
       dispatch(setPermissions(response.data.screens));
       if (defaultRoute === "PARENT") {
         dispatch(setChildren(response.data.children ?? []));

@@ -15,7 +15,7 @@ export default async function CoursePage(props: {
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
-  const subject = searchParams?.subject || "All";
+  // const subject = searchParams?.subject || "All";
 
   //const [selectedName, setSelectedName] = useState("");
 
@@ -74,13 +74,13 @@ export default async function CoursePage(props: {
     <>
       <div className="px-2">
         <div className="flex items-center justify-between mb-6">
-          <CourseNumber searchQuery={query} subjectQuery={subject} />
-          <div className="flex items-center space-x-2">
+          <CourseNumber searchQuery={query} />
+          <div className="flex items-center">
             <AddCourseModal buttonLabel="Tạo môn học" />
           </div>
         </div>
 
-        <CourseTable searchQuery={query} subjectQuery={subject} />
+        <CourseTable searchQuery={query} />
       </div>
     </>
   );

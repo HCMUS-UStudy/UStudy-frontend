@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store/store";
 import { setSelectedBranch, setBranches } from "../../../store/branch-slice";
-import { getAllBranches } from "@/app/lib/services/branch";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Branch } from "@/app/types";
+import { getUserDataFromCookies } from "@/app/lib/action";
 
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,16 +19,18 @@ const BranchSelector: React.FC = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await getAllBranches(0, 20);
-        // console.log("response", response);
-        const branchData = [...response.content].sort((a: Branch, b: Branch) =>
+        const userData = await getUserDataFromCookies();
+        if (!userData?.branches) {
+          console.error("No branches found in user data");
+          return;
+        }
+
+        const branchData = [...userData.branches].sort((a: Branch, b: Branch) =>
           a.name.localeCompare(b.name),
         );
 
-        // Lưu vào Redux
         dispatch(setBranches(branchData));
 
-        // Chọn chi nhánh đầu tiên nếu có dữ liệu
         if (branchData.length > 0) {
           dispatch(setSelectedBranch(branchData[0].id));
         }
@@ -68,7 +70,7 @@ const BranchSelector: React.FC = () => {
           className="relative cursor-pointer rounded-[20px]"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className="px-4 py-[10px] rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-[15px] items-center">
+          <div className="px-4 py-[10px] rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-[15px] items-center transition-all">
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
             <TiArrowSortedDown className="text-black" />
@@ -81,7 +83,7 @@ const BranchSelector: React.FC = () => {
               {branches.map((branch) => (
                 <div
                   key={branch.id}
-                  className={`px-4 py-2 cursor-pointer hover:bg-primary-light ${
+                  className={`px-4 py-2 cursor-pointer hover:bg-primary-light transition-all ${
                     branch.id === selectedBranchId ? "bg-primary-light" : ""
                   }`}
                   onClick={() => handleBranchChange(branch.id)}

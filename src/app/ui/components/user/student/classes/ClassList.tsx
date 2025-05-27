@@ -22,9 +22,14 @@ export interface ClassListProps {
   classes?: UserClassData;
   onDetailClick?: (id: string) => void;
   renderAction?: (classItem: ClassRegisterResponseItem) => React.ReactNode;
+  type?: "grid" | "row";
 }
 
-const ClassList: React.FC<ClassListProps> = ({ status, classes }) => {
+const ClassList: React.FC<ClassListProps> = ({
+  status,
+  classes,
+  type = "grid",
+}) => {
   const router = useRouter();
   const handleDetail = (id: string) => {
     router.push(`/member/classes/${id}`);
@@ -36,11 +41,17 @@ const ClassList: React.FC<ClassListProps> = ({ status, classes }) => {
 
   if (classes?.totalElements && classes.totalElements > 0) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={
+          type === "grid"
+            ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            : "flex flex-col gap-4"
+        }
+      >
         {classes?.content.map((classItem) => (
           <div
             key={classItem.id}
-            className="flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-2xl transition-all transform hover:shadow-md"
+            className={`flex items-center bg-gradient-to-r from-white to-green-50 border border-gray-200 p-6 rounded-lg transition-all transform hover:shadow-md ${type === "row" ? "w-full" : ""}`}
           >
             <div className="w-14 h-14 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center font-extrabold text-lg mr-6">
               {classItem.course?.name.charAt(0) || "?"}
@@ -61,7 +72,7 @@ const ClassList: React.FC<ClassListProps> = ({ status, classes }) => {
                 </p> */}
             </div>
             <Button
-              className="px-4 py-2 bg-primary-dark text-white text-sm rounded-full hover:bg-hover-primary"
+              className="px-4 py-2 text-sm rounded-full"
               onClick={() => {
                 handleDetail(classItem.id);
               }}

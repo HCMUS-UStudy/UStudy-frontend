@@ -5,6 +5,9 @@ import { ClassToRegisterItem, ClassToRegisterResponse } from "@/app/types";
 import { SiGoogleclassroom } from "react-icons/si";
 import { Button } from "../../../_common/Button";
 import { CheckCircle, ChevronRight } from "lucide-react";
+// import { useMutation } from "@tanstack/react-query";
+// import { submitOrderPayment } from "@/app/lib/services/payment";
+// import { toast } from "react-toastify";
 
 export interface Course {
   name?: string;
@@ -23,13 +26,38 @@ export interface ClassListProps {
   classes?: ClassToRegisterResponse;
   onDetailClick?: (id: string) => void;
   renderAction?: (classItem: ClassToRegisterItem) => React.ReactNode;
+  onPaymentClick?: (classItem: ClassToRegisterItem) => void;
+  paymentPendingId: string | null;
 }
 
 const RegisterClassesGrid: React.FC<ClassListProps> = ({
   status,
   classes,
   renderAction,
+  onPaymentClick,
+  paymentPendingId,
 }) => {
+  // const handlePaymentMutation = useMutation({
+  //   mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
+  //   onSuccess: (response) => {
+  //     console.log(response);
+  //     toast.success(response, {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     toast.error(error.message, {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       pauseOnHover: false,
+  //     });
+  //   },
+  // });
+  // const handlePayment = () => {
+  //   handlePaymentMutation.mutate(selectedClass: ClassToReg);
+  // };
   if (status === "pending") {
     return <RegisterClassesLoading />;
   }
@@ -71,10 +99,8 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
               <div className="flex flex-col gap-2">
                 <Button
                   className="text-sm text-primary-darkest group relative overflow-hidden"
-                  onClick={() => {
-                    // TODO: Implement payment flow
-                    console.log("Payment for class:", classItem.classDto.id);
-                  }}
+                  onClick={() => onPaymentClick?.(classItem)}
+                  isPending={paymentPendingId === classItem.classDto.id}
                   variant="outlined"
                 >
                   <div className="flex items-center gap-2">

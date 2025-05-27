@@ -8,6 +8,9 @@ import {
 import { Button } from "../../../_common/Button";
 import { RegisterClassResponse } from "@/app/types/register-class";
 import { CheckCircle } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { submitOrderPayment } from "@/app/lib/services/payment";
+import { toast } from "react-toastify";
 
 export default function StudentConfirmRegisterClass({
   isOpen,
@@ -18,6 +21,30 @@ export default function StudentConfirmRegisterClass({
   onClose: () => void;
   selectedClass?: RegisterClassResponse;
 }) {
+  const handlePaymentMutation = useMutation({
+    mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
+    onSuccess: (response) => {
+      console.log(response);
+      toast.success(response, {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+      onClose();
+    },
+    onError: (error) => {
+      toast.error(error.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+      });
+    },
+  });
+  const handlePayment = () => {
+    if (selectedClass?.payment.id) {
+      handlePaymentMutation.mutate(selectedClass?.payment.id);
+    }
+  };
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <DialogHeader>Thông tin đăng ký lớp học</DialogHeader>
@@ -66,11 +93,19 @@ export default function StudentConfirmRegisterClass({
                     .join(", ")
                 : "Chưa có giáo viên"}
             </p>
+            <p className="text-sm text-primary-darkest">
+              * Bạn có thể thanh toán sau
+            </p>
           </div>
         </div>
       </DialogContent>
-      <DialogFooter className="flex justify-end gap-3 text-sm">
-        <Button variant="primary" onClick={onClose}>
+      <DialogFooter className="flex justify-end items-center gap-3 text-sm">
+        <Button
+          className="w-full"
+          onClick={handlePayment}
+          isPending={handlePaymentMutation.status === "pending"}
+          variant="primary"
+        >
           Thanh toán ngay
         </Button>
       </DialogFooter>

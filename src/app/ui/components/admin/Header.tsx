@@ -9,6 +9,7 @@ import DropdownProfile from "../_common/DropdownProfile";
 import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Tooltip from "../_common/Tooltip";
+import BranchSelector from "./BranchSelector";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -72,15 +73,15 @@ const Header: React.FC = () => {
     >
       <div className="text-[15px] sm:text-lg font-bold mt-1">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
-          (subItem) => pathname.includes(subItem.path),
+          (subItem) => pathname?.includes(subItem.path),
         )?.title ||
-          SIDENAV_ITEMS_ADMIN.find((item) => pathname.includes(item.path))
+          SIDENAV_ITEMS_ADMIN.find((item) => pathname?.includes(item.path))
             ?.title}
       </div>
       <div className="flex gap-6 items-center">
-        {/* {!pathname.includes("/admin/branches") &&
-          !pathname.includes("/admin/sessions") &&
-          !pathname.includes("/admin/profile") && <BranchSelector />} */}
+        {!pathname?.includes("/admin/branches") &&
+          !pathname?.includes("/admin/sessions") &&
+          !pathname?.includes("/admin/profile") && <BranchSelector />}
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           <Tooltip text="Thông báo" position="bottom">
             <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">

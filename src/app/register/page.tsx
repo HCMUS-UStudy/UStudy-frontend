@@ -27,8 +27,8 @@ const StudentRegisterSchema = z
       .string({ message: "Đây là trường bắt buộc" })
       .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
       .regex(
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-        "Mật khẩu phải bao gồm cả chữ cái và chữ số",
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/,
+        "Mật khẩu phải bao gồm ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt",
       ),
     retypePassword: z
       .string({ message: "Đây là trường bắt buộc" })

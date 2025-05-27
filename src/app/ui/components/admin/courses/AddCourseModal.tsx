@@ -12,20 +12,20 @@ import {
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
 import TextArea from "@/app/ui/components/_common/text-field/TextArea";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCreatorFromCookies } from "@/app/lib/action";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const CreateGradeSchema = z.object({
   creator: z.string(),
   name: z
-    .string({ message: "(*) Đây là trường bắt buộc" })
-    .min(1, "(*) Đây là trường bắt buộc"),
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
   description: z
-    .string({ message: "(*) Đây là trường bắt buộc" })
-    .min(1, "(*) Đây là trường bắt buộc"),
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
 });
 
 interface ModalCourseWrapperProps {
@@ -46,32 +46,31 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
     defaultValues: { creator: creator ?? undefined },
   });
 
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
 
-  const onSubmit = async (data: CreateGradeInputs) => {
-    try {
-      const response = await createNewCourse(data);
-      console.log(response);
-
-      if (response.statusCode === "OK") {
-        toast.success("Tạo môn học thành công!", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
-
-        setShowModal(false);
-        router.push("/admin/courses");
-      }
-    } catch (err) {
-      console.error("Error fetching courses:", err);
+  const createCourseMutation = useMutation({
+    mutationFn: (data: CreateGradeInputs) => createNewCourse(data),
+    onSuccess: () => {
+      toast.success("Tạo môn học thành công!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+      setShowModal(false);
+      queryClient.invalidateQueries({ queryKey: ["Courses"] });
+    },
+    onError: (error) => {
+      console.error("Error creating course:", error);
       toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
         position: "bottom-right",
         autoClose: 3000,
       });
-    }
+    },
+  });
+
+  const onSubmit = async (data: CreateGradeInputs) => {
+    createCourseMutation.mutate(data);
   };
 
   useEffect(() => {
@@ -96,7 +95,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
         <DialogContent>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6"
+            className="space-y-3"
             id="add-course-admin-form"
           >
             {/*Creator*/}
@@ -114,21 +113,21 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
                 type="text"
                 placeholder="Nhập tên môn học"
                 label="Tên môn *"
+                isError={errors.name !== undefined}
+                errorMsg={errors.name?.message}
                 {...register("name")}
               />
-              <span className="text-error text-sm">{errors.name?.message}</span>
             </div>
 
             {/*Description*/}
             <div className="relative mb-4">
               <TextArea
                 placeholder="Nhập mô tả môn học"
+                isError={errors.description !== undefined}
+                errorMsg={errors.description?.message}
                 label="Mô tả môn học *"
                 {...register("description")}
               />
-              <span className="text-error text-sm">
-                {errors.description?.message}
-              </span>
             </div>
           </form>
         </DialogContent>
@@ -136,18 +135,12 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
           {/*Buttons*/}
           <div className="flex justify-between">
             <Button
-              variant="basic"
-              onClick={handleCloseModal}
-              className="bg-neutral hover:bg-neutral/80 text-primary-text w-[15%]"
-            >
-              Hủy
-            </Button>
-            <Button
               form="add-course-admin-form"
               type="submit"
-              className="w-[15%]"
+              className="w-full"
+              disabled={createCourseMutation.isPending}
             >
-              Tạo
+              {createCourseMutation.isPending ? "Đang tạo..." : "Tạo môn học"}
             </Button>
           </div>
         </DialogFooter>

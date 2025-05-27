@@ -26,14 +26,15 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const searchParams = useSearchParams();
-  const { classId } = useParams();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
   const queryClient = useQueryClient();
 
   const { data: studentList } = useQuery({
     queryKey: [
       "ListStudentsToAdd",
       currentPage,
-      searchParams.get("AccountName") ?? "",
+      searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
     queryFn: () => getFreeUsers(classId as string, 6, "STUDENT", currentPage),

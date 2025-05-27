@@ -29,7 +29,9 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
       ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       {isDashboard ? (
-        <div className="h-full p-3 overflow-y-auto">{children}</div>
+        <div className="h-full p-3 bg-foreground overflow-y-auto">
+          {children}
+        </div>
       ) : (
         <div
           className={`h-full px-6 py-4 bg-foreground rounded-lg ${pathname === "/member/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}

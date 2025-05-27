@@ -26,14 +26,15 @@ export default function AdminList({ onClose }: { onClose: () => void }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false); // Trạng thái tải thêm
   const [searchKeyword, setSearchKeyword] = useState<string>(""); // Từ khóa tìm kiếm
   const searchParams = useSearchParams();
-  const { classId } = useParams();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
   const queryClient = useQueryClient();
 
   const { data: adminList } = useQuery({
     queryKey: [
       "ListAdminsToAdd",
       currentPage,
-      searchParams.get("AccountName") ?? "",
+      searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
     queryFn: () => getFreeUsers(classId as string, 6, "ADMIN", currentPage),

@@ -41,3 +41,13 @@ export type CourseInfo = {
   id: string;
   name: string;
 };
+
+export type CreateCourseResponse = CourseDto & {
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string;
+  };
+};

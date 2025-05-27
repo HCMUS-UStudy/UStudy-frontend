@@ -25,11 +25,10 @@ export default function ReviewAssignment({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("Đã chuyển");
     const fetchReviewAssignment = async () => {
       try {
         setLoading(true);
-        const reviewData = await getSubmissionDetails(submissionId);
+        const reviewData = await getSubmissionDetails(submissionId, true);
         setReviewData(reviewData);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu bài nộp:", error);
@@ -71,12 +70,12 @@ export default function ReviewAssignment({
             <div className="ml-auto">
               <Tooltip text="Giải thích đáp án bằng AI">
                 <Button
-                  className="p-3 bg-highlight-text text-white font-semibold rounded-full shadow-md flex items-center justify-center transition duration-300 ease-in-out hover:bg-opacity-90"
+                  className="p-3 bg-gradient-to-tr to-highlight-text from-highlight-text/30 hover:to-highlight-text/50 hover:from-highlight-text/50 text-white font-semibold rounded-full shadow-md flex items-center justify-center transition-colors duration-300 ease-in-out hover:bg-opacity-90"
                   onClick={() =>
                     handleExplainAnswer(currentQuestion.questionId)
                   }
                 >
-                  <HiSparkles className="w-5 h-5" />
+                  <HiSparkles className="size-5" />
                 </Button>
               </Tooltip>
             </div>

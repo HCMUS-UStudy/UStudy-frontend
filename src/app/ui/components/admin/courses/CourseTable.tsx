@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaEdit, FaTrashAlt, FaPaperclip } from "react-icons/fa";
 import Pagination from "@/app/ui/components/_common/Pagination"; // Import Pagination
-import { CourseItem } from "@/app/types";
 import { getAllCourses } from "@/app/lib/services/course";
 import {
   Table,
@@ -14,49 +13,48 @@ import {
 } from "@/app/ui/components/_common/Table";
 import SearchField from "../../_common/text-field/SearchField";
 import { HiAdjustments } from "react-icons/hi";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import EmptyListOrTable from "../../_common/EmptyListOrTable";
+import Tooltip from "../../_common/Tooltip";
 
 interface CourseTableProps {
   searchQuery: string;
-  subjectQuery: string;
 }
 
-const CourseTable: React.FC<CourseTableProps> = ({
-  searchQuery,
-  subjectQuery,
-}) => {
-  const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const defaultSubject = subjectQuery === "All" ? "" : subjectQuery;
+  // const fetchCourses = async () => {
+  //   setLoading(true);
+  //   setError("");
 
-  const fetchCourses = async () => {
-    setLoading(true);
-    setError("");
+  //   try {
+  //     const searchParam =
+  //       searchQuery && defaultSubject
+  //         ? `${defaultSubject} ${searchQuery}`
+  //         : defaultSubject || searchQuery || "";
 
-    try {
-      const searchParam =
-        searchQuery && defaultSubject
-          ? `${defaultSubject} ${searchQuery}`
-          : defaultSubject || searchQuery || "";
+  //     const response = await getAllCourses(searchParam, 5, currentPage - 1);
 
-      const response = await getAllCourses(searchParam, 5, currentPage - 1);
+  //     setCourses(response.content);
+  //     setTotalPages(response.totalPages || 1);
+  //   } catch (err) {
+  //     console.error("Error fetching courses:", err);
+  //     setError("Error fetching courses.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-      setCourses(response.content);
-      setTotalPages(response.totalPages || 1);
-    } catch (err) {
-      console.error("Error fetching courses:", err);
-      setError("Error fetching courses.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // useEffect(() => {
+  //   fetchCourses();
+  // }, [currentPage, searchQuery, defaultSubject]);
 
-  useEffect(() => {
-    fetchCourses();
-  }, [currentPage, searchQuery, defaultSubject]);
+  const { data: courses, status } = useQuery({
+    queryKey: ["Courses", currentPage - 1, searchQuery],
+    queryFn: () => getAllCourses(searchQuery, 5, currentPage - 1),
+    placeholderData: keepPreviousData,
+  });
 
   // useEffect(() => {
   //     const fetchCourseData = async () => {
@@ -101,27 +99,20 @@ const CourseTable: React.FC<CourseTableProps> = ({
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <Table>
-          <TableHeader
-            columns={["Môn học", "Tài liệu", "Người tạo", "Hành động"]}
-          />
-          <TableBody isLoading={loading}>
-            {error ? (
-              <TableRow>
-                <TableCell
-                  colSpan={8}
-                  className="text-center py-4 text-red-500"
-                >
-                  {error}
-                </TableCell>
-              </TableRow>
-            ) : courses.length > 0 ? (
-              courses.map((course) => (
+      <div className="overflow-x-auto mt-6 ">
+        {courses?.totalElements === 0 ? (
+          <EmptyListOrTable message="Không tìm thấy môn học" />
+        ) : (
+          <Table>
+            <TableHeader
+              columns={["Môn học", "Tài liệu", "Người tạo", "Hành động"]}
+            />
+            <TableBody isLoading={status === "pending"}>
+              {courses?.content.map((course) => (
                 <TableRow key={course.detailedCourseDto.id}>
                   <TableCell>{course.detailedCourseDto.name}</TableCell>
                   <TableCell>
-                    <div className="flex justify-center items-center mx-auto">
+                    <div className="flex items-center mx-auto">
                       {course.totalGrades}
                       <FaPaperclip className="ml-2 mt-1 text-green-500" />
                     </div>
@@ -129,35 +120,35 @@ const CourseTable: React.FC<CourseTableProps> = ({
                   <TableCell>
                     {course.detailedCourseDto.createdBy?.name || "Trống"}
                   </TableCell>
-                  <TableCell className="flex justify-center items-center space-x-3">
-                    <button className="text-blue-600 hover:text-blue-800">
-                      <FaEdit className="h-5 w-5" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-800">
-                      <FaTrashAlt className="h-4 w-4" />
-                    </button>
+                  <TableCell className="flex items-center gap-3">
+                    <Tooltip text="Chỉnh sửa môn học">
+                      <button className="text-blue-600 hover:text-blue-800">
+                        <FaEdit className="h-5 w-5" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip text="Xóa môn học">
+                      <button className="text-red-600 hover:text-red-800">
+                        <FaTrashAlt className="h-4 w-4" />
+                      </button>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-4">
-                  Không tìm thấy khóa học.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+        )}
 
         <Pagination
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={courses?.totalPages || 1}
           handlePageClick={(page) => setCurrentPage(page)}
           handlePreviousPage={() =>
             setCurrentPage((prev) => Math.max(prev - 1, 1))
           }
           handleNextPage={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, courses?.totalPages || 1),
+            )
           }
         />
       </div>

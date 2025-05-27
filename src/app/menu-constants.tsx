@@ -23,7 +23,11 @@ import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { HiOutlineDocumentText } from "react-icons/hi";
-import { FaClipboardList, FaRegCommentDots } from "react-icons/fa6";
+import {
+  FaClipboardList,
+  FaRegCommentDots,
+  FaUserCheck,
+} from "react-icons/fa6";
 import {
   MdOutlineAssignment,
   MdOutlineNotificationsActive,
@@ -34,6 +38,21 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Thống kê",
     path: "/admin/dashboard",
     icon: <RiDashboard2Line size={20} />,
+  },
+  {
+    title: "Quản lý chi nhánh",
+    path: "/admin/branches",
+    icon: <GrMapLocation size={20} />,
+  },
+  {
+    title: "Quản lý ca học",
+    path: "/admin/sessions",
+    icon: <AiOutlineSchedule size={20} />,
+  },
+  {
+    title: "Quản lý chức vụ",
+    path: "/admin/roles",
+    icon: <BsShieldLock size={20} />,
   },
   {
     title: "Quản lý chung",
@@ -57,6 +76,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
         icon: <BsShieldLock size={20} />,
       },
     ],
+  },
+  {
+    title: "Thông báo",
+    path: "/admin/notifications",
+    icon: <MdOutlineNotificationsActive size={20} />,
   },
   {
     title: "Quản lý tài khoản",
@@ -85,8 +109,8 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <BsDoorOpen size={20} />,
   },
   {
-    title: "Quản lý tài liệu",
-    path: "/admin/materials",
+    title: "Tài liệu hệ thống",
+    path: "/admin/system-material",
     icon: <HiOutlineDocumentText size={20} />,
   },
   {
@@ -119,8 +143,18 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
   },
   {
     title: "Kết quả học tập",
-    path: "/teacher/results",
+    path: "/teacher/academic-results",
     icon: <BsPersonWorkspace size={20} />,
+  },
+  {
+    title: "Thông báo",
+    path: "/teacher/notifications",
+    icon: <MdOutlineNotificationsActive size={20} />,
+  },
+  {
+    title: "Điểm danh",
+    path: "/teacher/attendance",
+    icon: <FaUserCheck size={20} />,
   },
 ];
 

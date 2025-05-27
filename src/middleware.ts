@@ -3,6 +3,7 @@
 //   getTokensFromCookies,
 //   getUserDataFromCookies,
 //   handleLogoutCookies,
+//   getPermissions,
 // } from "./app/lib/action";
 // import { handleRefreshToken } from "./app/lib/services/auth";
 
@@ -10,6 +11,8 @@
 //   const { pathname } = request.nextUrl;
 //   const { accessToken, refreshToken } = await getTokensFromCookies();
 //   const userData = await getUserDataFromCookies();
+//   const permissions = await getPermissions();
+//   console.log(permissions);
 //   let response;
 //   if (accessToken) {
 //     // if(!userData) {
@@ -33,17 +36,30 @@
 //           break;
 //       }
 //     }
-//     if (pathname.startsWith("/teacher") && defaultRoute !== "TEACHER") {
-//       return NextResponse.redirect(new URL("/login", request.url));
+//     if (pathname.startsWith("/teacher")) {
+//       if (defaultRoute !== "TEACHER") {
+//         return NextResponse.redirect(new URL("/login", request.url));
+//       } else {
+//         if (!permissions.some((path) => pathname.startsWith(path))) {
+//           return NextResponse.redirect(
+//             new URL("/teacher/classes", request.url),
+//           );
+//         }
+//       }
 //     }
-//     if (
-//       pathname.startsWith("/member") &&
-//       !(defaultRoute === "PARENT" || defaultRoute === "STUDENT")
-//     ) {
-//       return NextResponse.redirect(new URL("/login", request.url));
-//     }
-//     if (pathname.startsWith("/admin") && defaultRoute !== "ADMIN") {
-//       return NextResponse.redirect(new URL("/admin/login", request.url));
+//     // if (
+//     //   pathname.startsWith("/member") &&
+//     //   !(defaultRoute === "PARENT" || defaultRoute === "STUDENT")
+//     // ) {
+//     //   return NextResponse.redirect(new URL("/login", request.url));
+//     // }
+//     if (pathname.startsWith("/admin")) {
+//       if (defaultRoute !== "ADMIN") {
+//         return NextResponse.redirect(new URL("/admin/login", request.url));
+//       }
+//       if (!permissions.some((path) => pathname.startsWith(path))) {
+//         return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+//       }
 //     }
 //     if (pathname.startsWith("/member")) {
 //       if (defaultRoute !== "STUDENT" && defaultRoute !== "PARENT") {
@@ -54,6 +70,20 @@
 //         return NextResponse.redirect(
 //           new URL(`${pathname}/overview`, request.url),
 //         );
+//       }
+//       if (!permissions.some((path) => pathname.startsWith(path))) {
+//         if (defaultRoute === "STUDENT") {
+//           if (!userData?.hadClass) {
+//             return NextResponse.redirect(
+//               new URL("/member/class-register", request.url),
+//             );
+//           } else {
+//             return NextResponse.redirect(
+//               new URL("/member/classes", request.url),
+//             );
+//           }
+//         }
+//         return NextResponse.redirect(new URL("/member/home", request.url));
 //       }
 //     }
 //     if (pathname === "/admin") {
