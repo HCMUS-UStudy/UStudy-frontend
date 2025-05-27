@@ -8,10 +8,12 @@ import ClassList from "@/app/ui/components/user/teacher/ClassList";
 import { ClassTeacher } from "@/app/types";
 import { getClassesForTeacher } from "@/app/lib/services/class";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
+import Loading from "@/app/ui/components/_common/loading/Loading";
 
 export default function Classes() {
   const [ongoingClasses, setOngoingClasses] = useState<ClassTeacher[]>([]);
   const [completedClasses, setCompletedClasses] = useState<ClassTeacher[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -27,6 +29,7 @@ export default function Classes() {
 
         setOngoingClasses(ongoingMapped);
         setCompletedClasses(completedMapped);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching classes:", error);
       }
@@ -34,6 +37,14 @@ export default function Classes() {
 
     fetchClasses();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="mt-4">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -28,7 +28,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <label
       className={classNames(
-        "flex gap-2 items-center cursor-pointer select-none",
+        "flex w-fit gap-2 items-center cursor-pointer select-none",
         {
           "cursor-not-allowed text-gray-200": disabled,
           "text-primary": !disabled,

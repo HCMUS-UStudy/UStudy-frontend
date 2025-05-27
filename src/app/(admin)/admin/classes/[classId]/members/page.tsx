@@ -86,16 +86,14 @@ const MemberPage = () => {
   //   role: "Học sinh",
   // }));
 
-  const memberListWithRole = members?.content
-    ?.map((member) => ({
-      ...member,
-      role: member.genId.startsWith("0")
-        ? "Giáo vụ"
-        : member.genId.startsWith("1")
-          ? "Giáo viên"
-          : "Học sinh",
-    }))
-    ?.sort((a, b) => Number(a.genId) - Number(b.genId));
+  const memberListWithRole = members?.content?.map((member) => ({
+    ...member,
+    role: member.genId.startsWith("0")
+      ? "Giáo vụ"
+      : member.genId.startsWith("1")
+        ? "Giáo viên"
+        : "Học sinh",
+  }));
 
   useEffect(() => {
     if (members) {
@@ -103,13 +101,13 @@ const MemberPage = () => {
     }
   }, [members]);
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col mt-10">
-        <Loading />;
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex flex-col mt-10">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col gap-5 px-4 mt-4">
@@ -123,20 +121,26 @@ const MemberPage = () => {
         <AddMember buttonLabel="Thêm thành viên" />
       </div>
 
-      <Table>
-        <TableHeader
-          columns={[
-            "GenId",
-            "Tên",
-            "Email",
-            "Địa chỉ",
-            "Ngày sinh",
-            "Giới tính",
-            "Vai trò",
-          ]}
-        />
-        <TableBody noDataMessage={false}>
-          {/* {currentStudentPage === 0 &&
+      {isLoading ? (
+        <div className="mt-5">
+          <Loading />
+        </div>
+      ) : (
+        <>
+          <Table>
+            <TableHeader
+              columns={[
+                "GenId",
+                "Tên",
+                "Email",
+                "Địa chỉ",
+                "Ngày sinh",
+                "Giới tính",
+                "Vai trò",
+              ]}
+            />
+            <TableBody noDataMessage={false}>
+              {/* {currentStudentPage === 0 &&
             [...adminListWithRole, ...teacherListWithRole].map((member) => (
               <TableRow key={member.id}>
                 <TableCell>{member.genId}</TableCell>
@@ -180,66 +184,70 @@ const MemberPage = () => {
                 <TableCell>{member.role}</TableCell>
               </TableRow>
             ))} */}
-          {memberListWithRole?.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell>{member.genId}</TableCell>
-              <TableCell>
-                {member.name.length > 18 ? (
-                  <button>
-                    <Tooltip text={member.name}>
-                      {member.name.slice(0, 18)}...
-                    </Tooltip>
-                  </button>
-                ) : (
-                  member.name
-                )}
-              </TableCell>
-              <TableCell>
-                {member.email?.length > 25 ? (
-                  <button>
-                    <Tooltip text={member.email}>
-                      {member.email.slice(0, 25)}...
-                    </Tooltip>
-                  </button>
-                ) : (
-                  member.email
-                )}
-              </TableCell>
-              <TableCell>
-                {member.address.length > 30 ? (
-                  <button>
-                    <Tooltip text={member.address}>
-                      {member.address.slice(0, 30)}...
-                    </Tooltip>
-                  </button>
-                ) : (
-                  member.address
-                )}
-              </TableCell>
-              <TableCell>
-                {new Date(member.birthday).toLocaleDateString("vi-VN")}
-              </TableCell>
-              <TableCell>{member.gender === "MALE" ? "Nam" : "Nữ"}</TableCell>
-              <TableCell>{member.role}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <div className="flex justify-end mt-2">
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage + 1}
-            totalPages={totalPages}
-            handlePageClick={(page) => setCurrentPage(page - 1)}
-            handlePreviousPage={() =>
-              setCurrentPage((prev) => Math.max(prev - 1, 0))
-            }
-            handleNextPage={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
-            }
-          />
-        )}
-      </div>
+              {memberListWithRole?.map((member) => (
+                <TableRow key={member.id}>
+                  <TableCell>{member.genId}</TableCell>
+                  <TableCell>
+                    {member.name.length > 18 ? (
+                      <button>
+                        <Tooltip text={member.name}>
+                          {member.name.slice(0, 18)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      member.name
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {member.email?.length > 25 ? (
+                      <button>
+                        <Tooltip text={member.email}>
+                          {member.email.slice(0, 25)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      member.email
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {member.address.length > 30 ? (
+                      <button>
+                        <Tooltip text={member.address}>
+                          {member.address.slice(0, 30)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      member.address
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(member.birthday).toLocaleDateString("vi-VN")}
+                  </TableCell>
+                  <TableCell>
+                    {member.gender === "MALE" ? "Nam" : "Nữ"}
+                  </TableCell>
+                  <TableCell>{member.role}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="flex justify-end mt-2">
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage + 1}
+                totalPages={totalPages}
+                handlePageClick={(page) => setCurrentPage(page - 1)}
+                handlePreviousPage={() =>
+                  setCurrentPage((prev) => Math.max(prev - 1, 0))
+                }
+                handleNextPage={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
+                }
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
