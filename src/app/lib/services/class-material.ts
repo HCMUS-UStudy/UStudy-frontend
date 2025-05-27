@@ -24,7 +24,7 @@ export const getPreview = async (materialId: string) => {
 
 export const downloadMaterial = async (materialId: string) => {
   const response = await axiosInstance.get(
-    `/personal-material/download/${materialId}`,
+    `/class-material/download/${materialId}`,
     {
       responseType: "blob",
     },

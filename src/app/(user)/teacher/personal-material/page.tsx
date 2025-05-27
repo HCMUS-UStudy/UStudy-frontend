@@ -348,7 +348,7 @@ export default function PersonalMaterial() {
               setShowUploadModal(true);
             }}
             className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
-            hover:bg-primary-lighter shadow-sm rounded-2xl"
+            hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
           >
             {isMobile ? (
               <Tooltip text="Tải tài liệu lên">
@@ -363,7 +363,7 @@ export default function PersonalMaterial() {
           </div>
           <div
             className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
-            hover:bg-primary-lighter shadow-sm rounded-2xl"
+            hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
             onClick={handleCreateFolder}
           >
             {isMobile ? (
@@ -559,7 +559,7 @@ export default function PersonalMaterial() {
                         fileRef.current[index] = el;
                       }}
                       key={item.id}
-                      className={`flex items-center py-3 pl-4 pr-3 border rounded-xl cursor-pointer border-gray-200 
+                      className={`flex items-center py-3 pl-4 pr-3 border select-none rounded-xl cursor-pointer border-gray-200 
                       ${
                         activeFile?.id === item.id
                           ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`

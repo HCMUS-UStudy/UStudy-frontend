@@ -77,3 +77,23 @@ export const getAccountByBranch = async (
     throw error;
   }
 };
+
+export const getFreeUsers = async (
+  classId: string,
+  limit: number,
+  route: string,
+  currentPage: number,
+): Promise<AccountData> => {
+  try {
+    const response = await axiosInstance.get(`/user/free-users/${classId}`, {
+      params: {
+        page: currentPage,
+        limit: limit,
+        route: route,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};

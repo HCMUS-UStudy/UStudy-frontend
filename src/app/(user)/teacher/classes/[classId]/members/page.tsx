@@ -19,6 +19,7 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 
 const MemberPage = () => {
   const searchParams = useSearchParams();
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const params = useParams<{ classId: string }>();
   const classId = params?.classId as string;
 
@@ -40,16 +41,20 @@ const MemberPage = () => {
   const members = memberQuery.data;
   const isLoading = memberQuery.isLoading;
 
-  const memberListWithRole = members?.content
-    ?.map((member) => ({
-      ...member,
-      role: member.genId.startsWith("0")
-        ? "Giáo vụ"
-        : member.genId.startsWith("1")
-          ? "Giáo viên"
-          : "Học sinh",
-    }))
-    ?.sort((a, b) => Number(a.genId) - Number(b.genId));
+  const memberListWithRole = members?.content?.map((member) => ({
+    ...member,
+    role: member.genId.startsWith("0")
+      ? "Giáo vụ"
+      : member.genId.startsWith("1")
+        ? "Giáo viên"
+        : "Học sinh",
+  }));
+
+  const filteredStudents = memberListWithRole?.filter(
+    (members) =>
+      members.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      members.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
+  );
 
   useEffect(() => {
     if (members) {
@@ -71,6 +76,7 @@ const MemberPage = () => {
         <SearchField
           queryKey="AccountName"
           placeholder="Tìm tên thành viên..."
+          onChange={(e) => setSearchKeyword(e.target.value)}
         />
       </div>
 
@@ -87,51 +93,7 @@ const MemberPage = () => {
           ]}
         />
         <TableBody noDataMessage={false}>
-          {/* {currentStudentPage === 0 &&
-            [...adminListWithRole, ...teacherListWithRole].map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>{member.genId}</TableCell>
-                <TableCell>
-                  {member.name.length > 18 ? (
-                    <button>
-                      <Tooltip text={member.name}>
-                        {member.name.slice(0, 18)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.name
-                  )}
-                </TableCell>
-                <TableCell>
-                  {member.email?.length > 25 ? (
-                    <button>
-                      <Tooltip text={member.email}>
-                        {member.email.slice(0, 25)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.email
-                  )}
-                </TableCell>
-                <TableCell>
-                  {member.address.length > 30 ? (
-                    <button>
-                      <Tooltip text={member.address}>
-                        {member.address.slice(0, 30)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.address
-                  )}
-                </TableCell>
-                <TableCell>
-                  {new Date(member.birthday).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell>{member.gender === "MALE" ? "Nam" : "Nữ"}</TableCell>
-                <TableCell>{member.role}</TableCell>
-              </TableRow>
-            ))} */}
-          {memberListWithRole?.map((member) => (
+          {filteredStudents?.map((member) => (
             <TableRow key={member.id}>
               <TableCell>{member.genId}</TableCell>
               <TableCell>

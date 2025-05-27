@@ -1,10 +1,11 @@
 import axiosInstance from "@/app/lib/axios";
 import { AttendaceData } from "@/app/types";
 
-export const getAllAttendancesNoStatus = async (
+export const getAttendances = async (
   currentPage: number,
   limit: number,
   classScheduleId: string,
+  status?: string,
 ): Promise<AttendaceData> => {
   const response = await axiosInstance.get(
     `/attendance/list/${classScheduleId}`,
@@ -12,26 +13,6 @@ export const getAllAttendancesNoStatus = async (
       params: {
         page: currentPage,
         limit: limit,
-        classScheduleId: classScheduleId,
-      },
-    },
-  );
-  return response.data.data;
-};
-
-export const getAllAttendances = async (
-  currentPage: number,
-  limit: number,
-  classScheduleId: string,
-  status: string,
-): Promise<AttendaceData> => {
-  const response = await axiosInstance.get(
-    `/attendance/list/${classScheduleId}`,
-    {
-      params: {
-        page: currentPage,
-        limit: limit,
-        classScheduleId: classScheduleId,
         status: status,
       },
     },
@@ -44,16 +25,17 @@ export const recordAttendances = async (
   studentStatusList: {
     userId: string;
     status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED" | "";
+    note: string;
   }[],
 ): Promise<void> => {
+  console.log("recordAttendances", studentStatusList);
   try {
     const response = await axiosInstance.post("/attendance/record", {
       classScheduleId,
       studentStatusList,
     });
-    console.log("Attendance recorded successfully:", response.data);
+    return response.data;
   } catch (error) {
-    console.error("Error recording attendance:", error);
     throw error;
   }
 };

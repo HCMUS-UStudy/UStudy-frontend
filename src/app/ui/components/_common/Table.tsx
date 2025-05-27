@@ -82,6 +82,7 @@ export const Table: React.FC<TableProps> = ({
 interface TableHeaderProps {
   columns: string[];
   className?: string;
+  classNameTH?: string[];
 }
 
 /**
@@ -98,6 +99,7 @@ interface TableHeaderProps {
 export const TableHeader: React.FC<TableHeaderProps> = ({
   columns,
   className,
+  classNameTH,
 }: TableHeaderProps) => {
   const { setColumns } = useTableContext();
   useEffect(() => {
@@ -108,7 +110,10 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
     <thead className={`${className} bg-slate-100`}>
       <tr className="border-b-2 border-slate-200">
         {columns.map((col, index) => (
-          <th key={index} className={`pl-5 py-3 text-[14px] text-left`}>
+          <th
+            key={index}
+            className={`${classNameTH?.[index]} pl-5 py-3 text-[14px] text-left`}
+          >
             {col}
           </th>
         ))}
@@ -227,7 +232,7 @@ export const TableRow: React.FC<TableRowProps> = ({
   return (
     <tr
       className={cn(
-        "transition-all duration-200 border-b-2 border-slate-100",
+        "transition-all duration-100 border-b-2 border-slate-100",
         isFetching ? "bg-primary animate-pulse" : "hover:bg-primary-lighter",
         className,
       )}
@@ -261,7 +266,7 @@ export const TableCell: React.FC<TableCellProps> = ({
   ...props
 }: TableCellProps) => {
   return (
-    <td className={cn(`px-5 py-4 text-sm left`, className)} {...props}>
+    <td className={cn(`pl-5 py-4 text-sm text-left ${className}`)} {...props}>
       {children}
     </td>
   );

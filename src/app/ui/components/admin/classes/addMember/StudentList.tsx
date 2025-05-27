@@ -13,18 +13,18 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { Button } from "@/app/ui/components/_common/Button";
-import { getAllAccount } from "@/app/lib/services/user";
+import { getFreeUsers } from "@/app/lib/services/user";
 import { AccountItem } from "@/app/types";
 import { addMembers } from "@/app/lib/services/class";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function StudentList({ onClose }: { onClose: () => void }) {
-  const [currentPage, setCurrentPage] = useState<number>(0); // Bắt đầu từ trang 0
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [students, setStudents] = useState<AccountItem[]>([]); // Danh sách học sinh
-  const [isLoadingMore, setIsLoadingMore] = useState(false); // Trạng thái tải thêm
-  const [searchKeyword, setSearchKeyword] = useState<string>(""); // Từ khóa tìm kiếm
+  const [students, setStudents] = useState<AccountItem[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const searchParams = useSearchParams();
   const params = useParams<{ classId: string }>();
   const classId = params?.classId as string;
@@ -37,13 +37,7 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
       searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
-    queryFn: () =>
-      getAllAccount(
-        searchParams?.get("AccountName") ?? "",
-        6,
-        "STUDENT",
-        currentPage,
-      ),
+    queryFn: () => getFreeUsers(classId as string, 6, "STUDENT", currentPage),
   });
 
   useEffect(() => {
@@ -65,7 +59,7 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
   const loadMore = async () => {
     if (studentList?.totalPages && currentPage < studentList.totalPages - 1) {
       setIsLoadingMore(true);
-      setCurrentPage((prev) => prev + 1); // Tăng trang hiện tại
+      setCurrentPage((prev) => prev + 1);
       setIsLoadingMore(false);
     }
   };
@@ -81,7 +75,7 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
   const filteredUnselectedStudents = unselectedStudents.filter(
     (student) =>
       student.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchKeyword.toLowerCase()),
+      student.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
   );
 
   const useAddMembersMutation = useMutation({
@@ -119,7 +113,7 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
         <div className="flex gap-3 w-1/3">
           <SearchField
             queryKey="AccountName"
-            placeholder="Tìm tên học viên..."
+            placeholder="Tìm id hoặc tên học viên..."
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>

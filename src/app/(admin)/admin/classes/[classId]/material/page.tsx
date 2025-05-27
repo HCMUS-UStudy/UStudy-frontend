@@ -360,7 +360,7 @@ export default function PersonalMaterial() {
                 setShowUploadModal(true);
               }}
               className="flex items-center justify-center flex-col gap-3 p-4 border cursor-pointer border-gray-200
-           hover:bg-primary-lighter shadow-sm rounded-2xl"
+            hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
             >
               {isMobile ? (
                 <Tooltip text="Tải tài liệu lên">
@@ -375,7 +375,7 @@ export default function PersonalMaterial() {
             </div>
             <div
               className="flex items-center justify-center flex-col gap-3 p-4 border cursor-pointer border-gray-200
-           hover:bg-primary-lighter shadow-sm rounded-2xl"
+            hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
               onClick={handleCreateFolder}
             >
               {isMobile ? (
@@ -434,7 +434,7 @@ export default function PersonalMaterial() {
                     <div
                       className="cursor-pointer p-1 rounded-full hover:bg-gray-200"
                       onClick={() => {
-                        handleDownload(activeFile.material.id);
+                        handleDownload(activeFile.id);
                         setActiveFile(null);
                       }}
                     >
@@ -575,7 +575,7 @@ export default function PersonalMaterial() {
                         fileRef.current[index] = el;
                       }}
                       key={item.id}
-                      className={`flex items-center py-3 pl-4 pr-3 border rounded-xl cursor-pointer border-gray-200 
+                      className={`flex items-center py-3 pl-4 pr-3 border select-none rounded-xl cursor-pointer border-gray-200 
                       ${
                         activeFile?.id === item.id
                           ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`
@@ -642,7 +642,7 @@ export default function PersonalMaterial() {
                                 <button
                                   className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                                   onClick={() => {
-                                    handleDownload(item.material.id);
+                                    handleDownload(item.id);
                                     setOpenOptionsId(null);
                                   }}
                                 >

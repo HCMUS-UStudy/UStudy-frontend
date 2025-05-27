@@ -13,7 +13,7 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { Button } from "@/app/ui/components/_common/Button";
-import { getAllAccount } from "@/app/lib/services/user";
+import { getFreeUsers } from "@/app/lib/services/user";
 import { AccountItem } from "@/app/types";
 import { addMembers } from "@/app/lib/services/class";
 import { useParams } from "next/navigation";
@@ -37,13 +37,7 @@ export default function TeacherList({ onClose }: { onClose: () => void }) {
       searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
-    queryFn: () =>
-      getAllAccount(
-        searchParams?.get("AccountName") ?? "",
-        6,
-        "TEACHER",
-        currentPage,
-      ),
+    queryFn: () => getFreeUsers(classId as string, 6, "TEACHER", currentPage),
   });
 
   useEffect(() => {
@@ -81,7 +75,7 @@ export default function TeacherList({ onClose }: { onClose: () => void }) {
   const filteredUnselectedTeachers = unselectedTeachers.filter(
     (teacher) =>
       teacher.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      teacher.email.toLowerCase().includes(searchKeyword.toLowerCase()),
+      teacher.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
   );
 
   const useAddMembersMutation = useMutation({
@@ -119,7 +113,7 @@ export default function TeacherList({ onClose }: { onClose: () => void }) {
         <div className="flex gap-3 w-1/3">
           <SearchField
             queryKey="AccountName"
-            placeholder="Tìm tên giáo viên..."
+            placeholder="Tìm id hoặc tên giáo viên..."
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
