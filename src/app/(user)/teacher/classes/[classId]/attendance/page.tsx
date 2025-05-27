@@ -41,7 +41,8 @@ const AttendancePage = () => {
   const [attendanceMap, setAttendanceMap] = useState<AttendanceMap>({});
   const [selectedSession, setSelectedSession] = useState<string>("");
 
-  const { classId } = useParams();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
 
   const [currentPage, setCurrentPage] = useState(0);
   // const [totalPages, setTotalPages] = useState<number>(0);
