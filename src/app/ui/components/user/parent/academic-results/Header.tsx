@@ -1,3 +1,4 @@
+"use client";
 import { BsGraphUp, BsCalendar3, BsFileText } from "react-icons/bs";
 import {
   Card,

@@ -103,7 +103,7 @@ export default function StudentConfirmRegisterClass({
         <Button
           className="w-full"
           onClick={handlePayment}
-          isPending={handlePaymentMutation.status === "pending"}
+          isPending={handlePaymentMutation.isPending}
           variant="primary"
         >
           Thanh toán ngay

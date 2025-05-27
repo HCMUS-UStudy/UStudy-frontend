@@ -47,11 +47,13 @@ export default function Login() {
     mutationFn: (data: LogInInputs) =>
       login(data.username, data.password, isUser),
     onError: (error) => {
+      console.log(error);
       const customError = error as CustomError;
       setError("username", { message: String(customError.data || "") });
       setError("password", { message: String(customError.data || "") });
     },
     onSuccess: (response) => {
+      console.log(response);
       const defaultRoute = response.data.user.role.defaultRoute;
       setTokensAndUserDataCookies(
         response.data.access_token,

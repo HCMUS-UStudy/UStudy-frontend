@@ -1,3 +1,4 @@
+"use client";
 import { Card, CardContent } from "../../../_common/Card";
 import { Button } from "../../../_common/Button";
 

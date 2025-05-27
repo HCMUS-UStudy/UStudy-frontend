@@ -36,7 +36,7 @@ const BranchPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const searchParams = useSearchParams();
 
-  const { data: fetchBranches, status } = useQuery({
+  const { data: fetchBranches, isLoading } = useQuery({
     queryKey: ["Branches", currentPage - 1, searchParams?.get("name") || ""],
     queryFn: () =>
       getAllBranches(currentPage - 1, 5, searchParams?.get("name") || ""),
@@ -103,7 +103,7 @@ const BranchPage = () => {
                 "Hành động",
               ]}
             />
-            <TableBody isLoading={status === "pending"}>
+            <TableBody isLoading={isLoading}>
               {fetchBranches?.content
                 .slice()
                 .sort((a, b) => a.name.localeCompare(b.name))

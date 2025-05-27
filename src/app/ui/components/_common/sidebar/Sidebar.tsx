@@ -5,24 +5,34 @@ import { useEffect, useState } from "react";
 import { routeMap } from "@/app/menu-constants";
 import { useRouter, usePathname } from "next/navigation";
 import Tooltip from "../Tooltip";
-import { useQuery } from "@tanstack/react-query";
-import { getPermissions } from "@/app/lib/services/permission";
+import { getPermissionsFromCookies } from "@/app/lib/action";
 
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: permissions, status } = useQuery({
-    queryKey: ["Permissions"],
-    queryFn: () => getPermissions(),
-  });
+  const [permissions, setPermissions] = useState<string[]>([]);
+  // const { data: permissions, status } = useQuery({
+  //   queryKey: ["Permissions"],
+  //   queryFn: () => getPermissions(),
+  // });
   // const permissions = useAppSelector(
   //   (state: RootState) => state.permission.screens,
   // );
 
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      const response = await getPermissionsFromCookies();
+      console.log(response);
+      setPermissions(response);
+    };
+    fetchPermissions();
+    console.log(routeMap);
+  }, []);
+
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    console.log(permissions);
+    // console.log(permissions);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };

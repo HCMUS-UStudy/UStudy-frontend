@@ -14,7 +14,7 @@ interface StudentClassesProps {
 const StudentClasses: React.FC<StudentClassesProps> = ({ searchQuery }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data: classes, status } = useQuery({
+  const { data: classes, isLoading } = useQuery({
     queryKey: ["Classes", currentPage - 1, searchQuery],
     queryFn: () => getAllStudentClasses(currentPage - 1, 5, searchQuery),
     placeholderData: keepPreviousData,
@@ -22,7 +22,7 @@ const StudentClasses: React.FC<StudentClassesProps> = ({ searchQuery }) => {
 
   return (
     <div>
-      <ClassList status={status} classes={classes} type="row" />
+      <ClassList isLoading={isLoading} classes={classes} type="row" />
       {classes?.totalElements !== 0 && (
         <Pagination
           currentPage={currentPage}

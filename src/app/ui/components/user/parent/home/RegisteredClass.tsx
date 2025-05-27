@@ -1,3 +1,4 @@
+"use client";
 import { BsJournalBookmarkFill } from "react-icons/bs";
 import {
   Card,

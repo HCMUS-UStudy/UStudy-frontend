@@ -1,3 +1,4 @@
+"use client";
 import { FaCommentDots } from "react-icons/fa6";
 import {
   Card,

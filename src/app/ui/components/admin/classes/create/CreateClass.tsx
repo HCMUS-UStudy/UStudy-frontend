@@ -160,7 +160,7 @@ export default function CreateClass() {
           <DayRoomSessionSelector />
           <ClassDescription />
           <Button
-            isPending={useCreateClassMutation.status === "pending"}
+            isPending={useCreateClassMutation.isPending}
             type="submit"
             className="w-full"
           >

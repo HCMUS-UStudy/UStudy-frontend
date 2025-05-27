@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import StudentClassesLoading from "../../../_common/loading/StudentClassesLoading";
 import EmptyListOrTable from "../../../_common/EmptyListOrTable";
@@ -18,7 +19,8 @@ export interface Teacher {
 }
 
 export interface ClassListProps {
-  status: "pending" | "success" | "error";
+  // status: "pending" | "success" | "error";
+  isLoading: boolean;
   classes?: UserClassData;
   onDetailClick?: (id: string) => void;
   renderAction?: (classItem: ClassRegisterResponseItem) => React.ReactNode;
@@ -26,7 +28,7 @@ export interface ClassListProps {
 }
 
 const ClassList: React.FC<ClassListProps> = ({
-  status,
+  isLoading,
   classes,
   type = "grid",
 }) => {
@@ -35,7 +37,7 @@ const ClassList: React.FC<ClassListProps> = ({
     router.push(`/member/classes/${id}`);
   };
 
-  if (status === "pending") {
+  if (isLoading) {
     return <StudentClassesLoading />;
   }
 

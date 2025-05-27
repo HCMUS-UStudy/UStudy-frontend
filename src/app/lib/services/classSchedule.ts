@@ -1,5 +1,6 @@
 import axiosInstance from "@/app/lib/axios";
 import { ClassSchedule, ClassScheduleItem } from "@/app/types";
+import { BasePaginationResponse } from "@/app/types/common";
 
 export const getAllClassSchedule = async (
   classId: string,
@@ -22,17 +23,21 @@ export const getClassSchedule = async (
   classId: string,
   page: number,
   limit: number,
-) => {
-  const response = await axiosInstance.get(
-    `/class-schedule/get-class-schedule/${classId}`,
-    {
-      params: {
-        page: page,
-        limit: limit,
+): Promise<BasePaginationResponse<ClassSchedule>> => {
+  try {
+    const response = await axiosInstance.get(
+      `/class-schedule/get-class-schedule/${classId}`,
+      {
+        params: {
+          page: page,
+          limit: limit,
+        },
       },
-    },
-  );
-  return response.data.data.content;
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // PUT: Update class schedule date

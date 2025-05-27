@@ -1,7 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 // import { useState, useEffect } from "react";
-import { ClassScheduleItem } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getClassById } from "@/app/lib/services/class";
 import Loading from "@/app/ui/components/_common/loading/Loading";
@@ -106,43 +105,41 @@ const ClassAdmin = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
             📆 Danh sách buổi học
           </h3>
-          {classSchedule.length > 0 ? (
+          {classSchedule?.totalElements && classSchedule.totalElements > 0 ? (
             <ul className="space-y-3">
-              {classSchedule.map(
-                (schedule: ClassScheduleItem, index: number) => (
-                  <li
-                    key={schedule.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow transition"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="font-medium text-gray-800">
-                          Buổi {index + 1}: {schedule.classSession.day}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Ngày: {formatDate(schedule.date)}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Phòng: {schedule.classSession.room.name}
-                        </div>
+              {classSchedule.content.map((schedule, index: number) => (
+                <li
+                  key={schedule.id}
+                  className="border border-gray-200 rounded-lg p-4 hover:shadow transition"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="font-medium text-gray-800">
+                        Buổi {index + 1}: {schedule.classSession?.day}
                       </div>
-                      {schedule.isPassed ? (
-                        <span
-                          className={`text-xs px-2 py-1 rounded bg-green-100 text-green-700`}
-                        >
-                          Đã hoàn thành
-                        </span>
-                      ) : (
-                        <span
-                          className={`text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700`}
-                        >
-                          Chưa hoàn thành
-                        </span>
-                      )}
+                      <div className="text-sm text-gray-500">
+                        Ngày: {formatDate(schedule.date)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Phòng: {schedule.classSession?.room?.name}
+                      </div>
                     </div>
-                  </li>
-                ),
-              )}
+                    {schedule.isPassed ? (
+                      <span
+                        className={`text-xs px-2 py-1 rounded bg-green-100 text-green-700`}
+                      >
+                        Đã hoàn thành
+                      </span>
+                    ) : (
+                      <span
+                        className={`text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700`}
+                      >
+                        Chưa hoàn thành
+                      </span>
+                    )}
+                  </div>
+                </li>
+              ))}
             </ul>
           ) : (
             <p className="text-gray-500 italic">Chưa có buổi học nào.</p>

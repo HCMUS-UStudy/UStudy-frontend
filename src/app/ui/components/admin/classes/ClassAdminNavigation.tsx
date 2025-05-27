@@ -12,6 +12,7 @@ export default function AdminNavigation({ activeTab }: { activeTab: string }) {
     { title: "Bài tập", urlPush: "assignment" },
     { title: "Thành viên", urlPush: "members" },
     { title: "Điểm danh", urlPush: "attendance" },
+    { title: "Cài đặt", urlPush: "setting" },
   ];
 
   const router = useRouter();

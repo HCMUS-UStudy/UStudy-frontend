@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { FiLock } from "react-icons/fi";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
@@ -12,7 +11,6 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import { deleteUser, getAllAccount } from "@/app/lib/services/user";
-import { useRouter } from "next/navigation";
 import Tooltip from "../../_common/Tooltip";
 import { toast } from "react-toastify";
 import { accountStatus } from "@/app/lib/utils";
@@ -22,7 +20,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Eye } from "lucide-react";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -33,18 +30,13 @@ const AccountTable: React.FC<AccountTableProps> = ({
   searchQuery,
   roleQuery,
 }) => {
-  // const [users, setUsers] = useState<AccountItem[]>([]);
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const router = useRouter();
-  // const [trigger, setTrigger] = useState<boolean>(false);
 
   const {
     data: fetchAccounts,
     error,
-    status,
+    isLoading,
   } = useQuery({
     queryKey: [
       "Accounts",
@@ -67,36 +59,6 @@ const AccountTable: React.FC<AccountTableProps> = ({
     setTotalPages(fetchAccounts?.totalPages || 1);
   }, [fetchAccounts]);
 
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const roleQueryUp = (roleQuery || "All").toUpperCase();
-  //       const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
-
-  //       const response = await getAllAccount(
-  //         searchQuery,
-  //         5,
-  //         defaultRole,
-  //         currentPage - 1,
-  //       );
-  //       // console.log(response.content);
-  //       setUsers(response.content);
-  //       setTotalPages(response.totalPages || 1);
-  //     } catch (error) {
-  //       console.log(error);
-  //       setError("Error fetching users.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchUsers();
-  // }, [currentPage, searchQuery, roleQuery, trigger]); // Use searchQueryState in the dependency array
-
-  const handleDetail = (userId: string) => {
-    router.push(`/admin/accounts/${userId}`);
-  };
-
   const queryClient = useQueryClient();
   const useDeleteAccountMutation = useMutation({
     mutationFn: (userId: string) => deleteUser(userId),
@@ -118,25 +80,6 @@ const AccountTable: React.FC<AccountTableProps> = ({
   });
 
   const handleDeleteAccount = async (userId: string) => {
-    // try {
-    //   // setLoading(true);
-    //   await deleteUser(userId, searchQuery, 5, roleQuery, currentPage);
-    //   // setTrigger((prev) => !prev);
-    //   toast.success("Xóa tài khoản thành công", {
-    //     position: "bottom-right",
-    //     autoClose: 3000,
-    //     pauseOnHover: false,
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error("Xóa tài khoản thất bại", {
-    //     position: "bottom-right",
-    //     autoClose: 3000,
-    //     pauseOnHover: false,
-    //   });
-    // } finally {
-    //   // setLoading(false);
-    // }
     useDeleteAccountMutation.mutate(userId);
   };
 
@@ -164,7 +107,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
           ]}
           className="bg-gray-100"
         />
-        <TableBody isLoading={status === "pending"}>
+        <TableBody isLoading={isLoading}>
           {error ? (
             <TableRow>
               <TableCell colSpan={7} className="text-red-500">
@@ -176,7 +119,6 @@ const AccountTable: React.FC<AccountTableProps> = ({
               <TableRow
                 key={user.id}
                 className="hover:bg-primary-lighter cursor-pointer"
-                // onClick={() => handleDetail(user.id)}
               >
                 <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
@@ -184,9 +126,9 @@ const AccountTable: React.FC<AccountTableProps> = ({
                 <TableCell>{user.role.name}</TableCell>
                 <TableCell>
                   <span
-                    className={`${accountStatus[user.status].color} font-bold`}
+                    className={`${accountStatus[user.status ?? "ACTIVE"].color} font-bold`}
                   >
-                    {accountStatus[user.status].label}
+                    {accountStatus[user.status ?? "ACTIVE"].label}
                   </span>
                 </TableCell>
                 <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
@@ -201,20 +143,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
                     className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
                   >
                     <Tooltip text="Xóa tài khoản">
-                      <FaTrashAlt className="size-4" />
-                    </Tooltip>
-                  </button>
-                  <button className="flex justify-center items-center text-yellow-600 hover:text-yellow-800 transition-colors">
-                    <Tooltip text="Khóa tài khoản">
-                      <FiLock className="size-5" />
-                    </Tooltip>
-                  </button>
-                  <button
-                    onClick={() => handleDetail(user.id)}
-                    className="flex justify-center items-center text-primary-dark hover:text-primary-darkest transition-colors"
-                  >
-                    <Tooltip text="Xem chi tiết">
-                      <Eye className="size-6" />
+                      <FaTrashAlt className="size-5" />
                     </Tooltip>
                   </button>
                 </TableCell>
@@ -223,17 +152,19 @@ const AccountTable: React.FC<AccountTableProps> = ({
           )}
         </TableBody>
       </Table>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handlePageClick={(page) => setCurrentPage(page)}
-        handlePreviousPage={() =>
-          setCurrentPage((prev) => Math.max(prev - 1, 1))
-        }
-        handleNextPage={() =>
-          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-        }
-      />
+      {fetchAccounts && fetchAccounts.content.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        />
+      )}
     </div>
   );
 };

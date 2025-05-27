@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import RegisterClassesLoading from "../../../_common/loading/RegisterClassesLoading";
 import EmptyListOrTable from "../../../_common/EmptyListOrTable";
@@ -22,7 +24,7 @@ export interface Teacher {
 }
 
 export interface ClassListProps {
-  status: "pending" | "success" | "error";
+  isLoading: boolean;
   classes?: ClassToRegisterResponse;
   onDetailClick?: (id: string) => void;
   renderAction?: (classItem: ClassToRegisterItem) => React.ReactNode;
@@ -31,7 +33,7 @@ export interface ClassListProps {
 }
 
 const RegisterClassesGrid: React.FC<ClassListProps> = ({
-  status,
+  isLoading,
   classes,
   renderAction,
   onPaymentClick,
@@ -58,7 +60,7 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
   // const handlePayment = () => {
   //   handlePaymentMutation.mutate(selectedClass: ClassToReg);
   // };
-  if (status === "pending") {
+  if (isLoading) {
     return <RegisterClassesLoading />;
   }
 
@@ -124,7 +126,9 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
                 <p className=" font-medium">Đã đăng ký thành công</p>
               </div>
             ) : (
-              renderAction && renderAction(classItem)
+              classItem.status === null &&
+              renderAction &&
+              renderAction(classItem)
             )}
           </div>
         ))}

@@ -13,7 +13,7 @@ const AccountNumber: React.FC<AccountNumberProps> = ({
   searchQuery,
   roleQuery,
 }) => {
-  const { data: fetchAccounts, status } = useQuery({
+  const { data: fetchAccounts, isLoading } = useQuery({
     queryKey: ["Accounts", searchQuery, roleQuery.toUpperCase()],
     queryFn: () =>
       getAllAccount(
@@ -28,11 +28,11 @@ const AccountNumber: React.FC<AccountNumberProps> = ({
   return (
     <h2
       className={`text-2xl font-bold ${
-        status === "pending" ? "animate-pulse text-gray-400" : ""
+        isLoading ? "animate-pulse text-gray-400" : ""
       }`}
     >
       Tổng số người dùng (
-      {status === "pending"
+      {isLoading
         ? "Đang tải..."
         : fetchAccounts?.content.length.toLocaleString("vi-VN")}
       )

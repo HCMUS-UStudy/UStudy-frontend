@@ -1,3 +1,4 @@
+"use client";
 import { BsPersonWorkspace } from "react-icons/bs";
 import {
   Card,

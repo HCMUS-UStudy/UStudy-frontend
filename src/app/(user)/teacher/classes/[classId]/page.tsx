@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { ClassDetail, ClassScheduleItem } from "@/app/types";
+import { ClassDetail } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getClassById } from "@/app/lib/services/class";
 import Loading from "@/app/ui/components/_common/loading/Loading";
@@ -32,36 +32,30 @@ const ClassDetailPage = () => {
   const { data: classDetail, isLoading } = classQuery;
   const { data: classSchedule } = classScheduleQuery;
 
-  const completed = Array.isArray(classSchedule)
-    ? classSchedule.filter((s: ClassScheduleItem) => s.isPassed)
+  const completed = Array.isArray(classSchedule?.content)
+    ? classSchedule.content.filter((s) => s.isPassed)
     : [];
-  const upcoming = Array.isArray(classSchedule)
-    ? classSchedule.filter((s: ClassScheduleItem) => !s.isPassed)
+  const upcoming = Array.isArray(classSchedule?.content)
+    ? classSchedule.content.filter((s) => !s.isPassed)
     : [];
 
   const lastCompleted = completed
     .slice()
-    .sort(
-      (a: ClassScheduleItem, b: ClassScheduleItem) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime(),
-    )[0];
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
   // 4 buổi chưa hoàn thành tiếp theo (theo ngày tăng dần)
   const nextUpcoming = upcoming
     .slice()
-    .sort(
-      (a: ClassScheduleItem, b: ClassScheduleItem) =>
-        new Date(a.date).getTime() - new Date(b.date).getTime(),
-    )
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 3);
 
   // Danh sách hiển thị mặc định
   const displayList = showAll
-    ? classSchedule
+    ? classSchedule?.content || []
     : [
         ...(lastCompleted ? [lastCompleted] : []),
         ...nextUpcoming.filter(
-          (s: ClassScheduleItem) => !lastCompleted || s.id !== lastCompleted.id,
+          (s) => !lastCompleted || s.id !== lastCompleted.id,
         ),
       ];
 
@@ -137,10 +131,10 @@ const ClassDetailPage = () => {
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
             Danh sách buổi học
           </h3>
-          {classSchedule.length > 0 ? (
+          {classSchedule?.content && classSchedule.content.length > 0 ? (
             <>
               <ul className="space-y-3">
-                {displayList.map((schedule: ClassScheduleItem) => (
+                {displayList.map((schedule) => (
                   <li
                     key={schedule.id}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow transition"
@@ -148,8 +142,8 @@ const ClassDetailPage = () => {
                     <div className="flex justify-between items-center">
                       <div>
                         <div className="font-medium text-gray-800">
-                          {(
-                            {
+                          {schedule.classSession?.day &&
+                            ({
                               monday: "Thứ hai",
                               tuesday: "Thứ ba",
                               wednesday: "Thứ tư",
@@ -157,15 +151,15 @@ const ClassDetailPage = () => {
                               friday: "Thứ sáu",
                               saturday: "Thứ bảy",
                               sunday: "Chủ nhật",
-                            } as Record<string, string>
-                          )[schedule.classSession.day.toLowerCase()] ||
-                            schedule.classSession.day}
+                            }[schedule.classSession.day.toLowerCase()] ||
+                              schedule.classSession.day)}
                         </div>
                         <div className="text-sm text-gray-500">
                           Ngày: {formatDate(schedule.date)}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Phòng: {schedule.classSession.room.name}
+                          Phòng:{" "}
+                          {schedule.classSession?.room?.name || "Chưa cập nhật"}
                         </div>
                       </div>
                       {schedule.isPassed ? (
@@ -185,7 +179,9 @@ const ClassDetailPage = () => {
                   </li>
                 ))}
               </ul>
-              {!showAll && classSchedule.length > displayList.length ? (
+              {!showAll &&
+              classSchedule?.content &&
+              classSchedule.content.length > displayList.length ? (
                 <div className="flex justify-center mt-4">
                   <button
                     className="text-primary-darker underline"

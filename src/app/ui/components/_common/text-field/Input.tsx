@@ -120,7 +120,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {
               "border-control-border border": !isError,
               "border-error border-2": isError,
-              "cursor-not-allowed opacity-50": disabled,
+              "bg-slate-100": disabled,
             },
             "w-full rounded-md px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-control-ring",
           )}
@@ -130,7 +130,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             // id={inputId}
             type={showPassword ? "text" : type}
             className={cn(
-              "peer w-full bg-transparent text-gray-700 disabled:cursor-not-allowed file:border-0 file:bg-transparent file:text-sm file:font-medium outline-none placeholder-control-placeholder",
+              "peer w-full bg-transparent text-gray-700 disabled:cursor-default disabled:text-primary-darkest file:border-0 file:bg-transparent file:text-sm file:font-medium outline-none placeholder-control-placeholder transition-all",
               {
                 "focus:placeholder-transparent focus:transition-colors focus:duration-200":
                   label,

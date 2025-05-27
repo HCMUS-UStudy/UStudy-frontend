@@ -1,3 +1,4 @@
+"use client";
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import {
   Card,

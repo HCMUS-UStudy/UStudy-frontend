@@ -281,9 +281,9 @@ const DashboardPage = () => {
         <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
           <h3 className="text-lg font-semibold mb-4">Thông báo gần đây</h3>
           <div className="space-y-4">
-            {recentNotifications.map((notification, index) => (
+            {recentNotifications.map((notification) => (
               <div
-                key={index}
+                key={notification.title}
                 className="flex items-start space-x-4 p-2 rounded-lg transition-all duration-300 hover:bg-primary-lighter"
               >
                 <div className="p-2 bg-blue-50 rounded-full">

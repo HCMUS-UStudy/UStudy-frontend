@@ -41,9 +41,9 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
 
-  const { data: classes, status } = useQuery({
+  const { data: classes, isLoading } = useQuery({
     queryKey: [
-      "Classes",
+      "RegisterClasses",
       currentPage - 1,
       searchQuery,
       courseQuery,
@@ -60,6 +60,8 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         statusQuery as "ACCEPTED" | "WAITING" | "",
       ),
     placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
+    staleTime: 30000,
   });
 
   const queryClient = useQueryClient();
@@ -78,7 +80,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
       setRegisteringClassId(null);
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      queryClient.invalidateQueries({ queryKey: ["RegisterClasses"] });
       setRegistrationSuccess(res);
       setConfirmRegsiter(true);
       setRegisteringClassId(null);
@@ -90,7 +92,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     onSuccess: (response) => {
       // Mở link thanh toán trong tab mới
       window.open(response, "_blank");
-      queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      queryClient.invalidateQueries({ queryKey: ["RegisterClasses"] });
       setPaymentPendingId(null);
     },
     onError: (error) => {
@@ -109,7 +111,6 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   };
 
   const handlePayment = (classItem: ClassToRegisterItem) => {
-    console.log(classItem.payment.id);
     setPaymentPendingId(classItem.classDto.id);
     paymentMutation.mutate(classItem.payment.id);
   };
@@ -117,7 +118,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   return (
     <div>
       <RegisterClassesGrid
-        status={status}
+        isLoading={isLoading}
         classes={classes}
         renderAction={(item) => (
           <Button

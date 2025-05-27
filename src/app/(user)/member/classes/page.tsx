@@ -1,15 +1,21 @@
-"use server";
+"use client";
 
-import { getUserDataFromCookies } from "@/app/lib/action";
-import ParentClasses from "@/app/ui/components/user/parent/classes/ParentClasses";
-import StudentClassesPage from "@/app/ui/components/user/student/classes/StudentClassesPage";
+// import { getUserDataFromCookies } from "@/app/lib/action";
+// import ParentClasses from "@/app/ui/components/user/parent/classes/ParentClasses";
+// import StudentClassesPage from "@/app/ui/components/user/student/classes/StudentClassesPage";
 
-export default async function Classes() {
-  const defaultRoute = (await getUserDataFromCookies())?.role.defaultRoute;
-  if (defaultRoute === "STUDENT") {
-    return <StudentClassesPage />;
-  }
-  if (defaultRoute === "PARENT") {
-    return <ParentClasses />;
-  }
+export default function Classes() {
+  // const defaultRoute = (await getUserDataFromCookies())?.role.defaultRoute;
+  return (
+    <>
+      {/* {defaultRoute === "STUDENT" && <StudentClassesPage />}
+      {defaultRoute === "PARENT" && <ParentClasses />} */}
+    </>
+  );
+  //   if (defaultRoute === "STUDENT") {
+  //   return <StudentClassesPage />;
+  // }
+  // if (defaultRoute === "PARENT") {
+  //   return <ParentClasses />;
+  // }
 }

@@ -1,3 +1,4 @@
+"use client";
 import { FaClipboardList, FaClock } from "react-icons/fa6";
 import { FaCalendar } from "react-icons/fa";
 import { motion } from "framer-motion";

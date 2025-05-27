@@ -113,6 +113,7 @@ export async function setTokensAndUserDataCookies(
   }
   if (permissions) {
     try {
+      // console.log(permissions);
       const { encryptedData, iv } = await encrypt(permissions, encryptionKey);
       cookieStore.set("permissions", encryptedData, {
         secure: true,
@@ -185,7 +186,7 @@ export async function handleLogoutCookies() {
   }
 }
 
-export async function getPermissions(): Promise<string[]> {
+export async function getPermissionsFromCookies(): Promise<string[]> {
   const cookieStore = await cookies();
   const encryptedPermissions = cookieStore.get("permissions")?.value;
   const iv = cookieStore.get("permissions_iv")?.value;

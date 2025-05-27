@@ -1,3 +1,4 @@
+"use client";
 import Calendar, { CalendarProps } from "react-calendar";
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import {
@@ -233,27 +234,30 @@ export default function AttendanceCalendar({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">Trạng thái:</span>
-                  {getAttendanceForSelectedDate()?.status === "present" && (
-                    <div className="flex items-center gap-1 text-green-600">
-                      <FaCheckCircle />
-                      <span>Có mặt</span>
-                    </div>
-                  )}
-                  {getAttendanceForSelectedDate()?.status === "absent" && (
-                    <div className="flex items-center gap-1 text-red-600">
-                      <FaTimesCircle />
-                      <span>Vắng mặt</span>
-                    </div>
-                  )}
-                  {getAttendanceForSelectedDate()?.status === "late" && (
-                    <div className="flex items-center gap-1 text-yellow-600">
-                      <FaClock />
-                      <span>
-                        Đi muộn {getAttendanceForSelectedDate()?.lateMinutes}{" "}
-                        phút
-                      </span>
-                    </div>
-                  )}
+                  {getAttendanceForSelectedDate() &&
+                    getAttendanceForSelectedDate()?.status === "present" && (
+                      <div className="flex items-center gap-1 text-green-600">
+                        <FaCheckCircle />
+                        <span>Có mặt</span>
+                      </div>
+                    )}
+                  {getAttendanceForSelectedDate() &&
+                    getAttendanceForSelectedDate()?.status === "absent" && (
+                      <div className="flex items-center gap-1 text-red-600">
+                        <FaTimesCircle />
+                        <span>Vắng mặt</span>
+                      </div>
+                    )}
+                  {getAttendanceForSelectedDate() &&
+                    getAttendanceForSelectedDate()?.status === "late" && (
+                      <div className="flex items-center gap-1 text-yellow-600">
+                        <FaClock />
+                        <span>
+                          Đi muộn {getAttendanceForSelectedDate()?.lateMinutes}{" "}
+                          phút
+                        </span>
+                      </div>
+                    )}
                 </div>
                 {getAttendanceForSelectedDate()?.reason && (
                   <div className="flex items-start gap-2">

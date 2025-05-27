@@ -47,7 +47,11 @@ const CreateBranchModal = ({
     resolver: zodResolver(CreateBranchSchema),
   });
 
-  const { data: sessions, status } = useQuery({
+  const {
+    data: sessions,
+    isLoading,
+    isSuccess,
+  } = useQuery({
     queryKey: ["Sessions"],
     queryFn: () => getSession(0, 100),
   });
@@ -121,9 +125,9 @@ const CreateBranchModal = ({
             {/* Phần chọn Ca học với checkbox */}
             <div>
               <div className="flex gap-2 items-center ml-2 text-gray-700">
-                Ca học {status === "pending" && <Loading className="size-6" />}
+                Ca học {isLoading && <Loading className="size-6" />}
               </div>
-              {status === "success" && (
+              {isSuccess && (
                 <div className="mt-2 max-h-40 overflow-y-auto border p-2 rounded-lg">
                   {sessions.content.map((item) => (
                     <SmallCheckbox

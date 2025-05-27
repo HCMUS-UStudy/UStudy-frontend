@@ -121,7 +121,7 @@ export default function AcademicResultsView() {
   //   },
   // ];
   const [selectedClass, setSelectedClass] = useState<string>("");
-  const { data: classes, status } = useQuery({
+  const { data: classes, isLoading } = useQuery({
     queryKey: ["Classes"],
     queryFn: () => getAllClasses("", 0, 100),
   });
@@ -178,7 +178,7 @@ export default function AcademicResultsView() {
           </select> */}
           <Select
             defaultLabel="Chọn lớp học để xem kết quả"
-            isLoading={status === "pending"}
+            isLoading={isLoading}
             onValueChange={(value) => setSelectedClass(value as string)}
           >
             {classes?.content.map((item) => (

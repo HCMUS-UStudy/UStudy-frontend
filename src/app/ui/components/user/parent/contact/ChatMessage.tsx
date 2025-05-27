@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { FaRegCommentDots } from "react-icons/fa";
 import { BsEmojiSmile, BsPerson } from "react-icons/bs";
