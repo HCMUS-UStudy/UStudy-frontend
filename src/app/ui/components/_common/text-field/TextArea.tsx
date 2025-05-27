@@ -63,7 +63,7 @@ const TextArea: React.FC<TextAreaProps> = ({
               "border-control-border border": !isError,
               "border-error border-2": isError,
             },
-            "w-full rounded-md p-3 text-sm focus:ring-2 focus:ring-control-ring disabled:cursor-not-allowed disabled:opacity-50",
+            "w-full rounded-md p-3 text-sm focus:ring-2 focus:ring-control-ring disabled:cursor-not-allowed disabled:bg-slate-100",
             className,
           )}
           {...props}

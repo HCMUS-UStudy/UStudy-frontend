@@ -26,7 +26,6 @@ import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { useAppSelector } from "@/app/store/store";
 import { getSessionByBranchId } from "@/app/lib/services/session";
 import ClassSettingLoading from "@/app/ui/components/_common/loading/ClassSettingLoading";
-import { ClassUpdateData } from "@/app/types";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -158,7 +157,7 @@ export default function ClassSetting() {
   // console.log(classDetail);
   const queryClient = useQueryClient();
   const useUpdateClassMutation = useMutation({
-    mutationFn: (data: ClassUpdateData) => updateClass(classId, data),
+    mutationFn: (data: updateClassFormInputs) => updateClass(classId, data),
     onError: (error) => {
       console.log(error);
       toast.error(error.message, {

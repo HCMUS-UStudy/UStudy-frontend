@@ -9,11 +9,12 @@ import {
 import { Course, CourseDto, CourseInfo } from "./course";
 import { GradeItem } from "./grade";
 import { Room } from "./room";
-import { ClassSessionItem, Session } from "./session";
+import { ClassSessionItem, DaysInWeek, Session } from "./session";
 
 export type ClassDetail = BaseClassInfo & {
   grade: GradeItem;
   course: Course;
+  fee: number;
   status: string | null;
   classSessions: classSessions[];
 };
@@ -27,7 +28,7 @@ export type ClassTeacher = BaseClassInfo & {
 
 export type classSessions = {
   id: string;
-  day: number;
+  day: DaysInWeek;
   session: Session;
   room: Room;
 };
