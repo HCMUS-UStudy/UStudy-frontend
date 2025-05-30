@@ -17,7 +17,7 @@ const CourseNumber: React.FC<CourseNumberProps> = ({ searchQuery }) => {
 
   return (
     <h2
-      className={`text-2xl font-bold ${
+      className={`text-lg md:text-2xl font-bold ${
         status === "pending" ? "animate-pulse text-gray-400" : ""
       }`}
     >

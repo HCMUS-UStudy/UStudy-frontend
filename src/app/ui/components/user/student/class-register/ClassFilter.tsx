@@ -39,9 +39,9 @@ export default function ClassFilter() {
   };
 
   return (
-    <div className="flex gap-3 items-center">
+    <div className="flex flex-col items-start sm:flex-row gap-3">
       <Select
-        className="text-nowrap min-w-32"
+        className="text-nowrap min-w-32 w-full sm:w-auto"
         isLoading={grades.status === "pending"}
         onValueChange={(gradeId) => handleQuery(gradeQuery, gradeId as string)}
         defaultLabel="Lọc môn học"
@@ -53,7 +53,7 @@ export default function ClassFilter() {
         ))}
       </Select>
       <Select
-        className="text-nowrap min-w-40"
+        className="text-nowrap min-w-40 w-full sm:w-auto"
         isLoading={courses.status === "pending"}
         onValueChange={(courseId) =>
           handleQuery(courseQuery, courseId as string)

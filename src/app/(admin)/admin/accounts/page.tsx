@@ -27,7 +27,7 @@ export default async function AccountPage(props: {
 
   return (
     <div className="px-2">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between ">
         <AccountNumber searchQuery={query} roleQuery={role} />
         <div className="flex items-center">
           {/* <AccountRegisterModal buttonLabel="Duyệt đăng ký" /> */}
@@ -35,7 +35,7 @@ export default async function AccountPage(props: {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2 gap-14">
+      <div className="flex items-center justify-between mt-2 gap-3 md:gap-14">
         <SearchField
           className="w-full bg-primary-lighter"
           placeholder="Tìm kiếm người dùng..."

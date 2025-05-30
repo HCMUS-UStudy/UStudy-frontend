@@ -109,7 +109,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   };
 
   const handlePayment = (classItem: ClassToRegisterItem) => {
-    console.log(classItem.payment.id);
+    console.log(classItem);
     setPaymentPendingId(classItem.classDto.id);
     paymentMutation.mutate(classItem.payment.id);
   };

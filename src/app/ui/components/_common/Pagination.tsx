@@ -66,7 +66,7 @@ const Pagination = ({
       <Button
         variant="basic"
         onClick={handlePreviousPage}
-        className="flex gap-1 items-center"
+        className="text-xs px-3 sm:text-base sm:px-4 sm:py-2 flex gap-1 items-center"
         disabled={currentPage === 1}
       >
         <FaAngleLeft />
@@ -90,7 +90,7 @@ const Pagination = ({
           key={page}
           variant="basic"
           onClick={() => handlePageClick(page)}
-          className={`px-4 py-2 rounded-md transition-all ${
+          className={`text-xs sm:text-base px-3 sm:px-4 sm:py-2 rounded-md transition-all ${
             currentPage === page ? "bg-primary hover:bg-hover-primary" : ""
           }`}
         >
@@ -105,7 +105,11 @@ const Pagination = ({
 
       {totalPages > MAX_DISPLAY_PAGES &&
         currentPage < totalPages - Math.floor(MAX_DISPLAY_PAGES / 2) && (
-          <Button variant="basic" onClick={() => handlePageClick(totalPages)}>
+          <Button
+            className="text-xs sm:text-base px-3 sm:px-4 sm:py-2"
+            variant="basic"
+            onClick={() => handlePageClick(totalPages)}
+          >
             {totalPages}
           </Button>
         )}
@@ -113,7 +117,7 @@ const Pagination = ({
       <Button
         variant="basic"
         onClick={handleNextPage}
-        className="flex gap-1 items-center"
+        className="text-xs sm:text-base px-3 sm:px-4 sm:py-2 flex gap-1 items-center"
         disabled={currentPage === totalPages}
       >
         Sau

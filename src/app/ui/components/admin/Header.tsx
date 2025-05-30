@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { IoNotificationsOutline } from "react-icons/io5";
+import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
 // import BranchSelector from "./BranchSelector";
 import { UserData } from "@/app/types";
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
       className={`h-header-height flex px-2 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
-      <div className="text-[15px] sm:text-lg font-bold mt-1">
+      <div className="hidden md:inline font-bold mt-1">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
           (subItem) => pathname?.includes(subItem.path),
         )?.title ||
@@ -84,9 +84,12 @@ const Header: React.FC = () => {
           !pathname?.includes("/admin/profile") && <BranchSelector />}
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           <Tooltip text="Thông báo" position="bottom">
-            <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
+            <div className="p-2 hidden md:flex rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary transition-all">
               <IoNotificationsOutline size={24} />
             </div>
+          </Tooltip>
+          <Tooltip text="Thông báo" position="bottom">
+            <IoNotifications className="size-8 flex md:hidden text-primary-dark hover:text-primary-darkest transition-all cursor-pointer" />
           </Tooltip>
           <DropdownProfile
             userInfo={userInfo}
