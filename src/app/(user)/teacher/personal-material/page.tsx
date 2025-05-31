@@ -347,33 +347,33 @@ export default function PersonalMaterial() {
             onClick={() => {
               setShowUploadModal(true);
             }}
-            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
+            className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
             hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
           >
             {isMobile ? (
               <Tooltip text="Tải tài liệu lên">
-                <IoIosAdd className="w-7 h-7" />
+                <IoIosAdd className="w-6 h-6" />
               </Tooltip>
             ) : (
               <IoIosAdd className="w-7 h-7" />
             )}
-            <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[15px]">
+            <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[14px]">
               Tải tài liệu lên
             </span>
           </div>
           <div
-            className="flex items-center justify-center flex-col gap-3 p-5 border cursor-pointer border-gray-200
+            className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
             hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
             onClick={handleCreateFolder}
           >
             {isMobile ? (
               <Tooltip text="Tạo thư mục mới">
-                <PiFolderPlus className="w-7 h-7" />
+                <PiFolderPlus className="w-6 h-6" />
               </Tooltip>
             ) : (
               <PiFolderPlus className="w-7 h-7" />
             )}
-            <span className="hidden md:inline md:text-[13px] lg:text-[15px]">
+            <span className="hidden md:inline md:text-[13px] lg:text-[14px]">
               Tạo thư mục mới
             </span>
           </div>

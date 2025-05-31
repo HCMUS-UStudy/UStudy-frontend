@@ -7,6 +7,11 @@ import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
 import { ClassTeacher, AssignmentItem } from "@/app/types";
 import { getClassById } from "@/app/lib/services/class";
 import { getAssignmentByClassId } from "@/app/lib/services/assignment";
+import { Button } from "@/app/ui/components/_common/Button";
+import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { FaList, FaSort } from "react-icons/fa6";
+import { FaThLarge } from "react-icons/fa";
+import AssignmentCard from "@/app/ui/components/user/teacher/AssignmentCard";
 
 // const mockExercises = [
 //   {
@@ -138,12 +143,17 @@ export default function Assignment() {
   const router = useRouter();
   const params = useParams();
   const classId = params?.classId;
-  const handleExerciseClick = (assignmentId: string) => {
-    router.push(`/teacher/classes/${classId}/assignment/${assignmentId}`);
+  const handleExerciseClick = (assignment: AssignmentItem) => {
+    router.push(`/teacher/classes/${classId}/assignment/${assignment.id}`);
   };
   const [adding, setAdding] = useState(false);
 
   const [assignment, setAssignment] = useState<AssignmentItem[]>([]);
+  const [filterFormat, setFilterFormat] = useState<
+    "ALL" | "MULTIPLE_CHOICE" | "ESSAY" | "MIXED"
+  >("ALL");
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [classDetail, setClassDetail] = useState<ClassTeacher | null>(null);
   const handleGoBack = () => {
@@ -165,6 +175,7 @@ export default function Assignment() {
   useEffect(() => {
     const fetchAssignment = async () => {
       try {
+        setLoading(true);
         const response = await getAssignmentByClassId(
           0,
           100,
@@ -173,11 +184,19 @@ export default function Assignment() {
         setAssignment(response.content);
       } catch (error) {
         console.error("Error fetching assignment:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchAssignment();
   }, [classId]);
+
+  const filteredAssignment = assignment.filter(
+    (a) => filterFormat === "ALL" || a.format === filterFormat,
+  );
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   return (
     <>
@@ -195,46 +214,122 @@ export default function Assignment() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {assignment.map((ex) => (
-            <div
-              key={ex.id}
-              onClick={() => handleExerciseClick(ex.id)}
-              className="cursor-pointer p-5 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md
-              transition bg-white hover:bg-gray-50"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  {ex.title}
-                </h2>
-                <span
-                  className={`text-xs font-medium px-3 py-1 rounded-full ${
-                    ex.completed ? "bg-red-100 text-red-700" : ""
-                  }`}
-                >
-                  {ex.completed ? "Đã hết hạn" : ""}
+        <div>
+          <SearchField
+            className="w-full bg-primary-lighter py-[2px] rounded-2xl mb-6"
+            placeholder="Tìm kiếm bài tập..."
+          />
+
+          <div className="flex items-center mb-6 justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+              {/* Sort by date */}
+              <div className="flex items-center space-x-2">
+                <span className="text-primary-darkest font-medium">
+                  Sắp xếp theo ngày:
                 </span>
+                <button
+                  onClick={() =>
+                    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                  className="flex items-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-200 transition"
+                >
+                  <span className="mr-2 text-primary-dark">
+                    {sortOrder === "asc" ? "Cũ nhất" : "Mới nhất"}
+                  </span>
+                  <FaSort size={15} />
+                </button>
               </div>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>
-                  <strong>Lớp:</strong> {ex.aclass.name} | <strong>Môn:</strong>{" "}
-                  {ex.aclass.course.name}
-                </p>
-                <p>
-                  <strong>Thời gian làm bài:</strong> {ex.duration} phút
-                </p>
-                <p>
-                  <strong>Thời gian:</strong>{" "}
-                  {new Date(ex.startTime).toLocaleString()} -{" "}
-                  {new Date(ex.endTime).toLocaleString()}
-                </p>
-                <p>
-                  <strong>GV:</strong> {ex.createdBy.name}
-                </p>
+
+              {/* Filter by format */}
+              <div className="flex items-center space-x-2">
+                <span className="text-primary-darkest font-medium">
+                  Loại bài:
+                </span>
+                <select
+                  value={filterFormat}
+                  onChange={(e) =>
+                    setFilterFormat(
+                      e.target.value as
+                        | "ALL"
+                        | "MULTIPLE_CHOICE"
+                        | "ESSAY"
+                        | "MIXED",
+                    )
+                  }
+                  className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-primary-dark hover:bg-gray-100 transition"
+                >
+                  <option value="ALL">Tất cả</option>
+                  <option value="MULTIPLE_CHOICE">Trắc nghiệm</option>
+                  <option value="ESSAY">Tự luận</option>
+                  <option value="MIXED">Kết hợp</option>
+                </select>
               </div>
             </div>
-          ))}
+
+            <div className="flex">
+              <Button
+                onClick={() => setViewMode("grid")}
+                className={`p-3 mx-1 rounded-lg transition ${
+                  viewMode === "grid"
+                    ? "bg-primary-dark hover:bg-hover-primary text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                <FaThLarge size={15} />
+              </Button>
+              <Button
+                onClick={() => setViewMode("list")}
+                className={`p-3 mx-1 rounded-lg transition ${
+                  viewMode === "list"
+                    ? "bg-primary-dark hover:bg-hover-primary text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                <FaList size={15} />
+              </Button>
+            </div>
+          </div>
         </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, index) => (
+              <div
+                key={index}
+                className="p-5 border-2 rounded-lg transition-opacity duration-500 opacity-50"
+              >
+                <div className="h-40 bg-gray-300 rounded-lg animate-pulse"></div>
+                <div className="h-5 w-3/4 bg-gray-300 rounded-lg mt-4"></div>
+                <div className="h-4 w-1/2 bg-gray-300 rounded-lg mt-2"></div>
+                <div className="flex items-center mt-4">
+                  <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+                  <div className="ml-2 h-4 w-20 bg-gray-300 rounded-lg"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : assignment.length > 0 ? (
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                : "flex flex-col gap-4"
+            }
+          >
+            {filteredAssignment.map((assignment, index) => (
+              <AssignmentCard
+                key={index}
+                assignment={assignment}
+                viewMode={viewMode}
+                onStart={handleExerciseClick}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 text-lg font-semibold mt-10">
+            Không có bài tập nào
+          </div>
+        )}
       </div>
       {adding && (
         <AssignmentModal
