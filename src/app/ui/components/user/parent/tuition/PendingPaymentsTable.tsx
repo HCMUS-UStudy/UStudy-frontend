@@ -58,29 +58,23 @@ export default function PendingPaymentsTable({
           {filteredPendingPayments.map((payment) => (
             <TableRow key={payment.invoiceId}>
               <TableCell>
-                {formatDate(payment.paymentPeriodDto.startDate)} -{" "}
-                {formatDate(payment.paymentPeriodDto.endDate)}
-              </TableCell>
-              <TableCell>
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
                     <FaUser className="h-4 w-4" />
                   </div>
-                  <span>{payment.paymentPeriodDto.student.name}</span>
+                  <span>{payment.student.name}</span>
                 </div>
               </TableCell>
               <TableCell>
                 <div>
-                  <p className="font-medium">
-                    {payment.paymentPeriodDto.enrolledClass.name}
-                  </p>
+                  <p className="font-medium">{payment.enrolledClass.name}</p>
                   <p className="text-sm text-gray-500">
-                    {payment.paymentPeriodDto.enrolledClass.course.name}
+                    {payment.enrolledClass.course.name}
                   </p>
                 </div>
               </TableCell>
               <TableCell className="font-medium text-primary-darker">
-                {formatCurrency(payment.paymentPeriodDto.amount)}
+                {formatCurrency(payment.amount)}
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-center">

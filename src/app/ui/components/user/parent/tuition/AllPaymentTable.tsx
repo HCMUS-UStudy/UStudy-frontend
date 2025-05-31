@@ -46,9 +46,8 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
         />
         <TableBody>
           {payments.map((payment) => {
-            const student = payment.paymentPeriodDto.student;
-            const enrolledClass = payment.paymentPeriodDto.enrolledClass;
-            const semester = `${formatDate(payment.paymentPeriodDto.startDate)} - ${formatDate(payment.paymentPeriodDto.endDate)}`;
+            const student = payment.student;
+            const enrolledClass = payment.enrolledClass;
             const dueDate = payment.paymentDate;
             const isOverdue =
               payment.status === "PENDING" && new Date(dueDate) < new Date();
@@ -67,11 +66,10 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                 <TableCell>
                   <div>
                     <p className="font-medium">{enrolledClass.name}</p>
-                    <p className="text-sm text-gray-500">{semester}</p>
                   </div>
                 </TableCell>
                 <TableCell className="font-medium text-primary-darker">
-                  {formatCurrency(payment.paymentPeriodDto.amount)}
+                  {formatCurrency(payment.amount)}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center">
