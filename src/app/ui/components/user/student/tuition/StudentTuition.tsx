@@ -1,233 +1,226 @@
-// "use client";
+"use client";
 
-// import React, { useEffect, useState } from "react";
-// import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
-// import PaymentDetailsModal from "@/app/ui/components/user/parent/tuition/PaymentDetailsModal";
-// import PaymentMethodModal from "@/app/ui/components/user/parent/tuition/PaymentMethodModal";
-// import Header from "@/app/ui/components/user/student/tuition/Header";
-// import PendingPaymentsList from "@/app/ui/components/user/student/tuition/PendingPaymentsList";
-// import PaidPaymentsList from "@/app/ui/components/user/student/tuition/PaidPaymentsList";
-// import AllPaymentsList from "@/app/ui/components/user/student/tuition/AllPaymentsList";
-// import { TuitionPayment, UserData } from "@/app/types";
-// import { getPaymentByStuId } from "@/app/lib/services/payment";
-// import { keepPreviousData, useQuery } from "@tanstack/react-query";
-// import { getUserDataFromCookies } from "@/app/lib/action";
+import React, { useEffect, useState } from "react";
+import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
+import PaymentDetailsModal from "@/app/ui/components/user/parent/tuition/PaymentDetailsModal";
+import PaymentMethodModal from "@/app/ui/components/user/parent/tuition/PaymentMethodModal";
+import { PaymentItem, UserData } from "@/app/types";
+import { getPaymentByStuId } from "@/app/lib/services/payment";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getUserDataFromCookies } from "@/app/lib/action";
+import PaymentLoadingSkeleton from "../../parent/tuition/PaymentLoadingSkeleton";
+import Header from "../../parent/tuition/Header";
+import PendingPaymentsTable from "../../parent/tuition/PendingPaymentsTable";
+import PaidPaymentsTable from "../../parent/tuition/PaidPaymentsTable";
+import AllPaymentTable from "../../parent/tuition/AllPaymentTable";
+import Pagination from "../../../_common/Pagination";
 
-// export default function StudentTuition() {
-//   const [activeTab, setActiveTab] = useState<string>("pending");
-//   const [selectedPayment, setSelectedPayment] = useState<TuitionPayment | null>(
-//     null,
-//   );
-//   const [showPaymentMethod, setShowPaymentMethod] = useState<boolean>(false);
-//   const [currentPage, setCurrentPage] = useState<number>(1);
-//   const [userData, setUserData] = useState<UserData | null>(null);
-//   useEffect(() => {
-//     const getUserInfo = async () => {
-//       const res = await getUserDataFromCookies();
-//       setUserData(res);
-//     };
-//     getUserInfo();
-//   }, []);
-//   const {
-//     data: paymentData,
-//     error,
-//     isLoading,
-//     isFetching,
-//   } = useQuery({
-//     queryKey: ["payments", activeTab, userData., currentPage - 1],
-//     queryFn: () =>
-//       getPaymentByStuId(selectedChild, currentPage - 1, 1, statusParam),
-//     placeholderData: keepPreviousData,
-//   });
-//   const pendingPayments: TuitionPayment[] = [
-//     {
-//       id: "1",
-//       invoiceNumber: "INV-2025-001",
-//       amount: 3500000,
-//       status: "PENDING",
-//       dueDate: "2025-04-25",
-//       description: "Học phí học kỳ 1 năm học 2025-2026",
-//       semester: "Học kỳ 1 năm học 2025-2026",
-//       classId: "CLS001",
-//       className: "Lớp Toán 11A",
-//       studentId: "ST001",
-//       studentName: "Nguyễn Văn A",
-//     },
-//     {
-//       id: "2",
-//       invoiceNumber: "INV-2025-002",
-//       amount: 2800000,
-//       status: "PENDING",
-//       dueDate: "2025-05-10",
-//       description: "Học phí khóa học Tiếng Anh nâng cao",
-//       semester: "Học kỳ 1 năm học 2025-2026",
-//       classId: "CLS002",
-//       className: "Lớp Tiếng Anh nâng cao",
-//       studentId: "ST001",
-//       studentName: "Nguyễn Văn A",
-//     },
-//   ];
+export default function StudentTuition() {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages] = useState(5);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(
+    null,
+  );
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
 
-//   const paidPayments: TuitionPayment[] = [
-//     {
-//       id: "3",
-//       invoiceNumber: "INV-2024-023",
-//       amount: 3200000,
-//       status: "PAID",
-//       dueDate: "2024-12-20",
-//       paidDate: "2024-12-15",
-//       description: "Học phí học kỳ 2 năm học 2024-2025",
-//       semester: "Học kỳ 2 năm học 2024-2025",
-//       classId: "CLS003",
-//       className: "Lớp Toán 10A",
-//       studentId: "ST001",
-//       studentName: "Nguyễn Văn A",
-//     },
-//     {
-//       id: "4",
-//       invoiceNumber: "INV-2024-015",
-//       amount: 2500000,
-//       status: "PAID",
-//       dueDate: "2024-08-15",
-//       paidDate: "2024-08-12",
-//       description: "Học phí học kỳ 1 năm học 2024-2025",
-//       semester: "Học kỳ 1 năm học 2024-2025",
-//       classId: "CLS004",
-//       className: "Lớp Lý 10A",
-//       studentId: "ST001",
-//       studentName: "Nguyễn Văn A",
-//     },
-//   ];
+  const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-//   const formatCurrency = (amount: number) => {
-//     return new Intl.NumberFormat("vi-VN", {
-//       style: "currency",
-//       currency: "VND",
-//     }).format(amount);
-//   };
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const res = await getUserDataFromCookies();
+      setUserData(res);
+    };
+    getUserInfo();
+  }, []);
+  const {
+    data: paymentData,
+    error,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["payments", activeTab, userData, currentPage - 1],
+    queryFn: () =>
+      getPaymentByStuId(undefined, currentPage - 1, 1, statusParam),
+    placeholderData: keepPreviousData,
+  });
+  console.log(paymentData?.content);
+  const payments = paymentData?.content || [];
 
-//   const formatDate = (dateString: string) => {
-//     const date = new Date(dateString);
-//     return new Intl.DateTimeFormat("vi-VN").format(date);
-//   };
+  const pendingPayments = payments.filter((p) => p.status === "PENDING");
+  const completedPayments = payments.filter((p) => p.status === "COMPLETED");
+  const filteredAllPayments = [...pendingPayments, ...completedPayments];
 
-//   const getStatusColor = (status: string) => {
-//     switch (status) {
-//       case "PAID":
-//         return "text-green-600 bg-green-100";
-//       case "PENDING":
-//         return "text-yellow-600 bg-yellow-100";
-//       case "OVERDUE":
-//         return "text-red-600 bg-red-100";
-//       case "CANCELLED":
-//         return "text-gray-600 bg-gray-100";
-//       default:
-//         return "text-gray-600";
-//     }
-//   };
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
+  };
 
-//   const getStatusName = (status: string) => {
-//     switch (status) {
-//       case "PAID":
-//         return "Đã thanh toán";
-//       case "PENDING":
-//         return "Chờ thanh toán";
-//       case "OVERDUE":
-//         return "Quá hạn";
-//       case "CANCELLED":
-//         return "Đã hủy";
-//       default:
-//         return status;
-//     }
-//   };
+  // Formatear la fecha
+  const formatDate = (date: string | Date): string => {
+    const parsedDate = typeof date === "string" ? new Date(date) : date;
+    return new Intl.DateTimeFormat("vi-VN").format(parsedDate);
+  };
 
-//   const handleOpenDetails = (payment: TuitionPayment) => {
-//     setSelectedPayment(payment);
-//   };
+  // Obtener el color según el estado del pago
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "COMPLETED":
+        return "text-green-600 bg-green-100";
+      case "PENDING":
+        return "text-yellow-600 bg-yellow-100";
+      case "OVERDUE":
+        return "text-red-600 bg-red-100";
+      default:
+        return "text-gray-600";
+    }
+  };
 
-//   const handleCloseDetails = () => {
-//     setSelectedPayment(null);
-//   };
+  // Traducir el estado de pago al vietnamita
+  const getStatusName = (status: string) => {
+    switch (status) {
+      case "COMPLETED":
+        return "Đã thanh toán";
+      case "PENDING":
+        return "Chờ thanh toán";
+      case "OVERDUE":
+        return "Quá hạn";
+      default:
+        return status;
+    }
+  };
 
-//   const handlePayNow = (payment: TuitionPayment) => {
-//     setSelectedPayment(payment);
-//     setShowPaymentMethod(true);
-//   };
+  // Mostrar detalles de un pago específico
+  const handleViewDetails = (payment: PaymentItem) => {
+    setSelectedPayment(payment);
+    setShowPaymentDetails(true);
+  };
 
-//   const handleClosePaymentMethod = () => {
-//     setShowPaymentMethod(false);
-//   };
+  // Iniciar el proceso de pago
+  const handlePayNow = (payment: PaymentItem) => {
+    setSelectedPayment(payment);
+    setShowPaymentMethod(true);
+  };
 
-//   const handlePaymentComplete = () => {
-//     setShowPaymentMethod(false);
-//     setSelectedPayment(null);
-//   };
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
-//   return (
-//     <div className="px-2">
-//       <Header
-//         pendingPayments={pendingPayments}
-//         paidPayments={paidPayments}
-//         handlePayNow={handlePayNow}
-//       />
-//       <Tabs value={activeTab} onTabChange={setActiveTab}>
-//         <TabList className="mb-6">
-//           <Tab label="Chờ thanh toán" value="pending" />
-//           <Tab label="Đã thanh toán" value="paid" />
-//           <Tab label="Tất cả" value="all" />
-//         </TabList>
+  if (isLoading) {
+    return (
+      <div className="space-y-4 p-4">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="animate-pulse flex items-center justify-between bg-gray-100 p-4 rounded shadow"
+          >
+            <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/6"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
-//         <TabPanel value="pending">
-//           <PendingPaymentsList
-//             pendingPayments={pendingPayments}
-//             formatCurrency={formatCurrency}
-//             formatDate={formatDate}
-//             getStatusColor={getStatusColor}
-//             getStatusName={getStatusName}
-//             handleOpenDetails={handleOpenDetails}
-//             handlePayNow={handlePayNow}
-//           />
-//         </TabPanel>
+  return (
+    <>
+      {isFetching ? (
+        <PaymentLoadingSkeleton />
+      ) : (
+        <>
+          <div className="px-2">
+            <Header
+              pendingPayments={pendingPayments}
+              paidPayments={completedPayments}
+              formatCurrency={formatCurrency}
+            />
 
-//         <TabPanel value="paid">
-//           <PaidPaymentsList
-//             paidPayments={paidPayments}
-//             formatCurrency={formatCurrency}
-//             formatDate={formatDate}
-//             getStatusColor={getStatusColor}
-//             getStatusName={getStatusName}
-//             handleOpenDetails={handleOpenDetails}
-//           />
-//         </TabPanel>
+            <Tabs value={activeTab} onTabChange={setActiveTab}>
+              <TabList>
+                <Tab value="pending" label="Chờ thanh toán" />
+                <Tab value="completed" label="Đã thanh toán" />
+                <Tab value="all" label="Tất cả" />
+              </TabList>
 
-//         <TabPanel value="all">
-//           <AllPaymentsList
-//             payments={[...pendingPayments, ...paidPayments]}
-//             formatCurrency={formatCurrency}
-//             formatDate={formatDate}
-//             getStatusColor={getStatusColor}
-//             getStatusName={getStatusName}
-//             handleOpenDetails={handleOpenDetails}
-//             handlePayNow={handlePayNow}
-//           />
-//         </TabPanel>
-//       </Tabs>
+              <TabPanel value="pending">
+                <PendingPaymentsTable
+                  filteredPendingPayments={pendingPayments}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  getStatusName={getStatusName}
+                  getStatusColor={getStatusColor}
+                  handleViewDetails={handleViewDetails}
+                  handlePayNow={handlePayNow}
+                />
+              </TabPanel>
 
-//       {selectedPayment && !showPaymentMethod && (
-//         <PaymentDetailsModal
-//           payment={selectedPayment}
-//           onClose={handleCloseDetails}
-//           onPayNow={handlePayNow}
-//         />
-//       )}
+              <TabPanel value="completed">
+                <PaidPaymentsTable
+                  data={completedPayments}
+                  onViewDetails={handleViewDetails}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  getStatusName={getStatusName}
+                  getStatusColor={getStatusColor}
+                />
+              </TabPanel>
 
-//       {selectedPayment && showPaymentMethod && (
-//         <PaymentMethodModal
-//           payment={selectedPayment}
-//           onClose={handleClosePaymentMethod}
-//           onPaymentComplete={handlePaymentComplete}
-//         />
-//       )}
-//     </div>
-//   );
-// }
+              <TabPanel value="all">
+                <AllPaymentTable
+                  payments={filteredAllPayments}
+                  onViewDetails={handleViewDetails}
+                  onPayNow={handlePayNow}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  getStatusName={getStatusName}
+                  getStatusColor={getStatusColor}
+                />
+              </TabPanel>
+
+              <div className="mt-4 flex justify-end">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={paymentData?.totalPages || 2}
+                  handlePageClick={(page) => setCurrentPage(page)}
+                  handlePreviousPage={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  handleNextPage={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                />
+              </div>
+            </Tabs>
+          </div>
+
+          {/* Modals ngoài Tabs */}
+          {showPaymentDetails && selectedPayment && (
+            <PaymentDetailsModal
+              payment={selectedPayment}
+              onClose={() => setShowPaymentDetails(false)}
+              onPayNow={() => {
+                setShowPaymentDetails(false);
+                setShowPaymentMethod(true);
+              }}
+            />
+          )}
+
+          {showPaymentMethod && selectedPayment && (
+            <PaymentMethodModal
+              payment={selectedPayment}
+              onClose={() => setShowPaymentMethod(false)}
+              onPaymentComplete={() => {
+                setShowPaymentMethod(false);
+              }}
+            />
+          )}
+        </>
+      )}
+    </>
+  );
+}
