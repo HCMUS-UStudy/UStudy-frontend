@@ -97,3 +97,12 @@ export const getFreeUsers = async (
     throw error;
   }
 };
+
+export const getProfle = async () => {
+  try {
+    const response = await axiosInstance.get("/user/profile");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
