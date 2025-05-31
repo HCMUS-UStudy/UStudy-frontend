@@ -55,7 +55,7 @@ const AttendancePage = () => {
         queryFn: () =>
           getListMembers(
             classId,
-            searchParams.get("AccountName") ?? "",
+            searchParams?.get("AccountName") ?? "",
             currentPage,
             100,
             "STUDENT",
