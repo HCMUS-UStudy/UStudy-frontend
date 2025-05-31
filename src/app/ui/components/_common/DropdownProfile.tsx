@@ -48,7 +48,7 @@ const DropdownProfile = ({
       </div>
       {toggleCollapse && (
         <div
-          className="absolute w-40 right-10 top-12 md:top-[60px] bg-white border border-gray-200
+          className="absolute w-40 right-8 top-12 md:top-[70px] bg-white border border-gray-200
             shadow-lg rounded-lg text-sm md:text-[15px] z-50"
         >
           <div

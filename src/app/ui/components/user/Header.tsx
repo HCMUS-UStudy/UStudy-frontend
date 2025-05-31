@@ -45,8 +45,8 @@ const Header = ({ role }: { role: string }) => {
   }, [role]);
 
   const handleProfileClick = () => {
-    console.log(`${pathname?.split("/")[1]}/profile`);
-    router.push(`${pathname?.split("/")[1]}/profile`);
+    console.log(`/${pathname?.split("/")[1]}/profile`);
+    router.push(`/${pathname?.split("/")[1]}/profile`);
   };
 
   const handleToggle = () => {
