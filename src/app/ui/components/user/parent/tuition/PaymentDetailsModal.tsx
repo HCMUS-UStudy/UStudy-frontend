@@ -8,7 +8,6 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { Button } from "@/app/ui/components/_common/Button";
-import { MdCreditCard } from "react-icons/md";
 import { PaymentItem } from "@/app/types";
 
 interface PaymentDetailsModalProps {
@@ -118,7 +117,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-gray-500">Số tiền</span>
               <span className="text-xl font-bold text-primary-darker">
-                {formatCurrency(payment.paymentPeriodDto.amount)}
+                {formatCurrency(payment.amount)}
               </span>
             </div>
           </div>
@@ -133,9 +132,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Học sinh</p>
-                  <p className="font-medium">
-                    {payment.paymentPeriodDto.student.name}
-                  </p>
+                  <p className="font-medium">{payment.student.name}</p>
                 </div>
               </div>
 
@@ -145,22 +142,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Lớp học</p>
-                  <p className="font-medium">
-                    {payment.paymentPeriodDto.enrolledClass.name}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start">
-                <div className="min-w-[30px] mr-4 mt-1">
-                  <MdCreditCard className="text-primary-darker" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Kỳ học</p>
-                  <p className="font-medium">
-                    {payment.paymentPeriodDto.startDate} -{" "}
-                    {payment.paymentPeriodDto.endDate}
-                  </p>
+                  <p className="font-medium">{payment.enrolledClass.name}</p>
                 </div>
               </div>
 
@@ -177,7 +159,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                   <p className="font-medium">
                     {payment.status === "COMPLETED" && payment.paymentDate
                       ? formatDate(payment.paymentDate)
-                      : formatDate(payment.paymentPeriodDto.endDate)}
+                      : ""}
                   </p>
                 </div>
               </div>

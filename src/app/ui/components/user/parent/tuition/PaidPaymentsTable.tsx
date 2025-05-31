@@ -54,18 +54,18 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                       <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
                         <FaUser className="h-4 w-4" />
                       </div>
-                      <span>{payment.paymentPeriodDto.student.name}</span>
+                      <span>{payment.student.name}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
                       <p className="font-medium">
-                        {payment.paymentPeriodDto.enrolledClass.name}
+                        {payment.enrolledClass.name}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-primary-darker">
-                    {formatCurrency(payment.paymentPeriodDto.amount)}
+                    {formatCurrency(payment.amount)}
                   </TableCell>
                   <TableCell>
                     {payment.paymentDate && formatDate(payment.paymentDate)}

@@ -16,11 +16,11 @@ export default function Header({
 }: HeaderProps) {
   const calculateTotals = () => {
     const totalPending = pendingPayments.reduce(
-      (sum, payment) => sum + payment.paymentPeriodDto.amount,
+      (sum, payment) => sum + payment.amount,
       0,
     );
     const totalPaid = paidPayments.reduce(
-      (sum, payment) => sum + payment.paymentPeriodDto.amount,
+      (sum, payment) => sum + payment.amount,
       0,
     );
 
