@@ -5,7 +5,7 @@ import {
   handleLogoutCookies,
   getPermissions,
 } from "./app/lib/action";
-import { handleRefreshToken } from "./app/lib/services/auth";
+import { handleRefreshToken, verifyToken } from "./app/lib/services/auth";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,11 +13,30 @@ export async function middleware(request: NextRequest) {
   const userData = await getUserDataFromCookies();
   const permissions = await getPermissions();
   // console.log(permissions);
-  let response;
+  let response: NextResponse;
   if (accessToken) {
     // if(!userData) {
     //   // cập nhật userData
     // }
+    const isValidToken = await verifyToken();
+    if (!isValidToken) {
+      switch (userData?.role.defaultRoute) {
+        case "ADMIN":
+          response = NextResponse.redirect(
+            new URL("/admin/login", request.url),
+          );
+          response.cookies.getAll().forEach((cookie) => {
+            response.cookies.delete(cookie.name);
+          });
+          return response;
+        default:
+          response = NextResponse.redirect(new URL("/login", request.url));
+          response.cookies.getAll().forEach((cookie) => {
+            response.cookies.delete(cookie.name);
+          });
+          return response;
+      }
+    }
     const defaultRoute = userData?.role.defaultRoute;
     if (pathname === "/login" || pathname === "/admin/login") {
       switch (defaultRoute) {

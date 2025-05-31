@@ -14,9 +14,9 @@ export default async function StudentClassesPage(props: {
   // const classQuery = searchParams?.classQuery || "All";
 
   return (
-    <div className="p-4 bg-foreground">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Danh sách lớp học</h2>
+    <div className=" bg-foreground">
+      <div className="flex items-center justify-between ">
+        <h2 className="text-lg md:text-2xl font-bold">Danh sách lớp học</h2>
       </div>
 
       <div className="flex items-center justify-between mt-2 gap-14">

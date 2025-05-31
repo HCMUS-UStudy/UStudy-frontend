@@ -120,7 +120,7 @@ const Tab: React.FC<TabProps> = ({ label, value, className }) => {
   return (
     <button
       className={cn(
-        "relative py-2 px-4 text-[16px] transition-all font-semibold",
+        "relative py-2 px-4 text-xs md:text-[16px] transition-all font-semibold",
         {
           "text-primary-dark": activeTab === value,
           "text-gray-700 hover:text-primary-darker": activeTab !== value,

@@ -32,7 +32,7 @@ export default async function ClassRegister(props: {
   return (
     <div className="bg-foreground">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-2xl font-bold">Các lớp học hiện có</h2>
+        <h2 className="text-lg md:text-2xl font-bold">Các lớp học hiện có</h2>
       </div>
 
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between mt-2 xl:gap-14 gap-4">

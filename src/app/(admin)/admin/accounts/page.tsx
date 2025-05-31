@@ -35,7 +35,7 @@ export default async function AccountPage(props: {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-2 gap-3 md:gap-14">
+      <div className="flex items-center justify-between mt-2 gap-2 md:gap-14">
         <SearchField
           className="w-full bg-primary-lighter"
           placeholder="Tìm kiếm người dùng..."

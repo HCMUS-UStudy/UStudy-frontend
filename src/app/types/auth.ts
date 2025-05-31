@@ -38,3 +38,9 @@ export type UserData = {
   branches: Branch[];
   hadClass: boolean;
 };
+
+export type VerifyTokenResponse = {
+  message: string;
+  status: string;
+  data: null;
+};

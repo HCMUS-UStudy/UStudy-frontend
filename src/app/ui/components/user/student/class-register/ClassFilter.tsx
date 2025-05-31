@@ -44,7 +44,7 @@ export default function ClassFilter() {
         className="text-nowrap min-w-32 w-full sm:w-auto"
         isLoading={grades.status === "pending"}
         onValueChange={(gradeId) => handleQuery(gradeQuery, gradeId as string)}
-        defaultLabel="Lọc môn học"
+        defaultLabel="Lọc khối học"
       >
         {grades.data?.content.map((item) => (
           <SelectItem key={item.id} value={item.id}>
@@ -58,7 +58,7 @@ export default function ClassFilter() {
         onValueChange={(courseId) =>
           handleQuery(courseQuery, courseId as string)
         }
-        defaultLabel="Lọc khối học"
+        defaultLabel="Lọc môn học"
       >
         {courses.data?.content.map((item) => (
           <SelectItem

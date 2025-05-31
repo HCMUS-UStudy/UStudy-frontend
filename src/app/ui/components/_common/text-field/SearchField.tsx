@@ -72,7 +72,7 @@ const SearchField = ({
       )}
     >
       <div>
-        <IoSearchOutline size={20} className="text-primary-darkest" />
+        <IoSearchOutline className="text-primary-darkest size-3 md:size-5" />
       </div>
       <input
         type="text"

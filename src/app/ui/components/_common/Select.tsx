@@ -142,7 +142,7 @@ const Select: React.FC<SelectProps> = ({
       }}
     >
       {isLoading ? (
-        <div className="px-2 py-0.5 bg-primary-lighter flex justify-start border-2 border-slate-300 rounded-md text-nowrap">
+        <div className="px-2 py-0.5 bg-primary-lighter w-full flex justify-start border-2 border-slate-300 rounded-md text-nowrap">
           <Loading
             text={defaultLabel || "Đang tải..."}
             customStyle={{ spinner: "size-8" }}

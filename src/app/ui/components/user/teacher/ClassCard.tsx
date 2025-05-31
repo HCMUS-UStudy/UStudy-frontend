@@ -24,11 +24,11 @@ export default function ClassCard({
       ${!completed ? "bg-white hover:shadow-md hover:shadow-primary-light" : "bg-slate-100 hover:bg-slate-200"}`}
       onClick={handleClick}
     >
-      <h2 className="text-lg font-semibold">{cls.name}</h2>
-      <p className="bg-gray-200 rounded-lg text-sm text-slate-800 w-fit px-1 mt-1">
+      <h2 className="text-sm md:text-lg font-semibold">{cls.name}</h2>
+      <p className="bg-gray-200 rounded-lg text-xs md:text-sm text-slate-800 w-fit px-1 mt-1">
         {cls.course?.name} - {cls.grade.name}
       </p>
-      <div className="flex-col py-2 text-sm">25 học sinh</div>
+      <div className="flex-col py-2 text-xs md:text-sm">25 học sinh</div>
       {!completed && (
         <div className="flex items-center gap-4">
           <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -44,7 +44,7 @@ export default function ClassCard({
               }}
             ></div>
           </div>
-          <div className="text-[12px] text-primary-darkest">
+          <div className="text-[10px] md:text-[12px] text-primary-darkest">
             {" "}
             {Math.round(
               ((Date.now() - new Date(cls.startDate).getTime()) /
@@ -56,7 +56,7 @@ export default function ClassCard({
           </div>
         </div>
       )}
-      <p className="text-[14px] text-gray-900 mt-1">
+      <p className="text-xs md:text-[14px] text-gray-900 mt-1">
         {new Date(cls.startDate).toLocaleDateString("en-GB")} -{" "}
         {new Date(cls.endDate).toLocaleDateString("en-GB")}
       </p>

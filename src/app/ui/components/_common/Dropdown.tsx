@@ -74,7 +74,7 @@ export default function Dropdown({
         onClick={() => setIsOpen(!isOpen)}
       >
         <FiFilter className="size-4 md:size-5 text-gray-600" />
-        <span className="text-nowrap text-sm md:text-base">
+        <span className="text-nowrap text-xs md:text-base">
           {items.find((item) => item.key === selected)?.label || label}
         </span>
       </button>
@@ -87,7 +87,7 @@ export default function Dropdown({
             <button
               type="button"
               key={key}
-              className={`block w-full text-left text-sm md:text-base px-4 py-2 hover:bg-primary transition-colors ${
+              className={`block w-full text-left text-xs md:text-base px-4 py-2 hover:bg-primary transition-colors ${
                 defaultSelected === key ? "bg-primary-lighter" : ""
               }`}
               onClick={() => handleSelect(key)}

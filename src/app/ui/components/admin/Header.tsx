@@ -68,7 +68,7 @@ const Header: React.FC = () => {
 
   return (
     <div
-      className={`h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
+      className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       <div className="hidden md:inline font-bold mt-1">
