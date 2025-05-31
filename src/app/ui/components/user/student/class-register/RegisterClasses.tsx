@@ -62,6 +62,8 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     placeholderData: keepPreviousData,
   });
 
+  console.log(classes);
+
   const queryClient = useQueryClient();
 
   const registerClassMutation = useMutation({

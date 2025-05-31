@@ -68,7 +68,7 @@ const Header: React.FC = () => {
 
   return (
     <div
-      className={`h-header-height flex px-2 sm:px-8 justify-between items-center bg-foreground 
+      className={`h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       <div className="hidden md:inline font-bold mt-1">
@@ -78,7 +78,7 @@ const Header: React.FC = () => {
           SIDENAV_ITEMS_ADMIN.find((item) => pathname?.includes(item.path))
             ?.title}
       </div>
-      <div className="flex gap-6 items-center">
+      <div className="flex flex-1 gap-6 justify-between md:justify-end items-center">
         {!pathname?.includes("/admin/branches") &&
           !pathname?.includes("/admin/sessions") &&
           !pathname?.includes("/admin/profile") && <BranchSelector />}
