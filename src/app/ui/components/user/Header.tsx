@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { IoNotificationsOutline } from "react-icons/io5";
+import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
 import { UserData, SideNavItem } from "@/app/types";
 import {
   SIDENAV_ITEMS_STUDENT,
@@ -45,7 +45,8 @@ const Header = ({ role }: { role: string }) => {
   }, [role]);
 
   const handleProfileClick = () => {
-    router.push("/admin/profile");
+    console.log(`/${pathname?.split("/")[1]}/profile`);
+    router.push(`/${pathname?.split("/")[1]}/profile`);
   };
 
   const handleToggle = () => {
@@ -85,13 +86,13 @@ const Header = ({ role }: { role: string }) => {
 
   return (
     <div
-      className={`h-header-height min-h-header-height flex px-10 justify-between items-center bg-foreground 
+      className={`h-header-height min-h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
-      <div className="text-[14px] sm:text-lg font-bold mt-1">
+      <div className="hidden md:inline text-xl font-bold mt-1">
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
-      <div className="flex gap-6 items-center">
+      <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           {userInfo?.role.defaultRoute === "PARENT" &&
             pathname?.includes("/member/tuition") && (
@@ -109,9 +110,12 @@ const Header = ({ role }: { role: string }) => {
               </Select>
             )}
           <Tooltip text="Thông báo" position="bottom">
-            <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
+            <div className="p-2 hidden md:flex rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary transition-all">
               <IoNotificationsOutline size={24} />
             </div>
+          </Tooltip>
+          <Tooltip text="Thông báo" position="bottom">
+            <IoNotifications className="size-8 flex md:hidden text-primary-dark hover:text-primary-darkest transition-all cursor-pointer" />
           </Tooltip>
           <DropdownProfile
             userInfo={userInfo}

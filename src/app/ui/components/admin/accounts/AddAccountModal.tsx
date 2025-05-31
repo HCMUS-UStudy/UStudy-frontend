@@ -127,7 +127,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
 
   return (
     <>
-      <Button onClick={handleOpenModal} className="pl-6 pr-6">
+      <Button onClick={handleOpenModal} className="w-full">
         {buttonLabel}
       </Button>
 

@@ -33,3 +33,12 @@ export const handleRefreshToken = async (
     throw error;
   }
 };
+
+export const verifyToken = async (): Promise<boolean> => {
+  try {
+    const response = await axiosInstance.get("/auth/verify-token");
+    return response.data.statusCode === "OK";
+  } catch (error) {
+    throw error;
+  }
+};

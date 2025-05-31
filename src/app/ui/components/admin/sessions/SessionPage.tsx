@@ -84,7 +84,7 @@ const SessionManagement = () => {
     <>
       <div className="px-2">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-xl font-semibold">
+          <div className="text-lg md:text-xl font-semibold">
             Tổng số ca học ({sessions?.length})
           </div>
           <Button className="" onClick={() => setIsModalOpen(true)}>
@@ -110,15 +110,15 @@ const SessionManagement = () => {
               {sessions?.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.startTime}</TableCell>
-                  <TableCell>{item.endTime}</TableCell>
+                  <TableCell>{item.startTime.slice(0, 5)}</TableCell>
+                  <TableCell>{item.endTime.slice(0, 5)}</TableCell>
                   <TableCell className="flex gap-2">
                     <Tooltip text="Chỉnh sửa ca học">
                       <button
                         onClick={() => handleUpdateSession(item)}
                         className="text-blue-600 hover:text-blue-800 transition-all"
                       >
-                        <FaEdit className="h-5 w-5" />
+                        <FaEdit className="size-4 md:size-5" />
                       </button>
                     </Tooltip>
                     <Tooltip text="Xóa ca học">
@@ -126,7 +126,7 @@ const SessionManagement = () => {
                         onClick={() => handleDeleteSession(item.id)}
                         className="text-red-600 hover:text-red-800 transition-all"
                       >
-                        <FaTrashAlt className="h-5 w-5" />
+                        <FaTrashAlt className="size-4 md:size-5" />
                       </button>
                     </Tooltip>
                   </TableCell>

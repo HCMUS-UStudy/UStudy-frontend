@@ -70,20 +70,20 @@ const BranchSelector: React.FC = () => {
           className="relative cursor-pointer rounded-[20px]"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className="px-4 py-[10px] rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-[15px] items-center transition-all">
+          <div className="px-4 py-1.5 md:py-[10px] rounded-xl md:rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-sm md:text-[15px] items-center transition-all">
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
             <TiArrowSortedDown className="text-black" />
           </div>
           {isOpen && (
             <div
-              className="absolute top-full mt-[2px] max-h-52 overflow-y-auto left-0 w-full
+              className="absolute top-full mt-[4px] max-h-52 overflow-y-auto left-0 w-full
                   border border-gray-300 rounded-[10px] bg-white z-[1000] shadow-xl"
             >
               {branches.map((branch) => (
                 <div
                   key={branch.id}
-                  className={`px-4 py-2 cursor-pointer hover:bg-primary-light transition-all ${
+                  className={`px-4 py-2 text-sm md:text-base cursor-pointer hover:bg-primary-light transition-all ${
                     branch.id === selectedBranchId ? "bg-primary-light" : ""
                   }`}
                   onClick={() => handleBranchChange(branch.id)}

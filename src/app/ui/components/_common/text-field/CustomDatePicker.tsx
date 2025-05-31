@@ -99,7 +99,7 @@ export const CustomDatePicker = <T extends FieldValues>({
                     placeholderText={placeholder}
                     id={name}
                     dateFormat="dd/MM/yyyy"
-                    className="w-full px-2  rounded outline-none cursor-pointer text-sm"
+                    className="w-full px-2  rounded outline-none cursor-pointer text-sm bg-transparent"
                     selected={date}
                     icon={<FaCalendar className="text-gray-500" />}
                     showIcon

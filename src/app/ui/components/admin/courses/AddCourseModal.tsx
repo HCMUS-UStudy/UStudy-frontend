@@ -82,7 +82,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
 
   return (
     <>
-      <Button onClick={handleOpenModal} className="pl-6 pr-6">
+      <Button onClick={handleOpenModal} className="w-full md:w-auto">
         {buttonLabel}
       </Button>
 

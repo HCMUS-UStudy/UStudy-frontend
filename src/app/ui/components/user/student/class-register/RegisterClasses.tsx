@@ -62,6 +62,8 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     placeholderData: keepPreviousData,
   });
 
+  console.log(classes);
+
   const queryClient = useQueryClient();
 
   const registerClassMutation = useMutation({
@@ -109,7 +111,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   };
 
   const handlePayment = (classItem: ClassToRegisterItem) => {
-    console.log(classItem.payment.id);
+    console.log(classItem);
     setPaymentPendingId(classItem.classDto.id);
     paymentMutation.mutate(classItem.payment.id);
   };

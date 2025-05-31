@@ -1,0 +1,85 @@
+# Use Node.js 20 Alpine as the base image for all jobs
+# Alpine is a lightweight Linux distribution that helps reduce build time
+image: node:20-alpine
+
+# Define the stages of our CI/CD pipeline
+# Stages run in sequence: build -> test -> deploy
+stages:
+  - build
+  - test
+  - deploy
+
+# Global variables available to all jobs
+variables:
+  # Disable Next.js telemetry to avoid unnecessary data collection
+  NEXT_TELEMETRY_DISABLED: 1
+
+# Configure caching to speed up pipeline execution
+cache:
+  # Use branch name as cache key to prevent cache conflicts between branches
+  key: ${CI_COMMIT_REF_SLUG}
+  # Cache node_modules and Next.js build cache
+  paths:
+    - node_modules/
+    - .next/cache
+
+# Build stage: Compile the Next.js application
+build:
+  stage: build
+  script:
+    # Install dependencies using clean install (faster and more reliable than npm install)
+    - npm ci
+    # Build the Next.js application
+    - npm run build
+  # Save build artifacts for use in later stages
+  artifacts:
+    paths:
+      - .next # Next.js build output
+      - public # Static files
+      - package.json # Dependencies manifest
+      - package-lock.json # Lock file for consistent installs
+      - node_modules # Installed dependencies
+    # Keep artifacts for 1 week to allow for debugging
+    expire_in: 1 week
+
+# Test stage: Run application tests
+test:
+  stage: test
+  script:
+    # Install dependencies
+    - npm ci
+    # Run test suite
+    - npm run test
+  # Use artifacts from build stage
+  dependencies:
+    - build
+
+# Deploy to staging environment
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploying to staging environment"
+    # TODO: Add your staging deployment commands here
+    # Example: - npm run deploy:staging
+  # Define environment for GitLab environment tracking
+  environment:
+    name: staging
+  # Only run on develop branch
+  only:
+    - develop
+
+# Deploy to production environment
+deploy_production:
+  stage: deploy
+  script:
+    - echo "Deploying to production environment"
+    # TODO: Add your production deployment commands here
+    # Example: - npm run deploy:production
+  # Define environment for GitLab environment tracking
+  environment:
+    name: production
+  # Only run on main branch
+  only:
+    - main
+  # Require manual approval before deploying to production
+  when: manual

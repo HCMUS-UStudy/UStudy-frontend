@@ -8,15 +8,20 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ className }) => {
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex gap-1 sm:gap-2 items-center">
       <Image
-        className="object-contain"
+        className="object-contain size-8 sm:size-12"
         src={"/UStudyIcon.png"}
         width={38}
         height={38}
         alt="UStudyLogo"
       />
-      <div className={twMerge("text-[34px] font-extrabold mt-1", className)}>
+      <div
+        className={twMerge(
+          "text-2xl sm:text-[34px] font-extrabold mt-1",
+          className,
+        )}
+      >
         <span className=" text-highlight-text">US</span>tudy
       </div>
     </div>

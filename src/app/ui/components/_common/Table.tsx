@@ -112,7 +112,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
         {columns.map((col, index) => (
           <th
             key={index}
-            className={`${classNameTH?.[index]} pl-5 py-3 text-[14px] text-left`}
+            className={`${classNameTH?.[index]} pl-5 py-3 text-xs md:text-[14px] text-left`}
           >
             {col}
           </th>
@@ -266,7 +266,10 @@ export const TableCell: React.FC<TableCellProps> = ({
   ...props
 }: TableCellProps) => {
   return (
-    <td className={cn(`pl-5 py-4 text-sm text-left ${className}`)} {...props}>
+    <td
+      className={cn(`pl-5 py-4 text-xs md:text-sm text-left ${className}`)}
+      {...props}
+    >
       {children}
     </td>
   );

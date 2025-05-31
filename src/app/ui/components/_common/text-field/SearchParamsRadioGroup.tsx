@@ -127,14 +127,19 @@ export const SearchParamsRadioGroup: React.FC<SearchParamsRadioGroupProps> = ({
       {label && (
         <h1 className={cn("text-gray-700", labelClassName)}>{label}</h1>
       )}
-      <div className={cn("flex items-center gap-4", radioGroupClassName)}>
+      <div
+        className={cn(
+          "flex flex-col justify-start sm:items-center sm:flex-row gap-4",
+          radioGroupClassName,
+        )}
+      >
         {options.map((option) => {
           const inputId = `${queryKey}-${option.value}`;
           return (
             <div key={option.value} className="flex items-center gap-2">
               <label
                 htmlFor={inputId}
-                className="cursor-pointer h-8 w-8 bg-background border-2 rounded-full flex justify-center items-center relative"
+                className="cursor-pointer h-7 w-7 sm:h-8 sm:w-8 bg-background border-2 rounded-full flex justify-center items-center relative"
               >
                 <input
                   type="radio"
@@ -145,7 +150,7 @@ export const SearchParamsRadioGroup: React.FC<SearchParamsRadioGroupProps> = ({
                   onChange={(e) => handleValueChange(e.target.value)}
                 />
                 <div className="w-full h-full absolute bg-transparent border-primary-dark border-0 peer-checked:border-2 transition-colors rounded-full"></div>
-                <div className="w-4 h-4 bg-primary-darkest scale-0 peer-checked:scale-100 transition-transform rounded-full"></div>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-primary-darkest scale-0 peer-checked:scale-100 transition-transform rounded-full"></div>
               </label>
               <label htmlFor={inputId} className="cursor-pointer select-none">
                 {option.label}

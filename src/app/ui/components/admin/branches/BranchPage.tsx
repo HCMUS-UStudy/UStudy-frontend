@@ -5,8 +5,6 @@ import React, { Suspense, useEffect, useState } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
 import { getAllBranches } from "@/app/lib/services/branch";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-import { FiFilter } from "react-icons/fi";
-import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { Branch } from "@/app/types";
 import { useDispatch } from "react-redux";
@@ -62,12 +60,12 @@ const BranchPage = () => {
   return (
     <Suspense>
       <div className="px-2">
-        <div className="flex items-center justify-between">
-          <div className="text-xl font-semibold mb-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="text-lg md:text-xl font-semibold ">
             Tổng số chi nhánh ({fetchBranches?.totalElements})
           </div>
 
-          <Button onClick={onCreateBranch} className="px-6">
+          <Button onClick={onCreateBranch} className="text-nowrap">
             Thêm chi nhánh
           </Button>
         </div>
@@ -80,7 +78,7 @@ const BranchPage = () => {
               queryKey="name"
             />
           </Suspense>
-          <div className="flex items-center gap-6 px-4">
+          {/* <div className="flex items-center gap-6 px-4">
             <div className="flex items-center gap-3 cursor-pointer">
               Lọc
               <FiFilter className="w-5 h-5" />
@@ -88,7 +86,7 @@ const BranchPage = () => {
             <div className="flex items-center cursor-pointer">
               <HiAdjustmentsHorizontal className="w-6 h-6" />
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Branch List */}
@@ -109,19 +107,21 @@ const BranchPage = () => {
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
+                    <TableCell className="text-nowrap">{item.name}</TableCell>
                     <TableCell>{item.address}</TableCell>
-                    <TableCell>{item.contactNumber}</TableCell>
+                    <TableCell className=" truncate">
+                      {item.contactNumber}
+                    </TableCell>
                     <TableCell>{item.rooms}</TableCell>
-                    <TableCell className="flex gap-2">
+                    <TableCell className="flex items-center h-full gap-2">
                       <Tooltip text="Chỉnh sửa chi nhánh">
                         <button className="text-blue-600 hover:text-blue-800 transition-all">
-                          <FaEdit className="h-5 w-5" />
+                          <FaEdit className="size-4 md:size-5" />
                         </button>
                       </Tooltip>
                       <Tooltip text="Xóa chi nhánh">
                         <button className="text-red-600 hover:text-red-800 transition-all">
-                          <FaTrashAlt className="h-5 w-5" />
+                          <FaTrashAlt className="size-4 md:size-5" />
                         </button>
                       </Tooltip>
                       <Tooltip text="Xem chi tiết">
@@ -129,7 +129,7 @@ const BranchPage = () => {
                           onClick={() => handleDetail(item)}
                           className="text-primary-dark hover:text-primary-darkest transition-all"
                         >
-                          <Eye className="h-5 w-5" />
+                          <Eye className="size-4 md:size-5" />
                         </button>
                       </Tooltip>
                     </TableCell>

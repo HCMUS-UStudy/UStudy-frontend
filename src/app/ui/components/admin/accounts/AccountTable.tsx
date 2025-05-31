@@ -201,12 +201,12 @@ const AccountTable: React.FC<AccountTableProps> = ({
                     className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
                   >
                     <Tooltip text="Xóa tài khoản">
-                      <FaTrashAlt className="size-4" />
+                      <FaTrashAlt className="size-4 md:size-4" />
                     </Tooltip>
                   </button>
                   <button className="flex justify-center items-center text-yellow-600 hover:text-yellow-800 transition-colors">
                     <Tooltip text="Khóa tài khoản">
-                      <FiLock className="size-5" />
+                      <FiLock className="size-4 md:size-5" />
                     </Tooltip>
                   </button>
                   <button
@@ -214,7 +214,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
                     className="flex justify-center items-center text-primary-dark hover:text-primary-darkest transition-colors"
                   >
                     <Tooltip text="Xem chi tiết">
-                      <Eye className="size-6" />
+                      <Eye className="size-5 md:size-6" />
                     </Tooltip>
                   </button>
                 </TableCell>

@@ -110,7 +110,7 @@ const SessionModal = ({
     },
   });
   return (
-    <Dialog className="w-1/3" isOpen={isOpen} onClose={onClose}>
+    <Dialog className="w-1/2 md:w-1/3" isOpen={isOpen} onClose={onClose}>
       <DialogHeader className="text-center">Tạo ca học mới</DialogHeader>
       <DialogContent>
         <form
