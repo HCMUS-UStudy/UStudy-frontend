@@ -73,11 +73,9 @@ export default async function CoursePage(props: {
   return (
     <>
       <div className="px-2">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:justify-between w-full ">
           <CourseNumber searchQuery={query} />
-          <div className="flex items-center">
-            <AddCourseModal buttonLabel="Tạo môn học" />
-          </div>
+          <AddCourseModal buttonLabel="Tạo môn học" />
         </div>
 
         <CourseTable searchQuery={query} />

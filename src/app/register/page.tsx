@@ -107,14 +107,14 @@ export default function StudentRegister() {
 
   return (
     <FormProvider {...methods}>
-      <div className="flex items-center justify-center h-screen overflow-auto">
+      <div className="flex items-center justify-center min-h-screen md:h-screen overflow-auto">
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light">
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            className="relative bg-foreground py-10 px-10 lg:px-16 xl:px-20 rounded-3xl shadow-lg z-[100] flex flex-col gap-2 w-2/3"
+            className="relative bg-primary-lighter md:bg-foreground py-10 px-10 lg:px-16 xl:px-20 h-auto md:rounded-3xl shadow-lg z-[100] flex flex-col gap-2 w-full md:w-2/3"
           >
             <Lottie
-              className="absolute -top-28 -left-20 size-56"
+              className="absolute -top-28 -left-20 size-56 invisible lg:visible"
               animationData={registeringAnimation}
               loop
             />
@@ -123,7 +123,7 @@ export default function StudentRegister() {
               Ghi danh
             </div>
             <StudentBasicInformation />
-            {/* <div className="col-span-3 flex flex-col gap-4 lg:pl-10">
+            {/* <div className="col-span-3 flex flex-col gap-4 lg:p l-10">
                 <StudentGradeSelector />
                 <StudentBranchSelector />
                 <StudentCoursesSelector />

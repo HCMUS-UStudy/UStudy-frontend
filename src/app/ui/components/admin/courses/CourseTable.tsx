@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import SearchField from "../../_common/text-field/SearchField";
-import { HiAdjustments } from "react-icons/hi";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import EmptyListOrTable from "../../_common/EmptyListOrTable";
 import Tooltip from "../../_common/Tooltip";
@@ -90,16 +89,8 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
     <div>
       <div className="flex items-center justify-between mt-2 gap-14">
         <SearchField className="w-full" placeholder="Tìm kiếm môn học..." />
-        <div className="flex items-center gap-6 px-4">
-          <div className="flex items-center">
-            {/* <DropdownCourse label="Lọc" onSelectCourse={setSelectedCourse} /> */}
-          </div>
-          <div className="flex items-center">
-            <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
-          </div>
-        </div>
       </div>
-      <div className="overflow-x-auto mt-6 ">
+      <div className="overflow-x-auto mt-3 ">
         {courses?.totalElements === 0 ? (
           <EmptyListOrTable message="Không tìm thấy môn học" />
         ) : (

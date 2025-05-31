@@ -25,11 +25,12 @@ export default function StudentConfirmRegisterClass({
     mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
     onSuccess: (response) => {
       console.log(response);
-      toast.success(response, {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      window.open(response, "_blank");
+      // toast.success(response, {
+      //   position: "bottom-right",
+      //   autoClose: 3000,
+      //   pauseOnHover: false,
+      // });
       onClose();
     },
     onError: (error) => {

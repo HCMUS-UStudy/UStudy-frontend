@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { IoNotificationsOutline } from "react-icons/io5";
+import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
 // import BranchSelector from "./BranchSelector";
 import { UserData } from "@/app/types";
 import { SIDENAV_ITEMS_ADMIN } from "@/app/menu-constants";
@@ -68,25 +68,28 @@ const Header: React.FC = () => {
 
   return (
     <div
-      className={`h-header-height flex px-2 sm:px-8 justify-between items-center bg-foreground 
+      className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
-      <div className="text-[15px] sm:text-lg font-bold mt-1">
+      <div className="hidden md:inline font-bold mt-1">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
           (subItem) => pathname?.includes(subItem.path),
         )?.title ||
           SIDENAV_ITEMS_ADMIN.find((item) => pathname?.includes(item.path))
             ?.title}
       </div>
-      <div className="flex gap-6 items-center">
+      <div className="flex flex-1 gap-6 justify-between md:justify-end items-center">
         {!pathname?.includes("/admin/branches") &&
           !pathname?.includes("/admin/sessions") &&
           !pathname?.includes("/admin/profile") && <BranchSelector />}
         <div className="flex gap-3 items-center" ref={dropdownRef}>
           <Tooltip text="Thông báo" position="bottom">
-            <div className="p-2 rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary">
+            <div className="p-2 hidden md:flex rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary transition-all">
               <IoNotificationsOutline size={24} />
             </div>
+          </Tooltip>
+          <Tooltip text="Thông báo" position="bottom">
+            <IoNotifications className="size-8 flex md:hidden text-primary-dark hover:text-primary-darkest transition-all cursor-pointer" />
           </Tooltip>
           <DropdownProfile
             userInfo={userInfo}

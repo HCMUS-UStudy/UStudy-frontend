@@ -43,6 +43,8 @@ const ClassAdmin = () => {
   const { data: classDetail, isLoading } = classQuery;
   const { data: classSchedule } = classScheduleQuery;
 
+  console.log(classSchedule);
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("vi-VN", {
@@ -106,7 +108,7 @@ const ClassAdmin = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
             📆 Danh sách buổi học
           </h3>
-          {classSchedule.length > 0 ? (
+          {classSchedule && classSchedule.length > 0 ? (
             <ul className="space-y-3">
               {classSchedule.map(
                 (schedule: ClassScheduleItem, index: number) => (
@@ -123,7 +125,9 @@ const ClassAdmin = () => {
                           Ngày: {formatDate(schedule.date)}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Phòng: {schedule.classSession.room.name}
+                          Phòng:{" "}
+                          {schedule.classSession.room?.name ??
+                            "Chưa có phòng học"}
                         </div>
                       </div>
                       {schedule.isPassed ? (

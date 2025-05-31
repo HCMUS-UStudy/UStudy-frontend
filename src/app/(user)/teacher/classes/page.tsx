@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-import { FiFilter } from "react-icons/fi";
-import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import ClassList from "@/app/ui/components/user/teacher/ClassList";
 import { ClassTeacher } from "@/app/types";
 import { getClassesForTeacher } from "@/app/lib/services/class";
@@ -57,12 +55,12 @@ export default function Classes() {
         <div className="flex items-center justify-between mb-4 gap-2">
           <Suspense>
             <SearchField
-              className="w-full bg-primary-lighter py-[2px] rounded-2xl"
+              className="w-full bg-primary-lighter py-[2px] rounded-xl"
               placeholder="Tìm kiếm lớp học..."
               // onSearch={handleSearch}
             />
           </Suspense>
-          <div className="flex items-center gap-6 px-4">
+          {/* <div className="flex items-center gap-6 px-4">
             <div className="flex items-center gap-3 cursor-pointer">
               Lọc
               <FiFilter className="w-5 h-5" />
@@ -70,7 +68,7 @@ export default function Classes() {
             <div className="flex items-center cursor-pointer">
               <HiAdjustmentsHorizontal className="w-6 h-6" />
             </div>
-          </div>
+          </div> */}
         </div>
         <TabPanel value={"ongoing"}>
           <ClassList classes={ongoingClasses} completed={false} />

@@ -72,14 +72,14 @@ const SearchField = ({
       )}
     >
       <div>
-        <IoSearchOutline size={20} className="text-primary-darkest" />
+        <IoSearchOutline className="text-primary-darkest size-3 md:size-5" />
       </div>
       <input
         type="text"
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        className="w-full rounded-lg px-3 py-2 text-sm text-ellipsis outline-none placeholder-gray-600 bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-lg px-3 py-2 text-xs md:text-sm text-ellipsis outline-none placeholder-gray-600 bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
         {...props}
       />
       {isLoading && <Loading className="size-7" />}

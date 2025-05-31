@@ -18,7 +18,7 @@ export default function StudentBasicInformation() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
       <div className="flex flex-col gap-3">
         <div>
           <Input
@@ -93,7 +93,9 @@ export default function StudentBasicInformation() {
         <div>
           <Input
             className="text-[14px]"
-            type="text"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Số điện thoại"
             label="Số điện thoại"
             isError={errors.phone !== undefined}
@@ -104,7 +106,9 @@ export default function StudentBasicInformation() {
         <div>
           <Input
             className="text-[14px]"
-            type="text"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Số điện thoại phụ huynh"
             label="Số điện thoại phụ huynh"
             isError={errors.parentPhone !== undefined}

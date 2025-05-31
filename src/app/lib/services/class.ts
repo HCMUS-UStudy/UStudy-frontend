@@ -6,10 +6,14 @@ import {
   ClassDetail,
   ApproveResponse,
   ClassToRegisterResponse,
+  ClassItem,
+  GenderType,
+  UserSummary,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
 import { CreateClassInputs } from "@/app/ui/components/admin/classes/create/CreateClass";
+import { updateClassFormInputs } from "@/app/(admin)/admin/classes/[classId]/setting/page";
 
 export const getAllClasses = async (
   nameQuery: string,
@@ -230,3 +234,22 @@ export const getListClassToRegister = async (
 //   const response = await axiosInstance.get(`/classes/all/get-one/${classId}`);
 //   return response.data.data;
 // };
+
+export const updateClass = async (
+  classId: string,
+  data: updateClassFormInputs,
+): Promise<
+  ClassItem & {
+    teacher: (UserSummary & { gender: GenderType })[];
+  }
+> => {
+  try {
+    const response = await axiosInstance.patch(
+      `/class/update/${classId}`,
+      data,
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
