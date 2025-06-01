@@ -24,10 +24,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Create .env.production with environment variables for build time
-RUN echo "NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL" >> .env.production && \
-    echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env.production && \
-    echo "COOKIES_SECRET_KEY=$COOKIES_SECRET_KEY" >> .env.production
+# Create .env.local with environment variables for build time
+RUN echo "NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL" >> .env.local && \
+    echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env.local && \
+    echo "COOKIES_SECRET_KEY=$COOKIES_SECRET_KEY" >> .env.local
 
 RUN npm run build
 
