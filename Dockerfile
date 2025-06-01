@@ -37,8 +37,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# No default values for runtime variables
-ENV COOKIES_SECRET_KEY=$COOKIES_SECRET_KEY
+# Set environment variables with defaults
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-https://api.ustudy.io.vn}
+ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+ENV COOKIES_SECRET_KEY=${COOKIES_SECRET_KEY:-55EGu/ZYyTDY1GxKWPyDfOVM5FtFYqRNcadpy8fAT+w=}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
