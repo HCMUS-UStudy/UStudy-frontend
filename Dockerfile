@@ -15,10 +15,10 @@ ARG NEXT_PUBLIC_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 ARG COOKIES_SECRET_KEY
 
-# Set environment variables from build args (with defaults)
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-https://api.ustudy.io.vn}
-ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
-ENV COOKIES_SECRET_KEY=${COOKIES_SECRET_KEY:-55EGu/ZYyTDY1GxKWPyDfOVM5FtFYqRNcadpy8fAT+w=}
+# Set environment variables from build args without defaults
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV COOKIES_SECRET_KEY=$COOKIES_SECRET_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -37,9 +37,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Pass environment variables to runtime (only non-NEXT_PUBLIC ones needed at runtime)
-ARG COOKIES_SECRET_KEY
-ENV COOKIES_SECRET_KEY=${COOKIES_SECRET_KEY:-55EGu/ZYyTDY1GxKWPyDfOVM5FtFYqRNcadpy8fAT+w=}
+# No default values for runtime variables
+ENV COOKIES_SECRET_KEY=$COOKIES_SECRET_KEY
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -48,8 +47,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-# Copy env file for runtime env variables
-COPY --from=builder /app/.env.production ./.env.production
 
 USER nextjs
 
