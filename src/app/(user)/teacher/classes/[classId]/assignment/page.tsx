@@ -298,7 +298,6 @@ export default function Assignment() {
                 key={index}
                 className="p-5 border-2 rounded-lg transition-opacity duration-500 opacity-50"
               >
-                <div className="h-40 bg-gray-300 rounded-lg animate-pulse"></div>
                 <div className="h-5 w-3/4 bg-gray-300 rounded-lg mt-4"></div>
                 <div className="h-4 w-1/2 bg-gray-300 rounded-lg mt-2"></div>
                 <div className="flex items-center mt-4">
