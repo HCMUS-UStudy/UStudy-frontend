@@ -30,16 +30,16 @@ export default async function ClassLayout({
     <>
       <div className="border-b border-primary-light">
         <div className="flex items-center space-x-4 mb-3">
-          <div className="bg-highlight-text text-white p-3 rounded-lg shadow">
-            <BsFillBookFill className="text-2xl" />
+          <div className="bg-highlight-text hidden md:flex text-white p-3 rounded-lg shadow">
+            <BsFillBookFill className="size-6" />
           </div>
           <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold text-primary-darker">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary-darkest">
               {classDetail.course.name
                 ? `Lớp ${classDetail.name} - ${classDetail.course.name} ${classDetail.grade.name}`
                 : classDetail.name}
             </h1>
-            <div className="flex items-center space-x-1">
+            <div className="md:flex hidden items-center space-x-1">
               {displayedMembers.map((member) => (
                 <Image
                   width={32}

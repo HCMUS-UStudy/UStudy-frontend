@@ -10,12 +10,16 @@ const options = [
     label: "Tất cả",
   },
   {
-    value: "WAITING",
+    value: "PENDING",
     label: "Chưa thanh toán",
   },
   {
-    value: "ACCEPTED",
+    value: "COMPLETED",
     label: "Đã thanh toán",
+  },
+  {
+    value: "OVERDUE",
+    label: "Quá hạn",
   },
 ];
 

@@ -11,6 +11,7 @@ export default async function Home() {
     return <StudentHome />;
   }
   if (userData?.role.defaultRoute === "PARENT") {
+    console.log("here");
     return <ParentHome />;
   }
 }

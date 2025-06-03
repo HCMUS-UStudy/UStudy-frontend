@@ -5,6 +5,7 @@ import { ClassToRegisterItem, ClassToRegisterResponse } from "@/app/types";
 import { SiGoogleclassroom } from "react-icons/si";
 import { Button } from "../../../_common/Button";
 import { CheckCircle, ChevronRight } from "lucide-react";
+import { IoWarning } from "react-icons/io5";
 // import { useMutation } from "@tanstack/react-query";
 // import { submitOrderPayment } from "@/app/lib/services/payment";
 // import { toast } from "react-toastify";
@@ -58,6 +59,7 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
   // const handlePayment = () => {
   //   handlePaymentMutation.mutate(selectedClass: ClassToReg);
   // };
+  console.log(classes);
   if (status === "pending") {
     return <RegisterClassesLoading />;
   }
@@ -95,7 +97,9 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
                 {classItem.description}
               </p> */}
             </div>
-            {classItem.status === "WAITING" ? (
+            {/* {classItem.payment !== null ? (
+              renderAction && renderAction(classItem)
+            ) : classItem.payment.status === "PENDING" ? (
               <div className="flex flex-col gap-2">
                 <Button
                   className="text-sm text-primary-darkest group relative overflow-hidden"
@@ -118,14 +122,95 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
                   </div>
                 </Button>
               </div>
-            ) : classItem.status === "ACCEPTED" ? (
+            ) : classItem.payment.status === "COMPLETED" ? (
+              <div className="flex gap-2 items-center text-green-600">
+                <CheckCircle className="size-8" />
+                <p className=" font-medium">Đã đăng ký thành công</p>
+              </div>
+            ) : classItem.payment.status === "OVERDUE" ? (
+              <div className="flex gap-2 items-center text-error">
+                <IoWarning className="size-8" />
+                <p className=" font-medium">Quá hạn thanh toán</p>
+              </div>
+            ) : (
+              renderAction && renderAction(classItem)
+            )} */}
+            {!classItem.payment ? (
+              renderAction && renderAction(classItem)
+            ) : classItem.payment.status === "PENDING" ? (
+              <div className="flex flex-col gap-2">
+                <Button
+                  className="text-sm text-primary-darkest group relative overflow-hidden"
+                  onClick={() => onPaymentClick?.(classItem)}
+                  isPending={paymentPendingId === classItem.classDto.id}
+                  variant="outlined"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="absolute inset-0 flex items-center justify-center bg-white">
+                      <p className="text-primary-darkest text-sm transform -translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        Thanh toán ngay
+                      </p>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <p className="text-primary-darkest text-sm transform translate-x-0 opacity-100 group-hover:-translate-x-full group-hover:opacity-0 transition-all duration-300 ease-in-out">
+                        Đã đăng ký - Chờ thanh toán
+                      </p>
+                      <ChevronRight className="size-5 transform translate-x-0 group-hover:translate-x-5 transition-transform duration-300 ease-in-out" />
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            ) : classItem.payment.status === "COMPLETED" ? (
+              <>
+                <div className="flex gap-2 items-center text-green-600">
+                  <CheckCircle className="size-8" />
+                  <p className=" font-medium">Đã đăng ký thành công</p>
+                </div>
+              </>
+            ) : (
+              classItem.payment.status === "OVERDUE" && (
+                <div className="flex gap-2 items-center text-error">
+                  <IoWarning className="size-8" />
+                  <p className=" font-medium">Quá hạn thanh toán</p>
+                </div>
+              )
+            )}
+            {/* {classItem.payment.status === "PENDING" ? (
+              <div className="flex flex-col gap-2">
+                <Button
+                  className="text-sm text-primary-darkest group relative overflow-hidden"
+                  onClick={() => onPaymentClick?.(classItem)}
+                  isPending={paymentPendingId === classItem.classDto.id}
+                  variant="outlined"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="absolute inset-0 flex items-center justify-center bg-white">
+                      <p className="text-primary-darkest text-sm transform -translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        Thanh toán ngay
+                      </p>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <p className="text-primary-darkest text-sm transform translate-x-0 opacity-100 group-hover:-translate-x-full group-hover:opacity-0 transition-all duration-300 ease-in-out">
+                        Đã đăng ký - Chờ thanh toán
+                      </p>
+                      <ChevronRight className="size-5 transform translate-x-0 group-hover:translate-x-5 transition-transform duration-300 ease-in-out" />
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            ) : classItem.payment.status === "COMPLETED" ? (
               <div className="flex gap-2 items-center text-green-600">
                 <CheckCircle className="size-8" />
                 <p className=" font-medium">Đã đăng ký thành công</p>
               </div>
             ) : (
-              renderAction && renderAction(classItem)
-            )}
+              classItem.payment.status === "OVERDUE" && (
+                <div className="flex gap-2 items-center text-error">
+                  <IoWarning className="size-8" />
+                  <p className=" font-medium">Quá hạn thanh toán</p>
+                </div>
+              )
+            )} */}
           </div>
         ))}
       </div>

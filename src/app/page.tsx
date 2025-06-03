@@ -114,7 +114,7 @@ export default async function Home() {
               Đăng nhập
             </Link>
           </button> */}
-          <div className="text-base md:text-xl text-nowrap bg-transparent rounded items-center justify-center flex border-2 border-primary-darkest  hover:bg-primary-darker text-primary-darkest font-bold hover:text-white transition-all cursor-pointer active:scale-[0.98]">
+          <div className="text-base md:text-xl text-nowrap bg-transparent rounded-xl items-center justify-center flex border-2 border-primary-darkest  hover:bg-primary-darker text-primary-darkest font-bold hover:text-white transition-all cursor-pointer active:scale-[0.98]">
             <button className="px-5 py-2 md:px-10 md:py-3">
               <Link href="/login">Đăng nhập</Link>
             </button>

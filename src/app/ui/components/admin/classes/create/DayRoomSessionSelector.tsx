@@ -195,14 +195,16 @@ export default function DayRoomSessionSelector() {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col">
-        <h1 className="font-bold">Thành lập thời khóa biểu</h1>
+        <h1 className="font-bold text-sm md:text-base">
+          Thành lập thời khóa biểu
+        </h1>
         <div className="mt-2">
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-2 md:gap-4">
             {Object.entries(daysMapping).map(([key, value]) => (
               <div key={key}>
                 <label
                   htmlFor={value}
-                  className="relative py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker has-[:disabled]:bg-slate-200 has-[:disabled]:hover:border-slate-200 has-[:disabled]:hover:cursor-default flex items-center justify-center h-20 w-20 border-2 border-slate-200
+                  className="relative h-16 w-16 md:h-20 md:w-20  py-6 shrink-0 grow-0 has-[:checked]:border-primary-darker has-[:disabled]:bg-slate-200 has-[:disabled]:hover:border-slate-200 has-[:disabled]:hover:cursor-default flex items-center justify-center border-2 border-slate-200
                          text-md rounded hover:border-primary-darkest hover:text-primary-darkest hover:bg-primary cursor-pointer transition-all"
                 >
                   <input
@@ -213,7 +215,7 @@ export default function DayRoomSessionSelector() {
                     checked={isDaySelected(key)}
                     onChange={() => handleSelectDaysInWeek(key as DaysInWeek)}
                   />
-                  <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all">
+                  <span className="peer-checked:text-primary-darkest text-black text-xs md:text-sm peer-checked:font-bold transition-all">
                     {value}
                   </span>
                   <FaCheck className="size-16 absolute text-primary-darkest opacity-0 peer-checked:opacity-10 transition-all" />
@@ -269,16 +271,20 @@ export default function DayRoomSessionSelector() {
       <span className="text-[13px] text-error">
         {errors.classTimes?.message}
       </span>
-      <Dialog isOpen={isSelecting} onClose={() => setSelecting(false)}>
+      <Dialog
+        className="w-2/3 md:w-auto"
+        isOpen={isSelecting}
+        onClose={() => setSelecting(false)}
+      >
         <DialogHeader>
-          <div className="text-base px-5">
+          <div className="text-base">
             Vui lòng chọn phòng học và ca học tương ứng
           </div>
         </DialogHeader>
         <DialogContent>
           <div className="text-base flex flex-col gap-4 px-2">
             <div>
-              <h1 className="font-bold">Chọn ca học</h1>
+              <h1 className="font-bold text-sm md:text-base">Chọn ca học</h1>
               {loadingSessions ? (
                 <SelectorLoadingHorizon numberOfItems={2} />
               ) : (
@@ -298,7 +304,7 @@ export default function DayRoomSessionSelector() {
                         checked={selectedSession?.id === session.id}
                         onChange={() => setSelectedSession(session)}
                       />
-                      <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all">
+                      <span className="peer-checked:text-primary-darkest text-black text-xs md:text-sm peer-checked:font-bold transition-all">
                         {session.session.name} -{" "}
                         {session.session.startTime.slice(0, -3)} -{" "}
                         {session.session.endTime.slice(0, -3)}
@@ -311,11 +317,13 @@ export default function DayRoomSessionSelector() {
             </div>
             {selectedSession !== null && (
               <div>
-                <h1 className="font-bold">Chọn phòng học</h1>
+                <h1 className="font-bold text-sm md:text-base">
+                  Chọn phòng học
+                </h1>
                 {loadingRooms ? (
                   <SelectorLoadingHorizon numberOfItems={2} />
                 ) : rooms.length === 0 ? (
-                  <div className="text-sm text-primary-darkest">
+                  <div className="text-xs md:text-sm text-primary-darkest mt-2">
                     Chưa có phòng học cho ca này, có thể chọn sau khi tạo lớp
                     học
                   </div>
@@ -336,7 +344,7 @@ export default function DayRoomSessionSelector() {
                           checked={selectedRoom?.id === room.id}
                           onChange={() => setSelectedRoom(room)}
                         />
-                        <span className="peer-checked:text-primary-darkest text-black text-sm peer-checked:font-bold transition-all text-center">
+                        <span className="peer-checked:text-primary-darkest text-black text-xs md:text-sm peer-checked:font-bold transition-all text-center">
                           {room.name}
                         </span>
                         <FaCheck className="size-6 absolute right-3 text-primary-darkest opacity-0 peer-checked:opacity-70 transition-all" />
@@ -349,12 +357,13 @@ export default function DayRoomSessionSelector() {
             <div className="flex gap-2 self-end">
               <button
                 type="button"
-                className="px-3 py-2 border bg-slate-200 hover:bg-slate-300 transition-colors rounded-lg"
+                className="px-3 py-2 text-xs md:text-sm border bg-slate-200 hover:bg-slate-300 transition-colors rounded-lg"
                 onClick={() => setSelecting(false)}
               >
                 Hủy
               </button>
               <Button
+                className="text-xs md:text-sm"
                 onClick={() => handleSelectDayRoomSession()}
                 type="button"
               >

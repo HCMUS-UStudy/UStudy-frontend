@@ -11,8 +11,8 @@ export default function NameSelector() {
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="font-bold">
-          Vui lòng nhập tên lớp học:
+        <label htmlFor="name" className="font-bold text-sm md:text-base">
+          Vui lòng nhập tên lớp học
         </label>
         <div className="flex-1">
           <Input

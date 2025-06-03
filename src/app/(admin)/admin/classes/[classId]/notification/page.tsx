@@ -195,7 +195,7 @@ const Notification = () => {
           <thead>
             <tr className="border-b bg-primary-dark text-white">
               <th className="pl-4 py-2 rounded-tl-lg"></th>
-              <th className="text-left text-[14px] sm:text-[16px] px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
+              <th className="text-left text-[14px] sm:text-[16px] text-nowrap px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
                 Tiêu đề
               </th>
               <th className="rounded-tr-lg text-left text-[14px] sm:text-[16px] px-3 py-2">
