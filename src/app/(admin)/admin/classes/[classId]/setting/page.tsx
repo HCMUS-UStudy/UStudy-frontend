@@ -15,8 +15,7 @@ import TextArea from "@/app/ui/components/_common/text-field/TextArea";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { getClassById, updateClass } from "@/app/lib/services/class";
 import { convertToVietnameseText, daysInWeekMap } from "@/app/lib/utils";
-import { Edit, Plus } from "lucide-react";
-import Tooltip from "@/app/ui/components/_common/Tooltip";
+import { Check, Edit, Pencil } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -200,30 +199,32 @@ export default function ClassSetting() {
     <div className=" mx-auto py-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex justify-between items-center">
-            <span>Thông tin lớp học</span>
-            <div className="flex gap-3">
-              {isEditing && (
-                <Button
-                  form="edit-class-form"
-                  isPending={useUpdateClassMutation.status === "pending"}
-                  type="submit"
-                >
-                  Hoàn tất
-                </Button>
-              )}
+          <CardTitle className="flex flex-col gap-3 md:flex-row justify-between items-center text-lg md:text-xl">
+            <span className="">Thông tin lớp học</span>
+            <div className="flex flex-row gap-1 md:gap-3 w-full md:w-auto">
               <Button
-                className="px-5 py-3"
+                className="flex-1"
+                form="edit-class-form"
+                disabled={!isEditing}
+                isPending={useUpdateClassMutation.status === "pending"}
+                type="submit"
+              >
+                <span className="hidden md:flex">Hoàn tất</span>
+                <Check className="flex md:hidden size-5" />
+              </Button>
+              <Button
+                className="md:w-auto flex-1 md:px-5"
                 onClick={() => setIsEditing((prev) => !prev)}
               >
-                Chỉnh sửa
+                <span className="hidden md:flex text-nowrap">Chỉnh sửa</span>
+                <Pencil className="flex md:hidden size-5" />
               </Button>
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form id="edit-class-form" onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 mb-3 gap-4 md:gap-8">
               <div className="flex flex-col gap-4 mb-3">
                 <Input
                   id="name"
@@ -299,7 +300,7 @@ export default function ClassSetting() {
 
             <div className="space-y-3">
               <h3 className="text-lg font-semibold">Lịch học</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {classDetail?.classSessions.map((session) => (
                   <Card
                     key={session.id}
@@ -307,10 +308,10 @@ export default function ClassSetting() {
                     className="relative hover:bg-primary-lighter hover:border-primary-dark transition-colors cursor-pointer group"
                   >
                     <div className="absolute flex justify-center items-center w-full h-full group-hover:bg-primary-light/40 transition-all">
-                      <Edit className="size-10 text-primary-darkest opacity-0 group-hover:opacity-100 transition-all" />
+                      <Edit className="size-8 md:size-10 text-primary-darkest opacity-0 group-hover:opacity-100 transition-all" />
                     </div>
 
-                    <CardContent className=" pt-6 transition-colors">
+                    <CardContent className=" pt-6 transition-colors text-sm md:text-base">
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="font-medium">Ngày trong tuần:</span>
@@ -341,14 +342,14 @@ export default function ClassSetting() {
                     </CardContent>
                   </Card>
                 ))}
-                <div>
+                {/* <div>
                   <Tooltip text="Thêm ca học mới" position="top">
                     <Plus
                       className="size-10 border-2 border-slate-200 hover:border-primary p-1 text-gray-700 hover:text-primary-darker rounded-lg cursor-pointer hover:bg-primary-lighter transition-all"
                       // onClick={() => setIsAddingSession(true)}
                     />
                   </Tooltip>
-                </div>
+                </div> */}
               </div>
             </div>
           </form>
@@ -397,6 +398,7 @@ export default function ClassSetting() {
         </DialogContent>
       </Dialog> */}
       <Dialog
+        className="h-1/2"
         isOpen={isSelectingRoom}
         onClose={() => setIsSelectingRoom(false)}
       >

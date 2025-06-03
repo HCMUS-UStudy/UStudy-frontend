@@ -87,12 +87,12 @@ const GradeTable: React.FC<GradeTableProps> = ({ searchQuery }) => {
                 <TableCell className="flex gap-2 justify-start">
                   <Tooltip text="Chỉnh sửa khối">
                     <button className="text-blue-600 hover:text-blue-800 transition-all">
-                      <FaEdit className="h-5 w-5" />
+                      <FaEdit className="size-4 md:size-5" />
                     </button>
                   </Tooltip>
                   <Tooltip text="Xóa khối">
                     <button className="text-red-600 hover:text-red-800 transition-all">
-                      <FaTrashAlt className="h-5 w-5" />
+                      <FaTrashAlt className="size-4 md:size-5" />
                     </button>
                   </Tooltip>
                 </TableCell>

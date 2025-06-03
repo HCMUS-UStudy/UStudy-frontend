@@ -54,7 +54,7 @@ export default function TeacherNavigation({
         {navigation.map((tab, index) => (
           <button
             key={index}
-            className={`relative py-2 mx-2 px-2 ${
+            className={`relative text-sm lg:text-base py-2 mx-2 px-2 ${
               activeTab === tab.urlPush
                 ? "text-primary-darkest font-semibold"
                 : "text-gray-500 hover:text-primary-darkest"

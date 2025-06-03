@@ -22,7 +22,6 @@
     "@tanstack/react-query-devtools": "^5.74.6",
     "apexcharts": "^4.0.0",
     "axios": "^1.8.2",
-    "axios-cache-interceptor": "^1.6.2",
     "chart.js": "^4.4.6",
     "chartjs-plugin-annotation": "^3.1.0",
     "class-variance-authority": "^0.7.0",

@@ -211,7 +211,7 @@ export const getListClassToRegister = async (
   limit: number,
   courseId?: string,
   gradeId?: string,
-  status?: "ACCEPTED" | "WAITING" | "",
+  status?: "OVERDUE" | "PENDING" | "COMPLETED" | "",
 ): Promise<ClassToRegisterResponse> => {
   try {
     const response = await axiosInstance.get("/register-class/list-class", {

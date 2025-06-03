@@ -26,6 +26,7 @@ interface SelectProps {
   id?: string;
   label?: string;
   isLoading?: boolean;
+  showClearButton?: boolean;
   customStyle?: {
     labelBg?: string;
   };
@@ -86,6 +87,7 @@ const Select: React.FC<SelectProps> = ({
   label,
   customStyle,
   isLoading = false,
+  showClearButton = true,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | number>(
     defaultValue,
@@ -163,7 +165,7 @@ const Select: React.FC<SelectProps> = ({
           <button
             type="button"
             className={cn(
-              "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
+              "w-full px-3 py-2 text-xs md:text-base border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
               className,
             )}
             onClick={(e) => {
@@ -173,7 +175,7 @@ const Select: React.FC<SelectProps> = ({
             disabled={disabled}
           >
             {selectedLabel}
-            {selectedValue ? (
+            {selectedValue && showClearButton ? (
               <>
                 <XIcon
                   onClick={(e) => {
@@ -183,7 +185,7 @@ const Select: React.FC<SelectProps> = ({
                   className="peer z-[1000] hover:text-primary-darkest transition-colors cursor-pointer"
                   size={20}
                 />
-                <div className="absolute bottom-10 right-0 bg-gray-700 z-[999] text-white text-[12px] py-1 px-2 rounded opacity-0 peer-hover:opacity-100 transition-all">
+                <div className="absolute bottom-10 right-0 bg-gray-700 z-[999] text-white text-[10px] md:text-[12px] py-1 px-2 rounded opacity-0 peer-hover:opacity-100 transition-all">
                   Xóa bộ lọc
                 </div>
               </>
@@ -252,7 +254,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   return (
     <div
       className={cn(
-        "px-3 py-2 cursor-pointer hover:bg-primary truncate",
+        "px-3 py-2 cursor-pointer text-xs md:text-base hover:bg-primary truncate transition-all",
         {
           "bg-primary": selectedValue === value,
         },

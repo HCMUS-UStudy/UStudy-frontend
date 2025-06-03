@@ -172,11 +172,10 @@ export async function getCreatorFromCookies(): Promise<string | null> {
 export async function handleLogoutCookies() {
   const cookieStore = await cookies();
   const defaultRoute = (await getUserDataFromCookies())?.role.defaultRoute;
-  cookieStore.delete("accessToken");
-  cookieStore.delete("permissions");
-  cookieStore.delete("permissions_iv");
-  cookieStore.delete("refreshToken");
-  cookieStore.delete("userData");
+  cookieStore.getAll().forEach((cookie) => {
+    console.log(cookie);
+    cookieStore.delete(cookie.name);
+  });
   switch (defaultRoute) {
     case "ADMIN":
       redirect("/admin/login");

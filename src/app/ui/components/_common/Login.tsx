@@ -71,6 +71,7 @@ export default function Login() {
         closeOnClick: false,
         pauseOnHover: false,
       });
+      console.log(defaultRoute);
       switch (defaultRoute) {
         case "TEACHER":
           router.push("/teacher/classes");
@@ -83,7 +84,8 @@ export default function Login() {
           }
           break;
         case "PARENT":
-          router.push("/member/home");
+          console.log("here");
+          router.push("/member/tuition");
           break;
         case "ADMIN":
           router.push("/admin/dashboard");

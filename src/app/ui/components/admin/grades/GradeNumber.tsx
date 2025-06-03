@@ -49,7 +49,7 @@ const GradeNumber: React.FC<GradeNumberProps> = ({
 
   return (
     <h2
-      className={`text-2xl font-bold ${
+      className={`text-lg md:text-2xl font-bold ${
         loading ? "animate-pulse text-gray-400" : ""
       }`}
     >

@@ -17,9 +17,9 @@ export default async function GradePage(props: {
 
   return (
     <div className="px-2">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row gap-2 items-center md:justify-between mb-4 md:mb-6">
         <GradeNumber searchQuery={query} gradeQuery={grade} />
-        <div className="flex items-center space-x-2">
+        <div className="w-full md:w-auto">
           <AddGrade />
         </div>
       </div>

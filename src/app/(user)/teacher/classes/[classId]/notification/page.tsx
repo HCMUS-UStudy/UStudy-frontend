@@ -64,14 +64,14 @@ const Notification = () => {
         await deleteClassNotiForUser(classId, ids);
         fetchData();
         toast.success("Xóa thông báo thành công", {
-          position: "top-right",
+          position: "bottom-right",
           autoClose: 3000,
           pauseOnHover: false,
           closeOnClick: true,
         });
       } catch {
         toast.error("Xóa thông báo thất bại", {
-          position: "top-right",
+          position: "bottom-right",
           autoClose: 3000,
           pauseOnHover: false,
           closeOnClick: true,
@@ -107,7 +107,7 @@ const Notification = () => {
       <div className="flex items-center justify-between my-4 mx-1">
         <div
           className="gap-1 cursor-pointer hover:bg-primary-lighter
-        flex items-center border border-gray-300 w-fit rounded-xl p-2"
+        flex items-center border border-gray-300 w-fit rounded-xl p-2 transition-all"
           onClick={() => {
             setIsOpen(true);
           }}

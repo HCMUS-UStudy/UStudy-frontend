@@ -12,14 +12,16 @@ export default function DurationSelector() {
   } = useFormContext<CreateClassInputs>();
   return (
     <div className="flex flex-col mt-2">
-      <h1 className="font-bold">Chọn thời gian học cho lớp</h1>
-      <div className="w-2/3 mt-2">
+      <h1 className="font-bold text-sm md:text-base">
+        Chọn thời gian học cho lớp
+      </h1>
+      <div className="w-full md:w-2/3 mt-2">
         <div className="flex flex-col gap-4">
           <div>
             <div className="flex items-center gap-5 max-h-8 w-full">
               <label
                 htmlFor="class-duration"
-                className="after:content-['*'] after:text-red-500"
+                className="after:content-['*'] after:text-red-500 text-nowrap text-sm md:text-base"
               >
                 Số buổi học:{" "}
               </label>
