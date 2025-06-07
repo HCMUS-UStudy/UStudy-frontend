@@ -421,7 +421,8 @@ export default function ClassMaterial() {
                       } else {
                         handleViewFile(
                           activeFile.material.id,
-                          activeFile.material.name.endsWith("pdf"),
+                          activeFile.material.name.endsWith("pdf") ||
+                            activeFile.material.name.endsWith("txt"),
                         );
                       }
                     }}
@@ -587,7 +588,8 @@ export default function ClassMaterial() {
                         } else {
                           handleViewFile(
                             item.material.id,
-                            item.material.name.endsWith("pdf"),
+                            item.material.name.endsWith("pdf") ||
+                              item.material.name.endsWith("txt"),
                           );
                         }
                       }}
