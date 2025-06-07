@@ -32,7 +32,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   return (
-    <div className="relative inline-block group">
+    <div className="relative inline-block group select-none">
       {children}
       <span
         className={`absolute hidden group-hover:block bg-gray-700 text-white text-[12px] rounded py-1 px-2 

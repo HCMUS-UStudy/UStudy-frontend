@@ -70,7 +70,7 @@ const Sidebar = () => {
         </div>
       )}
       {status === "pending" ? (
-        <div className="flex flex-col gap-3 px-4">
+        <div className="flex flex-col gap-3 px-4 mt-2">
           {[...Array(5)].map((_, idx) => (
             <div
               key={idx}

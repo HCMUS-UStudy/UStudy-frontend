@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
 import { UserData, SideNavItem } from "@/app/types";
 import {
   SIDENAV_ITEMS_STUDENT,
@@ -13,7 +12,7 @@ import { getUserDataFromCookies } from "@/app/lib/action";
 import { Select, SelectItem } from "../_common/Select";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setSelectedChild } from "@/app/store/ChildrenSlice";
-import Tooltip from "../_common/Tooltip";
+import { Notification } from "../_common/Notification";
 
 const Header = ({ role }: { role: string }) => {
   const pathname = usePathname();
@@ -93,7 +92,7 @@ const Header = ({ role }: { role: string }) => {
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
-        <div className="flex gap-3 items-center" ref={dropdownRef}>
+        <div className="flex gap-2 sm:gap-3 items-center" ref={dropdownRef}>
           {userInfo?.role.defaultRoute === "PARENT" &&
             pathname?.includes("/member/tuition") && (
               <Select
@@ -113,14 +112,20 @@ const Header = ({ role }: { role: string }) => {
                 ))}
               </Select>
             )}
-          <Tooltip text="Thông báo" position="bottom">
+          {/* <Tooltip text="Thông báo" position="bottom">
             <div className="p-2 hidden md:flex rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary transition-all">
               <IoNotificationsOutline size={24} />
             </div>
-          </Tooltip>
-          <Tooltip text="Thông báo" position="bottom">
-            <IoNotifications className="size-8 flex md:hidden text-primary-dark hover:text-primary-darkest transition-all cursor-pointer" />
-          </Tooltip>
+          </Tooltip> */}
+          {/* <Tooltip text="Thông báo" position="bottom">
+            <IoNotifications
+              className="size-8 flex text-primary-dark hover:text-primary-darkest transition-all cursor-pointer"
+              onClick={() => setShowNotification(!showNotification)}
+            />
+          </Tooltip> */}
+          <Notification
+            role={userInfo?.role.defaultRoute.toLowerCase() as string}
+          />
           <DropdownProfile
             userInfo={userInfo}
             handleToggle={handleToggle}
