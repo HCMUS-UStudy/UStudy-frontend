@@ -1,24 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export type Child = {
+  id: string;
+  name: string;
+};
+
 type ChildrenType = {
-  children: string[];
-  selectedId: string;
+  children: Child[];
+  selectedChild: Child | null;
 };
 
 const initialState: ChildrenType = {
   children: [],
-  selectedId: "",
+  selectedChild: null,
 };
 
 const childrenSlice = createSlice({
   name: "children",
   initialState,
   reducers: {
-    setChildren: (state, action: PayloadAction<string[]>) => {
+    setChildren: (state, action: PayloadAction<Child[]>) => {
       state.children = action.payload;
     },
-    setSelectedChild: (state, action: PayloadAction<string>) => {
-      state.selectedId = action.payload;
+    setSelectedChild: (state, action: PayloadAction<Child | null>) => {
+      state.selectedChild = action.payload;
     },
   },
 });
