@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { getListClassToRegister } from "@/app/lib/services/class";
 import { useSearchParams } from "next/navigation";
