@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { getListClassToRegister } from "@/app/lib/services/class";
 import { useSearchParams } from "next/navigation";
@@ -44,6 +44,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
 
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
+  const queryClient = useQueryClient();
 
   const { data: classes, status } = useQuery({
     queryKey: [
@@ -67,8 +68,6 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   });
 
   // console.log(classes?.content);
-
-  const queryClient = useQueryClient();
 
   const registerClassMutation = useMutation({
     mutationFn: (classId: string) =>

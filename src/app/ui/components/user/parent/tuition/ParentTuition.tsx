@@ -27,7 +27,7 @@ export default function ParentTuition() {
 
   const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
   const selectedChild = useAppSelector(
-    (state: RootState) => state.children.selectedId,
+    (state: RootState) => state.children.selectedChild,
   );
   const {
     data: paymentData,
@@ -35,10 +35,11 @@ export default function ParentTuition() {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["payments", activeTab, selectedChild, currentPage - 1],
+    queryKey: ["payments", activeTab, selectedChild?.id, currentPage - 1],
     queryFn: () =>
-      getPaymentByStuId(selectedChild, currentPage - 1, 1, statusParam),
+      getPaymentByStuId(selectedChild?.id, currentPage - 1, 1, statusParam),
     placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 
   const payments = paymentData?.content || [];

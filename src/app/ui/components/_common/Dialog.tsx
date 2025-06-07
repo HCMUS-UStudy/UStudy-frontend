@@ -170,6 +170,7 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({
 
       {displayCloseButton && (
         <button
+          type="button"
           className="hover:text-black hover:bg-gray-200 p-1 rounded-lg absolute top-[calc(50%-14px)] right-4"
           onClick={onClose}
         >

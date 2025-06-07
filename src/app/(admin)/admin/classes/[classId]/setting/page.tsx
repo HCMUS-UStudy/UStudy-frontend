@@ -29,6 +29,8 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+// import { classSessions } from "@/app/types";
+// import { getAvailableRooms } from "@/app/lib/services/room";
 
 const updateClassSchema = z
   .object({
@@ -71,6 +73,9 @@ export default function ClassSetting() {
     text: "",
   });
 
+  // const [selectedClassSession, setSelectedClassSession] =
+  //   useState<classSessions>();
+
   const [isSelectingRoom, setIsSelectingRoom] = useState<boolean>(false);
 
   const results = useQueries({
@@ -89,17 +94,18 @@ export default function ClassSetting() {
       //   queryFn: () =>
       //     getAvailableRooms(
       //       selectedBranchId,
-      //       newSesisonsRoom.day,
-      //       newSesisonsRoom.branchSessionId,
+      //       selectedClassSession?.day,
+      //       selectedClassSession?.id,
       //       classDetail?.startDate,
       //     ),
+      //     enabled: selectedBranchId !== null &&
       // },
     ],
   });
   const classDetail = results[0].data;
   // const sessions = results[1].data;
 
-  // console.log(sessions);
+  console.log(classDetail);
 
   const {
     register,
