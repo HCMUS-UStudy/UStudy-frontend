@@ -25,7 +25,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
   }, []);
   return (
     <div
-      className={`bg-background p-4 h-screen-height
+      className={`bg-background p-0 md:p-4 border-t-2 md:border-t-0 border-slate-300 h-screen-height
       ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       {isDashboard ? (
@@ -34,7 +34,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
         </div>
       ) : (
         <div
-          className={`h-full px-1 py-2 md:px-6 md:py-4 bg-foreground rounded-lg ${pathname === "/member/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}
+          className={`h-full px-3 py-2 md:px-6 md:py-4 bg-foreground md:rounded-lg ${pathname === "/member/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}
         >
           {children}
         </div>

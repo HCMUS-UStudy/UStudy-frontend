@@ -76,10 +76,10 @@ export const getPaymentByStuId = async (
 ): Promise<PaymentData> => {
   try {
     // Tạo endpoint dựa trên studentId có hay không
-    const endpoint = studentId ? `/payment/list/${studentId}` : `/payment/list`;
-
-    const response = await axiosInstance.get(endpoint, {
+    // const endpoint = studentId ? `/payment/list/${studentId}` : `/payment/list`;
+    const response = await axiosInstance.get("/payment/list", {
       params: {
+        studentId: studentId ?? "",
         page: currentPage,
         limit: limit,
         status: status,
@@ -88,7 +88,12 @@ export const getPaymentByStuId = async (
 
     return response.data.data;
   } catch (error) {
-    throw error;
+    console.log(error);
+    return {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+    };
   }
 };
 

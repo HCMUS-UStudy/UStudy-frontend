@@ -23,7 +23,7 @@ const Header = ({ role }: { role: string }) => {
   const [toggleCollapse, setToggleCollapse] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-  const { selectedId, children } = useAppSelector((state) => state.children);
+  const { children, selectedChild } = useAppSelector((state) => state.children);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const Header = ({ role }: { role: string }) => {
 
   return (
     <div
-      className={`h-header-height min-h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
+      className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
       <div className="hidden md:inline text-xl font-bold mt-1">
@@ -96,14 +96,18 @@ const Header = ({ role }: { role: string }) => {
           {userInfo?.role.defaultRoute === "PARENT" &&
             pathname?.includes("/member/tuition") && (
               <Select
-                defaultValue={selectedId}
+                defaultValue={selectedChild?.id}
                 label="Chọn tài khoản"
-                defaultLabel={selectedId}
-                onValueChange={(id) => dispatch(setSelectedChild(id as string))}
+                defaultLabel={selectedChild?.name}
+                showClearButton={false}
+                onValueChange={(child) => {
+                  console.log(child);
+                  dispatch(setSelectedChild(selectedChild));
+                }}
               >
                 {children.map((child) => (
-                  <SelectItem key={child} value={child}>
-                    {child}
+                  <SelectItem key={child.id} value={JSON.stringify(child)}>
+                    {child.name}
                   </SelectItem>
                 ))}
               </Select>

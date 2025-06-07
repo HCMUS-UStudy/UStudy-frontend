@@ -41,6 +41,7 @@ const CreateClassSchema = z.object({
     .number({ message: "Vui lòng nhập số buổi học" })
     .gte(1, "Số buổi học phải lớn hơn hoặc bằng 1"),
   description: z.optional(z.string()),
+  fee: z.optional(z.number()),
   branchId: z
     .string({ message: "Đây là trường bắt buộc" })
     .min(1, "Đây là trường bắt buộc"),
@@ -74,14 +75,13 @@ export default function CreateClass() {
     defaultValues: {
       classTimes: [],
       gradeId: "",
+      fee: 50000,
       startDate: "",
       numLessons: 0,
       branchId: selectedBranchId ?? undefined,
     },
   });
-  useEffect(() => {
-    console.log(methods.formState.errors);
-  }, [methods.formState.errors]);
+
   const router = useRouter();
   const queryClient = useQueryClient();
   const useCreateClassMutation = useMutation({
@@ -145,6 +145,7 @@ export default function CreateClass() {
       <h1 className="font-bold text-center mb-5">TẠO LỚP HỌC MỚI</h1>
       <FormProvider {...methods}>
         <form
+          id="CreateClassForm"
           className="flex flex-col gap-2"
           onSubmit={methods.handleSubmit(onSubmit)}
         >
@@ -161,6 +162,7 @@ export default function CreateClass() {
           <ClassDescription />
           <Button
             isPending={useCreateClassMutation.status === "pending"}
+            form="CreateClassForm"
             type="submit"
             className="w-full"
           >

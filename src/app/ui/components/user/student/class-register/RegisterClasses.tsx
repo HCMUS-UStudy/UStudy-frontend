@@ -44,6 +44,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
 
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
+  const queryClient = useQueryClient();
 
   const { data: classes, status } = useQuery({
     queryKey: [
@@ -67,8 +68,6 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   });
 
   // console.log(classes?.content);
-
-  const queryClient = useQueryClient();
 
   const registerClassMutation = useMutation({
     mutationFn: (classId: string) =>
