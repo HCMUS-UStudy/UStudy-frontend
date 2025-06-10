@@ -21,7 +21,8 @@ export const getAttendances = async (
 };
 
 export const recordAttendances = async (
-  classScheduleId: string,
+  classId: string,
+  recordDate: string,
   studentStatusList: {
     userId: string;
     status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED" | "";
@@ -31,7 +32,8 @@ export const recordAttendances = async (
   console.log("recordAttendances", studentStatusList);
   try {
     const response = await axiosInstance.post("/attendance/record", {
-      classScheduleId,
+      classId,
+      recordDate,
       studentStatusList,
     });
     return response.data;

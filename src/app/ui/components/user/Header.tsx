@@ -88,7 +88,7 @@ const Header = ({ role }: { role: string }) => {
       className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
         ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
     >
-      <div className="hidden md:inline text-xl font-bold mt-1">
+      <div className="text-md sm:text-lg font-bold mt-1">
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">

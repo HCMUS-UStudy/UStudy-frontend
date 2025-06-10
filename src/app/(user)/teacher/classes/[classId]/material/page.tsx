@@ -353,44 +353,42 @@ export default function ClassMaterial() {
   return (
     <div className="flex flex-col h-full justify-between px-2">
       <div className="flex flex-col gap-1 p-3">
-        {currentFolderId && (
-          <div className="flex items-center gap-4 mb-2">
-            <div
-              onClick={() => {
-                setShowUploadModal(true);
-              }}
-              className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
+        <div className="flex items-center gap-4 mb-2">
+          <div
+            onClick={() => {
+              setShowUploadModal(true);
+            }}
+            className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
               hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
-            >
-              {isMobile ? (
-                <Tooltip text="Tải tài liệu lên">
-                  <IoIosAdd className="w-6 h-6" />
-                </Tooltip>
-              ) : (
-                <IoIosAdd className="w-7 h-7" />
-              )}
-              <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[14px]">
-                Tải tài liệu lên
-              </span>
-            </div>
-            <div
-              className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
-            hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
-              onClick={handleCreateFolder}
-            >
-              {isMobile ? (
-                <Tooltip text="Tạo thư mục mới">
-                  <PiFolderPlus className="w-6 h-6" />
-                </Tooltip>
-              ) : (
-                <PiFolderPlus className="w-7 h-7" />
-              )}
-              <span className="hidden md:inline md:text-[13px] lg:text-[14px]">
-                Tạo thư mục mới
-              </span>
-            </div>
+          >
+            {isMobile ? (
+              <Tooltip text="Tải tài liệu lên">
+                <IoIosAdd className="w-6 h-6" />
+              </Tooltip>
+            ) : (
+              <IoIosAdd className="w-7 h-7" />
+            )}
+            <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[14px]">
+              Tải tài liệu lên
+            </span>
           </div>
-        )}
+          <div
+            className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
+            hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
+            onClick={handleCreateFolder}
+          >
+            {isMobile ? (
+              <Tooltip text="Tạo thư mục mới">
+                <PiFolderPlus className="w-6 h-6" />
+              </Tooltip>
+            ) : (
+              <PiFolderPlus className="w-7 h-7" />
+            )}
+            <span className="hidden md:inline md:text-[13px] lg:text-[14px]">
+              Tạo thư mục mới
+            </span>
+          </div>
+        </div>
 
         {activeFile ? (
           <div

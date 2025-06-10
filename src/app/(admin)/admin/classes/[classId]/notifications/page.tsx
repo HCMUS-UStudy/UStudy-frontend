@@ -108,7 +108,7 @@ const Notification = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center mt-2 h-full">
+      <div className="flex items-center justify-center mt-5">
         <Loading />
       </div>
     );
@@ -221,7 +221,7 @@ const Notification = () => {
                     notification.read = true;
                   }
                   router.push(
-                    `/admin/classes/${classId}/notification/${notification.id}`,
+                    `/admin/classes/${classId}/notifications/${notification.id}`,
                   );
                 }}
               >

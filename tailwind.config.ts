@@ -128,12 +128,12 @@ const config: Config = {
         "header-top": "90px",
       },
       width: {
-        "sidebar-width": "215px",
-        "sidebar-mobile": "80px",
+        "sidebar-width": "200px",
+        "sidebar-mobile": "72px",
       },
       margin: {
-        "from-sidebar": "215px",
-        "from-sidebar-mobile": "80px",
+        "from-sidebar": "200px",
+        "from-sidebar-mobile": "72px",
       },
     },
   },

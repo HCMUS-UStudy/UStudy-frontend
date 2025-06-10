@@ -48,7 +48,7 @@ export const Notification = ({ role }: { role: string }) => {
         >
           <IoNotifications
             className={`size-5 md:size-6 opacity-85
-            ${showDropdown ? "text-primary-darker" : "text-primary-dark"}`}
+            ${showDropdown ? "text-primary-darkest" : "text-primary-dark"}`}
           />
         </div>
       </Tooltip>
@@ -92,6 +92,7 @@ export const Notification = ({ role }: { role: string }) => {
                       if (!item.read) {
                         item.read = true;
                       }
+                      setShowDropdown(false);
                       router.push(`/${role}/notifications/${item.id}`);
                     }}
                     className={`px-3 py-2 border-b last:border-b-0 text-sm cursor-pointer
