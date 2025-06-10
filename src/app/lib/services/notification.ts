@@ -36,24 +36,24 @@ export const getNotificationDetails = async (notificationId: string) => {
   return response.data.data;
 };
 
-export const createClassNotification = async (
-  classId: string,
-  body: {
-    receiverId?: string;
-    title?: string;
-    content?: string;
-    type?: string;
-  },
-) => {
-  const response = await axiosInstance.post("/notification/create-class-noti", {
-    ...body,
-    type: body.type ?? "ANNOUNCEMENT",
-  });
+export const createNotification = async (body: {
+  receiverId?: string;
+  title?: string;
+  content?: string;
+  type?: string;
+  receiverType?: string;
+}) => {
+  const response = await axiosInstance.post(
+    "/notification/create-notification",
+    {
+      ...body,
+      type: body.type ?? "ANNOUNCEMENT",
+    },
+  );
   return response.data.data;
 };
 
-export const updateClassNotification = async (
-  classId: string,
+export const updateNotification = async (
   notiId: string | undefined,
   body: {
     title?: string;

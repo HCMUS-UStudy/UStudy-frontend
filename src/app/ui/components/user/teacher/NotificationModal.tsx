@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 import { IoReturnUpBack } from "react-icons/io5";
 import { Input } from "../../_common/text-field/Input";
 import {
-  createClassNotification,
-  updateClassNotification,
+  createNotification,
+  updateNotification,
 } from "@/app/lib/services/notification";
 import TextArea from "../../_common/text-field/TextArea";
 import Tooltip from "../../_common/Tooltip";
@@ -44,11 +44,12 @@ const NotificationModal = ({
             receiverId: classId,
             title: title,
             content: content,
+            receiverType: "CLASS",
           };
       if (notification) {
-        await updateClassNotification(classId, notification.id, body);
+        await updateNotification(notification.id, body);
       } else {
-        await createClassNotification(classId, body);
+        await createNotification(body);
       }
       toast.success(
         notification

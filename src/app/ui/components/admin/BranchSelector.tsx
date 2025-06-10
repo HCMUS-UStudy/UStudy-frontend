@@ -70,7 +70,7 @@ const BranchSelector: React.FC = () => {
           className="relative cursor-pointer rounded-[20px]"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className="px-4 py-1.5 md:py-[10px] rounded-xl md:rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-sm md:text-[15px] items-center transition-all">
+          <div className="px-3 sm:px-4 py-1.5 md:py-[10px] rounded-xl md:rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-sm md:text-[15px] items-center transition-all">
             {branches.find((branch) => branch.id === selectedBranchId)?.name ||
               "Chọn chi nhánh"}
             <TiArrowSortedDown className="text-black" />

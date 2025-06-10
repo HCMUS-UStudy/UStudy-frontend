@@ -15,9 +15,6 @@ const Sidebar = () => {
     queryKey: ["Permissions"],
     queryFn: () => getPermissions(),
   });
-  // const permissions = useAppSelector(
-  //   (state: RootState) => state.permission.screens,
-  // );
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -35,25 +32,15 @@ const Sidebar = () => {
     };
   }, [permissions]);
 
-  // const mergedItems = isMobile
-  //   ? SIDENAV_ITEMS.flatMap((item) =>
-  //       item.submenu && item.subMenuItems
-  //         ? [
-  //             { ...item, submenu: false, subMenuItems: undefined }, // item chính
-  //             ...item.subMenuItems, // gộp các submenu
-  //           ]
-  //         : [item],
-  //     )
-  //   : SIDENAV_ITEMS;
+  // Create an ordered list of all menu paths
+  const allMenuPaths = Object.keys(routeMap);
 
-  // useEffect(() => {
-  //   const merged = isMobile
-  //     ? SIDENAV_ITEMS.flatMap((item) =>
-  //         item.submenu && item.subMenuItems ? item.subMenuItems : [item],
-  //       )
-  //     : SIDENAV_ITEMS;
-  //   setMergedItems(merged);
-  // }, [isMobile, SIDENAV_ITEMS]);
+  // Sort permissions according to the order in allMenuPaths
+  const sortedPermissions = permissions
+    ?.slice()
+    .sort((a: string, b: string) => {
+      return allMenuPaths.indexOf(a) - allMenuPaths.indexOf(b);
+    });
 
   return (
     <div
@@ -61,16 +48,16 @@ const Sidebar = () => {
         ${isMobile ? "w-sidebar-mobile" : "w-sidebar-width"}`}
     >
       {!isMobile ? (
-        <div className="flex items-center justify-center pt-8 pb-6">
+        <div className="flex items-center justify-center pt-8 pb-7">
           <Image src="/logo.png" alt="Logo" width={135} height={135} />
         </div>
       ) : (
-        <div className="flex items-center justify-center pt-8 pb-6">
-          <Image src="/UstudyIcon.png" alt="Logo" width={30} height={30} />
+        <div className="flex items-center justify-center pt-6 pb-6">
+          <Image src="/UstudyIcon.png" alt="Logo" width={28} height={28} />
         </div>
       )}
       {status === "pending" ? (
-        <div className="flex flex-col gap-3 px-4 mt-2">
+        <div className="flex flex-col gap-2 px-4 mt-2">
           {[...Array(5)].map((_, idx) => (
             <div
               key={idx}
@@ -80,8 +67,8 @@ const Sidebar = () => {
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-[11px] px-4">
-            {permissions?.map((item: string) => {
+          <div className="flex flex-col gap-[6px] px-3">
+            {(sortedPermissions || []).map((item: string) => {
               const route = routeMap[item];
               if (!route) {
                 return null;

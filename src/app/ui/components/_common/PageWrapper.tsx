@@ -34,7 +34,8 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
         </div>
       ) : (
         <div
-          className={`h-full px-3 py-2 md:px-6 md:py-4 bg-foreground md:rounded-lg ${pathname === "/member/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}
+          className={`h-full px-2 py-2 md:px-5 md:py-4 bg-foreground md:rounded-lg 
+            ${pathname === "/member/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}
         >
           {children}
         </div>

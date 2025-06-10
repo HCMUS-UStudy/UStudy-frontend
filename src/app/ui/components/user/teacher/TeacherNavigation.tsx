@@ -11,7 +11,7 @@ export default function TeacherNavigation({
 }) {
   const navigation = [
     { title: "Thông tin lớp học", urlPush: "" },
-    { title: "Thông báo", urlPush: "notification" },
+    { title: "Thông báo", urlPush: "notifications" },
     { title: "Tài liệu", urlPush: "material" },
     { title: "Bài tập", urlPush: "assignment" },
     { title: "Thành viên", urlPush: "members" },
