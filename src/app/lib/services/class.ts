@@ -104,6 +104,7 @@ export const getClassesForTeacher = async () => {
       gradeId: "",
     },
   });
+  console.log("response", response.data);
   return response.data.data.content;
 };
 

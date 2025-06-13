@@ -7,6 +7,7 @@ export const getListNotification = async () => {
       limit: 100,
     },
   });
+  console.log("response", response.data);
   return response.data.data.content;
 };
 

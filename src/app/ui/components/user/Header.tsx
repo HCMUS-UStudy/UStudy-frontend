@@ -20,9 +20,6 @@ const Header = ({ role }: { role: string }) => {
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
   const [SIDENAV_ITEMS, setSIDENAV_ITEMS] = useState<SideNavItem[]>([]);
 
-  const [toggleCollapse, setToggleCollapse] = useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-
   const { children, selectedChild } = useAppSelector((state) => state.children);
   const dispatch = useAppDispatch();
 
@@ -44,29 +41,8 @@ const Header = ({ role }: { role: string }) => {
   }, [role]);
 
   const handleProfileClick = () => {
-    console.log(`/${pathname?.split("/")[1]}/profile`);
     router.push(`/${pathname?.split("/")[1]}/profile`);
   };
-
-  const handleToggle = () => {
-    setToggleCollapse(!toggleCollapse);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setToggleCollapse(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -92,7 +68,7 @@ const Header = ({ role }: { role: string }) => {
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
-        <div className="flex gap-2 sm:gap-3 items-center" ref={dropdownRef}>
+        <div className="flex gap-2 sm:gap-3 items-center">
           {userInfo?.role.defaultRoute === "PARENT" &&
             pathname?.includes("/member/tuition") && (
               <Select
@@ -128,11 +104,8 @@ const Header = ({ role }: { role: string }) => {
           />
           <DropdownProfile
             userInfo={userInfo}
-            handleToggle={handleToggle}
-            toggleCollapse={toggleCollapse}
             handleProfileClick={handleProfileClick}
             handleLogout={handleLogoutCookies}
-            dropdownRef={dropdownRef}
           />
         </div>
       </div>

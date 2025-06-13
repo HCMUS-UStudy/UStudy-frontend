@@ -17,9 +17,6 @@ const Header: React.FC = () => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
 
-  const [toggleCollapse, setToggleCollapse] = useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
@@ -31,26 +28,6 @@ const Header: React.FC = () => {
   const handleProfileClick = () => {
     router.push("/admin/profile");
   };
-
-  const handleToggle = () => {
-    setToggleCollapse(!toggleCollapse);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setToggleCollapse(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -83,7 +60,7 @@ const Header: React.FC = () => {
         {!pathname?.includes("/admin/branches") &&
           !pathname?.includes("/admin/sessions") &&
           !pathname?.includes("/admin/profile") && <BranchSelector />}
-        <div className="flex gap-2 sm:gap-3 items-center" ref={dropdownRef}>
+        <div className="flex gap-2 sm:gap-3 items-center">
           {/* <Tooltip text="Thông báo" position="bottom">
             <div className="p-2 hidden md:flex rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary transition-all">
               <IoNotificationsOutline size={24} />
@@ -97,11 +74,8 @@ const Header: React.FC = () => {
           />
           <DropdownProfile
             userInfo={userInfo}
-            handleToggle={handleToggle}
-            toggleCollapse={toggleCollapse}
             handleProfileClick={handleProfileClick}
             handleLogout={handleLogoutCookies}
-            dropdownRef={dropdownRef}
           />
         </div>
       </div>

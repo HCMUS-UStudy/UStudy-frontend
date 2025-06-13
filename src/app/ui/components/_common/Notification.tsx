@@ -54,7 +54,7 @@ export const Notification = ({ role }: { role: string }) => {
       </Tooltip>
       {showDropdown && (
         <div
-          className="absolute -right-2 mt-[6px] w-[270px] sm:w-[350px] max-h-[70vh] bg-white shadow-lg border border-gray-200
+          className="absolute -right-2 mt-[3px] w-[270px] sm:w-[350px] max-h-[70vh] bg-white shadow-lg border border-gray-200
           rounded-xl z-50 overflow-y-auto"
         >
           <div className="p-3 flex justify-between items-center border-b">
