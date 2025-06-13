@@ -23,6 +23,17 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  if (pathname?.startsWith("/member/contact")) {
+    return (
+      <div
+        className={`flex flex-col flex-1 h-full overflow-y-hidden bg-white
+      ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+      >
+        {children}
+      </div>
+    );
+  }
   return (
     <div
       className={`bg-background p-0 md:p-4 border-t-2 md:border-t-0 border-slate-300 h-screen-height
@@ -33,9 +44,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
           {children}
         </div>
       ) : (
-        <div
-          className={`h-full px-3 py-2 md:px-6 md:py-4 bg-foreground md:rounded-lg ${pathname === "/member/contact" ? "overflow-y-hidden" : "overflow-y-auto"}`}
-        >
+        <div className="h-full px-3 py-2 md:px-6 md:py-4 bg-foreground md:rounded-lg overflow-y-auto">
           {children}
         </div>
       )}

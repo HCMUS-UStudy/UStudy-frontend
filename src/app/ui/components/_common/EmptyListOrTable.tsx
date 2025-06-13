@@ -29,8 +29,14 @@ export default function EmptyListOrTable({
 }: EmptyListOrTableProps): JSX.Element {
   return (
     <div className="flex flex-col items-center justify-center text-center bg-primary-lighter border border-dashed border-primary-darkest p-6 rounded-xl shadow-sm">
-      <Lottie className="size-24" animationData={xIconAnimation} loop={false} />
-      <p className="text-primary-darkest text-lg font-medium">{message}</p>
+      <Lottie
+        className="size-20 md:size-24"
+        animationData={xIconAnimation}
+        loop={false}
+      />
+      <p className="text-primary-darkest text-sm md:text-lg font-medium">
+        {message}
+      </p>
     </div>
   );
 }

@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
-import TeacherList from "@/app/ui/components/user/parent/contact/TeacherList";
-import ChatMessage from "@/app/ui/components/user/parent/contact/ChatMessage";
+import { Contacts } from "./Contacts";
+import { ChatMessage } from "./ChatMessage";
 
 interface Message {
   id: number;
@@ -22,7 +22,7 @@ interface Teacher {
   lastActive: string;
 }
 
-export default function ParentContactPage() {
+const ContactPage = () => {
   const searchParams = useSearchParams();
   const teacherParam = searchParams?.get("teacher");
 
@@ -257,6 +257,10 @@ export default function ParentContactPage() {
     }
   }, [selectedTeacher, conversationHistory[selectedTeacher ?? ""]]);
 
+  const [viewPort, setViewPort] = useState<"chat" | "list">("list");
+
+  const [displayList, setDisplayList] = useState<boolean>(true);
+
   const handleSendMessage = () => {
     if (!messageInput.trim() || !selectedTeacher) return;
 
@@ -273,27 +277,93 @@ export default function ParentContactPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-      {/* Danh sách giáo viên */}
-      <TeacherList
-        teachers={teachers}
-        selectedTeacher={selectedTeacher}
-        setSelectedTeacher={setSelectedTeacher}
-      />
+    <>
+      <div className="flex">
+        <Contacts
+          contacts={teachers}
+          selectedTeacher={selectedTeacher}
+          setSelectedTeacher={setSelectedTeacher}
+          displayList={displayList}
+          setDisplayList={setDisplayList}
+        />
 
-      {/* Khu vực chat */}
-      <ChatMessage
-        selectedTeacher={selectedTeacher}
-        conversationHistory={conversationHistory}
-        teachers={teachers}
-        messageInput={messageInput}
-        setMessageInput={setMessageInput}
-        showEmojiPicker={showEmojiPicker}
-        setShowEmojiPicker={setShowEmojiPicker}
-        emojiRef={emojiRef}
-        messagesEndRef={messagesEndRef}
-        handleSendMessage={handleSendMessage}
-      />
-    </div>
+        <ChatMessage
+          selectedTeacher={selectedTeacher}
+          conversationHistory={conversationHistory}
+          teachers={teachers}
+          messageInput={messageInput}
+          setMessageInput={setMessageInput}
+          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker}
+          emojiRef={emojiRef}
+          messagesEndRef={messagesEndRef}
+          handleSendMessage={handleSendMessage}
+        />
+      </div>
+      {/* <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
+        <TeacherList
+          teachers={teachers}
+          selectedTeacher={selectedTeacher}
+          setSelectedTeacher={setSelectedTeacher}
+          displayList={displayList}
+          setDisplayList={setDisplayList}
+        />
+      </Dialog> */}
+    </>
   );
-}
+
+  // return (
+  //   <>
+  //     <div className="hidden md:flex bg-white">
+  //       <div className="grid grid-cols-1 md:grid-cols-4 w-full">
+  //         {/* Danh sách giáo viên */}
+  //         <TeacherList
+  //           teachers={teachers}
+  //           selectedTeacher={selectedTeacher}
+  //           setSelectedTeacher={setSelectedTeacher}
+  //         />
+
+  //         {/* Khu vực chat */}
+  //         <ChatMessage
+  //           selectedTeacher={selectedTeacher}
+  //           conversationHistory={conversationHistory}
+  //           teachers={teachers}
+  //           messageInput={messageInput}
+  //           setMessageInput={setMessageInput}
+  //           showEmojiPicker={showEmojiPicker}
+  //           setShowEmojiPicker={setShowEmojiPicker}
+  //           emojiRef={emojiRef}
+  //           messagesEndRef={messagesEndRef}
+  //           handleSendMessage={handleSendMessage}
+  //         />
+  //       </div>
+  //     </div>
+  //     <div className="flex md:hidden w-full">
+  //       {viewPort === "list" && (
+  //         <TeacherList
+  //           teachers={teachers}
+  //           selectedTeacher={selectedTeacher}
+  //           setSelectedTeacher={setSelectedTeacher}
+  //           setViewPort={setViewPort}
+  //         />
+  //       )}
+  //       {viewPort === "chat" && (
+  //         <ChatMessage
+  //           selectedTeacher={selectedTeacher}
+  //           conversationHistory={conversationHistory}
+  //           teachers={teachers}
+  //           messageInput={messageInput}
+  //           setMessageInput={setMessageInput}
+  //           showEmojiPicker={showEmojiPicker}
+  //           setShowEmojiPicker={setShowEmojiPicker}
+  //           emojiRef={emojiRef}
+  //           messagesEndRef={messagesEndRef}
+  //           handleSendMessage={handleSendMessage}
+  //         />
+  //       )}
+  //     </div>
+  //   </>
+  // );
+};
+
+export { ContactPage };

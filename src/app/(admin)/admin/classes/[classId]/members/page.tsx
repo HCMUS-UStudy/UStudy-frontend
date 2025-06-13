@@ -15,13 +15,14 @@ import {
   TableRow,
   TableCell,
 } from "@/app/ui/components/_common/Table";
-import { useParams } from "next/navigation";
 import Pagination from "@/app/ui/components/_common/Pagination";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const MemberPage = () => {
   const searchParams = useSearchParams();
-  const params = useParams();
-  const classId = params?.classId as string;
+  // const params = useParams<{ classId: string }>();
+  const { decryptedId } = useEncodedRoute({ paramName: "classId" });
+  const classId = decryptedId;
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);

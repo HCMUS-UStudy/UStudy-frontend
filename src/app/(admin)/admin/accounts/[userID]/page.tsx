@@ -10,12 +10,15 @@ import { AccountDetailItem, ClassUserItem } from "@/app/types";
 import { getListUserClass } from "@/app/lib/services/class";
 import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
 import Image from "next/image";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const AccountDetail = () => {
-  const params = useParams();
-  const userId = Array.isArray(params?.userID)
-    ? params.userID[0]
-    : params?.userID;
+  const params = useParams<{ userId: string }>();
+  const { decodeId } = useEncodedRoute();
+  const userId = decodeId(params?.userId as string);
+  // const userId = Array.isArray(params?.userID)
+  //   ? params.userID[0]
+  //   : params?.userID;
   const [user, setUser] = useState<AccountDetailItem>();
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const router = useRouter();

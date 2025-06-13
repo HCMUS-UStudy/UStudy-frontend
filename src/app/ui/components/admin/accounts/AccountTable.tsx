@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import { deleteUser, getAllAccount } from "@/app/lib/services/user";
-import { useRouter } from "next/navigation";
 import Tooltip from "../../_common/Tooltip";
 import { toast } from "react-toastify";
 import { accountStatus } from "@/app/lib/utils";
@@ -23,6 +22,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Eye } from "lucide-react";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -38,8 +38,10 @@ const AccountTable: React.FC<AccountTableProps> = ({
   // const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const router = useRouter();
+  // const router = useRouter();
   // const [trigger, setTrigger] = useState<boolean>(false);
+
+  const { handleNavigate } = useEncodedRoute();
 
   const {
     data: fetchAccounts,
@@ -94,7 +96,8 @@ const AccountTable: React.FC<AccountTableProps> = ({
   // }, [currentPage, searchQuery, roleQuery, trigger]); // Use searchQueryState in the dependency array
 
   const handleDetail = (userId: string) => {
-    router.push(`/admin/accounts/${userId}`);
+    handleNavigate(userId, "/admin/accounts");
+    // router.push(`/admin/accounts/${userId}`);
   };
 
   const queryClient = useQueryClient();
@@ -190,7 +193,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
                   </span>
                 </TableCell>
                 <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
-                <TableCell className="flex justify-center items-center gap-2">
+                <TableCell className="flex justify-start items-center gap-2">
                   <button className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors">
                     <Tooltip text="Chỉnh sửa tài khoản">
                       <FaEdit className="size-5" />

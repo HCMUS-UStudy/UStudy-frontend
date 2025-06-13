@@ -11,7 +11,7 @@ export default async function TeacherLayout({
   return (
     <div className="bg-background">
       <Sidebar />
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col h-screen w-full">
         <Header role="student" />
         <PageWrapper> {children} </PageWrapper>
       </div>

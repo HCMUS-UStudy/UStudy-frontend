@@ -1,19 +1,20 @@
 "use client";
-import { useParams } from "next/navigation";
-// import { useState, useEffect } from "react";
 import { ClassScheduleItem } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getClassById } from "@/app/lib/services/class";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { getClassSchedule } from "@/app/lib/services/classSchedule";
 import { daysInWeekMap } from "@/app/lib/utils";
+import { useEncodedRoute } from "@/app/lib/hooks";
+import { useParams } from "next/navigation";
 
 const ClassAdmin = () => {
   // const [currentPage, setCurrentPage] = useState(0);
   // const [totalPages, setTotalPages] = useState<number>(0);
 
   const params = useParams<{ classId: string }>();
-  const classId = params?.classId as string;
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params?.classId as string);
 
   // const { data: classQuery, isLoading } = useQuery<ClassDetail>({
   //   queryKey: ["ClassDetail", classId],

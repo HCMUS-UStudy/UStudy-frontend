@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 
 import {
   Card,
@@ -29,6 +28,8 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEncodedRoute } from "@/app/lib/hooks";
+import { useParams } from "next/navigation";
 // import { classSessions } from "@/app/types";
 // import { getAvailableRooms } from "@/app/lib/services/room";
 
@@ -58,8 +59,14 @@ const updateClassSchema = z
 export type updateClassFormInputs = z.infer<typeof updateClassSchema>;
 
 export default function ClassSetting() {
+  // const params = useParams<{ classId: string }>();
+  // const { decryptedId } = useEncodedRoute({ paramName: "classId" });
+  // const classId = decryptedId;
+
   const params = useParams<{ classId: string }>();
-  const classId = params?.classId ?? "";
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params?.classId as string);
+
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const selectedBranchId =
     useAppSelector((state) => state.branch.selectedBranchId) ?? "";

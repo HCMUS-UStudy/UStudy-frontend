@@ -165,7 +165,6 @@ export default function Login() {
             </div>
             <div className="mt-6 mb-4 w-[250px] md:w-[350px]">
               <Input
-                className="text-base md:text-[14px]"
                 type="text"
                 placeholder="Nhập tên tài khoản"
                 label="Tên tài khoản"
@@ -176,7 +175,6 @@ export default function Login() {
             </div>
             <div>
               <Input
-                className="text-[14px]"
                 type="password"
                 placeholder="Nhập mật khẩu"
                 label="Mật khẩu"

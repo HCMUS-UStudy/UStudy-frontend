@@ -8,7 +8,7 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { Branch } from "@/app/types";
 import { useDispatch } from "react-redux";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { setBranches } from "@/app/store/branch-slice";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
@@ -22,13 +22,13 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { Eye } from "lucide-react";
 import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const BranchPage = () => {
   // const { branches } = useSelector((state: RootState) => state.branch);
   // const [branches_, setBranches_] = useState<Branch[]>(branches);
 
   // const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -53,8 +53,11 @@ const BranchPage = () => {
     setShowModal(true);
   };
 
+  const { handleNavigate } = useEncodedRoute();
+
   const handleDetail = (branch: Branch) => {
-    router.push(`/admin/branches/${branch.id}`);
+    handleNavigate(branch.id, "/admin/branches");
+    // router.push(`/admin/branches/${branch.id}`);
   };
 
   return (
