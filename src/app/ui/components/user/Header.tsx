@@ -18,9 +18,11 @@ import { IoMenuOutline } from "react-icons/io5";
 const Header = ({
   role,
   handleMenuOpen,
+  collapsed,
 }: {
   role: string;
   handleMenuOpen: (isOpen: boolean) => void;
+  collapsed: boolean;
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -69,7 +71,7 @@ const Header = ({
   return (
     <div
       className={`h-[50px] md:h-header-height flex px-4 md:px-8 justify-between items-center bg-foreground 
-        ${isMobile ? "" : "ml-from-sidebar"}`}
+        ${isMobile ? "" : collapsed ? "ml-from-sidebar-collapsed" : "ml-from-sidebar"}`}
     >
       <div
         className="flex md:hidden items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full

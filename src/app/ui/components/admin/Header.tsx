@@ -11,8 +11,15 @@ import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
 // import Tooltip from "../_common/Tooltip";
 import BranchSelector from "./BranchSelector";
+import { IoMenuOutline } from "react-icons/io5";
 
-const Header: React.FC = () => {
+const Header = ({
+  handleMenuOpen,
+  collapsed,
+}: {
+  handleMenuOpen: (isOpen: boolean) => void;
+  collapsed: boolean;
+}) => {
   const pathname = usePathname();
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
@@ -47,8 +54,15 @@ const Header: React.FC = () => {
   return (
     <div
       className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
-        ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+        ${isMobile ? "" : collapsed ? "ml-from-sidebar-collapsed" : "ml-from-sidebar"}`}
     >
+      <div
+        className="flex md:hidden items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
+              transition-all cursor-pointer"
+        onClick={() => handleMenuOpen(true)}
+      >
+        <IoMenuOutline className="text-primary-darkest" size={20} />
+      </div>
       <div className="text-md font-bold mt-1 sm:text-lg mr-3">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
           (subItem) => pathname?.includes(subItem.path),

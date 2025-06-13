@@ -14,9 +14,13 @@ import Tooltip from "../Tooltip";
 const Sidebar = ({
   isOpen,
   handleClose,
+  collapsed,
+  setCollapsed,
 }: {
   isOpen: boolean;
   handleClose: (isOpen: boolean) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -26,7 +30,6 @@ const Sidebar = ({
   });
 
   const [isMobile, setIsMobile] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -73,24 +76,24 @@ const Sidebar = ({
             )}
             {!isMobile && (
               <div
-                className={`absolute top-1/2 -right-3 transform -translate-y-1/2 cursor-pointer p-1
+                className={`absolute top-1/3 -right-2 transform -translate-y-1/2 cursor-pointer p-1
                   rounded-full text-primary-darker bg-primary-light hover:bg-primary
                   hover:text-primary-darkest transition-all duration-200 select-none
                   ${collapsed ? "rotate-180" : ""}`}
-                onClick={() => setCollapsed((prev) => !prev)}
+                onClick={() => setCollapsed(!collapsed)}
               >
-                <IoIosArrowBack />
+                <IoIosArrowBack size={12} />
               </div>
             )}
-            <div className="flex items-center justify-center pt-6 pb-6">
+            <div className="flex items-center justify-center pt-7 pb-7">
               {isMobile ? (
                 <Image src="/logo.png" alt="Logo" width={100} height={100} />
               ) : collapsed ? (
                 <Image
                   src="/UstudyIcon.png"
                   alt="Logo"
-                  width={28}
-                  height={28}
+                  width={26}
+                  height={26}
                 />
               ) : (
                 <Image src="/logo.png" alt="Logo" width={120} height={120} />
