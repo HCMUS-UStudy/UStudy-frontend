@@ -26,7 +26,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
   return (
     <div
       className={`bg-background p-0 md:p-4 border-t-2 md:border-t-0 border-slate-300 h-screen-height
-      ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+      ${isMobile ? "" : "ml-from-sidebar"}`}
     >
       {isDashboard ? (
         <div className="h-full p-3 bg-foreground overflow-y-auto">

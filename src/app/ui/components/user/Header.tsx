@@ -13,8 +13,15 @@ import { Select, SelectItem } from "../_common/Select";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
+import { IoMenuOutline } from "react-icons/io5";
 
-const Header = ({ role }: { role: string }) => {
+const Header = ({
+  role,
+  handleMenuOpen,
+}: {
+  role: string;
+  handleMenuOpen: (isOpen: boolean) => void;
+}) => {
   const pathname = usePathname();
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
@@ -61,10 +68,17 @@ const Header = ({ role }: { role: string }) => {
 
   return (
     <div
-      className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
-        ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+      className={`h-[50px] md:h-header-height flex px-4 md:px-8 justify-between items-center bg-foreground 
+        ${isMobile ? "" : "ml-from-sidebar"}`}
     >
-      <div className="text-md sm:text-lg font-bold mt-1">
+      <div
+        className="flex md:hidden items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
+        transition-all cursor-pointer"
+        onClick={() => handleMenuOpen(true)}
+      >
+        <IoMenuOutline className="text-primary-darkest" size={20} />
+      </div>
+      <div className="text-md sm:text-lg font-bold">
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
