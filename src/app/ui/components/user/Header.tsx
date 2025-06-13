@@ -13,15 +13,21 @@ import { Select, SelectItem } from "../_common/Select";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
+import { IoMenuOutline } from "react-icons/io5";
 
-const Header = ({ role }: { role: string }) => {
+const Header = ({
+  role,
+  handleMenuOpen,
+  collapsed,
+}: {
+  role: string;
+  handleMenuOpen: (isOpen: boolean) => void;
+  collapsed: boolean;
+}) => {
   const pathname = usePathname();
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
   const [SIDENAV_ITEMS, setSIDENAV_ITEMS] = useState<SideNavItem[]>([]);
-
-  const [toggleCollapse, setToggleCollapse] = useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const { children, selectedChild } = useAppSelector((state) => state.children);
   const dispatch = useAppDispatch();
@@ -44,29 +50,8 @@ const Header = ({ role }: { role: string }) => {
   }, [role]);
 
   const handleProfileClick = () => {
-    console.log(`/${pathname?.split("/")[1]}/profile`);
     router.push(`/${pathname?.split("/")[1]}/profile`);
   };
-
-  const handleToggle = () => {
-    setToggleCollapse(!toggleCollapse);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setToggleCollapse(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -85,14 +70,21 @@ const Header = ({ role }: { role: string }) => {
 
   return (
     <div
-      className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
-        ${isMobile ? "ml-from-sidebar-mobile" : "ml-from-sidebar"}`}
+      className={`h-[50px] md:h-header-height flex px-4 md:px-8 justify-between items-center bg-foreground 
+        ${isMobile ? "" : collapsed ? "ml-from-sidebar-collapsed" : "ml-from-sidebar"}`}
     >
-      <div className="text-md sm:text-lg font-bold mt-1">
+      <div
+        className="flex md:hidden items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
+        transition-all cursor-pointer"
+        onClick={() => handleMenuOpen(true)}
+      >
+        <IoMenuOutline className="text-primary-darkest" size={20} />
+      </div>
+      <div className="text-md sm:text-lg font-bold">
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
-        <div className="flex gap-2 sm:gap-3 items-center" ref={dropdownRef}>
+        <div className="flex gap-2 sm:gap-3 items-center">
           {userInfo?.role.defaultRoute === "PARENT" &&
             pathname?.includes("/member/tuition") && (
               <Select
@@ -128,11 +120,8 @@ const Header = ({ role }: { role: string }) => {
           />
           <DropdownProfile
             userInfo={userInfo}
-            handleToggle={handleToggle}
-            toggleCollapse={toggleCollapse}
             handleProfileClick={handleProfileClick}
             handleLogout={handleLogoutCookies}
-            dropdownRef={dropdownRef}
           />
         </div>
       </div>
