@@ -186,11 +186,6 @@ export default function DayRoomSessionSelector() {
       _classTimes.filter((item) => item.day !== day),
     );
     setOverview((current) => current.filter((item) => item.day !== day));
-    toast.success("Xóa lớp học thành công", {
-      position: "bottom-right",
-      autoClose: 3000,
-      pauseOnHover: false,
-    });
   };
   return (
     <div className="flex flex-col gap-2">
