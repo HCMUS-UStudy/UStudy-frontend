@@ -19,10 +19,12 @@ const Header = ({
   role,
   handleMenuOpen,
   collapsed,
+  setCollapsed,
 }: {
   role: string;
   handleMenuOpen: (isOpen: boolean) => void;
   collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -70,17 +72,23 @@ const Header = ({
 
   return (
     <div
-      className={`h-[50px] md:h-header-height flex px-4 md:px-8 justify-between items-center bg-foreground 
+      className={`h-[50px] md:h-header-height flex pl-2 md:pl-1 pr-3 md:pr-7 justify-between items-center bg-foreground 
         ${isMobile ? "" : collapsed ? "ml-from-sidebar-collapsed" : "ml-from-sidebar"}`}
     >
       <div
-        className="flex md:hidden items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
-        transition-all cursor-pointer"
-        onClick={() => handleMenuOpen(true)}
+        className="flex items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
+          transition-all cursor-pointer"
+        onClick={() => {
+          if (isMobile) {
+            handleMenuOpen(true);
+          } else {
+            setCollapsed(!collapsed);
+          }
+        }}
       >
         <IoMenuOutline className="text-primary-darkest" size={20} />
       </div>
-      <div className="text-md sm:text-lg font-bold">
+      <div className="text-md sm:text-lg font-bold mt-[1px] md:mt-0">
         {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">

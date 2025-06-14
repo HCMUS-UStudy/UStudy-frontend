@@ -39,14 +39,17 @@ const ClassDetailPage = () => {
     ? classSchedule.filter((s: ClassScheduleItem) => !s.isPassed)
     : [];
 
-  const lastCompleted = completed
+  // 2 buổi đã hoàn thành gần nhất (theo ngày giảm dần)
+  const lastCompletedList = completed
     .slice()
     .sort(
       (a: ClassScheduleItem, b: ClassScheduleItem) =>
         new Date(b.date).getTime() - new Date(a.date).getTime(),
-    )[0];
+    )
+    .slice(0, 2)
+    .reverse();
 
-  // 4 buổi chưa hoàn thành tiếp theo (theo ngày tăng dần)
+  // 3 buổi chưa hoàn thành tiếp theo (theo ngày tăng dần)
   const nextUpcoming = upcoming
     .slice()
     .sort(
@@ -59,9 +62,10 @@ const ClassDetailPage = () => {
   const displayList = showAll
     ? classSchedule
     : [
-        ...(lastCompleted ? [lastCompleted] : []),
+        ...lastCompletedList,
         ...nextUpcoming.filter(
-          (s: ClassScheduleItem) => !lastCompleted || s.id !== lastCompleted.id,
+          (s: ClassScheduleItem) =>
+            !lastCompletedList.some((c) => c.id === s.id),
         ),
       ];
 
@@ -142,12 +146,12 @@ const ClassDetailPage = () => {
           <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 md:mb-4">
             Danh sách buổi học
           </h3>
-          {classSchedule.length > 0 ? (
+          {classSchedule ? (
             <>
               <ul className="space-y-3">
-                {displayList.map((schedule: ClassScheduleItem) => (
+                {displayList.map((schedule: ClassScheduleItem, idx: number) => (
                   <li
-                    key={schedule.id}
+                    key={schedule.id ?? `schedule-${idx}`}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow transition"
                   >
                     <div className="flex justify-between items-center">
