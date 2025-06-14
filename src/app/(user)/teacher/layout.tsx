@@ -28,7 +28,6 @@ export default function TeacherLayout({
         isOpen={isMenuOpen}
         handleClose={() => setIsMenuOpen(false)}
         collapsed={collapsed}
-        setCollapsed={setCollapsed}
       />
 
       <div className="flex flex-col h-full w-full">
@@ -36,6 +35,7 @@ export default function TeacherLayout({
           role="teacher"
           handleMenuOpen={setIsMenuOpen}
           collapsed={collapsed}
+          setCollapsed={setCollapsed}
         />
         <PageWrapper collapsed={collapsed}> {children} </PageWrapper>
       </div>

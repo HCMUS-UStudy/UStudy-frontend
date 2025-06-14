@@ -39,11 +39,14 @@ export default function AdminLayout({
           isOpen={isMenuOpen}
           handleClose={() => setIsMenuOpen(false)}
           collapsed={collapsed}
-          setCollapsed={setCollapsed}
         />
 
         <div className="flex flex-col h-full w-full">
-          <Header handleMenuOpen={setIsMenuOpen} collapsed={collapsed} />
+          <Header
+            handleMenuOpen={setIsMenuOpen}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+          />
           <PageWrapper collapsed={collapsed}> {children} </PageWrapper>
         </div>
       </div>
