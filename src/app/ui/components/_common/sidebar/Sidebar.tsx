@@ -7,7 +7,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getPermissions } from "@/app/lib/services/permission";
 import { RxCross2 } from "react-icons/rx";
-import { IoIosArrowBack } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import Tooltip from "../Tooltip";
 
@@ -15,12 +14,10 @@ const Sidebar = ({
   isOpen,
   handleClose,
   collapsed,
-  setCollapsed,
 }: {
   isOpen: boolean;
   handleClose: (isOpen: boolean) => void;
   collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -74,7 +71,7 @@ const Sidebar = ({
                 <RxCross2 className="text-primary-darker" />
               </div>
             )}
-            {!isMobile && (
+            {/* {!isMobile && (
               <div
                 className={`absolute top-1/3 -right-2 transform -translate-y-1/2 cursor-pointer p-1
                   rounded-full text-primary-darker bg-primary-light hover:bg-primary
@@ -84,16 +81,16 @@ const Sidebar = ({
               >
                 <IoIosArrowBack size={12} />
               </div>
-            )}
-            <div className="flex items-center justify-center pt-7 pb-7">
+            )} */}
+            <div className="flex items-center justify-center pt-5 pb-6">
               {isMobile ? (
                 <Image src="/logo.png" alt="Logo" width={100} height={100} />
               ) : collapsed ? (
                 <Image
                   src="/UstudyIcon.png"
                   alt="Logo"
-                  width={26}
-                  height={26}
+                  width={25}
+                  height={25}
                 />
               ) : (
                 <Image src="/logo.png" alt="Logo" width={120} height={120} />
