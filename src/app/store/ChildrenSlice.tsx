@@ -3,6 +3,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type Child = {
   id: string;
   name: string;
+  email: string;
+  phone: string;
 };
 
 type ChildrenType = {
