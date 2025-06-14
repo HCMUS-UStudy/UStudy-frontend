@@ -1,10 +1,19 @@
 import { GenderType, UserSummary } from "./common";
 
+export type AssignmentMode = "PRACTICE" | "TEST";
+
+export type AssignmentCount = {
+  total: number;
+  submitted: number;
+  overdue: number;
+};
+
 export type AssignmentItem = {
   id: string;
   title: string;
   duration: number;
   format: "MULTIPLE_CHOICE" | "MIXED" | "ESSAY";
+  mode: "PRACTICE" | "TEST";
   numAttempts: number;
   startTime: string;
   endTime: string;
