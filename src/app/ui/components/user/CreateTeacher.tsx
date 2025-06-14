@@ -129,7 +129,7 @@ export default function CreateTeacher() {
 
   useEffect(() => {
     setValue("grades", []);
-  }, [selectedCourse]);
+  }, [selectedCourse, setValue]);
 
   // useEffect(() => {
   //   const fetchGrades = async () => {

@@ -59,9 +59,7 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="font-medium">
-                        {payment.enrolledClass.name}
-                      </p>
+                      <p className="font-medium">{payment.classDto.name}</p>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-primary-darker">

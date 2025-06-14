@@ -47,7 +47,7 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
         <TableBody>
           {payments.map((payment) => {
             const student = payment.student;
-            const enrolledClass = payment.enrolledClass;
+            const classDto = payment.classDto;
             const dueDate = payment.paymentDate;
             const isOverdue =
               payment.status === "PENDING" && new Date(dueDate) < new Date();
@@ -57,15 +57,16 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                 <TableCell>{payment.invoiceId}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
-                      <FaUser className="h-4 w-4" />
-                    </div>
+                    <FaUser className="h-4 w-4" />
                     <span>{student.name}</span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <p className="font-medium">{enrolledClass.name}</p>
+                    <p className="font-medium">{classDto.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {classDto.course.name} - {classDto.grade.name}
+                    </p>
                   </div>
                 </TableCell>
                 <TableCell className="font-medium text-primary-darker">
@@ -73,9 +74,7 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center">
-                    {payment.status === "COMPLETED"
-                      ? formatDate(payment.paymentDate)
-                      : formatDate(payment.paymentDate)}
+                    {formatDate(payment.paymentDate)}
                     {isOverdue && (
                       <FaInfoCircle
                         className="ml-2 text-red-500"
