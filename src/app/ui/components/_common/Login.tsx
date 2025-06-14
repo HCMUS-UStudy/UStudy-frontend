@@ -59,11 +59,14 @@ export default function Login() {
         JSON.stringify(response.data.user),
         JSON.stringify(response.data.screens),
       );
-      console.log(response.data.screens);
       dispatch(setPermissions(response.data.screens));
       if (defaultRoute === "PARENT") {
         dispatch(setChildren(response.data.children ?? []));
-        dispatch(setSelectedChild(response.data.children?.at(0) ?? ""));
+        dispatch(
+          setSelectedChild(
+            response.data.children ? response.data.children[0] : null,
+          ),
+        );
       }
       toast.success("Đăng nhập thành công", {
         position: "bottom-right",
@@ -71,7 +74,6 @@ export default function Login() {
         closeOnClick: false,
         pauseOnHover: false,
       });
-      console.log(defaultRoute);
       switch (defaultRoute) {
         case "TEACHER":
           router.push("/teacher/classes");
@@ -84,7 +86,6 @@ export default function Login() {
           }
           break;
         case "PARENT":
-          console.log("here");
           router.push("/member/tuition");
           break;
         case "ADMIN":

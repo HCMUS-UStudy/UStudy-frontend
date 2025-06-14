@@ -17,6 +17,7 @@ import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { RxCross1 } from "react-icons/rx";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import Loading from "@/app/ui/components/_common/loading/Loading";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -30,6 +31,7 @@ const Notification = () => {
   const [updatingNotification, setUpdatingNotification] =
     useState<NotificationItem | null>(null);
   const [deleteItem, setShowDeleteModal] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [userData, setUserData] = useState<UserData | null>(null);
   useEffect(() => {
@@ -51,6 +53,8 @@ const Notification = () => {
       );
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [classId]);
 
@@ -101,6 +105,14 @@ const Notification = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [popupId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center mt-5">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col px-3">
@@ -209,7 +221,7 @@ const Notification = () => {
                   notification.read = true;
                 }
                 router.push(
-                  `/teacher/classes/${classId}/notification/${notification.id}`,
+                  `/teacher/classes/${classId}/notifications/${notification.id}`,
                 );
               }}
             >

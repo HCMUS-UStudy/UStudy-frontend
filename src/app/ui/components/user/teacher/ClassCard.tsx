@@ -28,7 +28,9 @@ export default function ClassCard({
       <p className="bg-gray-200 rounded-lg text-xs md:text-sm text-slate-800 w-fit px-1 mt-1">
         {cls.course?.name} - {cls.grade.name}
       </p>
-      <div className="flex-col py-2 text-xs md:text-sm">25 học sinh</div>
+      <div className="flex-col py-2 text-xs md:text-sm">
+        {cls.studentAmount} học sinh
+      </div>
       {!completed && (
         <div className="flex items-center gap-4">
           <div className="w-full bg-gray-200 rounded-full h-2.5">

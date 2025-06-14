@@ -1,6 +1,7 @@
 import { StudentRegisterInputs } from "../register/page";
 import { GenderType } from "./common";
 import { Branch } from "./branch";
+import { Child } from "../store/ChildrenSlice";
 
 export type AuthResponse = {
   message: string;
@@ -10,7 +11,7 @@ export type AuthResponse = {
     screens: string[];
     refresh_token: string;
     access_token: string;
-    children: string[] | null;
+    children: Child[] | null;
   };
 };
 

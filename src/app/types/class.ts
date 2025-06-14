@@ -23,6 +23,7 @@ export type ClassTeacher = BaseClassInfo & {
   grade: GradeItem;
   course: Course;
   status: string | null;
+  studentAmount: number;
   classSessions: classSessions[];
 };
 

@@ -165,7 +165,7 @@ const Select: React.FC<SelectProps> = ({
           <button
             type="button"
             className={cn(
-              "w-full px-3 py-2 text-xs md:text-base border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
+              "w-full px-3 py-2 text-xs md:text-sm border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
               className,
             )}
             onClick={(e) => {
@@ -254,7 +254,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   return (
     <div
       className={cn(
-        "px-3 py-2 cursor-pointer text-xs md:text-base hover:bg-primary truncate transition-all",
+        "px-3 py-2 cursor-pointer text-xs md:text-sm hover:bg-primary truncate transition-all",
         {
           "bg-primary": selectedValue === value,
         },

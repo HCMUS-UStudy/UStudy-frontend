@@ -173,7 +173,6 @@ export async function handleLogoutCookies() {
   const cookieStore = await cookies();
   const defaultRoute = (await getUserDataFromCookies())?.role.defaultRoute;
   cookieStore.getAll().forEach((cookie) => {
-    console.log(cookie);
     cookieStore.delete(cookie.name);
   });
   switch (defaultRoute) {

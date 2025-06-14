@@ -226,7 +226,7 @@ export default function DayRoomSessionSelector() {
         </div>
       </div>
       {classTimes.length !== 0 && (
-        <div className="flex flex-col w-1/2">
+        <div className="flex flex-col w-full xl:w-1/2">
           <h1 className="font-bold">Thời khóa biểu</h1>
           <div className="mt-2 border border-slate-200 rounded">
             <Table>
@@ -251,13 +251,13 @@ export default function DayRoomSessionSelector() {
                           type="button"
                           onClick={() => handleDeleteDay(item.day)}
                         >
-                          <FaTrashAlt className="size-5 text-error hover:scale-125 transition-transform" />
+                          <FaTrashAlt className="size-4 md:size-5 text-error hover:scale-125 transition-transform" />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleSelectDaysInWeek(item.day)}
                         >
-                          <FaEdit className="size-5 text-primary-darkest hover:scale-125 transition-transform" />
+                          <FaEdit className="size-4 md:size-5 text-primary-darkest hover:scale-125 transition-transform" />
                         </button>
                       </div>
                     </TableCell>
