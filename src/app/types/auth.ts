@@ -45,3 +45,9 @@ export type VerifyTokenResponse = {
   status: string;
   data: null;
 };
+
+export type ChangePasswordPayload = {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
