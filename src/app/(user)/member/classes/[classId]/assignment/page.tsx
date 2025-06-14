@@ -47,22 +47,28 @@ export default function ClassAssignment() {
 
   const isExpired = (endTime: string): boolean => {
     const currentTime = new Date();
-    const endTimeDate = new Date(endTime); // Assuming `endTime` is in string format
+    const endTimeDate = new Date(endTime);
 
-    return currentTime > endTimeDate; // Check if current time is greater than the end time
+    return currentTime > endTimeDate;
   };
 
   const handleOpenModal = (assignment: AssignmentItem) => {
-    setSelectedAssignment(assignment); // Set the selected assignment
-    setIsModalOpen(true); // Open the modal
+    setSelectedAssignment(assignment);
+    setIsModalOpen(true);
   };
 
   const handleReviewClick = (submissionId: string) => {
     if (selectedAssignment) {
-      if (isExpired(selectedAssignment.endTime)) {
+      // Nếu là chế độ PRACTICE, cho phép xem review thoải mái
+      if (selectedAssignment.mode === "PRACTICE") {
         router.push(`/member/classes/${classId}/review/${submissionId}`);
       } else {
-        console.log("Assignment is not yet expired.");
+        // Nếu là chế độ TEST, kiểm tra hạn chót
+        if (isExpired(selectedAssignment.endTime)) {
+          router.push(`/member/classes/${classId}/review/${submissionId}`);
+        } else {
+          console.log("Assignment is not yet expired.");
+        }
       }
     } else {
       console.log("Selected assignment is not available.");

@@ -1,4 +1,20 @@
 import axiosInstance from "@/app/lib/axios";
+import { AssignmentCount, AssignmentMode } from "@/app/types/assignment";
+
+export const getAssignmentCount = async (
+  mode?: AssignmentMode,
+): Promise<AssignmentCount> => {
+  try {
+    const response = await axiosInstance.get("/assignment/count", {
+      params: {
+        mode,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const getAssignmentByClassId = async (
   currentPage: number,
