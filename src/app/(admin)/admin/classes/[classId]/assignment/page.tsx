@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
-import { ClassTeacher, AssignmentItem } from "@/app/types";
+import { AssignmentItem, ClassDetail } from "@/app/types";
 import { getClassById } from "@/app/lib/services/class";
 import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 
@@ -145,7 +145,7 @@ export default function Assignment() {
 
   const [assignment, setAssignment] = useState<AssignmentItem[]>([]);
 
-  const [classDetail, setClassDetail] = useState<ClassTeacher | null>(null);
+  const [classDetail, setClassDetail] = useState<ClassDetail | null>(null);
   const handleGoBack = () => {
     setAdding(false);
   };
