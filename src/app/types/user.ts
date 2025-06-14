@@ -4,6 +4,7 @@ import {
   BaseAccountInfo,
   GenderType,
 } from "./common";
+import { Child } from "../store/ChildrenSlice";
 
 export type User = BaseEntity &
   BaseUserInfo &
@@ -32,6 +33,7 @@ export type UserProfile = {
   address: string;
   gender: GenderType;
   birthday: string;
+  children?: Child[];
 };
 
 export interface UpdateProfilePayload {

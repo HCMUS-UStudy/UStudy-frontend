@@ -11,7 +11,7 @@ import { IoReturnUpBack } from "react-icons/io5";
 import { useForm, useFieldArray } from "react-hook-form";
 import TextArea from "../../_common/text-field/TextArea";
 import { Input } from "../../_common/text-field/Input";
-import { ClassTeacher } from "@/app/types";
+import { ClassDetail } from "@/app/types";
 import { useDropzone } from "react-dropzone";
 import { MdUploadFile } from "react-icons/md";
 import { FaCloudUploadAlt, FaCheck } from "react-icons/fa";
@@ -86,7 +86,7 @@ const QuestionModal = ({
 }: {
   onGoBack: () => void;
   onClose: (value: boolean) => void;
-  classDetail: ClassTeacher;
+  classDetail: ClassDetail;
 }) => {
   const {
     register,
