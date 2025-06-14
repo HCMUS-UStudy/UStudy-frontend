@@ -2,33 +2,17 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
-import { Contacts } from "./Contacts";
 import { ChatMessage } from "./ChatMessage";
-
-interface Message {
-  id: number;
-  sender: string;
-  content: string;
-  timestamp: string;
-  isParent: boolean;
-}
-
-interface Teacher {
-  id: number;
-  name: string;
-  subject: string;
-  avatar: string;
-  lastActive: string;
-}
+import { RoomChatItem } from "@/app/types";
+import { useWebSocketService } from "@/app/hooks/use-web-socket";
+import { Dialog } from "../_common/Dialog";
+import { ContactList } from "./ContactList";
 
 const ContactPage = () => {
-  const searchParams = useSearchParams();
-  const teacherParam = searchParams?.get("teacher");
-
-  const [selectedTeacher, setSelectedTeacher] = useState<string | null>(
-    teacherParam ?? "",
-  );
+  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem>(
+  //   teacherParam ?? "",
+  // );
+  const [selectedRoom, setSelectedRoom] = useState<RoomChatItem | null>(null);
   const [messageInput, setMessageInput] = useState("");
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -54,243 +38,65 @@ const ContactPage = () => {
     };
   }, [showEmojiPicker]);
 
-  // Mock data
-  const teachers: Teacher[] = [
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      subject: "Toán học",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 5 phút trước",
-    },
-    {
-      id: 2,
-      name: "Trần Văn C",
-      subject: "Vật lý",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 30 phút trước",
-    },
-    {
-      id: 3,
-      name: "Phạm Thị D",
-      subject: "Hóa học",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 2 giờ trước",
-    },
-    {
-      id: 4,
-      name: "Lê Thị B",
-      subject: "Sinh học",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 10 phút trước",
-    },
-    {
-      id: 5,
-      name: "Ngô Văn E",
-      subject: "Tiếng Anh",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 1 giờ trước",
-    },
-    {
-      id: 6,
-      name: "Hoàng Thị F",
-      subject: "Lịch sử",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 20 phút trước",
-    },
-    {
-      id: 7,
-      name: "Đỗ Văn G",
-      subject: "Địa lý",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 3 giờ trước",
-    },
-    {
-      id: 8,
-      name: "Nguyễn Thị H",
-      subject: "Công nghệ",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 8 phút trước",
-    },
-    {
-      id: 9,
-      name: "Phan Văn I",
-      subject: "Giáo dục công dân",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 25 phút trước",
-    },
-    {
-      id: 10,
-      name: "Vũ Thị K",
-      subject: "Tin học",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 50 phút trước",
-    },
-    {
-      id: 11,
-      name: "Nguyễn Văn A",
-      subject: "Toán học",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 7 phút trước",
-    },
-    {
-      id: 12,
-      name: "Trần Văn C",
-      subject: "Vật lý",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 1 giờ trước",
-    },
-    {
-      id: 13,
-      name: "Phạm Thị D",
-      subject: "Hóa học",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 45 phút trước",
-    },
-    {
-      id: 14,
-      name: "Lê Thị B",
-      subject: "Sinh học",
-      avatar: "/teacher.png",
-      lastActive: "Hoạt động 15 phút trước",
-    },
-    {
-      id: 15,
-      name: "Ngô Văn E",
-      subject: "Tiếng Anh",
-      avatar: "/student.png",
-      lastActive: "Hoạt động 4 giờ trước",
-    },
-  ];
-
-  const conversationHistory: { [key: string]: Message[] } = {
-    "Nguyễn Văn A": [
-      {
-        id: 1,
-        sender: "Nguyễn Văn A",
-        content:
-          "Chào phụ huynh, tôi là giáo viên môn Toán của bạn Bình. Có điều gì tôi có thể giúp được không?",
-        timestamp: "20/04/2025 10:30",
-        isParent: false,
-      },
-      {
-        id: 2,
-        sender: "Phụ huynh",
-        content:
-          "Chào thầy, tôi muốn hỏi về tình hình học tập của cháu Bình trong thời gian gần đây.",
-        timestamp: "20/04/2025 10:45",
-        isParent: true,
-      },
-      {
-        id: 3,
-        sender: "Nguyễn Văn A",
-        content:
-          "Bình đang học tập rất tốt, đặc biệt là phần hình học không gian. Tuy nhiên, cháu còn hơi yếu ở phần Đại số, cụ thể là giải phương trình mũ và logarit.",
-        timestamp: "20/04/2025 11:00",
-        isParent: false,
-      },
-      {
-        id: 4,
-        sender: "Nguyễn Văn A",
-        content:
-          "Chào phụ huynh, tôi là giáo viên môn Toán của bạn Bình. Có điều gì tôi có thể giúp được không?",
-        timestamp: "20/04/2025 10:30",
-        isParent: false,
-      },
-      {
-        id: 5,
-        sender: "Phụ huynh",
-        content:
-          "Chào thầy, tôi muốn hỏi về tình hình học tập của cháu Bình trong thời gian gần đây.",
-        timestamp: "20/04/2025 10:45",
-        isParent: true,
-      },
-      {
-        id: 6,
-        sender: "Nguyễn Văn A",
-        content:
-          "Bình đang học tập rất tốt, đặc biệt là phần hình học không gian. Tuy nhiên, cháu còn hơi yếu ở phần Đại số, cụ thể là giải phương trình mũ và logarit.",
-        timestamp: "20/04/2025 11:00",
-        isParent: false,
-      },
-      {
-        id: 7,
-        sender: "Nguyễn Văn A",
-        content:
-          "Chào phụ huynh, tôi là giáo viên môn Toán của bạn Bình. Có điều gì tôi có thể giúp được không?",
-        timestamp: "20/04/2025 10:30",
-        isParent: false,
-      },
-      {
-        id: 8,
-        sender: "Phụ huynh",
-        content:
-          "Chào thầy, tôi muốn hỏi về tình hình học tập của cháu Bình trong thời gian gần đây.",
-        timestamp: "20/04/2025 10:45",
-        isParent: true,
-      },
-      {
-        id: 9,
-        sender: "Nguyễn Văn A",
-        content:
-          "Bình đang học tập rất tốt, đặc biệt là phần hình học không gian. Tuy nhiên, cháu còn hơi yếu ở phần Đại số, cụ thể là giải phương trình mũ và logarit.",
-        timestamp: "20/04/2025 11:00",
-        isParent: false,
-      },
-    ],
-    "Trần Văn C": [
-      {
-        id: 1,
-        sender: "Trần Văn C",
-        content:
-          "Xin chào phụ huynh, tôi là giáo viên môn Vật lý của bạn Bình.",
-        timestamp: "19/04/2025 09:15",
-        isParent: false,
-      },
-    ],
-    "Phạm Thị D": [],
-  };
-
   useEffect(() => {
-    if (selectedTeacher && messagesEndRef.current) {
+    if (selectedRoom && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedTeacher, conversationHistory[selectedTeacher ?? ""]]);
-
-  const [viewPort, setViewPort] = useState<"chat" | "list">("list");
-
-  const [displayList, setDisplayList] = useState<boolean>(true);
+  }, [selectedRoom]); //, conversationHistory[selectedRoom ?? ""]
 
   const handleSendMessage = () => {
-    if (!messageInput.trim() || !selectedTeacher) return;
+    if (!messageInput.trim() || !selectedRoom) return;
 
     // Trong ứng dụng thực tế, bạn sẽ gửi tin nhắn tới API
-    console.log(
-      "Gửi tin nhắn:",
-      messageInput,
-      "tới giáo viên:",
-      selectedTeacher,
-    );
+    console.log("Gửi tin nhắn:", messageInput, "tới giáo viên:", selectedRoom);
+
+    send("/app/chat", {
+      roomId: selectedRoom.roomChatId,
+      content: messageInput,
+      receiverId: selectedRoom.user?.id,
+    });
 
     // Clear input sau khi gửi
     setMessageInput("");
   };
 
+  const { connect, subscribe, send, unsubscribe, disconnect } =
+    useWebSocketService(
+      () => console.log("Connected!"),
+      (error) => console.log("WebSocket Error:", error),
+    );
+
+  useEffect(() => {
+    connect();
+
+    subscribe("/topic/chat", (message) => {
+      // setMessages((prevMessages) => [...prevMessages, message.text]);
+      console.log("New message received:", message);
+    });
+
+    return () => {
+      unsubscribe("/topic/chat");
+      disconnect();
+    };
+  }, []);
+
+  const [displayList, setDisplayList] = useState<boolean>(false);
+
   return (
     <>
       <div className="flex">
-        <Contacts
-          contacts={teachers}
-          selectedTeacher={selectedTeacher}
-          setSelectedTeacher={setSelectedTeacher}
-          displayList={displayList}
-          setDisplayList={setDisplayList}
-        />
+        <div
+          className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}
+        >
+          <ContactList
+            selectedRoom={selectedRoom}
+            setSelectedRoom={setSelectedRoom}
+            searchQuery=""
+          />
+        </div>
 
         <ChatMessage
-          selectedTeacher={selectedTeacher}
-          conversationHistory={conversationHistory}
-          teachers={teachers}
+          selectedRoom={selectedRoom}
           messageInput={messageInput}
           setMessageInput={setMessageInput}
           showEmojiPicker={showEmojiPicker}
@@ -300,70 +106,15 @@ const ContactPage = () => {
           handleSendMessage={handleSendMessage}
         />
       </div>
-      {/* <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
-        <TeacherList
-          teachers={teachers}
-          selectedTeacher={selectedTeacher}
-          setSelectedTeacher={setSelectedTeacher}
-          displayList={displayList}
-          setDisplayList={setDisplayList}
+      <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
+        <ContactList
+          selectedRoom={selectedRoom}
+          setSelectedRoom={setSelectedRoom}
+          searchQuery=""
         />
-      </Dialog> */}
+      </Dialog>
     </>
   );
-
-  // return (
-  //   <>
-  //     <div className="hidden md:flex bg-white">
-  //       <div className="grid grid-cols-1 md:grid-cols-4 w-full">
-  //         {/* Danh sách giáo viên */}
-  //         <TeacherList
-  //           teachers={teachers}
-  //           selectedTeacher={selectedTeacher}
-  //           setSelectedTeacher={setSelectedTeacher}
-  //         />
-
-  //         {/* Khu vực chat */}
-  //         <ChatMessage
-  //           selectedTeacher={selectedTeacher}
-  //           conversationHistory={conversationHistory}
-  //           teachers={teachers}
-  //           messageInput={messageInput}
-  //           setMessageInput={setMessageInput}
-  //           showEmojiPicker={showEmojiPicker}
-  //           setShowEmojiPicker={setShowEmojiPicker}
-  //           emojiRef={emojiRef}
-  //           messagesEndRef={messagesEndRef}
-  //           handleSendMessage={handleSendMessage}
-  //         />
-  //       </div>
-  //     </div>
-  //     <div className="flex md:hidden w-full">
-  //       {viewPort === "list" && (
-  //         <TeacherList
-  //           teachers={teachers}
-  //           selectedTeacher={selectedTeacher}
-  //           setSelectedTeacher={setSelectedTeacher}
-  //           setViewPort={setViewPort}
-  //         />
-  //       )}
-  //       {viewPort === "chat" && (
-  //         <ChatMessage
-  //           selectedTeacher={selectedTeacher}
-  //           conversationHistory={conversationHistory}
-  //           teachers={teachers}
-  //           messageInput={messageInput}
-  //           setMessageInput={setMessageInput}
-  //           showEmojiPicker={showEmojiPicker}
-  //           setShowEmojiPicker={setShowEmojiPicker}
-  //           emojiRef={emojiRef}
-  //           messagesEndRef={messagesEndRef}
-  //           handleSendMessage={handleSendMessage}
-  //         />
-  //       )}
-  //     </div>
-  //   </>
-  // );
 };
 
 export { ContactPage };

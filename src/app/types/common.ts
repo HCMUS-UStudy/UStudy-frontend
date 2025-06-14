@@ -93,5 +93,5 @@ export interface BaseScheduleInfo {
 export interface BasePaginationResponse<T> {
   content: T[];
   totalPages: number;
-  totalElements?: number;
+  totalElements: number;
 }

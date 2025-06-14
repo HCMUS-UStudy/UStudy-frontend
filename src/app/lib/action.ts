@@ -106,6 +106,7 @@ export async function setTokensAndUserDataCookies(
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
     } catch (error) {
       throw error;
@@ -118,11 +119,13 @@ export async function setTokensAndUserDataCookies(
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
       cookieStore.set("permissions_iv", iv, {
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
     } catch (error) {
       console.error("Error encrypting permissions:", error);
