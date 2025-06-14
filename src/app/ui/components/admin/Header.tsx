@@ -16,9 +16,11 @@ import { IoMenuOutline } from "react-icons/io5";
 const Header = ({
   handleMenuOpen,
   collapsed,
+  setCollapsed,
 }: {
   handleMenuOpen: (isOpen: boolean) => void;
   collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -53,17 +55,23 @@ const Header = ({
 
   return (
     <div
-      className={`h-[50px] md:h-header-height flex px-5 sm:px-8 justify-between items-center bg-foreground 
+      className={`h-[50px] md:h-header-height flex pl-2 md:pl-1 pr-3 md:pr-7 justify-between items-center bg-foreground 
         ${isMobile ? "" : collapsed ? "ml-from-sidebar-collapsed" : "ml-from-sidebar"}`}
     >
       <div
-        className="flex md:hidden items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
-              transition-all cursor-pointer"
-        onClick={() => handleMenuOpen(true)}
+        className="flex items-center mr-2 select-none p-2 hover:bg-primary-lighter rounded-full
+          transition-all cursor-pointer"
+        onClick={() => {
+          if (isMobile) {
+            handleMenuOpen(true);
+          } else {
+            setCollapsed(!collapsed);
+          }
+        }}
       >
         <IoMenuOutline className="text-primary-darkest" size={20} />
       </div>
-      <div className="text-md font-bold mt-1 sm:text-lg mr-3">
+      <div className="text-md font-bold sm:text-lg mt-[1px] md:mt-0">
         {SIDENAV_ITEMS_ADMIN.find((item) => item.submenu)?.subMenuItems?.find(
           (subItem) => pathname?.includes(subItem.path),
         )?.title ||
