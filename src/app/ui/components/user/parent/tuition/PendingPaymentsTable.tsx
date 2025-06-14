@@ -67,9 +67,9 @@ export default function PendingPaymentsTable({
               </TableCell>
               <TableCell>
                 <div>
-                  <p className="font-medium">{payment.enrolledClass.name}</p>
+                  <p className="font-medium">{payment.classDto.name}</p>
                   <p className="text-sm text-gray-500">
-                    {payment.enrolledClass.course.name}
+                    {payment.classDto.course.name}
                   </p>
                 </div>
               </TableCell>

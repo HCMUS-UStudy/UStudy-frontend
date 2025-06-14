@@ -98,7 +98,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
     };
 
     fetchClasses();
-  }, [currentPage, searchQuery]);
+  }, [currentPage, searchQuery, fetchData, loading, selectedCourse]);
 
   const hasData = classes.length > 0;
   const showSelectColumn = hasData && isSelecting;

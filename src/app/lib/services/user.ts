@@ -1,4 +1,9 @@
-import { AccountData, AccountItem, DeleteAccountResponse } from "@/app/types";
+import {
+  AccountData,
+  AccountItem,
+  DeleteAccountResponse,
+  UpdateProfilePayload,
+} from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
 export const createNewAccount = async (data: AccountItem) => {
@@ -101,6 +106,32 @@ export const getFreeUsers = async (
 export const getProfle = async () => {
   try {
     const response = await axiosInstance.get("/user/profile");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateProfile = async (data: UpdateProfilePayload) => {
+  try {
+    const response = await axiosInstance.put("/user/update-profile", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateAvatar = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await axiosInstance.put("/user/update-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
     return response.data;
   } catch (error) {
     throw error;

@@ -1,12 +1,12 @@
 "use client";
 
 import { getListMembers } from "@/app/lib/services/class";
-import { getClassSchedule } from "@/app/lib/services/classSchedule";
+import { getPastSchedule } from "@/app/lib/services/classSchedule";
 import {
   getAttendances,
   recordAttendances,
 } from "@/app/lib/services/attendance";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { useQueries, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "next/navigation";
@@ -40,7 +40,7 @@ const AttendancePage = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [attendanceMap, setAttendanceMap] = useState<AttendanceMap>({});
-  const [selectedSession, setSelectedSession] = useState<string>("");
+  const [date, setDate] = useState<string>("");
 
   const params = useParams<{ classId: string }>();
   const { decodeId } = useEncodedRoute();
@@ -66,15 +66,14 @@ const AttendancePage = () => {
       {
         queryKey: ["ClassSchedule", classId],
         refetchOnWindowFocus: false,
-        queryFn: () => getClassSchedule(classId as string, 0, 100),
+        queryFn: () => getPastSchedule(classId as string, 0, 100),
         enabled: !!classId,
       },
       {
-        queryKey: ["Attendance", selectedSession],
+        queryKey: ["Attendance", date],
         refetchOnWindowFocus: false,
-        queryFn: () =>
-          getAttendances(currentPage, 100, selectedSession as string),
-        enabled: !!selectedSession,
+        queryFn: () => getAttendances(currentPage, 100, date),
+        enabled: !!date && !date.startsWith("custom-"),
       },
     ],
   });
@@ -82,18 +81,27 @@ const AttendancePage = () => {
   const members = memberQuery.data;
   const totalPages = memberQuery.data?.totalPages ?? 0;
 
-  const isLoading = memberQuery.isLoading && attendanceQuery.isLoading;
+  const isLoading = memberQuery.isLoading;
 
-  const classSchedule = classScheduleQuery.data;
+  const classSchedule = useMemo(
+    () =>
+      (classScheduleQuery.data ?? [])
+        .slice()
+        .sort(
+          (a: ClassScheduleItem, b: ClassScheduleItem) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime(),
+        ),
+    [classScheduleQuery.data],
+  );
 
   useEffect(() => {
-    if (classSchedule?.length && selectedSession === "") {
-      setSelectedSession(classSchedule[0].id);
+    if (classSchedule.length && date === "") {
+      setDate(classSchedule[0].id);
     }
-    if (!attendanceMap[selectedSession] && members?.content) {
+    if (!attendanceMap[date] && members?.content) {
       setAttendanceMap((prev) => ({
         ...prev,
-        [selectedSession]: members.content?.map((member) => ({
+        [date]: members.content?.map((member) => ({
           user: member,
           status: "PRESENT",
           note: "",
@@ -101,7 +109,7 @@ const AttendancePage = () => {
         })),
       }));
     }
-  }, [classSchedule, selectedSession, members, attendanceMap]);
+  }, [classSchedule, date, members, attendanceMap]);
 
   const attendanceData = attendanceQuery.data;
   const lastModified = attendanceData?.attendances.content.length
@@ -119,16 +127,16 @@ const AttendancePage = () => {
     : null;
 
   useEffect(() => {
-    if (selectedSession === "") return;
+    if (date === "") return;
     if (attendanceData?.attendances?.content.length) {
       setAttendanceMap((prev) => ({
         ...prev,
-        [selectedSession]: attendanceData.attendances.content,
+        [date]: attendanceData.attendances.content,
       }));
     } else if (members?.content) {
       setAttendanceMap((prev) => ({
         ...prev,
-        [selectedSession]: members.content.map((member) => ({
+        [date]: members.content.map((member) => ({
           user: member,
           status: "PRESENT",
           note: "",
@@ -136,7 +144,7 @@ const AttendancePage = () => {
         })),
       }));
     }
-  }, [selectedSession, attendanceData, members]);
+  }, [date, attendanceData, members]);
 
   const filteredStudents = members?.content?.filter(
     (member) =>
@@ -147,14 +155,14 @@ const AttendancePage = () => {
   const handleStatusChange = (userId: string, status: AttendanceStatus) => {
     setAttendanceMap((prev) => {
       const updated =
-        prev[selectedSession]?.map((attendance) =>
+        prev[date]?.map((attendance) =>
           attendance.user.id === userId
             ? { ...attendance, status }
             : attendance,
         ) ?? [];
       return {
         ...prev,
-        [selectedSession]: updated,
+        [date]: updated,
       };
     });
   };
@@ -162,25 +170,31 @@ const AttendancePage = () => {
   const handleNoteChange = (userId: string, note: string) => {
     setAttendanceMap((prev) => {
       const updated =
-        prev[selectedSession]?.map((attendance) =>
+        prev[date]?.map((attendance) =>
           attendance.user.id === userId ? { ...attendance, note } : attendance,
         ) ?? [];
       return {
         ...prev,
-        [selectedSession]: updated,
+        [date]: updated,
       };
     });
   };
 
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (
+    mutationFn: async ({
+      studentStatusList,
+      recordDate,
+    }: {
       studentStatusList: {
         userId: string;
         status: AttendanceStatus;
         note: string;
-      }[],
-    ) => recordAttendances(selectedSession, studentStatusList),
+      }[];
+      recordDate: string;
+    }) => {
+      return recordAttendances(classId, recordDate, studentStatusList);
+    },
     onSuccess: () => {
       toast.success("Lưu điểm danh thành công", {
         autoClose: 2000,
@@ -189,9 +203,15 @@ const AttendancePage = () => {
         closeOnClick: true,
       });
       queryClient.invalidateQueries({
-        queryKey: ["Attendance", selectedSession],
+        queryKey: ["ClassSchedule", classId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["Attendance", date],
       });
       setIsEditing(false);
+      if (date.startsWith("custom-")) {
+        setDate(classSchedule[0]?.id || "custom-");
+      }
     },
     onError: () => {
       toast.error("Lưu điểm danh thất bại", {
@@ -203,16 +223,27 @@ const AttendancePage = () => {
     },
   });
 
+  const formatDate = (d: Date) =>
+    `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
+
   const onSaveAttendances = () => {
-    mutation.mutate(
-      attendanceMap[selectedSession].map((att) => {
-        return {
-          userId: att.user.id,
-          status: att.status,
-          note: att.note,
-        };
-      }),
-    );
+    let recordDate = "";
+    if (date.startsWith("custom-")) {
+      recordDate = formatDate(new Date(date.replace("custom-", "")));
+    } else {
+      const session = classSchedule.find(
+        (s: ClassScheduleItem) => s.id === date,
+      );
+      recordDate = session ? formatDate(new Date(session.date)) : "";
+    }
+    mutation.mutate({
+      studentStatusList: attendanceMap[date].map((att) => ({
+        userId: att.user.id,
+        status: att.status,
+        note: att.note,
+      })),
+      recordDate,
+    });
   };
 
   if (isLoading) {
@@ -225,181 +256,208 @@ const AttendancePage = () => {
 
   return (
     <div className="flex flex-col gap-3 px-4 mt-4">
-      {classSchedule?.length ? (
-        <>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 ml-1">
-              <span className="font-semibold">Chọn buổi học:</span>
-              <select
-                className="border rounded-lg border-primary-dark px-3 py-1 focus:outline-none
-              focus:ring-1 focus:ring-primary-dark z-auto"
-                value={selectedSession ?? ""}
+      <>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 ml-1">
+            <span className="font-semibold">Buổi học:</span>
+            <select
+              className="border rounded-lg border-primary-dark px-1 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark z-auto"
+              value={date}
+              onChange={(e) => {
+                setDate(e.target.value);
+                setIsEditing(false);
+              }}
+            >
+              {/* Always show the custom date option on top */}
+              <option value="custom-">Chọn ngày khác...</option>
+              {classSchedule?.map((session: ClassScheduleItem) => (
+                <option key={session.id} value={session.id}>
+                  {new Date(session.date).toLocaleDateString("vi-VN")}
+                </option>
+              ))}
+            </select>
+            {date.startsWith("custom-") && (
+              <input
+                type="date"
+                className="ml-2 border border-primary-darker rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark"
+                value={(() => {
+                  if (date === "custom-") {
+                    return new Date().toISOString().split("T")[0];
+                  }
+                  const customDate = new Date(date.replace("custom-", ""));
+                  return customDate.toISOString().split("T")[0];
+                })()}
                 onChange={(e) => {
-                  setSelectedSession(e.target.value);
+                  const customDate = e.target.value;
+                  setDate(`custom-${new Date(customDate).toISOString()}`);
                   setIsEditing(false);
                 }}
-              >
-                {classSchedule?.map((session: ClassScheduleItem) => (
-                  <option key={session.id} value={session.id}>
-                    {new Date(session.date).toLocaleDateString("vi-VN")}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <span className="hidden sm:flex sm:text-sm lg:text-[15px] items-center mr-2">
-              {lastModified ? (
-                <span className="flex items-center gap-1">
-                  Cập nhật:{" "}
-                  <span className="text-primary-darkest">
-                    {lastModified.toLocaleDateString("vi-VN")}{" "}
-                    {lastModified.toLocaleTimeString("vi-VN")}
-                  </span>
-                </span>
-              ) : (
-                ""
-              )}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex w-1/3">
-              <SearchField
-                queryKey="AccountName"
-                placeholder="Tìm tên học sinh..."
-                onChange={(e) => setSearchKeyword(e.target.value)}
               />
-            </div>
-            {attendanceData?.attendances.content.length && !isEditing ? (
-              <Button
-                className="bg-white text-primary-darkest hover:bg-primary-lighter"
-                onClick={() => setIsEditing(true)}
-              >
-                <MdEdit className="mr-2" />
-                Sửa điểm danh
-              </Button>
-            ) : (
-              <Button onClick={onSaveAttendances}>Lưu điểm danh</Button>
             )}
           </div>
-        </>
+          <span className="hidden sm:flex sm:text-sm lg:text-[15px] items-center mr-2">
+            {lastModified ? (
+              <span className="flex items-center gap-1">
+                Cập nhật:{" "}
+                <span className="text-primary-darkest">
+                  {lastModified.toLocaleDateString("vi-VN")}{" "}
+                  {lastModified.toLocaleTimeString("vi-VN")}
+                </span>
+              </span>
+            ) : (
+              ""
+            )}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex w-1/3">
+            <SearchField
+              queryKey="AccountName"
+              placeholder="Tìm tên học sinh..."
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+          </div>
+          {attendanceData?.attendances.content.length && !isEditing ? (
+            <Button
+              className="bg-white text-primary-darkest hover:bg-primary-lighter"
+              onClick={() => setIsEditing(true)}
+            >
+              <MdEdit className="mr-2" />
+              Sửa điểm danh
+            </Button>
+          ) : (
+            <Button onClick={onSaveAttendances}>Lưu điểm danh</Button>
+          )}
+        </div>
+      </>
+      {attendanceQuery.isLoading ? (
+        <Loading />
       ) : (
-        <span className="ml-2">Không có buổi học nào</span>
-      )}
-
-      {attendanceMap[selectedSession] && (
-        <Table>
-          <TableHeader
-            columns={[
-              "GenId",
-              "Tên",
-              "Ngày sinh",
-              "Giới tính",
-              "Có mặt",
-              "Vắng mặt",
-              "Đi muộn",
-              "Có phép",
-              "Ghi chú",
-            ]}
-            classNameTH={[
-              "",
-              "",
-              "",
-              "text-center",
-              "text-center",
-              "text-center",
-              "text-center",
-              "text-center",
-              "",
-            ]}
-          />
-          <TableBody noDataMessage={false}>
-            {filteredStudents?.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>{student.genId}</TableCell>
-                <TableCell>
-                  {student.name.length > 18 ? (
-                    <button>
-                      <Tooltip text={student.name}>
-                        {student.name.slice(0, 18)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    student.name
-                  )}
-                </TableCell>
-                <TableCell>
-                  {new Date(student.birthday).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell className="text-center">
-                  {student.gender === "MALE" ? "Nam" : "Nữ"}
-                </TableCell>
-                {(
-                  ["PRESENT", "ABSENT", "LATE", "EXCUSED"] as AttendanceStatus[]
-                ).map((status) => (
-                  <TableCell key={status}>
-                    <div className={`flex items-center justify-center`}>
-                      <Checkbox
-                        checked={attendanceMap[selectedSession].some(
-                          (attendance) =>
-                            attendance.user.id === student.id &&
-                            attendance.status === status,
-                        )}
-                        className={`${
-                          attendanceData &&
-                          attendanceData?.attendances.totalElements > 0 &&
-                          !isEditing
-                            ? "cursor-not-allowed"
-                            : ""
-                        }`}
-                        onChange={() => {
-                          if (
-                            (attendanceData &&
-                              attendanceData?.attendances.totalElements == 0) ||
-                            isEditing
-                          )
-                            handleStatusChange(student.id, status);
-                        }}
-                      />
+        attendanceMap[date] && (
+          <Table>
+            <TableHeader
+              columns={[
+                "GenId",
+                "Tên",
+                "Ngày sinh",
+                "Giới tính",
+                "Có mặt",
+                "Vắng mặt",
+                "Đi muộn",
+                "Có phép",
+                "Ghi chú",
+              ]}
+              classNameTH={[
+                "",
+                "",
+                "",
+                "text-center",
+                "text-center",
+                "text-center",
+                "text-center",
+                "text-center",
+                "",
+              ]}
+            />
+            <TableBody noDataMessage={false}>
+              {filteredStudents?.map((student) => (
+                <TableRow key={student.id}>
+                  <TableCell>{student.genId}</TableCell>
+                  <TableCell>
+                    {student.name.length > 18 ? (
+                      <button>
+                        <Tooltip text={student.name}>
+                          {student.name.slice(0, 18)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      student.name
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(student.birthday).toLocaleDateString("vi-VN")}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {student.gender === "MALE" ? "Nam" : "Nữ"}
+                  </TableCell>
+                  {(
+                    [
+                      "PRESENT",
+                      "ABSENT",
+                      "LATE",
+                      "EXCUSED",
+                    ] as AttendanceStatus[]
+                  ).map((status) => (
+                    <TableCell key={status}>
+                      <div className="flex items-center justify-center">
+                        <Checkbox
+                          checked={attendanceMap[date]?.some(
+                            (attendance) =>
+                              attendance.user.id === student.id &&
+                              attendance.status === status,
+                          )}
+                          className={
+                            attendanceData &&
+                            attendanceData?.attendances.totalElements > 0 &&
+                            !isEditing
+                              ? "cursor-not-allowed"
+                              : ""
+                          }
+                          onChange={() => {
+                            if (
+                              (attendanceData &&
+                                attendanceData?.attendances.totalElements ===
+                                  0) ||
+                              isEditing ||
+                              date.startsWith("custom-")
+                            ) {
+                              handleStatusChange(student.id, status);
+                            }
+                          }}
+                        />
+                      </div>
+                    </TableCell>
+                  ))}
+                  <TableCell className="max-w-[180px]">
+                    <div className="flex items-center w-full pr-5">
+                      {attendanceData &&
+                      attendanceData?.attendances.totalElements > 0 &&
+                      !isEditing ? (
+                        <span className="text-primary-darkest text-sm my-1">
+                          {(() => {
+                            const note = attendanceMap[date].find(
+                              (att) => att.user.id === student.id,
+                            )?.note;
+                            return note && note.trim() !== ""
+                              ? note
+                              : "Không có ghi chú";
+                          })()}
+                        </span>
+                      ) : (
+                        <input
+                          type="text"
+                          value={
+                            attendanceMap[date].find(
+                              (att) => att.user.id === student.id,
+                            )?.note ?? ""
+                          }
+                          onChange={(e) =>
+                            handleNoteChange(student.id, e.target.value)
+                          }
+                          className="w-full h-8 px-2 text-gray-700 border bg-transparent border-primary-dark rounded-lg
+                        focus:outline-none focus:ring-1 focus:ring-primary-dark"
+                          placeholder="Nhập ghi chú..."
+                        />
+                      )}
                     </div>
                   </TableCell>
-                ))}
-                <TableCell className="max-w-[180px]">
-                  <div className="flex items-center w-full pr-5">
-                    {attendanceData &&
-                    attendanceData?.attendances.totalElements > 0 &&
-                    !isEditing ? (
-                      <span className="text-primary-darkest text-sm my-1">
-                        {(() => {
-                          const note = attendanceMap[selectedSession].find(
-                            (att) => att.user.id === student.id,
-                          )?.note;
-                          return note && note.trim() !== ""
-                            ? note
-                            : "Không có ghi chú";
-                        })()}
-                      </span>
-                    ) : (
-                      <input
-                        type="text"
-                        value={
-                          attendanceMap[selectedSession].find(
-                            (att) => att.user.id === student.id,
-                          )?.note ?? ""
-                        }
-                        onChange={(e) =>
-                          handleNoteChange(student.id, e.target.value)
-                        }
-                        className="w-full h-8 px-2 text-gray-700 border bg-transparent border-primary-dark rounded-lg
-                        focus:outline-none focus:ring-1 focus:ring-primary-dark"
-                        placeholder="Nhập ghi chú..."
-                      />
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )
       )}
+
       <div className="flex justify-end mt-2">
         {totalPages > 1 && (
           <Pagination

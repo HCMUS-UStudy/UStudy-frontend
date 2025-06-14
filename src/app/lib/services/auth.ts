@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { AuthResponse } from "@/app/types";
+import { AuthResponse, ChangePasswordPayload } from "@/app/types";
 
 export const login = async (
   username: string,
@@ -38,6 +38,15 @@ export const verifyToken = async (): Promise<boolean> => {
   try {
     const response = await axiosInstance.get("/auth/verify-token");
     return response.data.statusCode === "OK";
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const changePassword = async (data: ChangePasswordPayload) => {
+  try {
+    const response = await axiosInstance.put("/api/auth/change-password", data);
+    return response.data;
   } catch (error) {
     throw error;
   }

@@ -411,8 +411,9 @@ export default function PersonalMaterial() {
                             );
                           } else {
                             handleViewFile(
-                              activeFile.id,
-                              activeFile.material.name.endsWith("pdf"),
+                              activeFile.material.id,
+                              activeFile.material.name.endsWith("pdf") ||
+                                activeFile.material.name.endsWith("txt"),
                             );
                           }
                         }}
@@ -571,8 +572,9 @@ export default function PersonalMaterial() {
                           handleClickFolder(item.id, item.material.name);
                         } else {
                           handleViewFile(
-                            item.id,
-                            item.material.name.endsWith("pdf"),
+                            item.material.id,
+                            item.material.name.endsWith("pdf") ||
+                              item.material.name.endsWith("txt"),
                           );
                         }
                       }}

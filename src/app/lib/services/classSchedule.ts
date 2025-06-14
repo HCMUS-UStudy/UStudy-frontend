@@ -35,6 +35,23 @@ export const getClassSchedule = async (
   return response.data.data.content;
 };
 
+export const getPastSchedule = async (
+  classId: string,
+  page: number,
+  limit: number,
+) => {
+  const response = await axiosInstance.get(
+    `/class-schedule/list-past-schedule/${classId}`,
+    {
+      params: {
+        page: page,
+        limit: limit,
+      },
+    },
+  );
+  return response.data.data.content;
+};
+
 // PUT: Update class schedule date
 export const updateClassScheduleDate = (
   classScheduleId: string,

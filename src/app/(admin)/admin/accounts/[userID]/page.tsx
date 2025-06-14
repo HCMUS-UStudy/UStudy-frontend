@@ -60,12 +60,23 @@ const AccountDetail = () => {
 
   useEffect(() => {
     if (!userId) return;
+
+    const fetchClasses = async (role: string) => {
+      if (!["Student", "Teacher"].includes(role)) return;
+
+      try {
+        const response = await getListUserClass(userId as string, "", 0, 100);
+        setClasses(response.content);
+      } catch (error) {
+        console.error("Failed to fetch user classes:", error);
+      }
+    };
+
     const fetchUser = async () => {
       try {
         const response = await getListUserDetail(userId as string);
         setUser(response.data);
 
-        // Chỉ gọi API lấy danh sách lớp học nếu user là Student hoặc Teacher
         if (["Student", "Teacher"].includes(response.data.role?.name)) {
           fetchClasses(response.data.role?.name);
         }
@@ -73,19 +84,9 @@ const AccountDetail = () => {
         console.error("Failed to fetch user details:", error);
       }
     };
+
     fetchUser();
   }, [userId]);
-
-  const fetchClasses = async (role: string) => {
-    if (!["Student", "Teacher"].includes(role)) return; // Kiểm tra lại role
-
-    try {
-      const response = await getListUserClass(userId as string, "", 0, 100);
-      setClasses(response.content);
-    } catch (error) {
-      console.error("Failed to fetch user classes:", error);
-    }
-  };
 
   const handleBack = () => {
     setIsExiting(true);
