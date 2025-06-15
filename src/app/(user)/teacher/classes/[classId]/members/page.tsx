@@ -18,6 +18,19 @@ import { useParams } from "next/navigation";
 import Pagination from "@/app/ui/components/_common/Pagination";
 
 const MemberPage = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   const searchParams = useSearchParams();
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const params = useParams<{ classId: string }>();
@@ -85,8 +98,8 @@ const MemberPage = () => {
           columns={[
             "GenId",
             "Tên",
-            "Email",
-            "Địa chỉ",
+            ...(!isMobile ? ["Email"] : []),
+            // "Địa chỉ",
             "Ngày sinh",
             "Giới tính",
             "Vai trò",
@@ -107,18 +120,20 @@ const MemberPage = () => {
                   member.name
                 )}
               </TableCell>
-              <TableCell>
-                {member.email?.length > 25 ? (
-                  <button>
-                    <Tooltip text={member.email}>
-                      {member.email.slice(0, 25)}...
-                    </Tooltip>
-                  </button>
-                ) : (
-                  member.email
-                )}
-              </TableCell>
-              <TableCell>
+              {!isMobile && (
+                <TableCell>
+                  {member.email?.length > 25 ? (
+                    <button>
+                      <Tooltip text={member.email}>
+                        {member.email.slice(0, 25)}...
+                      </Tooltip>
+                    </button>
+                  ) : (
+                    member.email
+                  )}
+                </TableCell>
+              )}
+              {/* <TableCell>
                 {member.address.length > 30 ? (
                   <button>
                     <Tooltip text={member.address}>
@@ -128,7 +143,7 @@ const MemberPage = () => {
                 ) : (
                   member.address
                 )}
-              </TableCell>
+              </TableCell> */}
               <TableCell>
                 {new Date(member.birthday).toLocaleDateString("vi-VN")}
               </TableCell>

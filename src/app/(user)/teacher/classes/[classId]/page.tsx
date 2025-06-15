@@ -88,14 +88,8 @@ const ClassDetailPage = () => {
 
   return (
     <>
-      {/* <button
-        className="mt-2 ml-4 text-primary-dark hover:text-primary-darkest"
-        onClick={() => router.back()}
-      >
-        ← Trở về
-      </button> */}
       <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full mt-3">
           <Button
             className="w-full md:w-auto"
             onClick={() => setAddingModal(true)}

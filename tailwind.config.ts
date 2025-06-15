@@ -107,6 +107,7 @@ const config: Config = {
       height: {
         "header-height": "65px",
         "screen-height": "calc(100vh - 65px)",
+        "screen-height-mobile": "calc(100vh - 50px)",
         "sub-header-height": "10vh",
         "sub-screen-height": "calc(100vh - 65px - 10vh)",
         "chat-input-area": "12vh",
@@ -129,7 +130,7 @@ const config: Config = {
       },
       width: {
         "sidebar-width": "200px",
-        "sidebar-mobile": "72px",
+        "sidebar-collapsed": "72px",
       },
       margin: {
         "from-sidebar": "200px",

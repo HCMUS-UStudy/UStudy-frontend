@@ -186,11 +186,6 @@ export default function DayRoomSessionSelector() {
       _classTimes.filter((item) => item.day !== day),
     );
     setOverview((current) => current.filter((item) => item.day !== day));
-    toast.success("Xóa lớp học thành công", {
-      position: "bottom-right",
-      autoClose: 3000,
-      pauseOnHover: false,
-    });
   };
   return (
     <div className="flex flex-col gap-2">
@@ -246,7 +241,7 @@ export default function DayRoomSessionSelector() {
                       {item.session.session.endTime.slice(0, -3)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex justify-center gap-2 w-full">
+                      <div className="flex gap-2 w-full">
                         <button
                           type="button"
                           onClick={() => handleDeleteDay(item.day)}
