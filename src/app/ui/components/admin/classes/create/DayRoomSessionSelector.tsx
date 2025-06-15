@@ -241,7 +241,7 @@ export default function DayRoomSessionSelector() {
                       {item.session.session.endTime.slice(0, -3)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex justify-center gap-2 w-full">
+                      <div className="flex gap-2 w-full">
                         <button
                           type="button"
                           onClick={() => handleDeleteDay(item.day)}

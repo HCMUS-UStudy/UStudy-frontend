@@ -143,6 +143,23 @@ export const getListMembers = async (
   }
 };
 
+export const removeMembers = async (
+  classId: string | string[] | undefined,
+  listUserIds?: string[],
+): Promise<MemberData> => {
+  try {
+    const response = await axiosInstance.delete(
+      `/class-member/remove/${classId}`,
+      {
+        data: listUserIds,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getListAvailableTea = async (
   classId: string,
   query: "",
