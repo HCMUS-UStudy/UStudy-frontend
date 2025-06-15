@@ -1,22 +1,28 @@
 export type PaymentItem = {
   id: string;
+  paymentDate: string;
+  invoiceId: string;
   amount: number;
   student: {
     id: string;
-    name: string;
     genId: string;
+    email: string;
+    name: string;
+    avatar: string;
   };
-  enrolledClass: {
+  classDto: {
     id: string;
     name: string;
     course: {
       id: string;
       name: string;
     };
+    grade: {
+      id: string;
+      name: string;
+    };
   };
   status: "PENDING" | "OVERDUE" | "COMPLETED";
-  paymentDate: string;
-  invoiceId: string;
 };
 
 export type PaymentSchema = {

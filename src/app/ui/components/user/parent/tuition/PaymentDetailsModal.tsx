@@ -142,7 +142,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Lớp học</p>
-                  <p className="font-medium">{payment.enrolledClass.name}</p>
+                  <p className="font-medium">{payment.classDto.name}</p>
                 </div>
               </div>
 

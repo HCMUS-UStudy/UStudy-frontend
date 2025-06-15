@@ -13,6 +13,7 @@ const mockAssignment: AssignmentItem = {
   id: "ass1",
   title: "Bài tập chương 1: Định lý Pythagoras",
   duration: 45,
+  mode: "PRACTICE",
   format: "ESSAY", // hoặc "MULTIPLE_CHOICE", "MIXED"
   numAttempts: 1,
   startTime: "2025-05-05T17:14:30.531Z",

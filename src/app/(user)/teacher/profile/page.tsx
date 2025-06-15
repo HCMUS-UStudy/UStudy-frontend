@@ -7,7 +7,7 @@ import ProfileHeader from "@/app/ui/components/_common/profile/ProfileHeader";
 import ProfileInfoGrid from "@/app/ui/components/_common/profile/ProfileInfoGrid";
 import ProfileLoadingSkeleton from "@/app/ui/components/_common/profile/ProfileLoadingSkeleton";
 
-const ProfilePage: React.FC = () => {
+const TeacherProfilePage: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -41,4 +41,4 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+export default TeacherProfilePage;

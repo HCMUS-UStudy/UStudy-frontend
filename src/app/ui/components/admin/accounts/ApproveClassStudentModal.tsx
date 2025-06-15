@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import {
   Dialog,
@@ -51,19 +51,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
   const [totalPagesCl, setTotalPagesCl] = useState(0);
   const [totalPagesStuCl, setTotalPagesStuCl] = useState(0);
 
-  const fetchDetailUser = async (userId: string) => {
-    try {
-      const response = await getListUserDetail(userId);
-      setUserDetail({
-        genId: response.data.genId,
-        name: response.data.name,
-      });
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách lớp:", error);
-    }
-  };
-
-  const fetchClasses = async () => {
+  const fetchClasses = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -78,9 +66,9 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPageCl, setClasses, setTotalPagesCl, setLoading, totalPagesCl]);
 
-  const fetchClassStudentsIn = async () => {
+  const fetchClassStudentsIn = useCallback(async () => {
     if (!userId) {
       toast.error("Vui lòng chọn một học sinh.");
       return;
@@ -94,7 +82,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
         currentPageStuCl,
         5,
       );
-      // Set total pages for students based on API response
+
       console.log(totalPagesStuCl);
       setStuClass(response.content);
       setTotalPagesStuCl(response.totalPages || 0);
@@ -102,6 +90,25 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       console.log(error);
     } finally {
       setLoading(false);
+    }
+  }, [
+    userId,
+    currentPageStuCl,
+    setStuClass,
+    setTotalPagesStuCl,
+    setLoading,
+    totalPagesStuCl,
+  ]);
+
+  const fetchDetailUser = async (userId: string) => {
+    try {
+      const response = await getListUserDetail(userId);
+      setUserDetail({
+        genId: response.data.genId,
+        name: response.data.name,
+      });
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách lớp:", error);
     }
   };
 
@@ -227,7 +234,14 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       fetchClasses();
       fetchClassStudentsIn();
     }
-  }, [currentPageCl, currentPageStuCl, userId]);
+  }, [
+    currentPageCl,
+    currentPageStuCl,
+    fetchClassStudentsIn,
+    fetchClasses,
+    isOpen,
+    userId,
+  ]);
 
   return (
     <>

@@ -9,6 +9,7 @@ import {
   ClassItem,
   GenderType,
   UserSummary,
+  StudentClassCount,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
@@ -266,6 +267,15 @@ export const updateClass = async (
       `/class/update/${classId}`,
       data,
     );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentClassCount = async (): Promise<StudentClassCount> => {
+  try {
+    const response = await axiosInstance.get("/class/count-student-classes");
     return response.data.data;
   } catch (error) {
     throw error;

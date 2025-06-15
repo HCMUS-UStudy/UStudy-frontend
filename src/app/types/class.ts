@@ -167,3 +167,8 @@ export type ClassRegisterResponseItem = BaseClassInfo & {
 
 export type ClassRegisterResponse =
   BasePaginationResponse<ClassRegisterResponseItem>;
+
+export type StudentClassCount = {
+  inProgressClasses: number;
+  totalClasses: number;
+};

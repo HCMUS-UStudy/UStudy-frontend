@@ -13,7 +13,7 @@ import QuestionSidebar from "@/app/ui/components/user/student/classes/assignment
 import ReviewAnswers from "@/app/ui/components/user/student/classes/assignment/ReviewAnswers";
 import ScoreModal from "@/app/ui/components/user/student/classes/quiz/ScoreModal";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const AssignmentPage = () => {
@@ -59,6 +59,15 @@ const AssignmentPage = () => {
     router.back(); // Trở về trang trước đó
   };
 
+  const handleSubmitAssignment = useCallback(() => {
+    console.log(answers);
+    console.log(attachments);
+
+    if (currentQuestionIndex === questions.length - 1) {
+      setShowReview(true);
+    }
+  }, [answers, attachments, currentQuestionIndex, questions.length]);
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -79,7 +88,7 @@ const AssignmentPage = () => {
       }
     };
     fetchQuestions();
-  }, [assignmentId]);
+  }, [assignmentId, duration, handleSubmitAssignment]);
 
   useEffect(() => {
     if (timeLeft > 0 && !showResult) {
@@ -88,7 +97,7 @@ const AssignmentPage = () => {
     } else if (timeLeft === 0 && !showResult) {
       handleSubmitAssignment();
     }
-  }, [timeLeft, showResult]);
+  }, [timeLeft, showResult, handleSubmitAssignment]);
 
   const handleAnswerSelect = (questionId: string, optionId: string) => {
     setSubmittedAnswers((prev) => ({
@@ -103,14 +112,6 @@ const AssignmentPage = () => {
         Math.min(prev + 1, questions.length - 1),
       );
     }, 500);
-  };
-
-  const handleSubmitAssignment = () => {
-    console.log(answers);
-    console.log(attachments);
-    if (currentQuestionIndex === questions.length - 1) {
-      setShowReview(true);
-    }
   };
 
   const handleFinishAssignment = async () => {
