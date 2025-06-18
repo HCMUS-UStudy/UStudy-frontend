@@ -1,3 +1,5 @@
+"use client";
+
 import { getAIAssignment } from "@/app/lib/services/AI";
 import React, { useEffect, useState } from "react";
 

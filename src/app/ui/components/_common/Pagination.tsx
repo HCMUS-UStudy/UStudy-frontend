@@ -103,8 +103,8 @@ const Pagination = ({
           variant="basic"
           onClick={() => handlePageClick(page)}
           className={`text-xs md:text-base px-3 md:px-4 md:py-2 rounded-md transition-all ${
-            currentPage === page 
-              ? "bg-primary-dark text-white hover:bg-primary-darker shadow-md" 
+            currentPage === page
+              ? "bg-primary-dark text-white hover:bg-primary-darker shadow-md"
               : "hover:bg-primary-lighter hover:text-primary-darkest"
           }`}
         >

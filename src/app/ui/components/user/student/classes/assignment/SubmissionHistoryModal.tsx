@@ -1,3 +1,5 @@
+"use client";
+
 import { AssignmentItem, SubmissionItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import {

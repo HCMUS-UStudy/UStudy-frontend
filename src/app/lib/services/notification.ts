@@ -80,3 +80,8 @@ export const deleteClassNotiForUser = async (
   });
   return response.data.data;
 };
+
+export const markAllNotificationsAsRead = async () => {
+  const response = await axiosInstance.get("/notification/mark-all-as-read");
+  return response.data;
+};

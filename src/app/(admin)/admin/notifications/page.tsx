@@ -33,8 +33,8 @@ const Notification = () => {
     try {
       const data = await getListNotification();
       const sortedData = data.sort(
-          (a: NotificationItem, b: NotificationItem) =>
-            new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
+        (a: NotificationItem, b: NotificationItem) =>
+          new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
       );
       setNotifications(sortedData);
       setFilteredNotifications(sortedData);
@@ -228,7 +228,7 @@ const Notification = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
         <div className="text-center">
-        <Loading />
+          <Loading />
           <p className="mt-4 text-primary-darkest font-medium">
             Đang tải thông báo...
           </p>
@@ -388,7 +388,9 @@ const Notification = () => {
                 </svg>
               </div>
               <div>
-                <span className="text-xs sm:text-sm text-primary-dark">Tổng cộng</span>
+                <span className="text-xs sm:text-sm text-primary-dark">
+                  Tổng cộng
+                </span>
                 <div className="text-lg sm:text-xl font-bold text-primary-darkest">
                   {filteredNotifications.length}
                 </div>
@@ -411,7 +413,9 @@ const Notification = () => {
                 </svg>
               </div>
               <div>
-                <span className="text-xs sm:text-sm text-primary-dark">Chưa đọc</span>
+                <span className="text-xs sm:text-sm text-primary-dark">
+                  Chưa đọc
+                </span>
                 <div className="text-lg sm:text-xl font-bold text-red-600">
                   {filteredNotifications.filter((n) => !n.read).length}
                 </div>
@@ -441,21 +445,21 @@ const Notification = () => {
               </svg>
             </div>
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-          Không có thông báo nào
+              Không có thông báo nào
             </h3>
             <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
               {searchTerm || filterType !== "ALL" || filterStatus !== "ALL"
                 ? "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm để xem kết quả khác"
                 : "Bạn chưa có thông báo nào. Các thông báo mới sẽ xuất hiện ở đây."}
             </p>
-        </div>
-      ) : (
+          </div>
+        ) : (
           <div className="space-y-3 sm:space-y-4">
             {currentNotifications.map((notification, index) => {
-                const isUnread = !notification.read;
-                return (
+              const isUnread = !notification.read;
+              return (
                 <Card
-                    key={notification.id}
+                  key={notification.id}
                   className={`cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group ${
                     isUnread
                       ? "border-l-4 border-l-red-500 bg-gradient-to-r from-red-50 to-white shadow-lg"
@@ -468,12 +472,12 @@ const Notification = () => {
                     animationTimingFunction: "ease-out",
                     animationFillMode: "forwards",
                   }}
-                    onClick={() => {
-                      if (!notification.read) {
-                        notification.read = true;
-                      }
+                  onClick={() => {
+                    if (!notification.read) {
+                      notification.read = true;
+                    }
                     router.push(`/admin/notifications/${notification.id}`);
-                    }}
+                  }}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 p-4 sm:p-6">
                     {/* Icon with gradient */}
@@ -481,7 +485,7 @@ const Notification = () => {
                       className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br ${getTypeGradient(notification.receiverType)} shadow-lg flex-shrink-0 group-hover:scale-110 transition-transform duration-300 self-start`}
                     >
                       {getTypeIcon(notification.receiverType)}
-                      </div>
+                    </div>
 
                     {/* Content - Main section */}
                     <div className="flex-1 min-w-0">
@@ -496,14 +500,16 @@ const Notification = () => {
                             <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
                               <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mr-1.5 sm:mr-2 animate-pulse"></div>
                               Chưa đọc
-                        </span>
+                            </span>
                           )}
                         </div>
                       </div>
 
                       <h3
                         className={`font-bold text-primary-darkest mb-2 group-hover:text-primary-dark transition-colors duration-200 leading-tight ${
-                          isUnread ? "text-lg sm:text-xl" : "text-base sm:text-lg"
+                          isUnread
+                            ? "text-lg sm:text-xl"
+                            : "text-base sm:text-lg"
                         }`}
                       >
                         {notification.title}
@@ -580,8 +586,8 @@ const Notification = () => {
                     </div>
                   </div>
                 </Card>
-                );
-              })}
+              );
+            })}
           </div>
         )}
 
@@ -598,7 +604,7 @@ const Notification = () => {
               />
             </div>
           </div>
-      )}
+        )}
       </div>
 
       <style jsx>{`
