@@ -1,157 +1,227 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getListNotification } from "@/app/lib/services/notification";
 import { NotificationItem } from "@/app/types";
-import Image from "next/image";
 import Loading from "@/app/ui/components/_common/loading/Loading";
+import Pagination from "@/app/ui/components/_common/Pagination";
+import NotificationHeader from "@/app/ui/components/admin/notifications/NotificationHeader";
+import NotificationSearchFilter from "@/app/ui/components/admin/notifications/NotificationSearchFilter";
+import NotificationCard from "@/app/ui/components/admin/notifications/NotificationCard";
+import NotificationEmptyState from "@/app/ui/components/admin/notifications/NotificationEmptyState";
 
 const Notification = () => {
+  const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [filteredNotifications, setFilteredNotifications] = useState<
+    NotificationItem[]
+  >([]);
   const router = useRouter();
-  const [popupId, setPopupId] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("ALL");
+  const [filterStatus, setFilterStatus] = useState("ALL");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const fetchData = useCallback(async () => {
+    if (!mounted) return;
+    
     setIsLoading(true);
     try {
       const data = await getListNotification();
-      setNotifications(
-        data.sort(
-          (a: NotificationItem, b: NotificationItem) =>
-            new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
-        ),
+      const sortedData = data.sort(
+        (a: NotificationItem, b: NotificationItem) =>
+          new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
       );
+      setNotifications(sortedData);
+      setFilteredNotifications(sortedData);
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [mounted]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (mounted) {
+      fetchData();
+    }
+  }, [fetchData, mounted]);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setPopupId(null);
+  // Filter and search logic
+  useEffect(() => {
+    if (!mounted) return;
+    
+    let filtered = notifications;
+
+    // Filter by type
+    if (filterType !== "ALL") {
+      filtered = filtered.filter(
+        (notification) => notification.receiverType === filterType,
+      );
+    }
+
+    // Filter by status
+    if (filterStatus !== "ALL") {
+      filtered = filtered.filter((notification) =>
+        filterStatus === "UNREAD" ? !notification.read : notification.read,
+      );
+    }
+
+    // Search by title or content
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (notification) =>
+          notification.title.toLowerCase().includes(term) ||
+          (notification.content &&
+            notification.content.toLowerCase().includes(term)) ||
+          notification.sender.name.toLowerCase().includes(term),
+      );
+    }
+
+    setFilteredNotifications(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
+  }, [notifications, searchTerm, filterType, filterStatus, mounted]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentNotifications = filteredNotifications.slice(
+    startIndex,
+    endIndex,
+  );
+
+  const handlePageClick = (page: number) => {
+    if (mounted) {
+      setCurrentPage(page);
     }
   };
 
-  useEffect(() => {
-    if (popupId) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+  const handlePreviousPage = () => {
+    if (mounted && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [popupId]);
+  const handleNextPage = () => {
+    if (mounted && currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleNotificationClick = (notification: NotificationItem) => {
+    if (!mounted) return;
+    
+    if (!notification.read) {
+      notification.read = true;
+    }
+    router.push(`/teacher/notifications/${notification.id}`);
+  };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+        <div className="text-center">
+          <Loading />
+          <p className="mt-4 text-primary-darkest font-medium">
+            Đang tải thông báo...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+        <div className="text-center">
+          <Loading />
+          <p className="mt-4 text-primary-darkest font-medium">
+            Đang tải thông báo...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col px-3 mt-4">
-      {isLoading ? (
-        <Loading />
-      ) : notifications.length === 0 ? (
-        <div className="flex justify-center items-center py-10 text-gray-500 text-lg">
-          Không có thông báo nào
-        </div>
-      ) : (
-        <>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b bg-primary-dark text-white">
-                <th className="pl-2 rounded-tl-lg"></th>
-                <th className="text-left text-[14px] sm:text-[16px] px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
-                  Tiêu đề
-                </th>
-                <th className="rounded-tr-lg text-left text-[14px] sm:text-[16px] px-3 py-2">
-                  Thông tin
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {notifications.map((notification) => (
-                <tr
-                  key={notification.id}
-                  className={`cursor-pointer border border-primary-light ${
-                    popupId === notification.id
-                      ? !notification.read
-                        ? "bg-primary-lighter"
-                        : ""
-                      : !notification.read
-                        ? "bg-primary-lighter hover:bg-primary-light"
-                        : "hover:bg-primary-lighter"
-                  }`}
-                  onClick={() => {
-                    if (!notification.read) {
-                      notification.read = true;
-                    }
-                    router.push(`/teacher/notifications/${notification.id}`);
-                  }}
-                >
-                  <td className="pl-2"></td>
-                  <td className="px-3 py-3 text-left">
-                    <span className="text-[13px] sm:text-[15px] text-primary-darkest">
-                      {notification.receiverType === "SYSTEM" ? (
-                        "Thông báo hệ thống"
-                      ) : notification.receiverType === "CLASS" ? (
-                        <span> Lớp {notification.className} </span>
-                      ) : notification.receiverType === "USER" ? (
-                        "Thông báo cá nhân"
-                      ) : (
-                        notification.receiverType
-                      )}
-                    </span>
-                    <br />
-                    <span className="text-[13px] sm:text-[15px]">
-                      {notification.title}
-                    </span>
-                  </td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Image
-                          src={notification.sender.avatar}
-                          alt="notification"
-                          width={35}
-                          height={35}
-                          className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
-                        />
-                        <div className="flex flex-col">
-                          <div className="text-[12px] sm:text-[14px]">
-                            {notification.sender.name}
-                          </div>
-                          <div className="text-[12px] sm:text-[14px]">
-                            {new Date(notification.sendDate).toLocaleString(
-                              "vi-VN",
-                              {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              },
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+      {/* Header */}
+      <NotificationHeader onRefresh={fetchData} />
+
+      {/* Search and Filter */}
+      <NotificationSearchFilter
+        searchTerm={searchTerm}
+        filterType={filterType}
+        filterStatus={filterStatus}
+        totalCount={filteredNotifications.length}
+        unreadCount={filteredNotifications.filter((n) => !n.read).length}
+        onSearchChange={setSearchTerm}
+        onFilterTypeChange={setFilterType}
+        onFilterStatusChange={setFilterStatus}
+      />
+
+      {/* Content */}
+      <div className="px-4 sm:px-6 pb-6 sm:pb-8">
+        {filteredNotifications.length === 0 ? (
+          <NotificationEmptyState
+            searchTerm={searchTerm}
+            filterType={filterType}
+            filterStatus={filterStatus}
+          />
+        ) : (
+          <div className="space-y-3 sm:space-y-4">
+            {currentNotifications.map((notification, index) => (
+              <NotificationCard
+                key={notification.id}
+                notification={notification}
+                index={index}
+                onClick={handleNotificationClick}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {filteredNotifications.length > itemsPerPage && (
+          <div className="mt-4 sm:mt-6 flex justify-center sm:justify-end">
+            <div className="rounded-xl p-2 sm:p-4">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                handlePageClick={handlePageClick}
+                handlePreviousPage={handlePreviousPage}
+                handleNextPage={handleNextPage}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };

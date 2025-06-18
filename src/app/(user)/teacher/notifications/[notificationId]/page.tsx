@@ -2,91 +2,256 @@
 
 import { useState, useEffect } from "react";
 import { NotificationItem } from "@/app/types";
-import { getNotificationDetails } from "@/app/lib/services/notification";
+import {
+  getNotificationDetails,
+  getListNotification,
+} from "@/app/lib/services/notification";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useParams, useRouter } from "next/navigation";
-import { IoReturnUpBack } from "react-icons/io5";
 import { useQueryClient } from "@tanstack/react-query";
+import NotificationDetailHeader from "@/app/ui/components/admin/notifications/NotificationDetailHeader";
+import NotificationSidebar from "@/app/ui/components/admin/notifications/NotificationSidebar";
+import NotificationDetailContent from "@/app/ui/components/admin/notifications/NotificationDetailContent";
+import NotificationNotFound from "@/app/ui/components/admin/notifications/NotificationNotFound";
 
 const SingleNotification = () => {
+  const [mounted, setMounted] = useState(false);
   const [notification, setNotification] = useState<NotificationItem | null>(
     null,
   );
+  const [allNotifications, setAllNotifications] = useState<NotificationItem[]>(
+    [],
+  );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [navigating, setNavigating] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const params = useParams();
   const notificationId = params?.notificationId ?? "";
-  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        window.innerWidth < 1024 &&
+        sidebarOpen &&
+        !target.closest(".sidebar") &&
+        !target.closest(".sidebar-toggle")
+      ) {
+        setSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [sidebarOpen, mounted]);
+
+  // Close sidebar on window resize
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const fetchData = async () => {
-      const data = await getNotificationDetails(notificationId as string);
-      // Invalidate the query to ensure fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["notifications"],
-      });
-      setNotification(data);
-      setLoading(false);
+      setLoading(true);
+      try {
+        // Fetch both current notification and all notifications
+        const [currentData, allData] = await Promise.all([
+          getNotificationDetails(notificationId as string),
+          getListNotification(),
+        ]);
+
+        setNotification(currentData);
+        setAllNotifications(
+          allData.sort(
+            (a: NotificationItem, b: NotificationItem) =>
+              new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
+          ),
+        );
+
+        // Invalidate the query to ensure fresh data
+        queryClient.invalidateQueries({
+          queryKey: ["notifications"],
+        });
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
-  }, [notificationId, queryClient]);
+  }, [notificationId, queryClient, mounted]);
 
-  return (
-    <div className="p-6">
-      <button
-        onClick={() => {
-          router.push(`/teacher/notifications`);
-        }}
-        className="flex items-center space-x-2 text-primary-dark hover:text-primary-darkest mb-4"
-      >
-        <IoReturnUpBack className="text-[22px]" />
-        <span>Trở về</span>
-      </button>
-      {loading ? (
-        <Loading />
-      ) : (
-        <div className="flex flex-col space-y-8 p-4">
-          <div className="flex flex-col space-y-2">
-            <div className="text-primary-darkest text-[26px]">
-              {notification?.title}
-            </div>
-            <div className="flex gap-2">
-              <div className="flex gap-1 text-gray-500">
-                đăng bởi
-                <div className="text-primary-darker">
-                  {notification?.sender.name}
-                </div>
-              </div>
-              {"-"}
-              <div className="flex gap-1">
-                <div className="text-gray-500">
-                  {notification?.sendDate
-                    ? new Date(notification.sendDate)
-                        .toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
-                        .replace("am", "AM")
-                        .replace("pm", "PM")
-                    : "Unknown date"}
-                </div>
-              </div>
-            </div>
+  const handleNotificationClick = (notificationId: string) => {
+    if (!mounted) return;
+    
+    setNavigating(true);
+    setSidebarOpen(false); // Close sidebar on mobile when selecting notification
+    router.push(`/teacher/notifications/${notificationId}`);
+  };
+
+  const handleBackToList = () => {
+    if (mounted) {
+      router.push("/teacher/notifications");
+    }
+  };
+
+  const handleToggleSidebar = () => {
+    if (mounted) {
+      setSidebarOpen(!sidebarOpen);
+    }
+  };
+
+  const handleCloseSidebar = () => {
+    if (mounted) {
+      setSidebarOpen(false);
+    }
+  };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <Loading />
           </div>
-          <p>
-            {notification?.content.split("\\n").map((line, index) => (
-              <span key={index}>
-                {line}
-                <br />
-              </span>
-            ))}
+          <p className="mt-4 text-primary-darkest font-medium animate-pulse">
+            Đang tải thông báo...
           </p>
         </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <Loading />
+          </div>
+          <p className="mt-4 text-primary-darkest font-medium animate-pulse">
+            Đang tải thông báo...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+      {/* Navigation Loading Overlay */}
+      {navigating && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl flex items-center gap-4">
+            <div className="animate-spin">
+              <svg
+                className="w-6 h-6 text-primary-dark"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            </div>
+            <span className="text-primary-darkest font-medium animate-pulse">
+              Đang chuyển trang...
+            </span>
+          </div>
+        </div>
       )}
+
+      {/* Header */}
+      <NotificationDetailHeader
+        onBack={handleBackToList}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={handleToggleSidebar}
+      />
+
+      <div className="flex h-screen-minus-header">
+        {/* Left Side - Notification List */}
+        <NotificationSidebar
+          sidebarOpen={sidebarOpen}
+          allNotifications={allNotifications}
+          currentNotificationId={notificationId as string}
+          navigating={navigating}
+          onNotificationClick={handleNotificationClick}
+          onCloseSidebar={handleCloseSidebar}
+        />
+
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
+            onClick={handleCloseSidebar}
+          />
+        )}
+
+        {/* Right Side - Notification Detail */}
+        <div className="flex-1 bg-gradient-to-br from-white via-primary-lighter/20 to-primary-light/10 overflow-y-auto">
+          {notification ? (
+            <NotificationDetailContent notification={notification} />
+          ) : (
+            <NotificationNotFound onBackToList={handleBackToList} />
+          )}
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .h-screen-minus-header {
+          height: calc(100vh - 80px);
+        }
+      `}</style>
     </div>
   );
 };

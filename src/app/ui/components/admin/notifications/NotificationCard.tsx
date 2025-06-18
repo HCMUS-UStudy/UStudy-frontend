@@ -199,10 +199,10 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               alt={notification.sender.name}
               width={24}
               height={24}
-              className="rounded-full w-6 h-6 sm:w-7 sm:h-7 shadow-sm object-cover ring-2 ring-white"
+              className="rounded-full w-6 h-6 sm:w-7 sm:h-7 shadow-sm object-cover ring-2 ring-white flex-shrink-0"
             />
-            <div className="text-right hidden sm:block">
-              <div className="text-xs font-semibold text-primary-darkest truncate max-w-20 sm:max-w-24">
+            <div className="text-right hidden sm:block min-w-0">
+              <div className="text-xs font-semibold text-primary-darkest break-words">
                 {notification.sender.name}
               </div>
             </div>

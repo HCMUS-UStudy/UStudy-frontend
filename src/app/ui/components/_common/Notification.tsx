@@ -436,7 +436,7 @@ export const Notification = ({ role }: { role: string }) => {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50">
+            <div className="p-2 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50">
               <div className="text-center">
                 <button
                   onClick={() => router.push(`/${role}/notifications`)}
