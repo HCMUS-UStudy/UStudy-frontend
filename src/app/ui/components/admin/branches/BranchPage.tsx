@@ -28,34 +28,85 @@ const BranchPage = () => {
   // const [branches_, setBranches_] = useState<Branch[]>(branches);
 
   // const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const searchParams = useSearchParams();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { data: fetchBranches, status } = useQuery({
     queryKey: ["Branches", currentPage - 1, searchParams?.get("name") || ""],
     queryFn: () =>
       getAllBranches(currentPage - 1, 5, searchParams?.get("name") || ""),
     placeholderData: keepPreviousData,
+    enabled: mounted, // Only run query after component is mounted
   });
+
   useEffect(() => {
-    console.log(fetchBranches);
-    if (fetchBranches?.content) {
+    if (mounted && fetchBranches?.content) {
+      console.log(fetchBranches);
       dispatch(setBranches(fetchBranches.content));
     }
-  }, [fetchBranches, dispatch]);
+  }, [fetchBranches, dispatch, mounted]);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const onCreateBranch = () => {
-    setShowModal(true);
+    if (mounted) {
+      setShowModal(true);
+    }
   };
 
   const handleDetail = (branch: Branch) => {
-    router.push(`/admin/branches/${branch.id}`);
+    if (mounted) {
+      router.push(`/admin/branches/${branch.id}`);
+    }
   };
+
+  if (!mounted) {
+    return (
+      <div className="px-2">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="text-lg md:text-xl font-semibold">
+            Tổng số chi nhánh (0)
+          </div>
+          <Button className="text-nowrap">Thêm chi nhánh</Button>
+        </div>
+        <div className="flex items-center justify-between mt-2 gap-14">
+          <SearchField
+            className="w-full"
+            placeholder="Tìm kiếm chi nhánh..."
+            queryKey="name"
+          />
+        </div>
+        <div className="overflow-x-auto mt-4 rounded-lg">
+          <Table>
+            <TableHeader
+              columns={[
+                "Tên chi nhánh",
+                "Địa chỉ",
+                "Số điện thoại",
+                "Số phòng học",
+                "Hành động",
+              ]}
+            />
+            <TableBody isLoading={true}>
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <div className="bg-slate-200 h-3 my-1 rounded"></div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Suspense>
