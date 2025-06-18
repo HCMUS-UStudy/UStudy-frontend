@@ -1,3 +1,5 @@
+"use client";
+
 import { Input } from "../../_common/text-field/Input";
 import { Button } from "../../_common/Button";
 import {
