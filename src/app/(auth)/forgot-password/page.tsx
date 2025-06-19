@@ -1,0 +1,73 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingImages";
+import ForgotPasswordAnimation from "@/app/ui/components/_common/forgetPassword/ForgotPasswordAnimation";
+import ForgotPasswordForm from "@/app/ui/components/_common/forgetPassword/ForgotPasswordForm";
+
+const ForgotPasswordSchema = z.object({
+  email: z
+    .string({ message: "Vui lòng nhập email" })
+    .email({ message: "Email không hợp lệ" }),
+});
+
+type ForgotPasswordInputs = z.infer<typeof ForgotPasswordSchema>;
+
+export default function ForgotPassword() {
+  const [isLoadingBack, setIsLoadingBack] = useState(false);
+  const router = useRouter();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<ForgotPasswordInputs>({
+    resolver: zodResolver(ForgotPasswordSchema),
+  });
+
+  const onSubmit = (data: ForgotPasswordInputs) => {
+    // TODO: Implement forgot password logic (API call)
+    alert(`Email gửi đến: ${data.email}`);
+  };
+
+  return (
+    <>
+      {isLoadingBack && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
+          <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+      <div className="flex items-center justify-center h-screen overflow-hidden">
+        <div className="hidden lg:flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
+          <div className="relative  lg:h-[80px] lg:w-[250px] xl:h-[100px] xl:w-[300px]">
+            <Image className="object-contain" src="/logo.png" alt="Logo" fill />
+          </div>
+          <h1 className="text-xl xl:text-2xl font-semibold text-[#273526]">
+            Nhập email để nhận hướng dẫn đặt lại mật khẩu.
+          </h1>
+        </div>
+        <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
+          <FallingImages />
+          <div className="w-full max-w-md mx-auto z-[100]">
+            <div className="flex flex-col items-center gap-0">
+              <ForgotPasswordAnimation className="w-40 h-40 md:w-60 md:h-60 mx-auto -mb-4" />
+            </div>
+            <ForgotPasswordForm
+              onSubmit={onSubmit}
+              errors={errors}
+              register={register}
+              isLoadingBack={isLoadingBack}
+              router={router}
+              setIsLoadingBack={setIsLoadingBack}
+              handleSubmit={handleSubmit}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -1,7 +1,5 @@
 "use client";
-
-import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -35,6 +33,7 @@ export default function Login() {
   const pathname = usePathname();
   const isUser = pathname === "/login";
   const dispatch = useDispatch();
+  const [isLoadingForgot, setIsLoadingForgot] = useState(false);
 
   const {
     register,
@@ -103,6 +102,11 @@ export default function Login() {
 
   return (
     <>
+      {isLoadingForgot && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
+          <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       <div className="flex items-center justify-center h-screen overflow-hidden">
         <div className="hidden lg:flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <div className="relative  lg:h-[80px] lg:w-[250px] xl:h-[100px] xl:w-[300px]">
@@ -196,12 +200,19 @@ export default function Login() {
                 </label>
               </div>
               <div className="flex">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-gray-600 hover:underline"
+                <button
+                  type="button"
+                  className="text-sm text-gray-600 hover:underline focus:outline-none"
+                  onClick={() => {
+                    setIsLoadingForgot(true);
+                    router.push(
+                      isUser ? "/forgot-password" : "/admin/forgot-password",
+                    );
+                  }}
+                  disabled={isLoadingForgot}
                 >
                   Quên mật khẩu?
-                </Link>
+                </button>
               </div>
             </div>
             <Button

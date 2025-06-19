@@ -37,7 +37,12 @@ export async function middleware(request: NextRequest) {
       }
     }
     const defaultRoute = userData?.role.defaultRoute;
-    if (pathname === "/login" || pathname === "/admin/login") {
+    if (
+      pathname === "/login" ||
+      pathname === "/admin/login" ||
+      pathname === "/forgot-password" ||
+      pathname === "/admin/forgot-password"
+    ) {
       switch (defaultRoute) {
         case "TEACHER":
           return NextResponse.redirect(
@@ -113,6 +118,8 @@ export async function middleware(request: NextRequest) {
     if (
       pathname === "/login" ||
       pathname === "/admin/login" ||
+      pathname === "/forgot-password" ||
+      pathname === "/admin/forgot-password" ||
       pathname === "/"
     ) {
       return NextResponse.next();
@@ -157,6 +164,8 @@ export const config = {
     "/",
     "/admin/login",
     "/login",
+    "/forgot-password",
+    "/admin/forgot-password",
     "/admin/:path*",
     "/teacher/:path*",
     "/member/:path*",
