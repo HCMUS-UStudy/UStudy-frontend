@@ -9,7 +9,7 @@ import { IoNotifications, IoCheckmarkDone } from "react-icons/io5";
 import Tooltip from "./Tooltip";
 import { useRef, useEffect, useState, useMemo } from "react";
 import { NotificationItem } from "@/app/types";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams, usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 
 export const Notification = ({ role }: { role: string }) => {
@@ -23,6 +23,9 @@ export const Notification = ({ role }: { role: string }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const params = useParams();
+  const pathname = usePathname();
+  const currentNotificationId = params?.notificationId as string | undefined;
 
   // Fetch notifications
   const query = useQuery({
@@ -170,6 +173,9 @@ export const Notification = ({ role }: { role: string }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
+
+  // Add pathname as a dependency to force re-render when URL changes
+  useEffect(() => {}, [pathname]);
 
   return (
     <div className="relative" ref={ref}>
@@ -343,14 +349,21 @@ export const Notification = ({ role }: { role: string }) => {
                             markAsRead(item.id);
                           }
                           setShowDropdown(false);
-                          router.push(`/${role}/notifications/${item.id}`);
+                          // Convert student and parent roles to member
+                          const navigationRole =
+                            role === "student" || role === "parent"
+                              ? "member"
+                              : role;
+                          router.push(
+                            `/${navigationRole}/notifications/${item.id}`,
+                          );
                         }}
                         className={`relative flex items-start gap-3 p-3 rounded-xl border-l-4 transition-all shadow-sm cursor-pointer
                         ${!isItemRead ? "border-primary-dark bg-primary-lighter shadow-md" : "border-gray-200 bg-white hover:shadow-md"}
                         hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-primary-light group`}
                       >
                         {/* Dot chưa đọc ở góc phải trên */}
-                        {!isItemRead && (
+                        {!isItemRead && item.id !== currentNotificationId && (
                           <span className="absolute top-2 right-2 w-2 h-2 rounded-full animate-pulse z-10 bg-primary-dark"></span>
                         )}
                         {/* Icon loại thông báo trong vòng tròn màu nhỏ */}
@@ -436,10 +449,15 @@ export const Notification = ({ role }: { role: string }) => {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50">
+            <div className="p-2 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50">
               <div className="text-center">
                 <button
-                  onClick={() => router.push(`/${role}/notifications`)}
+                  onClick={() => {
+                    // Convert student and parent roles to member
+                    const navigationRole =
+                      role === "student" || role === "parent" ? "member" : role;
+                    router.push(`/${navigationRole}/notifications`);
+                  }}
                   className="inline-flex items-center gap-1 text-primary-dark hover:text-primary-darkest text-sm font-semibold transition-colors duration-200 group"
                 >
                   <span>Xem tất cả thông báo</span>

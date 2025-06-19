@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { getListNotification } from "@/app/lib/services/notification";
 import { NotificationItem } from "@/app/types";
@@ -28,6 +28,9 @@ const Notification = () => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+
+  const params = useParams();
+  const currentNotificationId = params?.notificationId as string | undefined;
 
   useEffect(() => {
     setMounted(true);
@@ -189,6 +192,7 @@ const Notification = () => {
                 notification={notification}
                 index={index}
                 onClick={handleNotificationClick}
+                currentNotificationId={currentNotificationId}
               />
             ))}
           </div>
