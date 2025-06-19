@@ -92,29 +92,29 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     }
   };
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "Hệ thống";
-      case "CLASS":
-        return `Lớp ${allNotifications.find((n) => n.receiverType === type)?.className || ""}`;
-      case "USER":
-        return "Cá nhân";
-      default:
-        return type;
-    }
-  };
+  // const getTypeLabel = (type: string) => {
+  //   switch (type) {
+  //     case "SYSTEM":
+  //       return "Hệ thống";
+  //     case "CLASS":
+  //       return `Lớp ${allNotifications.find((n) => n.receiverType === type)?.className || ""}`;
+  //     case "USER":
+  //       return "Cá nhân";
+  //     default:
+  //       return type;
+  //   }
+  // };
 
-  const getTypeBadgeColor = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
-      case "CLASS":
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
-      default:
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
-    }
-  };
+  // const getTypeBadgeColor = (type: string) => {
+  //   switch (type) {
+  //     case "SYSTEM":
+  //       return "bg-primary-lighter text-primary-darkest border-primary-light";
+  //     case "CLASS":
+  //       return "bg-primary-lighter text-primary-darkest border-primary-light";
+  //     default:
+  //       return "bg-primary-lighter text-primary-darkest border-primary-light";
+  //   }
+  // };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -224,13 +224,20 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span
-                        className={`text-xs px-2 py-1 rounded-full font-semibold border ${getTypeBadgeColor(item.receiverType)}`}
+                        className={`text-xs px-2 py-1 rounded-full font-semibold border ${item.receiverType === "SYSTEM" || item.receiverType === "CLASS" ? "bg-primary-lighter text-primary-darkest border-primary-light" : "bg-primary-lighter text-primary-darkest border-primary-light"}`}
                       >
-                        {getTypeLabel(item.receiverType)}
+                        {item.receiverType === "SYSTEM"
+                          ? "Hệ thống"
+                          : item.receiverType === "CLASS"
+                            ? `Lớp ${item.className || ""}`
+                            : item.receiverType === "USER"
+                              ? "Cá nhân"
+                              : item.receiverType}
                       </span>
-                      {isUnread && (
+                      {/* Hide badge if this is the active notification */}
+                      {isUnread && !isActive && (
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5 animate-pulse"></div>
+                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></div>
                           Chưa đọc
                         </span>
                       )}

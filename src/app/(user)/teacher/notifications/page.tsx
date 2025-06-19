@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { getListNotification } from "@/app/lib/services/notification";
 import { NotificationItem } from "@/app/types";
@@ -29,13 +29,16 @@ const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
+  const params = useParams();
+  const currentNotificationId = params?.notificationId as string | undefined;
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const fetchData = useCallback(async () => {
     if (!mounted) return;
-    
+
     setIsLoading(true);
     try {
       const data = await getListNotification();
@@ -61,7 +64,7 @@ const Notification = () => {
   // Filter and search logic
   useEffect(() => {
     if (!mounted) return;
-    
+
     let filtered = notifications;
 
     // Filter by type
@@ -123,7 +126,7 @@ const Notification = () => {
 
   const handleNotificationClick = (notification: NotificationItem) => {
     if (!mounted) return;
-    
+
     if (!notification.read) {
       notification.read = true;
     }
@@ -189,6 +192,7 @@ const Notification = () => {
                 notification={notification}
                 index={index}
                 onClick={handleNotificationClick}
+                currentNotificationId={currentNotificationId}
               />
             ))}
           </div>

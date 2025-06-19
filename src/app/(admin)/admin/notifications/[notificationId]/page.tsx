@@ -74,24 +74,43 @@ const SingleNotification = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch both current notification and all notifications
-        const [currentData, allData] = await Promise.all([
-          getNotificationDetails(notificationId as string),
-          getListNotification(),
-        ]);
-
-        setNotification(currentData);
-        setAllNotifications(
-          allData.sort(
-            (a: NotificationItem, b: NotificationItem) =>
-              new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
-          ),
+        // Only fetch current notification details
+        const currentData = await getNotificationDetails(
+          notificationId as string,
         );
+        setNotification(currentData);
 
-        // Invalidate the query to ensure fresh data
-        queryClient.invalidateQueries({
-          queryKey: ["notifications"],
-        });
+        // Try to get notifications from cache first, only fetch if not available
+        const cachedNotifications = queryClient.getQueryData(["notifications"]);
+        if (cachedNotifications) {
+          setAllNotifications(
+            (cachedNotifications as NotificationItem[]).sort(
+              (a: NotificationItem, b: NotificationItem) =>
+                new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
+            ),
+          );
+        } else {
+          // Only fetch all notifications if not in cache
+          const allData = await getListNotification();
+          setAllNotifications(
+            allData.sort(
+              (a: NotificationItem, b: NotificationItem) =>
+                new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
+            ),
+          );
+        }
+
+        // Mark current notification as read if it's not already read
+        if (currentData && !currentData.read) {
+          // Update the notification in cache to mark as read
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          queryClient.setQueryData(["notifications"], (oldData: any) => {
+            if (!oldData) return oldData;
+            return oldData.map((item: NotificationItem) =>
+              item.id === notificationId ? { ...item, read: true } : item,
+            );
+          });
+        }
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {

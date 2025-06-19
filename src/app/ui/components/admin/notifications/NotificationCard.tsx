@@ -8,12 +8,14 @@ interface NotificationCardProps {
   notification: NotificationItem;
   index: number;
   onClick: (notification: NotificationItem) => void;
+  currentNotificationId?: string;
 }
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
   notification,
   index,
   onClick,
+  currentNotificationId,
 }) => {
   const isUnread = !notification.read;
 
@@ -166,7 +168,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               >
                 {getTypeLabel(notification.receiverType)}
               </span>
-              {isUnread && (
+              {isUnread && notification.id !== currentNotificationId && (
                 <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mr-1.5 sm:mr-2 animate-pulse"></div>
                   Chưa đọc
