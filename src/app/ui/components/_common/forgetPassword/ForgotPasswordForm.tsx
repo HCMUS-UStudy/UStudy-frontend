@@ -2,6 +2,7 @@
 import { Button } from "@/app/ui/components/_common/Button";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import React from "react";
+import ForgotPasswordAnimation from "./ForgotPasswordAnimation";
 
 export default function ForgotPasswordForm({
   onSubmit,
@@ -21,6 +22,12 @@ export default function ForgotPasswordForm({
     >
       <div className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center -mt-2">
         Quên mật khẩu
+      </div>
+      <div className="flex flex-col items-center gap-0">
+        <ForgotPasswordAnimation className="w-40 h-40 md:w-60 md:h-60 mx-auto -mb-4" />
+        <p className="text-gray-600 text-center text-base md:text-lg max-w-xs mb-2">
+          Nhập email để nhận hướng dẫn đặt lại mật khẩu.
+        </p>
       </div>
       <div className="mt-2 mb-2 w-[250px] md:w-[350px]">
         <Input

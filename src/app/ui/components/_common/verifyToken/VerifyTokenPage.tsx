@@ -56,15 +56,18 @@ export default function VerifyTokenPage({
       <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
         <FallingImages />
         <div className="w-full max-w-md mx-auto z-[100]">
-          <div className="flex flex-col items-center gap-0 mb-2">
+          {/* <div className="flex flex-col items-center gap-0 mb-2">
             <VerifyTokenAnimation className="w-40 h-40 md:w-40 md:h-40 mx-auto -mb-4" />
-          </div>
+          </div> */}
           <form
             onSubmit={handleSubmit}
             className="bg-white/90 backdrop-blur-md py-10 px-8 md:px-12 rounded-3xl shadow-2xl border border-primary-light/40 flex flex-col gap-6 items-center"
           >
             <div className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center">
               Xác thực mã OTP
+            </div>
+            <div className="flex flex-col items-center gap-0 mb-2">
+              <VerifyTokenAnimation className="w-40 h-40 md:w-40 md:h-40 mx-auto -mb-4" />
             </div>
             <p className="text-gray-600 text-center text-base md:text-lg max-w-xs mb-2">
               {subheading}

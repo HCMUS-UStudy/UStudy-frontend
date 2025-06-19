@@ -7,7 +7,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingImages";
-import ForgotPasswordAnimation from "@/app/ui/components/_common/forgetPassword/ForgotPasswordAnimation";
 import ForgotPasswordForm from "@/app/ui/components/_common/forgetPassword/ForgotPasswordForm";
 
 const ForgotPasswordSchema = z.object({
@@ -66,12 +65,6 @@ export default function ForgotPassword() {
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
           <FallingImages />
           <div className="w-full max-w-md mx-auto z-[100]">
-            <div className="flex flex-col items-center gap-0">
-              <ForgotPasswordAnimation className="w-40 h-40 md:w-60 md:h-60 mx-auto -mb-4" />
-              <p className="text-gray-600 text-center text-base md:text-lg max-w-xs mb-2">
-                Nhập email để nhận hướng dẫn đặt lại mật khẩu.
-              </p>
-            </div>
             <ForgotPasswordForm
               onSubmit={onSubmit}
               errors={errors}
