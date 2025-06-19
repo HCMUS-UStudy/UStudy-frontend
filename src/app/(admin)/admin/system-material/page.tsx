@@ -161,13 +161,17 @@ export default function SystemMaterial() {
 
   useEffect(() => {
     const checkScreen = () => {
-      setIsMobile(window.innerWidth < 768);
+      if (typeof window !== "undefined") {
+        setIsMobile(window.innerWidth < 768);
+      }
     };
 
     checkScreen();
-    window.addEventListener("resize", checkScreen);
 
-    return () => window.removeEventListener("resize", checkScreen);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", checkScreen);
+      return () => window.removeEventListener("resize", checkScreen);
+    }
   }, []);
 
   const fetchMaterial = useCallback(async () => {
@@ -261,20 +265,22 @@ export default function SystemMaterial() {
     async (id: string, canViewFile: boolean = false) => {
       try {
         const blob = await getPreview(id);
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        if (canViewFile) {
-          link.target = "_blank";
-        } else {
-          const materialItem = material.find((item) => item.id === id);
-          if (materialItem) {
-            link.download = materialItem.material.name;
+        if (typeof window !== "undefined") {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          if (canViewFile) {
+            link.target = "_blank";
+          } else {
+            const materialItem = material.find((item) => item.id === id);
+            if (materialItem) {
+              link.download = materialItem.material.name;
+            }
           }
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
         }
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
       } catch (error) {
         console.error("Error downloading file:", error);
       }
@@ -286,16 +292,18 @@ export default function SystemMaterial() {
     async (id: string) => {
       try {
         const blob = await downloadMaterial(id);
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        const materialItem = material.find((item) => item.id === id);
-        if (materialItem) {
-          link.download = materialItem.material.name;
+        if (typeof window !== "undefined") {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          const materialItem = material.find((item) => item.id === id);
+          if (materialItem) {
+            link.download = materialItem.material.name;
+          }
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
         }
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
       } catch {
         toast.error("Tải xuống thất bại", {
           autoClose: 2500,
@@ -366,10 +374,12 @@ export default function SystemMaterial() {
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -384,10 +394,12 @@ export default function SystemMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsidePopUp);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsidePopUp);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsidePopUp);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutsidePopUp);
+      };
+    }
   }, [openOptionsId]);
 
   useEffect(() => {
@@ -402,15 +414,20 @@ export default function SystemMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsideCreateFolder);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideCreateFolder);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsideCreateFolder);
+      return () => {
+        document.removeEventListener(
+          "mousedown",
+          handleClickOutsideCreateFolder,
+        );
+      };
+    }
   }, [creatingFolder]);
 
   const [popUpLeft, setPopUpLeft] = useState(false);
   const toggleOptions = useCallback((id: string, index: number) => {
-    if (buttonRefs.current) {
+    if (buttonRefs.current && typeof window !== "undefined") {
       const rect = buttonRefs.current[index]?.getBoundingClientRect();
       const popupWidth = 150;
       const screenWidth = window.innerWidth;

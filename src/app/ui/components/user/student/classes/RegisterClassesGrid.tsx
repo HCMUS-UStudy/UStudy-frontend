@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import RegisterClassesLoading from "../../../_common/loading/RegisterClassesLoading";
 import EmptyListOrTable from "../../../_common/EmptyListOrTable";

@@ -1,3 +1,5 @@
+"use client";
+
 import { QnA } from "@/app/types";
 import React from "react";
 import { FaClock, FaCheckCircle } from "react-icons/fa";

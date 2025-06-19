@@ -21,14 +21,21 @@ const Sidebar = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   const { data: permissions, status } = useQuery({
     queryKey: ["Permissions"],
     queryFn: () => getPermissions(),
   });
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -39,7 +46,7 @@ const Sidebar = ({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [mounted]);
 
   // Create an ordered list of all menu paths
   const allMenuPaths = Object.keys(routeMap);
@@ -50,6 +57,10 @@ const Sidebar = ({
     .sort((a: string, b: string) => {
       return allMenuPaths.indexOf(a) - allMenuPaths.indexOf(b);
     });
+
+  if (!mounted) {
+    return null; // Return null during SSR to prevent hydration mismatch
+  }
 
   return (
     <>

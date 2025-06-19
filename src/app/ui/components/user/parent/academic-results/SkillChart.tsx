@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -5,8 +7,15 @@ import {
   CardTitle,
 } from "../../../_common/Card";
 import { Radar } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 
 export const SkillChart = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Dữ liệu cho biểu đồ radar kỹ năng
   const skillsData = {
     labels: [
@@ -42,6 +51,22 @@ export const SkillChart = () => {
       },
     ],
   };
+
+  if (!isClient) {
+    return (
+      <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
+        <CardHeader>
+          <CardTitle>Đánh giá kỹ năng</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
       <CardHeader>

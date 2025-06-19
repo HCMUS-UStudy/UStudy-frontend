@@ -1,16 +1,26 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../../../_common/Button";
 import { useRouter } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 
 export default function CreateClassButton() {
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleClick = () => {
+    if (mounted) {
+      router.push("/admin/classes/create");
+    }
+  };
+
   return (
     <Button
-      onClick={() => {
-        router.push("/admin/classes/create");
-      }}
+      onClick={handleClick}
       type="button"
       className="relative group w-[180px] bg-primary transition-all duration-200"
     >

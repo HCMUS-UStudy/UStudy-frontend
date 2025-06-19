@@ -66,7 +66,7 @@ const Pagination = ({
       <Button
         variant="basic"
         onClick={handlePreviousPage}
-        className="text-xs px-3 sm:text-base sm:px-4 sm:py-2 flex md:hidden gap-1 items-center"
+        className="text-xs px-3 sm:text-base sm:px-4 sm:py-2 flex md:hidden gap-1 items-center hover:bg-primary-lighter hover:text-primary-darkest disabled:hover:bg-transparent disabled:text-disabled-dark"
         disabled={currentPage === 1}
       >
         <FaAngleLeft />
@@ -74,7 +74,7 @@ const Pagination = ({
       <Button
         variant="basic"
         onClick={handlePreviousPage}
-        className="text-xs px-3 sm:text-base sm:px-4 sm:py-2 hidden md:flex gap-1 items-center"
+        className="text-xs px-3 sm:text-base sm:px-4 sm:py-2 hidden md:flex gap-1 items-center hover:bg-primary-lighter hover:text-primary-darkest disabled:hover:bg-transparent disabled:text-disabled-dark"
         disabled={currentPage === 1}
       >
         <FaAngleLeft />
@@ -84,7 +84,7 @@ const Pagination = ({
       {totalPages > MAX_DISPLAY_PAGES &&
         currentPage > Math.floor(MAX_DISPLAY_PAGES / 2) + 1 && (
           <Button
-            className="text-xs md:text-base px-3 md:px-4 md:py-2"
+            className="text-xs md:text-base px-3 md:px-4 md:py-2 hover:bg-primary-lighter hover:text-primary-darkest"
             variant="basic"
             onClick={() => handlePageClick(1)}
           >
@@ -103,7 +103,9 @@ const Pagination = ({
           variant="basic"
           onClick={() => handlePageClick(page)}
           className={`text-xs md:text-base px-3 md:px-4 md:py-2 rounded-md transition-all ${
-            currentPage === page ? "bg-primary hover:bg-hover-primary" : ""
+            currentPage === page
+              ? "bg-primary-dark text-white hover:bg-primary-darker shadow-md"
+              : "hover:bg-primary-lighter hover:text-primary-darkest"
           }`}
         >
           {page}
@@ -112,13 +114,13 @@ const Pagination = ({
 
       {totalPages > MAX_DISPLAY_PAGES + 1 &&
         currentPage < totalPages - Math.floor(MAX_DISPLAY_PAGES / 2) - 1 && (
-          <span className="py-2 tracking-wider">...</span>
+          <span className="py-2 tracking-wider text-primary-dark">...</span>
         )}
 
       {totalPages > MAX_DISPLAY_PAGES &&
         currentPage < totalPages - Math.floor(MAX_DISPLAY_PAGES / 2) && (
           <Button
-            className="text-xs md:text-base px-3 md:px-4 md:py-2"
+            className="text-xs md:text-base px-3 md:px-4 md:py-2 hover:bg-primary-lighter hover:text-primary-darkest"
             variant="basic"
             onClick={() => handlePageClick(totalPages)}
           >
@@ -129,7 +131,7 @@ const Pagination = ({
       <Button
         variant="basic"
         onClick={handleNextPage}
-        className="text-xs md:text-base px-3 md:px-4 md:py-2 hidden md:flex gap-1 items-center"
+        className="text-xs md:text-base px-3 md:px-4 md:py-2 hidden md:flex gap-1 items-center hover:bg-primary-lighter hover:text-primary-darkest disabled:hover:bg-transparent disabled:text-disabled-dark"
         disabled={currentPage === totalPages}
       >
         Sau
@@ -138,7 +140,7 @@ const Pagination = ({
       <Button
         variant="basic"
         onClick={handleNextPage}
-        className="text-xs md:text-base  px-3 md:px-4 md:py-2 flex md:hidden gap-1 items-center"
+        className="text-xs md:text-base px-3 md:px-4 md:py-2 flex md:hidden gap-1 items-center hover:bg-primary-lighter hover:text-primary-darkest disabled:hover:bg-transparent disabled:text-disabled-dark"
         disabled={currentPage === totalPages}
       >
         <FaAngleRight />
