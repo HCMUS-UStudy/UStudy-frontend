@@ -20,6 +20,7 @@ type ForgotPasswordInputs = z.infer<typeof ForgotPasswordSchema>;
 
 export default function ForgotPassword() {
   const [isLoadingBack, setIsLoadingBack] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const {
     register,
@@ -29,14 +30,26 @@ export default function ForgotPassword() {
     resolver: zodResolver(ForgotPasswordSchema),
   });
 
+  const validEmails = ["admin@example.com"];
+
   const onSubmit = (data: ForgotPasswordInputs) => {
-    // TODO: Implement forgot password logic (API call)
-    alert(`Email gửi đến: ${data.email}`);
+    setIsLoading(true);
+    if (validEmails.includes(data.email)) {
+      router.push("/admin/verify-token");
+    } else {
+      setIsLoading(false);
+      alert("Email không hợp lệ hoặc không tồn tại!");
+    }
   };
 
   return (
     <>
       {isLoadingBack && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
+          <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+      {isLoading && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
           <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
         </div>
@@ -47,7 +60,7 @@ export default function ForgotPassword() {
             <Image className="object-contain" src="/logo.png" alt="Logo" fill />
           </div>
           <h1 className="text-xl xl:text-2xl font-semibold text-[#273526]">
-            Nhập email để nhận hướng dẫn đặt lại mật khẩu.
+            Khôi phục mật khẩu dễ dàng, tiếp bước hành trình tri thức!
           </h1>
         </div>
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
@@ -55,6 +68,9 @@ export default function ForgotPassword() {
           <div className="w-full max-w-md mx-auto z-[100]">
             <div className="flex flex-col items-center gap-0">
               <ForgotPasswordAnimation className="w-40 h-40 md:w-60 md:h-60 mx-auto -mb-4" />
+              <p className="text-gray-600 text-center text-base md:text-lg max-w-xs mb-2">
+                Nhập email để nhận hướng dẫn đặt lại mật khẩu.
+              </p>
             </div>
             <ForgotPasswordForm
               onSubmit={onSubmit}

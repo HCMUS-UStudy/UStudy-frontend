@@ -31,7 +31,11 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   // Exclude the layout for the 'admin/login' path
-  if (pathname === "/admin/login" || pathname === "/admin/forgot-password") {
+  if (
+    pathname === "/admin/login" ||
+    pathname === "/admin/forgot-password" ||
+    pathname === "/admin/verify-token"
+  ) {
     return <>{children}</>;
   }
 
