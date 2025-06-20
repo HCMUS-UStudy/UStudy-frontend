@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { setPermissions } from "@/app/store/PermissionScreenSlice";
 import { useMutation } from "@tanstack/react-query";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
+import Loading from "./loading/Loading";
 
 const LogInSchema = z.object({
   username: z
@@ -102,11 +103,6 @@ export default function Login() {
 
   return (
     <>
-      {isLoadingForgot && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
-          <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
       <div className="flex items-center justify-center h-screen overflow-hidden">
         <div className="hidden lg:flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <div className="relative  lg:h-[80px] lg:w-[250px] xl:h-[100px] xl:w-[300px]">
@@ -202,7 +198,7 @@ export default function Login() {
               <div className="flex">
                 <button
                   type="button"
-                  className="text-sm text-gray-600 hover:underline focus:outline-none"
+                  className="text-sm text-gray-600 hover:underline focus:outline-none flex items-center"
                   onClick={() => {
                     setIsLoadingForgot(true);
                     router.push(
@@ -211,6 +207,14 @@ export default function Login() {
                   }}
                   disabled={isLoadingForgot}
                 >
+                  {isLoadingForgot && (
+                    <Loading
+                      className="mr-1"
+                      customStyle={{
+                        spinner: "w-4 h-4 border-gray-600",
+                      }}
+                    />
+                  )}
                   Quên mật khẩu?
                 </button>
               </div>

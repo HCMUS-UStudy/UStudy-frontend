@@ -7,6 +7,7 @@ export default function AdminVerifyToken() {
       heading="Bảo mật tài khoản, an tâm sử dụng!"
       subheading="Nhập mã xác thực gồm 6 số đã gửi về email của bạn."
       onSuccessRedirect="/admin/reset-password"
+      sampleCode="123456"
     />
   );
 }

@@ -4,20 +4,24 @@ import Image from "next/image";
 import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingImages";
 import VerifyTokenAnimation from "@/app/ui/components/_common/verifyToken/VerifyTokenAnimation";
 import { useRouter } from "next/navigation";
+import { Button } from "@/app/ui/components/_common/Button";
 
 interface VerifyTokenPageProps {
   heading?: string;
   subheading?: string;
   onSuccessRedirect?: string;
+  sampleCode?: string;
 }
 
 export default function VerifyTokenPage({
   heading = "Bảo mật tài khoản, an tâm sử dụng!",
   subheading = "Nhập mã xác thực gồm 6 số đã gửi về email của bạn.",
   onSuccessRedirect = "/",
+  sampleCode,
 }: VerifyTokenPageProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (value: string, idx: number) => {
@@ -34,13 +38,28 @@ export default function VerifyTokenPage({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     if (code.join("").length !== 6) {
       setError("Vui lòng nhập đủ 6 số xác thực!");
       return;
     }
-    // TODO: Xác thực mã thực tế ở đây
-    alert("Xác thực thành công!");
-    router.push(onSuccessRedirect);
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      if (sampleCode) {
+        if (code.join("") === sampleCode) {
+          router.push(onSuccessRedirect);
+          return; // No need to setIsLoading(false) as we are navigating away
+        } else {
+          setError("Mã xác thực không đúng!");
+          setIsLoading(false);
+          return;
+        }
+      }
+      // TODO: Handle real API verification
+      alert("Xác thực thành công!"); // Placeholder for actual verification
+      router.push(onSuccessRedirect);
+    }, 500);
   };
 
   return (
@@ -87,12 +106,14 @@ export default function VerifyTokenPage({
               ))}
             </div>
             {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-            <button
+            <Button
               type="submit"
               className="w-full bg-gradient-to-r from-primary-dark to-highlight-text text-white font-bold py-2 rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-200 text-lg"
+              isPending={isLoading}
+              disabled={isLoading}
             >
               Xác nhận
-            </button>
+            </Button>
           </form>
         </div>
       </div>

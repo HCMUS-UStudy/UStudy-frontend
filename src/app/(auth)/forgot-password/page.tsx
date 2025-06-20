@@ -33,26 +33,19 @@ export default function ForgotPassword() {
 
   const onSubmit = (data: ForgotPasswordInputs) => {
     setIsLoading(true);
-    if (validEmails.includes(data.email)) {
-      router.push("/verify-token");
-    } else {
-      setIsLoading(false);
-      alert("Email không hợp lệ hoặc không tồn tại!");
-    }
+    // Simulate API call
+    setTimeout(() => {
+      if (validEmails.includes(data.email)) {
+        router.push("/verify-token");
+      } else {
+        setIsLoading(false);
+        alert("Email không hợp lệ hoặc không tồn tại!");
+      }
+    }, 500);
   };
 
   return (
     <>
-      {isLoadingBack && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
-          <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-      {isLoading && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-30">
-          <div className="w-12 h-12 border-4 border-primary-light border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
       <div className="flex items-center justify-center h-screen overflow-hidden">
         <div className="hidden lg:flex flex-col items-center justify-center w-4/5 h-full bg-primary-light">
           <div className="relative  lg:h-[80px] lg:w-[250px] xl:h-[100px] xl:w-[300px]">
@@ -69,6 +62,7 @@ export default function ForgotPassword() {
               onSubmit={onSubmit}
               errors={errors}
               register={register}
+              isLoading={isLoading}
               isLoadingBack={isLoadingBack}
               router={router}
               setIsLoadingBack={setIsLoadingBack}

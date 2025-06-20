@@ -43,7 +43,9 @@ export async function middleware(request: NextRequest) {
       pathname === "/forgot-password" ||
       pathname === "/admin/forgot-password" ||
       pathname === "/verify-token" ||
-      pathname === "/admin/verify-token"
+      pathname === "/admin/verify-token" ||
+      pathname === "/reset-password" ||
+      pathname === "/admin/reset-password"
     ) {
       switch (defaultRoute) {
         case "TEACHER":
@@ -124,6 +126,8 @@ export async function middleware(request: NextRequest) {
       pathname === "/admin/forgot-password" ||
       pathname === "/verify-token" ||
       pathname === "/admin/verify-token" ||
+      pathname === "/reset-password" ||
+      pathname === "/admin/reset-password" ||
       pathname === "/"
     ) {
       return NextResponse.next();
@@ -172,6 +176,8 @@ export const config = {
     "/admin/forgot-password",
     "/verify-token",
     "/admin/verify-token",
+    "/reset-password",
+    "/admin/reset-password",
     "/admin/:path*",
     "/teacher/:path*",
     "/member/:path*",

@@ -34,7 +34,8 @@ export default function AdminLayout({
   if (
     pathname === "/admin/login" ||
     pathname === "/admin/forgot-password" ||
-    pathname === "/admin/verify-token"
+    pathname === "/admin/verify-token" ||
+    pathname === "/admin/reset-password"
   ) {
     return <>{children}</>;
   }
