@@ -245,9 +245,9 @@ export default function ParentSchedule() {
   };
 
   return (
-    <div className="flex gap-8 p-4 h-[750px]">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 p-2 md:p-4">
       {/* Calendar Section */}
-      <Card className="flex-[2] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
+      <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-primary-darkest">
@@ -283,7 +283,7 @@ export default function ParentSchedule() {
       </Card>
 
       {/* Schedule Detail Section */}
-      <Card className="flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto">
+      <Card className="w-full lg:flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
         <CardHeader className="p-6">
           <CardTitle className="text-2xl font-bold text-primary-darkest">
             📖 Chi tiết lịch học
