@@ -7,6 +7,7 @@ import {
   FaClock,
   FaChalkboardTeacher,
   FaCheckCircle,
+  FaSpinner,
 } from "react-icons/fa";
 import {
   Card,
@@ -46,6 +47,7 @@ export default function ParentSchedule() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleData>({ dates: {} });
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
+  const [loading, setLoading] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleActiveStartDateChange = (args: any) => {
@@ -59,6 +61,7 @@ export default function ParentSchedule() {
       setScheduleData({ dates: {} });
       return;
     }
+    setLoading(true);
     try {
       const response = await getPersonalClassSchedule(
         month,
@@ -116,6 +119,8 @@ export default function ParentSchedule() {
       setScheduleData(newScheduleData);
     } catch (error) {
       console.error("Failed to fetch class schedule", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -258,17 +263,28 @@ export default function ParentSchedule() {
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="p-6 pt-0">
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            onActiveStartDateChange={handleActiveStartDateChange}
-            activeStartDate={activeStartDate}
-            locale="vi"
-            className="w-full border-0"
-            tileClassName={getTileClassName}
-            tileContent={renderTileContent}
-          />
+        <CardContent className="p-6 pt-0 relative">
+          {/* Overlay loading cho Calendar */}
+          <div className="relative">
+            <div className={loading ? "pointer-events-none opacity-50" : ""}>
+              <Calendar
+                onChange={handleDateChange}
+                value={selectedDate}
+                onActiveStartDateChange={handleActiveStartDateChange}
+                activeStartDate={activeStartDate}
+                locale="vi"
+                className="w-full border-0"
+                tileClassName={getTileClassName}
+                tileContent={renderTileContent}
+              />
+            </div>
+            {loading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <FaSpinner className="animate-spin text-4xl mb-2 text-gray-400" />
+                <p className="text-gray-400">Đang tải lịch học...</p>
+              </div>
+            )}
+          </div>
           <div className="text-sm text-gray-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-center mt-4">
             <div className="flex items-center gap-1">
               <span className="text-[14px]">📘</span>
@@ -299,7 +315,12 @@ export default function ParentSchedule() {
         </CardHeader>
 
         <CardContent className="p-6 pt-0">
-          {getScheduleForSelectedDate().length > 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400 animate-pulse">
+              <FaSpinner className="animate-spin text-4xl mb-2" />
+              <p>Đang tải lịch học...</p>
+            </div>
+          ) : getScheduleForSelectedDate().length > 0 ? (
             <div className="space-y-6 text-gray-700">
               {getScheduleForSelectedDate().map((record, index) => (
                 <div
