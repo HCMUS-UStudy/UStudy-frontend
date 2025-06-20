@@ -130,15 +130,22 @@ const Header = ({
               </div>
             ) : (
               <div className="flex flex-col items-start gap-1">
-                <label className="block text-xs font-medium text-primary-darkest mb-0.5">
+                <label className="block text-xs font-medium text-primary-darkest">
                   Chọn học sinh
                 </label>
                 <Select
-                  className="w-full max-w-[160px] rounded-lg border border-primary-light bg-white shadow text-sm px-2 py-1"
+                  className="min-w-[160px] w-auto max-w-none rounded-lg border border-primary-light bg-white shadow text-sm px-2 py-1"
                   defaultLabel={selectedChild?.name}
                   showClearButton={false}
-                  onValueChange={() => {
-                    dispatch(setSelectedChild(selectedChild));
+                  onValueChange={(value) => {
+                    if (typeof value === "string" && value.trim() !== "") {
+                      try {
+                        const child = JSON.parse(value);
+                        dispatch(setSelectedChild(child));
+                      } catch (e) {
+                        console.log(e);
+                      }
+                    }
                   }}
                 >
                   {children.map((child) => {
