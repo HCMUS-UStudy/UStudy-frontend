@@ -11,7 +11,7 @@ import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { Select, SelectItem } from "../_common/Select";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
-import { setSelectedChild } from "@/app/store/ChildrenSlice";
+import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
 import { IoMenuOutline } from "react-icons/io5";
 import Image from "next/image";
@@ -39,10 +39,21 @@ const Header = ({
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
       setUserInfo(userInfo);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userInfoWithChildren = userInfo as UserData & { children?: any[] };
+      if (
+        userInfoWithChildren?.role.defaultRoute === "PARENT" &&
+        userInfoWithChildren.children &&
+        userInfoWithChildren.children.length > 0 &&
+        children.length === 0
+      ) {
+        dispatch(setChildren(userInfoWithChildren.children));
+        dispatch(setSelectedChild(userInfoWithChildren.children[0]));
+      }
     };
     console.log(children.at(0));
     fetchData();
-  }, [children]);
+  }, []);
 
   useEffect(() => {
     if (role === "student") {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -35,12 +35,14 @@ export default function Login() {
   const isUser = pathname === "/login";
   const dispatch = useDispatch();
   const [isLoadingForgot, setIsLoadingForgot] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const {
     register,
     formState: { errors },
     handleSubmit,
     setError,
+    setValue,
   } = useForm<LogInInputs>({ resolver: zodResolver(LogInSchema) });
 
   const useLoginMutation = useMutation({
@@ -53,10 +55,19 @@ export default function Login() {
     },
     onSuccess: (response) => {
       const defaultRoute = response.data.user.role.defaultRoute;
+      let userDataToSave = response.data.user;
+      if (defaultRoute === "PARENT") {
+        userDataToSave = {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...(response.data.user as any),
+          children: response.data.children ?? [],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as typeof response.data.user & { children?: any[] };
+      }
       setTokensAndUserDataCookies(
         response.data.access_token,
         response.data.refresh_token,
-        JSON.stringify(response.data.user),
+        JSON.stringify(userDataToSave),
         JSON.stringify(response.data.screens),
       );
       dispatch(setPermissions(response.data.screens));
@@ -97,7 +108,31 @@ export default function Login() {
     },
   });
 
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("rememberedUsername");
+    const expireAt = localStorage.getItem("rememberedUsernameExpire");
+    if (savedUsername && expireAt) {
+      if (Date.now() < Number(expireAt)) {
+        setValue("username", savedUsername);
+        setRememberMe(true);
+      } else {
+        // Hết hạn, xóa khỏi localStorage
+        localStorage.removeItem("rememberedUsername");
+        localStorage.removeItem("rememberedUsernameExpire");
+      }
+    }
+  }, [setValue]);
+
   const onSubmit = (data: LogInInputs) => {
+    if (rememberMe) {
+      localStorage.setItem("rememberedUsername", data.username);
+      // Lưu thời điểm hết hạn (hiện tại + 3 ngày)
+      const expireAt = Date.now() + 3 * 24 * 60 * 60 * 1000;
+      localStorage.setItem("rememberedUsernameExpire", expireAt.toString());
+    } else {
+      localStorage.removeItem("rememberedUsername");
+      localStorage.removeItem("rememberedUsernameExpire");
+    }
     useLoginMutation.mutate(data);
   };
 
@@ -187,7 +222,13 @@ export default function Login() {
             </div>
             <div className="flex flex-col gap-2 md:flex-row w-full justify-between mt-4 px-1">
               <div className="flex items-center">
-                <input type="checkbox" id="rememberMe" className="mr-1" />
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  className="mr-1"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />
                 <label
                   htmlFor="rememberMe"
                   className="text-sm text-gray-600 cursor-pointer"
