@@ -13,6 +13,37 @@ export async function middleware(request: NextRequest) {
   const userData = await getUserDataFromCookies();
   const permissions = await getPermissions();
   let response: NextResponse;
+
+  const referer = request.headers.get("referer");
+
+  if (!accessToken) {
+    if (
+      pathname === "/verify-token" &&
+      (!referer || !referer.includes("/forgot-password"))
+    ) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (
+      pathname === "/reset-password" &&
+      (!referer || !referer.includes("/verify-token"))
+    ) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    if (
+      pathname === "/admin/verify-token" &&
+      (!referer || !referer.includes("/admin/forgot-password"))
+    ) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    if (
+      pathname === "/admin/reset-password" &&
+      (!referer || !referer.includes("/admin/verify-token"))
+    ) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
+
   if (accessToken) {
     // if(!userData) {
     //   // cập nhật userData
