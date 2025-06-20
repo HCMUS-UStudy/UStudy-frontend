@@ -74,24 +74,24 @@ export default function VerifyTokenPage({
       </div>
       <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
         <FallingImages />
-        <div className="w-full max-w-md mx-auto z-[100]">
+        <div className="w-full max-w-md mx-auto z-[100] px-4 md:px-0">
           {/* <div className="flex flex-col items-center gap-0 mb-2">
             <VerifyTokenAnimation className="w-40 h-40 md:w-40 md:h-40 mx-auto -mb-4" />
           </div> */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white/90 backdrop-blur-md py-10 px-8 md:px-12 rounded-3xl shadow-2xl border border-primary-light/40 flex flex-col gap-6 items-center"
+            className="bg-white/90 backdrop-blur-md py-8 px-4 md:py-10 md:px-8 rounded-3xl shadow-2xl border border-primary-light/40 flex flex-col gap-6 items-center"
           >
             <div className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center">
               Xác thực mã OTP
             </div>
             <div className="flex flex-col items-center gap-0 mb-2">
-              <VerifyTokenAnimation className="w-40 h-40 md:w-40 md:h-40 mx-auto -mb-4" />
+              <VerifyTokenAnimation className="w-32 h-32 md:w-40 md:h-40 mx-auto -mb-4" />
             </div>
-            <p className="text-gray-600 text-center text-base md:text-lg max-w-xs mb-2">
+            <p className="text-gray-600 text-center text-sm md:text-lg max-w-xs mb-2">
               {subheading}
             </p>
-            <div className="flex gap-3 mb-2">
+            <div className="flex gap-2 md:gap-3 mb-2 max-[350px]:gap-1 max-[300px]:gap-0.5">
               {code.map((num, idx) => (
                 <input
                   key={idx}
@@ -99,7 +99,7 @@ export default function VerifyTokenPage({
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
-                  className="w-12 h-14 text-center text-2xl border-2 border-primary-light rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm bg-white/80"
+                  className="w-10 h-12 md:w-12 md:h-14 text-center text-xl md:text-2xl max-[350px]:w-8 max-[350px]:h-10 max-[350px]:text-base max-[300px]:w-6 max-[300px]:h-8 max-[300px]:text-xs border-2 border-primary-light rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm bg-white/80"
                   value={num}
                   onChange={(e) => handleChange(e.target.value, idx)}
                 />
