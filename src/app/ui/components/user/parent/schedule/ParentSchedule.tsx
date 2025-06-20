@@ -19,6 +19,7 @@ import { useState, useEffect } from "react";
 import { FaBell, FaBook, FaRegClipboard } from "react-icons/fa6";
 import { getPersonalClassSchedule } from "@/app/lib/services/classSchedule";
 import { ClassSchedule } from "@/app/types";
+import { useAppSelector } from "@/app/store/store";
 
 interface ScheduleData {
   dates: Record<string, ScheduleRecord[]>;
@@ -41,6 +42,7 @@ interface TileProps {
 }
 
 export default function ParentSchedule() {
+  const selectedChild = useAppSelector((state) => state.children.selectedChild);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleData>({ dates: {} });
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
@@ -53,8 +55,16 @@ export default function ParentSchedule() {
   };
 
   const fetchSchedule = async (month: number, year: number) => {
+    if (!selectedChild?.id) {
+      setScheduleData({ dates: {} });
+      return;
+    }
     try {
-      const response = await getPersonalClassSchedule(month, year);
+      const response = await getPersonalClassSchedule(
+        month,
+        year,
+        selectedChild.id,
+      );
       const fetchedClassSchedules = response.data.data;
 
       const newScheduleData: ScheduleData = { dates: {} };
@@ -110,11 +120,11 @@ export default function ParentSchedule() {
   };
 
   useEffect(() => {
+    if (!selectedChild?.id) return;
     const month = activeStartDate.getMonth() + 1;
     const year = activeStartDate.getFullYear();
-
     fetchSchedule(month, year);
-  }, [activeStartDate]);
+  }, [activeStartDate, selectedChild]);
 
   function formatDateLocal(date: Date): string {
     const year = date.getFullYear();
