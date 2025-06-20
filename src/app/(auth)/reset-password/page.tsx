@@ -68,7 +68,7 @@ export default function ResetPassword() {
         </div>
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light lg:bg-background">
           <FallingImages />
-          <div className="w-full max-w-md mx-auto z-[100]">
+          <div className="w-full max-w-md mx-auto z-[100] px-4 md:px-0">
             <ResetPasswordForm
               onSubmit={onSubmit}
               errors={errors}

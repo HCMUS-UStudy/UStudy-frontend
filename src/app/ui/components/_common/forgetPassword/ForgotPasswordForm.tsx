@@ -20,18 +20,18 @@ export default function ForgotPasswordForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-white/90 backdrop-blur-md py-8 px-6 md:px-10 rounded-3xl shadow-xl border border-primary-light/40 flex flex-col gap-4"
+      className="bg-white/90 backdrop-blur-md py-6 px-4 md:py-8 md:px-10 rounded-3xl shadow-xl border border-primary-light/40 flex flex-col gap-4 max-w-md w-full mx-auto"
     >
-      <div className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center -mt-2">
+      <div className="text-xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center -mt-2">
         Quên mật khẩu
       </div>
       <div className="flex flex-col items-center gap-0">
-        <ForgotPasswordAnimation className="w-40 h-40 md:w-60 md:h-60 mx-auto -mb-4" />
-        <p className="text-gray-600 text-center text-base md:text-lg max-w-xs mb-2">
+        <ForgotPasswordAnimation className="w-32 h-32 md:w-60 md:h-60 mx-auto -mb-4" />
+        <p className="text-gray-600 text-center text-sm md:text-lg max-w-xs mb-2">
           Nhập email để nhận hướng dẫn đặt lại mật khẩu.
         </p>
       </div>
-      <div className="mt-2 mb-2 w-[250px] md:w-[350px]">
+      <div className="mt-2 mb-2 w-full max-w-xs md:max-w-md mx-auto">
         <Input
           id="email"
           className="text-base md:text-[14px]"
@@ -78,7 +78,7 @@ export default function ForgotPasswordForm({
       </Button>
       <button
         type="button"
-        className="text-sm text-gray-600 hover:underline focus:outline-none mt-2 group flex items-center justify-center gap-1"
+        className="text-xs md:text-sm text-gray-600 hover:underline focus:outline-none mt-2 group flex items-center justify-center gap-1"
         onClick={() => {
           setIsLoadingBack(true);
           router.push(backTo);
