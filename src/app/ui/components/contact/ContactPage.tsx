@@ -84,7 +84,7 @@ const ContactPage = () => {
 
   return (
     <>
-      <div className="flex">
+      <div className="flex h-full">
         <div
           className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}
         >

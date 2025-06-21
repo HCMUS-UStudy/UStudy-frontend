@@ -1,12 +1,12 @@
 import axiosInstance from "@/app/lib/axios";
-import { MessageList, RoomChat } from "@/app/types";
+import { BasePaginationResponse, MessageList, RoomChatItem } from "@/app/types";
 
 export const getAllRooms = async (
   currentPage: number,
   limit: number,
   filter?: string,
   userId?: string,
-): Promise<RoomChat> => {
+): Promise<BasePaginationResponse<RoomChatItem>> => {
   try {
     const response = await axiosInstance.get(`/room-chat/list`, {
       params: {
@@ -16,7 +16,6 @@ export const getAllRooms = async (
         userId: userId,
       },
     });
-    console.log("getAllRooms response", response.data.data);
     return response.data.data;
   } catch (error) {
     throw error;

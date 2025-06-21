@@ -54,7 +54,6 @@ export const handleExpiredAccessToken = async (
 axiosInstance.interceptors.request.use(
   async function (request) {
     if (!requestUrl.includes(request.url ?? "")) {
-      console.log(request.url);
       const { accessToken, refreshToken } = await getTokensFromCookies();
       let _accessToken = accessToken;
       if (_accessToken) {

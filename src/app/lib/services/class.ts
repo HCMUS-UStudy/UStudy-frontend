@@ -9,11 +9,13 @@ import {
   ClassItem,
   GenderType,
   UserSummary,
+  ClassSchema,
+  UpdateSchedule,
+  BaseResponse,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
 import { CreateClassInputs } from "@/app/ui/components/admin/classes/create/CreateClass";
-import { updateClassFormInputs } from "@/app/(admin)/admin/classes/[classId]/setting/page";
 
 export const getAllClasses = async (
   nameQuery: string,
@@ -238,7 +240,10 @@ export const getListClassToRegister = async (
 
 export const updateClass = async (
   classId: string,
-  data: updateClassFormInputs,
+  data: Pick<
+    ClassSchema,
+    "name" | "description" | "courseId" | "gradeId" | "fee"
+  >,
 ): Promise<
   ClassItem & {
     teacher: (UserSummary & { gender: GenderType })[];
@@ -247,6 +252,24 @@ export const updateClass = async (
   try {
     const response = await axiosInstance.patch(
       `/class/update/${classId}`,
+      data,
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateSchedule = async ({
+  classId,
+  data,
+}: {
+  classId: string;
+  data: UpdateSchedule;
+}): Promise<BaseResponse> => {
+  try {
+    const response = await axiosInstance.patch(
+      `/class/update-schedule/${classId}`,
       data,
     );
     return response.data.data;

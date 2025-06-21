@@ -148,12 +148,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data: messages, status } = useQuery({
+  const { data: messages } = useQuery({
     queryKey: ["Messages", selectedRoom, currentPage - 1],
     queryFn: () =>
       getAllMessages(selectedRoom?.roomChatId, currentPage - 1, 10),
     enabled: !!selectedRoom?.roomChatId,
   });
+
+  console.log(messages);
 
   return (
     <div className="relative w-full lg:w-[calc(100%-270px)] h-full md:col-span-3 bg-white">

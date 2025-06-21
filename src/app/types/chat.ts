@@ -1,17 +1,13 @@
 import { BasePaginationResponse, UserSummary } from "@/app/types/common";
 
 export type RoomChatItem = {
-  roomChatId: string | null | undefined;
+  roomChatId: string;
   listClassName: string[];
   user: UserSummary;
   unreadCount: number;
 };
 
-export type RoomChat = BasePaginationResponse<RoomChatItem> & {
-  pageNumber: number;
-  pageSize: number;
-  last: boolean;
-};
+export type RoomChat = BasePaginationResponse<RoomChatItem>;
 
 export type MessageItem = {
   id: string;

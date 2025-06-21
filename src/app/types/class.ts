@@ -167,3 +167,13 @@ export type ClassRegisterResponseItem = BaseClassInfo & {
 
 export type ClassRegisterResponse =
   BasePaginationResponse<ClassRegisterResponseItem>;
+
+export type UpdateSchedule = {
+  startDate: string;
+  numLessons: number;
+  classSessions: {
+    day: DaysInWeek;
+    branchSessionId: string;
+    roomId: string;
+  };
+};

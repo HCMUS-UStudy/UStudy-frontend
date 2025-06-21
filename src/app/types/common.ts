@@ -92,6 +92,14 @@ export interface BaseScheduleInfo {
 
 export interface BasePaginationResponse<T> {
   content: T[];
+  pageNumber: number;
+  pageSize: number;
   totalPages: number;
   totalElements: number;
+  last: boolean;
+}
+
+export interface BaseResponse {
+  message: string;
+  statusCode: string;
 }

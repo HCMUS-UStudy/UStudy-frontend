@@ -30,7 +30,10 @@ export default function PageWrapper({
     };
   }, []);
 
-  if (pathname?.startsWith("/member/contact")) {
+  if (
+    pathname?.startsWith("/member/contact") ||
+    pathname?.startsWith("/admin/contact")
+  ) {
     return (
       <div
         className={`h-screen-height overflow-y-hidden bg-white
@@ -44,7 +47,7 @@ export default function PageWrapper({
   }
   return (
     <div
-      className={`bg-background p-0 md:p-4 border-t-2 md:border-t-0 border-slate-300 h-screen-height
+      className={`bg-background p-0 md:p-4 border-t-2 md:border-t-0 border-slate-300 h-screen-height-mobile md:h-screen-height
       ${isMobile ? "" : collapsed ? "ml-from-sidebar-collapsed" : "ml-from-sidebar"}`}
     >
       {isDashboard ? (

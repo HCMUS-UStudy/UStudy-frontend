@@ -93,8 +93,10 @@ export const ContactList = ({
     queryKey: ["RoomChats", currentPage - 1, searchQuery],
     queryFn: () => getAllRooms(currentPage - 1, 10, searchQuery, ""),
   });
+
+  // console.log(rooms);
   return (
-    <Card className="h-full shadow-md bg-white border flex flex-col">
+    <Card className="h-full shadow-none hover:shadow-none bg-white border flex flex-col">
       <CardHeader className="h-[80px]">
         <CardTitle className="flex items-center text-primary-darkest text-sm lg:text-base">
           <BsPerson className="mr-2 hidden lg:flex" />
@@ -105,52 +107,73 @@ export const ContactList = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2 py-2 flex-1 max-h-[75vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
-        {sampleRoomChats.map((room) => (
-          <div
-            key={room.roomChatId}
-            className={`relative flex items-center p-3 border rounded cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
-              selectedRoom?.roomChatId === room.roomChatId
-                ? "border-primary-dark bg-primary-lighter"
-                : "hover:bg-gray-50"
-            }`}
-            onClick={() => setSelectedRoom(room)}
-          >
-            {/*Show num un-read message*/}
-            <div className="absolute -top-2 -right-2">
-              {room.unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-                  {room.unreadCount}
-                </span>
-              )}
-            </div>
-            <div className="relative w-11 h-11 mr-3">
-              <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100 flex items-center justify-center">
-                {room.user.avatar ? (
-                  <Image
-                    width={36}
-                    height={36}
-                    src={room.user.avatar}
-                    alt={room.user.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <BsPerson size={24} className="text-primary-dark" />
-                )}
+        {status === "pending" ? (
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="relative flex items-center p-3 border rounded cursor-pointer animate-pulse bg-gray-50"
+              >
+                <div className="relative w-11 h-11 mr-3">
+                  <div className="w-11 h-11 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center" />
+                  <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-gray-300 rounded-full border-2 border-white shadow-md"></span>
+                </div>
+                <div className="text-sm space-y-1 w-full">
+                  <div className="h-4 bg-gray-300 rounded w-2/3"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
               </div>
-              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white shadow-md"></span>
-            </div>
-            <div className="text-sm">
-              <p className="font-semibold text-primary-dark">
-                {room.user.name}
-              </p>
-              {room.listClassName.length > 0 && (
-                <p className="text-xs text-gray-500">
-                  Lớp phụ trách: {room.listClassName.join(", ")}
-                </p>
-              )}
-            </div>
-          </div>
-        ))}
+            ))}
+          </>
+        ) : (
+          <>
+            {rooms?.content.map((room) => (
+              <div
+                key={room.roomChatId}
+                className={`relative flex items-center p-3 border rounded cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
+                  selectedRoom?.roomChatId === room.roomChatId
+                    ? "border-primary-dark bg-primary-lighter"
+                    : "hover:bg-gray-50"
+                }`}
+                onClick={() => setSelectedRoom(room)}
+              >
+                <div className="absolute -top-2 -right-2">
+                  {room.unreadCount > 0 && (
+                    <span className="bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                      {room.unreadCount}
+                    </span>
+                  )}
+                </div>
+                <div className="relative w-11 h-11 mr-3">
+                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100 flex items-center justify-center">
+                    {room.user.avatar ? (
+                      <Image
+                        width={36}
+                        height={36}
+                        src={room.user.avatar}
+                        alt={room.user.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <BsPerson size={24} className="text-primary-dark" />
+                    )}
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white shadow-md"></span>
+                </div>
+                <div className="text-sm">
+                  <p className="font-semibold text-primary-dark">
+                    {room.user.name}
+                  </p>
+                  {room.listClassName.length > 0 && (
+                    <p className="text-xs text-gray-500">
+                      Lớp phụ trách: {room.listClassName.join(", ")}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </CardContent>
     </Card>
   );
