@@ -1,4 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
+import { ChildClassScore } from "@/app/types/childClasses";
 
 export const getListChildClasses = async (
   childId: string,
@@ -11,6 +12,26 @@ export const getListChildClasses = async (
       page,
       limit,
       filter,
+    },
+  });
+  return response.data.data;
+};
+
+export const getChildScores = async (
+  childId: string,
+): Promise<ChildClassScore[]> => {
+  const response = await axiosInstance.get(`/parent/child-scores/${childId}`);
+  return response.data.data;
+};
+
+export const getChildClassDetails = async (
+  studentId: string,
+  classId: string,
+) => {
+  const response = await axiosInstance.get(`/parent/child-class-details`, {
+    params: {
+      studentId,
+      classId,
     },
   });
   return response.data.data;

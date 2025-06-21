@@ -6,48 +6,67 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../_common/Card";
-import { Radar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
+import { ChildClassScore } from "@/app/types";
 
-export const SkillChart = () => {
+interface SkillChartProps {
+  data: ChildClassScore[];
+}
+
+export const SkillChart = ({ data }: SkillChartProps) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Dữ liệu cho biểu đồ radar kỹ năng
-  const skillsData = {
-    labels: [
-      "Tư duy phản biện",
-      "Khả năng ghi nhớ",
-      "Tính tự giác",
-      "Kỹ năng nhóm",
-      "Thuyết trình",
-      "Sáng tạo",
-    ],
+  const nameCounts = data.reduce(
+    (acc, score) => {
+      acc[score.course.name] = (acc[score.course.name] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const labels = data.map((score) => {
+    if (nameCounts[score.course.name] > 1) {
+      return `${score.course.name} - ${score.grade.name}`;
+    }
+    return score.course.name;
+  });
+
+  const studentAverages = data.map((item) => item.studentAverage);
+  const differences = data.map(
+    (item) => item.classAverage - item.studentAverage,
+  );
+
+  const comparisonData = {
+    labels: labels,
     datasets: [
       {
-        label: "Kỹ năng của con",
-        data: [8.5, 9.0, 7.5, 6.8, 7.2, 8.3],
-        backgroundColor: "rgba(190, 229, 209, 0.3)",
-        borderColor: "rgba(58, 169, 122, 1)",
-        pointBackgroundColor: "rgba(58, 169, 122, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(58, 169, 122, 1)",
-        borderWidth: 2,
+        label: "Điểm của con",
+        data: studentAverages,
+        backgroundColor: "rgba(156, 163, 175, 0.7)", // gray-400
+        borderColor: "rgba(107, 114, 128, 1)", // gray-500
+        borderWidth: 1,
       },
       {
-        label: "Trung bình lớp",
-        data: [7.2, 7.5, 7.0, 7.3, 6.8, 7.1],
-        backgroundColor: "rgba(217, 217, 217, 0.3)",
-        borderColor: "rgba(150, 150, 150, 1)",
-        pointBackgroundColor: "rgba(150, 150, 150, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(150, 150, 150, 1)",
-        borderWidth: 2,
+        label: "Chênh lệch đến TB lớp",
+        data: differences,
+        backgroundColor: differences.map(
+          (d) =>
+            d >= 0
+              ? "rgba(239, 68, 68, 0.7)" // red-500
+              : "rgba(58, 169, 122, 0.7)", // custom green
+        ),
+        borderColor: differences.map(
+          (d) =>
+            d >= 0
+              ? "rgba(220, 38, 38, 1)" // red-600
+              : "rgba(5, 150, 105, 1)", // emerald-600
+        ),
+        borderWidth: 1,
       },
     ],
   };
@@ -56,7 +75,7 @@ export const SkillChart = () => {
     return (
       <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
         <CardHeader>
-          <CardTitle>Đánh giá kỹ năng</CardTitle>
+          <CardTitle>So sánh với trung bình lớp</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[400px] flex items-center justify-center">
@@ -70,23 +89,43 @@ export const SkillChart = () => {
   return (
     <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
       <CardHeader>
-        <CardTitle>Đánh giá kỹ năng</CardTitle>
+        <CardTitle>So sánh với trung bình lớp</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
-          <Radar
-            data={skillsData}
+          <Bar
+            data={comparisonData}
             options={{
+              indexAxis: "y",
               responsive: true,
               maintainAspectRatio: false,
-              scales: {
-                r: {
-                  beginAtZero: true,
-                  min: 0,
-                  max: 10,
-                  ticks: {
-                    stepSize: 2,
+              plugins: {
+                legend: {
+                  position: "top",
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      if (context.dataset.label === "Điểm của con") {
+                        return ` ${context.dataset.label}: ${context.formattedValue}`;
+                      }
+                      const diff = parseFloat(context.formattedValue);
+                      const comparisonText = diff >= 0 ? "Thấp hơn" : "Cao hơn";
+                      return ` ${comparisonText} TB lớp: ${Math.abs(diff).toFixed(1)}`;
+                    },
                   },
+                },
+              },
+              scales: {
+                x: {
+                  stacked: true,
+                  title: {
+                    display: true,
+                    text: "Điểm trung bình",
+                  },
+                },
+                y: {
+                  stacked: true,
                 },
               },
             }}
