@@ -107,7 +107,8 @@ const Header = ({
         <div className="flex gap-2 sm:gap-3 items-center">
           {userInfo?.role.defaultRoute === "PARENT" &&
             (pathname?.includes("/member/tuition") ||
-              pathname?.includes("/member/schedule")) &&
+              pathname?.includes("/member/schedule") ||
+              pathname?.includes("/member/academic-result")) &&
             (children.length === 1 ? (
               <div className="flex flex-col items-start gap-0.5">
                 <label className="block text-xs font-medium text-primary-darkest mb-0.5">

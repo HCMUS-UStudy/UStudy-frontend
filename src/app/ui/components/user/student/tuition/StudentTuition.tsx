@@ -18,7 +18,7 @@ import Pagination from "../../../_common/Pagination";
 export default function StudentTuition() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages] = useState(5);
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("all");
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(
     null,
   );
@@ -43,7 +43,7 @@ export default function StudentTuition() {
   } = useQuery({
     queryKey: ["payments", activeTab, userData, currentPage - 1],
     queryFn: () =>
-      getPaymentByStuId(undefined, currentPage - 1, 1, statusParam),
+      getPaymentByStuId(undefined, currentPage - 1, totalPages, statusParam),
     placeholderData: keepPreviousData,
   });
   console.log(paymentData?.content);
@@ -52,6 +52,8 @@ export default function StudentTuition() {
   const pendingPayments = payments.filter((p) => p.status === "PENDING");
   const completedPayments = payments.filter((p) => p.status === "COMPLETED");
   const filteredAllPayments = [...pendingPayments, ...completedPayments];
+
+  console.log(filteredAllPayments);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -142,9 +144,9 @@ export default function StudentTuition() {
 
             <Tabs value={activeTab} onTabChange={setActiveTab}>
               <TabList>
+                <Tab value="all" label="Tất cả" />
                 <Tab value="pending" label="Chờ thanh toán" />
                 <Tab value="completed" label="Đã thanh toán" />
-                <Tab value="all" label="Tất cả" />
               </TabList>
 
               <TabPanel value="pending">
