@@ -9,15 +9,17 @@ import Schedule from "@/app/ui/components/user/student/home/Schedule";
 
 export default function StudentHome() {
   return (
-    <div className="px-2">
+    <div className="px-2 md:px-6">
       <HeaderHome />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mt-4 md:mt-6">
         <Homework />
         <ResultStudy />
       </div>
 
-      <Schedule />
+      <div className="mt-4 md:mt-6">
+        <Schedule />
+      </div>
     </div>
   );
 }

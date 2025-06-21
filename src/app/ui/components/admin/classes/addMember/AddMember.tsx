@@ -8,10 +8,8 @@ import {
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
-import StudentList from "./StudentList";
-import TeacherList from "./TeacherList";
+import MemberList from "./MemberList";
 import { usePathname, useRouter } from "next/navigation";
-import AdminList from "./AdminList";
 
 interface AddMemberProps {
   buttonLabel: string;
@@ -47,15 +45,24 @@ const AddMember: React.FC<AddMemberProps> = ({ buttonLabel }) => {
             </TabList>
 
             <TabPanel value="students">
-              <StudentList onClose={() => setShowModalRe(false)} />
+              <MemberList
+                onClose={() => setShowModalRe(false)}
+                role={"STUDENT"}
+              />
             </TabPanel>
 
             <TabPanel value="teachers">
-              <TeacherList onClose={() => setShowModalRe(false)} />
+              <MemberList
+                onClose={() => setShowModalRe(false)}
+                role={"TEACHER"}
+              />
             </TabPanel>
 
             <TabPanel value="admins">
-              <AdminList onClose={() => setShowModalRe(false)} />
+              <MemberList
+                onClose={() => setShowModalRe(false)}
+                role={"ADMIN"}
+              />
             </TabPanel>
           </Tabs>
         </DialogContent>

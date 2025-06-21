@@ -7,6 +7,7 @@ import {
   FaClock,
   FaChalkboardTeacher,
   FaCheckCircle,
+  FaSpinner,
 } from "react-icons/fa";
 import {
   Card,
@@ -45,8 +46,8 @@ interface TileProps {
 export default function StudentSchedule() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleData>({ dates: {} });
-
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
+  const [loading, setLoading] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleActiveStartDateChange = (args: any) => {
@@ -58,6 +59,7 @@ export default function StudentSchedule() {
   const router = useRouter();
 
   const fetchSchedule = async (month: number, year: number) => {
+    setLoading(true);
     try {
       const response = await getPersonalClassSchedule(month, year);
       const fetchedClassSchedules = response.data.data;
@@ -113,6 +115,8 @@ export default function StudentSchedule() {
       setScheduleData(newScheduleData);
     } catch (error) {
       console.error("Failed to fetch class schedule", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -242,9 +246,9 @@ export default function StudentSchedule() {
   };
 
   return (
-    <div className="flex gap-8 p-4">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 p-2 md:p-4">
       {/* Calendar Section */}
-      <Card className="flex-[2] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
+      <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-primary-darkest">
@@ -255,18 +259,28 @@ export default function StudentSchedule() {
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="p-6 pt-0 overflow-visible">
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            onActiveStartDateChange={handleActiveStartDateChange}
-            activeStartDate={activeStartDate}
-            locale="vi"
-            className="w-full border-0"
-            tileClassName={getTileClassName}
-            tileContent={renderTileContent}
-          />
-
+        <CardContent className="p-6 pt-0 overflow-visible relative">
+          {/* Overlay loading cho Calendar */}
+          <div className="relative">
+            <div className={loading ? "pointer-events-none opacity-50" : ""}>
+              <Calendar
+                onChange={handleDateChange}
+                value={selectedDate}
+                onActiveStartDateChange={handleActiveStartDateChange}
+                activeStartDate={activeStartDate}
+                locale="vi"
+                className="w-full border-0"
+                tileClassName={getTileClassName}
+                tileContent={renderTileContent}
+              />
+            </div>
+            {loading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <FaSpinner className="animate-spin text-4xl mb-2 text-gray-400" />
+                <p className="text-gray-400">Đang tải lịch học...</p>
+              </div>
+            )}
+          </div>
           <div className="text-sm text-gray-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-center mt-4">
             <div className="flex items-center gap-1">
               <span className="text-[14px]">📘</span>
@@ -281,7 +295,7 @@ export default function StudentSchedule() {
       </Card>
 
       {/* Schedule Detail Section */}
-      <Card className="flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto">
+      <Card className="w-full lg:flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
         <CardHeader className="p-6">
           <CardTitle className="text-2xl font-bold text-primary-darkest">
             📖 Chi tiết lịch học
@@ -297,7 +311,12 @@ export default function StudentSchedule() {
         </CardHeader>
 
         <CardContent className="p-6 pt-0">
-          {getScheduleForSelectedDate().length > 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400 animate-pulse">
+              <FaSpinner className="animate-spin text-4xl mb-2" />
+              <p>Đang tải lịch học...</p>
+            </div>
+          ) : getScheduleForSelectedDate().length > 0 ? (
             <div className="space-y-6 text-gray-700">
               {getScheduleForSelectedDate().map((record, index) => (
                 <div

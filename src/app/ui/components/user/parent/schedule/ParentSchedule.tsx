@@ -7,6 +7,7 @@ import {
   FaClock,
   FaChalkboardTeacher,
   FaCheckCircle,
+  FaSpinner,
 } from "react-icons/fa";
 import {
   Card,
@@ -19,6 +20,7 @@ import { useState, useEffect } from "react";
 import { FaBell, FaBook, FaRegClipboard } from "react-icons/fa6";
 import { getPersonalClassSchedule } from "@/app/lib/services/classSchedule";
 import { ClassSchedule } from "@/app/types";
+import { useAppSelector } from "@/app/store/store";
 
 interface ScheduleData {
   dates: Record<string, ScheduleRecord[]>;
@@ -41,9 +43,11 @@ interface TileProps {
 }
 
 export default function ParentSchedule() {
+  const selectedChild = useAppSelector((state) => state.children.selectedChild);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleData>({ dates: {} });
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
+  const [loading, setLoading] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleActiveStartDateChange = (args: any) => {
@@ -53,8 +57,17 @@ export default function ParentSchedule() {
   };
 
   const fetchSchedule = async (month: number, year: number) => {
+    if (!selectedChild?.id) {
+      setScheduleData({ dates: {} });
+      return;
+    }
+    setLoading(true);
     try {
-      const response = await getPersonalClassSchedule(month, year);
+      const response = await getPersonalClassSchedule(
+        month,
+        year,
+        selectedChild.id,
+      );
       const fetchedClassSchedules = response.data.data;
 
       const newScheduleData: ScheduleData = { dates: {} };
@@ -106,15 +119,17 @@ export default function ParentSchedule() {
       setScheduleData(newScheduleData);
     } catch (error) {
       console.error("Failed to fetch class schedule", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (!selectedChild?.id) return;
     const month = activeStartDate.getMonth() + 1;
     const year = activeStartDate.getFullYear();
-
     fetchSchedule(month, year);
-  }, [activeStartDate]);
+  }, [activeStartDate, selectedChild]);
 
   function formatDateLocal(date: Date): string {
     const year = date.getFullYear();
@@ -235,9 +250,9 @@ export default function ParentSchedule() {
   };
 
   return (
-    <div className="flex gap-8 p-4 h-[750px]">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 p-2 md:p-4">
       {/* Calendar Section */}
-      <Card className="flex-[2] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
+      <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-primary-darkest">
@@ -248,17 +263,28 @@ export default function ParentSchedule() {
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="p-6 pt-0">
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            onActiveStartDateChange={handleActiveStartDateChange}
-            activeStartDate={activeStartDate}
-            locale="vi"
-            className="w-full border-0"
-            tileClassName={getTileClassName}
-            tileContent={renderTileContent}
-          />
+        <CardContent className="p-6 pt-0 relative">
+          {/* Overlay loading cho Calendar */}
+          <div className="relative">
+            <div className={loading ? "pointer-events-none opacity-50" : ""}>
+              <Calendar
+                onChange={handleDateChange}
+                value={selectedDate}
+                onActiveStartDateChange={handleActiveStartDateChange}
+                activeStartDate={activeStartDate}
+                locale="vi"
+                className="w-full border-0"
+                tileClassName={getTileClassName}
+                tileContent={renderTileContent}
+              />
+            </div>
+            {loading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <FaSpinner className="animate-spin text-4xl mb-2 text-gray-400" />
+                <p className="text-gray-400">Đang tải lịch học...</p>
+              </div>
+            )}
+          </div>
           <div className="text-sm text-gray-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-center mt-4">
             <div className="flex items-center gap-1">
               <span className="text-[14px]">📘</span>
@@ -273,7 +299,7 @@ export default function ParentSchedule() {
       </Card>
 
       {/* Schedule Detail Section */}
-      <Card className="flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto">
+      <Card className="w-full lg:flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
         <CardHeader className="p-6">
           <CardTitle className="text-2xl font-bold text-primary-darkest">
             📖 Chi tiết lịch học
@@ -289,7 +315,12 @@ export default function ParentSchedule() {
         </CardHeader>
 
         <CardContent className="p-6 pt-0">
-          {getScheduleForSelectedDate().length > 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400 animate-pulse">
+              <FaSpinner className="animate-spin text-4xl mb-2" />
+              <p>Đang tải lịch học...</p>
+            </div>
+          ) : getScheduleForSelectedDate().length > 0 ? (
             <div className="space-y-6 text-gray-700">
               {getScheduleForSelectedDate().map((record, index) => (
                 <div

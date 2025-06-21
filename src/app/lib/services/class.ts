@@ -12,6 +12,7 @@ import {
   ClassSchema,
   UpdateSchedule,
   BaseResponse,
+  StudentClassCount,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
@@ -145,6 +146,23 @@ export const getListMembers = async (
   }
 };
 
+export const removeMembers = async (
+  classId: string | string[] | undefined,
+  listUserIds?: string[],
+): Promise<MemberData> => {
+  try {
+    const response = await axiosInstance.delete(
+      `/class-member/remove/${classId}`,
+      {
+        data: listUserIds,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getListAvailableTea = async (
   classId: string,
   query: "",
@@ -272,6 +290,15 @@ export const updateSchedule = async ({
       `/class/update-schedule/${classId}`,
       data,
     );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentClassCount = async (): Promise<StudentClassCount> => {
+  try {
+    const response = await axiosInstance.get("/class/count-student-classes");
     return response.data.data;
   } catch (error) {
     throw error;

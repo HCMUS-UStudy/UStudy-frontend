@@ -162,7 +162,9 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
         toast.success("Cập nhật bài làm thành công!");
         setIsConfirmModalOpen(false);
 
-        window.location.reload();
+        if (typeof window !== "undefined") {
+          window.location.reload();
+        }
       } else {
         toast.error("Không có câu trả lời nào để cập nhật.");
       }

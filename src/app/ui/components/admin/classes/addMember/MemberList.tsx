@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -18,37 +18,46 @@ import { AccountItem } from "@/app/types";
 import { addMembers } from "@/app/lib/services/class";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
+import Loading from "@/app/ui/components/_common/loading/Loading";
 
-export default function StudentList({ onClose }: { onClose: () => void }) {
+export default function MemberList({
+  onClose,
+  role,
+}: {
+  onClose: () => void;
+  role: string;
+}) {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [students, setStudents] = useState<AccountItem[]>([]);
+  const [members, setMembers] = useState<AccountItem[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const searchParams = useSearchParams();
   const params = useParams<{ classId: string }>();
   const classId = params?.classId as string;
   const queryClient = useQueryClient();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { data: studentList } = useQuery({
+  const { data: memberList } = useQuery({
     queryKey: [
-      "ListStudentsToAdd",
+      "ListMembersToAdd",
+      role,
       currentPage,
       searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
-    queryFn: () => getFreeUsers(classId as string, 6, "STUDENT", currentPage),
+    queryFn: () => getFreeUsers(classId as string, 10, role, currentPage),
   });
 
   useEffect(() => {
-    if (studentList) {
+    if (memberList) {
       if (currentPage === 0) {
-        setStudents(studentList.content); // Nếu là trang đầu tiên, thay thế danh sách
+        setMembers(memberList.content); // Nếu là trang đầu tiên, thay thế danh sách
       } else {
-        setStudents((prev) => [...prev, ...studentList.content]); // Nếu không, thêm vào danh sách hiện tại
+        setMembers((prev) => [...prev, ...memberList.content]); // Nếu không, thêm vào danh sách hiện tại
       }
     }
-  }, [studentList, currentPage]);
+  }, [memberList, currentPage]);
 
   const handleSelection = (id: string) => {
     setSelectedIds((prev) =>
@@ -56,43 +65,55 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
     );
   };
 
-  const loadMore = async () => {
-    if (studentList?.totalPages && currentPage < studentList.totalPages - 1) {
-      setIsLoadingMore(true);
-      setCurrentPage((prev) => prev + 1);
-      setIsLoadingMore(false);
-    }
-  };
+  // Infinite scroll: load more when scroll to bottom
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = scrollRef.current;
+      if (!el || isLoadingMore) return;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 20) {
+        if (memberList?.totalPages && currentPage < memberList.totalPages - 1) {
+          setIsLoadingMore(true);
+          setCurrentPage((prev) => prev + 1);
+          setIsLoadingMore(false);
+        }
+      }
+    };
+    const el = scrollRef.current;
+    if (el) el.addEventListener("scroll", handleScroll);
+    return () => {
+      if (el) el.removeEventListener("scroll", handleScroll);
+    };
+  }, [memberList, currentPage, isLoadingMore]);
 
-  const selectedStudents = students.filter((student) =>
-    selectedIds.includes(student.id),
+  const selectedMembers = members.filter((member) =>
+    selectedIds.includes(member.id),
   );
 
-  const unselectedStudents = students.filter(
-    (student) => !selectedIds.includes(student.id),
+  const unselectedMembers = members.filter(
+    (member) => !selectedIds.includes(member.id),
   );
 
-  const filteredUnselectedStudents = unselectedStudents.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      student.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
+  const filteredUnselectedMembers = unselectedMembers.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      member.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
   );
 
   const useAddMembersMutation = useMutation({
     mutationFn: (ids: string[]) => addMembers(ids, classId, "STUDENT"),
     onSuccess: () => {
-      toast.success("Thêm học viên thành công", {
+      toast.success("Thêm thành công", {
         autoClose: 2000,
         pauseOnHover: false,
         pauseOnFocusLoss: false,
         closeOnClick: true,
       });
       onClose();
-      queryClient.invalidateQueries({ queryKey: ["ListMembers"] });
-      queryClient.invalidateQueries({ queryKey: ["ListStudentsToAdd"] });
+      queryClient.invalidateQueries({ queryKey: ["ListMembers", currentPage] });
+      queryClient.invalidateQueries({ queryKey: ["ListMembersToAdd"] });
     },
     onError: () => {
-      toast.error("Thêm học viên thất bại", {
+      toast.error("Thêm thất bại", {
         autoClose: 2000,
         pauseOnHover: false,
         pauseOnFocusLoss: false,
@@ -113,7 +134,7 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
         <div className="flex gap-3 w-1/3">
           <SearchField
             queryKey="AccountName"
-            placeholder="Tìm id hoặc tên học viên..."
+            placeholder="Tìm id hoặc tên..."
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
@@ -128,7 +149,11 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
         </div>
       </div>
 
-      <div className="flex flex-col overflow-y-auto max-h-[420px]">
+      <div
+        className="flex flex-col overflow-y-scroll max-h-[420px] min-h-[200px] border border-gray-200 rounded-md bg-white"
+        ref={scrollRef}
+        style={{ scrollbarGutter: "stable" }}
+      >
         <Table>
           <TableHeader
             columns={[
@@ -143,56 +168,56 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
             ]}
           />
           <TableBody noDataMessage={false}>
-            {[...selectedStudents, ...filteredUnselectedStudents].map(
-              (student) => (
-                <TableRow key={student.id}>
-                  <TableCell>{student.genId}</TableCell>
+            {[...selectedMembers, ...filteredUnselectedMembers].map(
+              (member) => (
+                <TableRow key={member.id}>
+                  <TableCell>{member.genId}</TableCell>
                   <TableCell>
-                    {student.name.length > 18 ? (
+                    {member.name.length > 18 ? (
                       <button>
-                        <Tooltip text={student.name}>
-                          {student.name.slice(0, 18)}...
+                        <Tooltip text={member.name}>
+                          {member.name.slice(0, 18)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      student.name
+                      member.name
                     )}
                   </TableCell>
                   <TableCell>
-                    {student.email.length > 25 ? (
+                    {member.email.length > 25 ? (
                       <button>
-                        <Tooltip text={student.email}>
-                          {student.email.slice(0, 25)}...
+                        <Tooltip text={member.email}>
+                          {member.email.slice(0, 25)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      student.email
+                      member.email
                     )}
                   </TableCell>
                   <TableCell>
-                    {student.address.length > 30 ? (
+                    {member.address.length > 30 ? (
                       <button>
-                        <Tooltip text={student.address}>
-                          {student.address.slice(0, 30)}...
+                        <Tooltip text={member.address}>
+                          {member.address.slice(0, 30)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      student.address
+                      member.address
                     )}
                   </TableCell>
                   <TableCell>
-                    {new Date(student.birthday).toLocaleDateString("vi-VN")}
+                    {new Date(member.birthday).toLocaleDateString("vi-VN")}
                   </TableCell>
-                  <TableCell>{student.phone}</TableCell>
+                  <TableCell>{member.phone}</TableCell>
                   <TableCell>
-                    {student.gender === "MALE" ? "Nam" : "Nữ"}
+                    {member.gender === "MALE" ? "Nam" : "Nữ"}
                   </TableCell>
                   <TableCell className="pl-7">
                     <Checkbox
                       className="w-5 h-5"
                       tickClassName="w-3 h-3"
-                      checked={selectedIds.includes(student.id)}
-                      onChange={() => handleSelection(student.id)}
+                      checked={selectedIds.includes(member.id)}
+                      onChange={() => handleSelection(member.id)}
                     />
                   </TableCell>
                 </TableRow>
@@ -200,18 +225,11 @@ export default function StudentList({ onClose }: { onClose: () => void }) {
             )}
           </TableBody>
         </Table>
-        {studentList?.totalPages &&
-          currentPage < studentList.totalPages - 1 && (
-            <div className="flex justify-center mt-4">
-              <button
-                className="text-[16px] text-primary-darker hover:text-primary-darkest underline"
-                onClick={loadMore}
-                disabled={isLoadingMore}
-              >
-                {isLoadingMore ? "Đang tải..." : "Hiển thị thêm"}
-              </button>
-            </div>
-          )}
+        {isLoadingMore && (
+          <div className="flex justify-center py-2">
+            <Loading customStyle={{ spinner: "w-6 h-6" }} />
+          </div>
+        )}
       </div>
     </div>
   );

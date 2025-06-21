@@ -130,7 +130,7 @@ const config: Config = {
       },
       width: {
         "sidebar-width": "200px",
-        "sidebar-mobile": "72px",
+        "sidebar-collapsed": "72px",
       },
       margin: {
         "from-sidebar": "200px",

@@ -16,19 +16,27 @@ export default function AdminLayout({
 
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth < 768) {
+      if (typeof window !== "undefined" && window.innerWidth < 768) {
         setCollapsed(false);
       }
     }
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => window.removeEventListener("resize", handleResize);
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+      handleResize();
+      return () => window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   const pathname = usePathname();
 
   // Exclude the layout for the 'admin/login' path
-  if (pathname === "/admin/login") {
+  if (
+    pathname === "/admin/login" ||
+    pathname === "/admin/forgot-password" ||
+    pathname === "/admin/verify-token" ||
+    pathname === "/admin/reset-password"
+  ) {
     return <>{children}</>;
   }
 

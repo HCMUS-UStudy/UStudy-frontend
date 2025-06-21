@@ -1,10 +1,10 @@
 "use client";
 
 import AddMember from "@/app/ui/components/admin/classes/addMember/AddMember";
-import { getListMembers } from "@/app/lib/services/class";
-import { useState, useEffect } from "react";
+import { getListMembers, removeMembers } from "@/app/lib/services/class";
+import { useState, useEffect, useCallback } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
@@ -17,8 +17,24 @@ import {
 } from "@/app/ui/components/_common/Table";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { useEncodedRoute } from "@/app/lib/hooks";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { toast } from "react-toastify";
+import DeletePopup from "@/app/ui/components/_common/DeletePopup";
 
 const MemberPage = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   const searchParams = useSearchParams();
   // const params = useParams<{ classId: string }>();
   const { decryptedId } = useEncodedRoute({ paramName: "classId" });
@@ -27,67 +43,20 @@ const MemberPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-  const memberQuery = useQuery(
-    {
-      queryKey: ["ListMembers", currentPage],
-      refetchOnWindowFocus: false,
-      queryFn: () =>
-        getListMembers(
-          classId,
-          searchParams?.get("AccountName") ?? "",
-          currentPage,
-          12,
-        ),
-    },
-    // {
-    //   queryKey: ["ListTeachers"],
-    //   refetchOnWindowFocus: false,
-    //   queryFn: () =>
-    //     getListMembers(
-    //       classId,
-    //       searchParams.get("AccountName") ?? "",
-    //       0,
-    //       20,
-    //       "TEACHER",
-    //     ),
-    // },
-    // {
-    //   queryKey: ["ListStudents", currentStudentPage],
-    //   refetchOnWindowFocus: false,
-    //   queryFn: () =>
-    //     getListMembers(
-    //       classId,
-    //       searchParams.get("AccountName") ?? "",
-    //       currentStudentPage,
-    //       8,
-    //       "STUDENT",
-    //     ),
-    // },
-  );
+  const memberQuery = useQuery({
+    queryKey: ["ListMembers", currentPage],
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      getListMembers(
+        classId,
+        searchParams?.get("AccountName") ?? "",
+        currentPage,
+        12,
+      ),
+  });
 
   const members = memberQuery.data;
   const isLoading = memberQuery.isLoading;
-
-  // const [adminQuery, teacherQuery, studentQuery] = results;
-  // const adminList = adminQuery.data?.content ?? [];
-  // const teacherList = teacherQuery.data?.content ?? [];
-  // const studentList = studentQuery.data?.content ?? [];
-  // const isLoading = results.some((item) => item.status === "pending");
-
-  // const adminListWithRole = adminList.map((member) => ({
-  //   ...member,
-  //   role: "Giáo vụ",
-  // }));
-
-  // const teacherListWithRole = teacherList.map((member) => ({
-  //   ...member,
-  //   role: "Giáo viên",
-  // }));
-  // const studentListWithRole = studentList.map((member) => ({
-  //   ...member,
-  //   role: "Học sinh",
-  // }));
-
   const memberListWithRole = members?.content?.map((member) => ({
     ...member,
     role: member.genId.startsWith("0")
@@ -103,13 +72,51 @@ const MemberPage = () => {
     }
   }, [members]);
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex flex-col mt-10">
-  //       <Loading />
-  //     </div>
-  //   );
-  // }
+  const [deletePopup, setDeletePopup] = useState<boolean>(false);
+  const [selectedMember, setSelectedMember] = useState<{
+    role: string;
+    memberId: string;
+  } | null>(null);
+
+  const queryClient = useQueryClient();
+  const removeFunction = useMutation({
+    mutationFn: async ({
+      classId,
+      memberRemove,
+    }: {
+      classId: string;
+      memberRemove: string[];
+    }) => {
+      return removeMembers(classId, memberRemove);
+    },
+    onSuccess: () => {
+      toast.success("Xóa thành viên thành công", {
+        autoClose: 2000,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+        closeOnClick: true,
+      });
+      queryClient.invalidateQueries({ queryKey: ["ListMembers", currentPage] });
+    },
+    onError: () => {
+      toast.error("Xóa thành viên thất bại", {
+        autoClose: 2000,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+        closeOnClick: true,
+      });
+    },
+  });
+
+  const handleRemoveMember = useCallback(
+    (role: string, memberId: string) => {
+      removeFunction.mutate({
+        classId,
+        memberRemove: [memberId],
+      });
+    },
+    [classId, removeFunction],
+  );
 
   return (
     <div className="flex flex-col gap-5 px-4 mt-4">
@@ -134,58 +141,14 @@ const MemberPage = () => {
               columns={[
                 "GenId",
                 "Tên",
-                "Email",
-                "Địa chỉ",
+                ...(!isMobile ? ["Email"] : []),
                 "Ngày sinh",
                 "Giới tính",
                 "Vai trò",
+                "",
               ]}
             />
             <TableBody noDataMessage={false}>
-              {/* {currentStudentPage === 0 &&
-            [...adminListWithRole, ...teacherListWithRole].map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>{member.genId}</TableCell>
-                <TableCell>
-                  {member.name.length > 18 ? (
-                    <button>
-                      <Tooltip text={member.name}>
-                        {member.name.slice(0, 18)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.name
-                  )}
-                </TableCell>
-                <TableCell>
-                  {member.email?.length > 25 ? (
-                    <button>
-                      <Tooltip text={member.email}>
-                        {member.email.slice(0, 25)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.email
-                  )}
-                </TableCell>
-                <TableCell>
-                  {member.address.length > 30 ? (
-                    <button>
-                      <Tooltip text={member.address}>
-                        {member.address.slice(0, 30)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.address
-                  )}
-                </TableCell>
-                <TableCell>
-                  {new Date(member.birthday).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell>{member.gender === "MALE" ? "Nam" : "Nữ"}</TableCell>
-                <TableCell>{member.role}</TableCell>
-              </TableRow>
-            ))} */}
               {memberListWithRole?.map((member) => (
                 <TableRow key={member.id}>
                   <TableCell>{member.genId}</TableCell>
@@ -200,28 +163,19 @@ const MemberPage = () => {
                       member.name
                     )}
                   </TableCell>
-                  <TableCell>
-                    {member.email?.length > 25 ? (
-                      <button>
-                        <Tooltip text={member.email}>
-                          {member.email.slice(0, 25)}...
-                        </Tooltip>
-                      </button>
-                    ) : (
-                      member.email
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {member.address.length > 30 ? (
-                      <button>
-                        <Tooltip text={member.address}>
-                          {member.address.slice(0, 30)}...
-                        </Tooltip>
-                      </button>
-                    ) : (
-                      member.address
-                    )}
-                  </TableCell>
+                  {!isMobile && (
+                    <TableCell>
+                      {member.email?.length > 25 ? (
+                        <button>
+                          <Tooltip text={member.email}>
+                            {member.email.slice(0, 25)}...
+                          </Tooltip>
+                        </button>
+                      ) : (
+                        member.email
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell>
                     {new Date(member.birthday).toLocaleDateString("vi-VN")}
                   </TableCell>
@@ -229,6 +183,23 @@ const MemberPage = () => {
                     {member.gender === "MALE" ? "Nam" : "Nữ"}
                   </TableCell>
                   <TableCell>{member.role}</TableCell>
+                  <TableCell className="flex items-center">
+                    {member.role !== "Giáo vụ" && (
+                      <Tooltip text="Xóa thành viên">
+                        <RiDeleteBin6Line
+                          size={18}
+                          className="text-red-600 hover:text-red-800 cursor-pointer"
+                          onClick={() => {
+                            setSelectedMember({
+                              role: member.role,
+                              memberId: member.id,
+                            });
+                            setDeletePopup(true);
+                          }}
+                        />
+                      </Tooltip>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -249,6 +220,19 @@ const MemberPage = () => {
             )}
           </div>
         </>
+      )}
+      {deletePopup && selectedMember && (
+        <DeletePopup
+          onDelete={() => {
+            handleRemoveMember(selectedMember.role, selectedMember.memberId);
+            setDeletePopup(false);
+            setSelectedMember(null);
+          }}
+          onCancel={() => {
+            setDeletePopup(false);
+            setSelectedMember(null);
+          }}
+        />
       )}
     </div>
   );

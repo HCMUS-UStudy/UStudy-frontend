@@ -1,3 +1,5 @@
+"use client";
+
 import { getSubmissionDetails } from "@/app/lib/services/submission";
 import { SubmissionDetail } from "@/app/types";
 import React, { useEffect, useState } from "react";

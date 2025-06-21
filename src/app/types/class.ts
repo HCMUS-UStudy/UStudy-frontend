@@ -177,3 +177,8 @@ export type UpdateSchedule = {
     roomId: string;
   };
 };
+
+export type StudentClassCount = {
+  inProgressClasses: number;
+  totalClasses: number;
+};

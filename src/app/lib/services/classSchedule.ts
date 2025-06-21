@@ -67,12 +67,19 @@ export const updateClassScheduleDate = (
 };
 
 // GET: Personal schedule for a given month and year
-export const getPersonalClassSchedule = (month: number, year: number) => {
+export const getPersonalClassSchedule = (
+  month: number,
+  year: number,
+  studentId?: string,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any = { month, year };
+  if (studentId) params.studentId = studentId;
   return axiosInstance.get<{
     message: string;
     statusCode: string;
     data: ClassSchedule[];
-  }>(`/class-schedule/list/personal`, { params: { month, year } });
+  }>(`/class-schedule/list/personal`, { params });
 };
 
 // GET: Class schedule for a given class, month and year

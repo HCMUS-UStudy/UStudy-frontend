@@ -31,6 +31,12 @@ export default function ClassesTable({
   query: string;
   currentPage: number;
 }) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     data: fetchClasses,
     status,
@@ -39,12 +45,40 @@ export default function ClassesTable({
     queryKey: ["Classes", query, currentPage],
     queryFn: () => getAllClasses(query, currentPage - 1, 5),
     placeholderData: (prevData) => prevData,
+    enabled: mounted, // Only run query after component is mounted
   });
 
   const { handleNavigate } = useEncodedRoute();
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedId, setSelectedId] = useState<string>("");
+
+  if (!mounted) {
+    return (
+      <div>
+        <Table>
+          <TableHeader
+            columns={[
+              "Tên lớp",
+              "Môn học",
+              "Khối",
+              "Học phí",
+              "Ngày bắt đầu",
+              "Ngày kết thúc",
+              "",
+            ]}
+          />
+          <TableBody isLoading={true}>
+            <TableRow>
+              <TableCell colSpan={7}>
+                <div className="bg-slate-200 h-3 my-1 rounded"></div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
 
   if (error) {
     return <div>{error.message}</div>;
