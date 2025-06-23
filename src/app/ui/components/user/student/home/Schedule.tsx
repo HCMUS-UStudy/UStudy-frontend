@@ -33,7 +33,7 @@ export default function Schedule() {
           currentDate.getMonth() + 1,
           currentDate.getFullYear(),
         );
-        console.log("API Response:", response.data.data);
+        // console.log("API Response:", response.data.data);
         setSchedules(response.data.data);
       } catch (error) {
         console.error("Error fetching schedules:", error);
@@ -60,8 +60,8 @@ export default function Schedule() {
   // Transform API data to match display format
   const transformedSchedules = schedules
     .map((schedule) => {
-      console.log("Processing schedule:", schedule);
-      console.log("Teacher data:", schedule.classSession?.clazz.teacher);
+      // console.log("Processing schedule:", schedule);
+      // console.log("Teacher data:", schedule.classSession?.clazz.teacher);
       return {
         subject:
           schedule.classSession?.clazz.course.name || "Không có tên môn học",

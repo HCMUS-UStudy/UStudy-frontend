@@ -220,3 +220,14 @@ export const config = {
 // export async function middleware() {
 //   return NextResponse.next();
 // }
+
+// export const config = {
+//   matcher: [
+//     "/",
+//     "/admin/login",
+//     "/login",
+//     "/admin/:path*",
+//     "/teacher/:path*",
+//     "/member/:path*",
+//   ],
+// };

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "next/navigation";
 import {
   getListMaterial,
   getPreview,
@@ -34,6 +33,8 @@ import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import { useEncodedRoute } from "@/app/lib/hooks";
+import { useParams } from "next/navigation";
 
 const fileTypeIcons = [
   {
@@ -95,7 +96,9 @@ export default function ClassMaterial() {
   const buttonRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
 
-  const { classId } = useParams() as { classId: string };
+  const params = useParams<{ classId: string }>();
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params?.classId as string);
 
   const [user, setUser] = useState<UserData | null>(null);
   useEffect(() => {

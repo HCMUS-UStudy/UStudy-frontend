@@ -2,6 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import branchReducer from "./branch-slice";
 import permissionReducer from "./PermissionScreenSlice";
 import childrenReducer from "./ChildrenSlice";
+import encryptedIdReducer from "./EncryptedIdSlice";
+import chatReducer from "./ChatSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 
 const store = configureStore({
@@ -9,6 +12,8 @@ const store = configureStore({
     branch: branchReducer,
     permission: permissionReducer,
     children: childrenReducer,
+    encryptedId: encryptedIdReducer,
+    chat: chatReducer,
   },
 });
 

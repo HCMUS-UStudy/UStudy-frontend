@@ -166,6 +166,11 @@ const Select: React.FC<SelectProps> = ({
             type="button"
             className={cn(
               "w-full px-3 py-2 text-xs md:text-sm border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
+              {
+                "opacity-100 cursor-not-allowed bg-slate-100 hover:bg-slate-100":
+                  disabled,
+                "hover:bg-gray-50": !disabled,
+              },
               className,
             )}
             onClick={(e) => {
@@ -174,8 +179,10 @@ const Select: React.FC<SelectProps> = ({
             }}
             disabled={disabled}
           >
-            {selectedLabel}
-            {selectedValue && showClearButton ? (
+            <span className={cn("truncate", { "text-slate-500": disabled })}>
+              {selectedLabel}
+            </span>
+            {selectedValue && showClearButton && !disabled ? (
               <>
                 <XIcon
                   onClick={(e) => {
@@ -190,7 +197,10 @@ const Select: React.FC<SelectProps> = ({
                 </div>
               </>
             ) : (
-              <IoChevronDown size={18} />
+              <IoChevronDown
+                size={18}
+                className={cn({ "text-slate-700": disabled })}
+              />
             )}
           </button>
           {label && (
@@ -209,7 +219,13 @@ const Select: React.FC<SelectProps> = ({
           )}
           {isOpen ? (
             <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
-              {children}
+              {React.Children.count(children) === 0 ? (
+                <div className="px-3 py-2 text-xs md:text-sm text-slate-500 text-center">
+                  Không có dữ liệu
+                </div>
+              ) : (
+                children
+              )}
             </div>
           ) : null}
         </div>

@@ -101,7 +101,8 @@ const Header = ({
         <IoMenuOutline className="text-primary-darkest" size={20} />
       </div>
       <div className="text-md sm:text-lg font-bold mt-[1px] md:mt-0">
-        {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
+        {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title ??
+          "Thông tin cá nhân"}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
         <div className="flex gap-2 sm:gap-3 items-center">

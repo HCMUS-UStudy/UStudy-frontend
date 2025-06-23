@@ -113,6 +113,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     path: "/admin/roles",
     icon: <BsShieldLock size={20} />,
   },
+  {
+    title: "Liên hệ",
+    path: "/admin/contact",
+    icon: <FaRegCommentDots size={20} />,
+  },
 ];
 
 export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [

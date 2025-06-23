@@ -20,7 +20,7 @@ import ClassPagination from "./ClassPagination";
 // import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
 import Tooltip from "../../_common/Tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const MemoizedClassPagination = memo(ClassPagination);
 
@@ -32,7 +32,6 @@ export default function ClassesTable({
   currentPage: number;
 }) {
   const [mounted, setMounted] = React.useState(false);
-  const router = useRouter();
 
   React.useEffect(() => {
     setMounted(true);
@@ -48,6 +47,8 @@ export default function ClassesTable({
     placeholderData: (prevData) => prevData,
     enabled: mounted, // Only run query after component is mounted
   });
+
+  const { handleNavigate } = useEncodedRoute();
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedId, setSelectedId] = useState<string>("");
@@ -108,7 +109,12 @@ export default function ClassesTable({
               <TableCell>{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
                 {/* Nút xem lớp */}
-                <div onClick={() => router.push(`/admin/classes/${c.id}`)}>
+                <div
+                  onClick={() => {
+                    handleNavigate(c.id, "/admin/classes");
+                    // router.push(`/admin/classes/${c.id}`);
+                  }}
+                >
                   <Tooltip text="Xem lớp học">
                     <Eye className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
                   </Tooltip>
