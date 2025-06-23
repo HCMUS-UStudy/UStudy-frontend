@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingImages";
 import VerifyTokenAnimation from "@/app/ui/components/_common/verifyToken/VerifyTokenAnimation";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/app/ui/components/_common/Button";
+import { verifyOtp } from "@/app/lib/services/auth";
+import { useMutation } from "@tanstack/react-query";
 
 interface VerifyTokenPageProps {
   heading?: string;
@@ -16,13 +18,28 @@ interface VerifyTokenPageProps {
 export default function VerifyTokenPage({
   heading = "Bảo mật tài khoản, an tâm sử dụng!",
   subheading = "Nhập mã xác thực gồm 6 số đã gửi về email của bạn.",
-  onSuccessRedirect = "/",
-  sampleCode,
 }: VerifyTokenPageProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
+
+  const mutation = useMutation({
+    mutationFn: ({ email, otp }: { email: string; otp: string }) =>
+      verifyOtp({ email, otp }),
+    onSuccess: (_data, variables) => {
+      router.push(
+        `/reset-password?email=${encodeURIComponent(email)}&otp=${variables.otp}`,
+      );
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      setError(error?.response?.data?.message || "Mã xác thực không đúng!");
+      setIsLoading(false);
+    },
+  });
 
   const handleChange = (value: string, idx: number) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -44,22 +61,12 @@ export default function VerifyTokenPage({
       return;
     }
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      if (sampleCode) {
-        if (code.join("") === sampleCode) {
-          router.push(onSuccessRedirect);
-          return; // No need to setIsLoading(false) as we are navigating away
-        } else {
-          setError("Mã xác thực không đúng!");
-          setIsLoading(false);
-          return;
-        }
-      }
-      // TODO: Handle real API verification
-      alert("Xác thực thành công!"); // Placeholder for actual verification
-      router.push(onSuccessRedirect);
-    }, 500);
+    if (!email) {
+      setError("Không tìm thấy email xác thực!");
+      setIsLoading(false);
+      return;
+    }
+    mutation.mutate({ email, otp: code.join("") });
   };
 
   return (
@@ -82,7 +89,7 @@ export default function VerifyTokenPage({
             onSubmit={handleSubmit}
             className="bg-white/90 backdrop-blur-md py-8 px-4 md:py-10 md:px-8 rounded-3xl shadow-2xl border border-primary-light/40 flex flex-col gap-6 items-center"
           >
-            <div className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center">
+            <div className="text-highlight-text text-2xl md:text-3xl font-bold flex justify-center">
               Xác thực mã OTP
             </div>
             <div className="flex flex-col items-center gap-0 mb-2">
@@ -108,7 +115,7 @@ export default function VerifyTokenPage({
             {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary-dark to-highlight-text text-white font-bold py-2 rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-200 text-lg"
+              className="flex items-center justify-center w-full transition-all duration-200 group-hover:-translate-x-2"
               isPending={isLoading}
               disabled={isLoading}
             >
