@@ -16,6 +16,7 @@ import { setPermissions } from "@/app/store/PermissionScreenSlice";
 import { useMutation } from "@tanstack/react-query";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import Loading from "./loading/Loading";
+import Cookies from "js-cookie";
 
 const LogInSchema = z.object({
   username: z
@@ -27,6 +28,56 @@ const LogInSchema = z.object({
 });
 
 type LogInInputs = z.infer<typeof LogInSchema>;
+
+// Hàm mã hóa phía client (AES-GCM, base64 key)
+async function encryptClient(
+  plainData: string,
+  base64Key: string,
+): Promise<{ encryptedData: string; iv: string }> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encoder = new TextEncoder();
+  const encoded = encoder.encode(plainData);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    Uint8Array.from(atob(base64Key), (c) => c.charCodeAt(0)),
+    { name: "AES-GCM" },
+    false,
+    ["encrypt"],
+  );
+  const encrypted = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    encoded,
+  );
+  return {
+    encryptedData: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
+    iv: btoa(String.fromCharCode(...iv)),
+  };
+}
+
+async function decryptClient(
+  encryptedData: string,
+  iv: string,
+  base64Key: string,
+): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    Uint8Array.from(atob(base64Key), (c) => c.charCodeAt(0)),
+    { name: "AES-GCM" },
+    false,
+    ["decrypt"],
+  );
+  const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) =>
+    c.charCodeAt(0),
+  );
+  const ivBytes = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0));
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: ivBytes },
+    key,
+    encryptedBytes,
+  );
+  return new TextDecoder().decode(decrypted);
+}
 
 export default function Login() {
   const router = useRouter();
@@ -109,29 +160,45 @@ export default function Login() {
   });
 
   useEffect(() => {
-    const savedUsername = localStorage.getItem("rememberedUsername");
-    const expireAt = localStorage.getItem("rememberedUsernameExpire");
-    if (savedUsername && expireAt) {
-      if (Date.now() < Number(expireAt)) {
-        setValue("username", savedUsername);
-        setRememberMe(true);
-      } else {
-        // Hết hạn, xóa khỏi localStorage
-        localStorage.removeItem("rememberedUsername");
-        localStorage.removeItem("rememberedUsernameExpire");
+    const getRemembered = async () => {
+      const encrypted = Cookies.get("rememberedLogin");
+      const iv = Cookies.get("rememberedLogin_iv");
+      const key = process.env.NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY;
+      if (encrypted && iv && key) {
+        try {
+          const decrypted = await decryptClient(encrypted, iv, key);
+          const { username, password } = JSON.parse(decrypted);
+          setValue("username", username);
+          setValue("password", password);
+          setRememberMe(true);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+          Cookies.remove("rememberedLogin");
+          Cookies.remove("rememberedLogin_iv");
+        }
       }
-    }
+    };
+    getRemembered();
   }, [setValue]);
 
-  const onSubmit = (data: LogInInputs) => {
-    if (rememberMe) {
-      localStorage.setItem("rememberedUsername", data.username);
-      // Lưu thời điểm hết hạn (hiện tại + 3 ngày)
-      const expireAt = Date.now() + 3 * 24 * 60 * 60 * 1000;
-      localStorage.setItem("rememberedUsernameExpire", expireAt.toString());
+  const onSubmit = async (data: LogInInputs) => {
+    const key = process.env.NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY;
+    if (rememberMe && key) {
+      const expireDays = 3;
+      const encrypted = await encryptClient(JSON.stringify(data), key);
+      Cookies.set("rememberedLogin", encrypted.encryptedData, {
+        expires: expireDays,
+        secure: true,
+        sameSite: "strict",
+      });
+      Cookies.set("rememberedLogin_iv", encrypted.iv, {
+        expires: expireDays,
+        secure: true,
+        sameSite: "strict",
+      });
     } else {
-      localStorage.removeItem("rememberedUsername");
-      localStorage.removeItem("rememberedUsernameExpire");
+      Cookies.remove("rememberedLogin");
+      Cookies.remove("rememberedLogin_iv");
     }
     useLoginMutation.mutate(data);
   };
