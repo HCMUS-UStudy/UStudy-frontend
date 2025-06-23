@@ -54,7 +54,7 @@ Trong file `.env`:
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # URL của backend API
-NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
 ```
 
 ### 4. Chạy dự án
