@@ -159,10 +159,14 @@ export default function Login() {
     },
   });
 
+  // Thêm hàm helper để lấy cookie prefix
+  const getCookiePrefix = () => (isUser ? "user_" : "admin_");
+
   useEffect(() => {
     const getRemembered = async () => {
-      const encrypted = Cookies.get("rememberedLogin");
-      const iv = Cookies.get("rememberedLogin_iv");
+      const prefix = getCookiePrefix();
+      const encrypted = Cookies.get(`${prefix}rememberedLogin`);
+      const iv = Cookies.get(`${prefix}rememberedLogin_iv`);
       const key = process.env.NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY;
       if (encrypted && iv && key) {
         try {
@@ -173,32 +177,33 @@ export default function Login() {
           setRememberMe(true);
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
-          Cookies.remove("rememberedLogin");
-          Cookies.remove("rememberedLogin_iv");
+          Cookies.remove(`${prefix}rememberedLogin`);
+          Cookies.remove(`${prefix}rememberedLogin_iv`);
         }
       }
     };
     getRemembered();
-  }, [setValue]);
+  }, [setValue, isUser]);
 
   const onSubmit = async (data: LogInInputs) => {
     const key = process.env.NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY;
+    const prefix = getCookiePrefix();
     if (rememberMe && key) {
       const expireDays = 3;
       const encrypted = await encryptClient(JSON.stringify(data), key);
-      Cookies.set("rememberedLogin", encrypted.encryptedData, {
+      Cookies.set(`${prefix}rememberedLogin`, encrypted.encryptedData, {
         expires: expireDays,
         secure: true,
         sameSite: "strict",
       });
-      Cookies.set("rememberedLogin_iv", encrypted.iv, {
+      Cookies.set(`${prefix}rememberedLogin_iv`, encrypted.iv, {
         expires: expireDays,
         secure: true,
         sameSite: "strict",
       });
     } else {
-      Cookies.remove("rememberedLogin");
-      Cookies.remove("rememberedLogin_iv");
+      Cookies.remove(`${prefix}rememberedLogin`);
+      Cookies.remove(`${prefix}rememberedLogin_iv`);
     }
     useLoginMutation.mutate(data);
   };
