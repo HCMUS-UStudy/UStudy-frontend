@@ -22,7 +22,7 @@ export default function ForgotPasswordForm({
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white/90 backdrop-blur-md py-6 px-4 md:py-8 md:px-10 rounded-3xl shadow-xl border border-primary-light/40 flex flex-col gap-4 max-w-md w-full mx-auto"
     >
-      <div className="text-xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center -mt-2">
+      <div className="text-highlight-text text-2xl md:text-3xl font-bold flex justify-center">
         Quên mật khẩu
       </div>
       <div className="flex flex-col items-center gap-0">
@@ -44,7 +44,7 @@ export default function ForgotPasswordForm({
         />
       </div>
       <Button
-        className="group mt-2 w-full bg-gradient-to-r from-primary-dark to-highlight-text text-white font-bold py-2 rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center relative overflow-hidden"
+        className="mt-2 w-full py-2 rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center relative overflow-hidden"
         type="submit"
         disabled={isLoading || isLoadingBack}
       >

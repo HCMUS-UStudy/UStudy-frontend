@@ -73,7 +73,7 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                   {formatCurrency(payment.amount)}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-left">
                     {formatDate(payment.paymentDate)}
                     {isOverdue && (
                       <FaInfoCircle
@@ -93,9 +93,13 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                   </span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Button onClick={() => onViewDetails(payment)}>
-                      <FaEye className="size-5 text-primary hover:text-primary-darkest" />
+                  <div className="flex items-left justify-left space-x-2">
+                    <Button
+                      onClick={() => onViewDetails(payment)}
+                      variant="outlined"
+                      className="rounded-full p-0 min-w-0 flex"
+                    >
+                      <FaEye className="size-4" />
                     </Button>
                     {payment.status === "PENDING" ? (
                       <Button
@@ -108,9 +112,9 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                     ) : (
                       <Button
                         variant="outlined"
-                        className="rounded-full w-8 h-8 p-0 min-w-0 flex items-center justify-center"
+                        className="rounded-full p-0 min-w-0 flex"
                       >
-                        <FaDownload className="h-4 w-4" title="Tải biên lai" />
+                        <FaDownload className="size-4" title="Tải biên lai" />
                       </Button>
                     )}
                   </div>

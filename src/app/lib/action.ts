@@ -176,9 +176,22 @@ export async function getCreatorFromCookies(): Promise<string | null> {
 export async function handleLogoutCookies() {
   const cookieStore = await cookies();
   const defaultRoute = (await getUserDataFromCookies())?.role.defaultRoute;
-  cookieStore.getAll().forEach((cookie) => {
-    cookieStore.delete(cookie.name);
+
+  // Chỉ xóa các cookies liên quan đến session
+  const sessionCookies = [
+    "accessToken",
+    "refreshToken",
+    "userData",
+    "userData_iv",
+    "permissions",
+    "permissions_iv",
+    "creator",
+  ];
+
+  sessionCookies.forEach((cookieName) => {
+    cookieStore.delete(cookieName);
   });
+
   switch (defaultRoute) {
     case "ADMIN":
       redirect("/admin/login");

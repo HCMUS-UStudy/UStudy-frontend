@@ -44,7 +44,6 @@ export default function PendingPaymentsTable({
       <Table>
         <TableHeader
           columns={[
-            "Thời gian học", // Đổi từ "Mã hóa đơn"
             "Học sinh",
             "Lớp học",
             "Số tiền",
@@ -69,7 +68,8 @@ export default function PendingPaymentsTable({
                 <div>
                   <p className="font-medium">{payment.classDto.name}</p>
                   <p className="text-sm text-gray-500">
-                    {payment.classDto.course.name}
+                    {payment.classDto.course.name} -{" "}
+                    {payment.classDto.grade.name}
                   </p>
                 </div>
               </TableCell>
@@ -77,7 +77,7 @@ export default function PendingPaymentsTable({
                 {formatCurrency(payment.amount)}
               </TableCell>
               <TableCell>
-                <div className="flex items-center justify-center">
+                <div className="flex items-left justify-left">
                   {formatDate(payment.paymentDate)}
                   {new Date(payment.paymentDate) < new Date() && (
                     <Tooltip text="Quá hạn">
@@ -96,7 +96,7 @@ export default function PendingPaymentsTable({
                 </span>
               </TableCell>
               <TableCell>
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-left justify-left space-x-2">
                   <Tooltip text="Xem chi tiết">
                     <Button
                       variant="outlined"

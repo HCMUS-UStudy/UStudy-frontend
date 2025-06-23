@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingImages";
 import ForgotPasswordForm from "@/app/ui/components/_common/forgetPassword/ForgotPasswordForm";
+import { generateOtp } from "@/app/lib/services/auth";
+import { useMutation } from "@tanstack/react-query";
 
 const ForgotPasswordSchema = z.object({
   email: z
@@ -29,16 +31,23 @@ export default function ForgotPassword() {
     resolver: zodResolver(ForgotPasswordSchema),
   });
 
-  const validEmails = ["admin@example.com"];
+  const mutation = useMutation({
+    mutationFn: generateOtp,
+    onSuccess: (data, variables) => {
+      router.push(
+        `/admin/verify-token?email=${encodeURIComponent(variables.email)}`,
+      );
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      setIsLoading(false);
+      alert(error?.response?.data?.message || "Có lỗi xảy ra!");
+    },
+  });
 
   const onSubmit = (data: ForgotPasswordInputs) => {
     setIsLoading(true);
-    if (validEmails.includes(data.email)) {
-      router.push("/admin/verify-token");
-    } else {
-      setIsLoading(false);
-      alert("Email không hợp lệ hoặc không tồn tại!");
-    }
+    mutation.mutate({ email: data.email });
   };
 
   return (

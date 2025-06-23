@@ -22,7 +22,7 @@ export default function ResetPasswordForm({
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white/90 backdrop-blur-md py-6 px-4 md:py-8 md:px-10 rounded-3xl shadow-xl border border-primary-light/40 flex flex-col gap-4 max-w-md w-full mx-auto"
     >
-      <div className="text-xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-dark via-highlight-text to-primary-darker drop-shadow-lg text-center -mt-2">
+      <div className="text-highlight-text text-2xl md:text-3xl font-bold flex justify-center">
         Đặt lại mật khẩu
       </div>
       <div className="flex flex-col items-center gap-0 mb-2">
@@ -58,7 +58,7 @@ export default function ResetPasswordForm({
         />
       </div>
       <Button
-        className="group mt-2 w-full bg-gradient-to-r from-primary-dark to-highlight-text text-white font-bold py-2 rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center relative overflow-hidden"
+        className="mt-2 w-full py-2 rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center relative overflow-hidden"
         type="submit"
         disabled={isLoading || isLoadingBack}
       >
@@ -71,6 +71,24 @@ export default function ResetPasswordForm({
           )}
           Xác nhận
         </span>
+        {!isLoading && (
+          <span className="absolute right-6 top-1/2 -translate-y-1/2 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </span>
+        )}
       </Button>
       <button
         type="button"
