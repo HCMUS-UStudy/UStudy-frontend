@@ -3,21 +3,26 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { ChatMessage } from "./ChatMessage";
-import { RoomChatItem } from "@/app/types";
 import { useWebSocketService } from "@/app/hooks/use-web-socket";
 import { Dialog } from "../_common/Dialog";
 import { ContactList } from "./ContactList";
+import { useAppDispatch, useAppSelector } from "@/app/store/store";
+import { MessageItem } from "@/app/types";
+import { addMessage } from "@/app/store/ChatSlice";
 
 const ContactPage = () => {
+  const room = useAppSelector((state) => state.chat.room);
+  const dispatch = useAppDispatch();
   // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem>(
   //   teacherParam ?? "",
   // );
-  const [selectedRoom, setSelectedRoom] = useState<RoomChatItem | null>(null);
+  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem | null>(null);
   const [messageInput, setMessageInput] = useState("");
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiRef = useRef<HTMLDivElement | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const userId = useAppSelector((state) => state.chat.userId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,44 +43,47 @@ const ContactPage = () => {
     };
   }, [showEmojiPicker]);
 
-  useEffect(() => {
-    if (selectedRoom && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [selectedRoom]); //, conversationHistory[selectedRoom ?? ""]
-
   const handleSendMessage = () => {
-    if (!messageInput.trim() || !selectedRoom) return;
+    if (!messageInput.trim() || !room) return;
 
     // Trong ứng dụng thực tế, bạn sẽ gửi tin nhắn tới API
-    console.log("Gửi tin nhắn:", messageInput, "tới giáo viên:", selectedRoom);
+    console.log("Gửi tin nhắn:", messageInput, "tới:", room);
 
     send("/app/chat", {
-      roomId: selectedRoom.roomChatId,
+      roomId: room.roomChatId,
       content: messageInput,
-      receiverId: selectedRoom.user?.id,
+      receiverId: room.user?.id,
     });
-
+    dispatch(addMessage({ content: messageInput, isSender: true }));
     // Clear input sau khi gửi
     setMessageInput("");
   };
 
   const { connect, subscribe, send, unsubscribe, disconnect } =
     useWebSocketService(
-      () => console.log("Connected!"),
+      () => {
+        // /user/{userId}/topic/messages
+        console.log(`/user/${userId}/topic/messages`);
+        subscribe(`/user/${userId}/topic/messages`, (_message) => {
+          // setMessages((prevMessages) => [...prevMessages, message.text]);
+          console.log("New message received:", _message);
+          const message = _message as MessageItem;
+          dispatch(
+            addMessage({
+              content: message.content,
+              isSender: message.isSender,
+            }),
+          );
+        });
+      },
       (error) => console.log("WebSocket Error:", error),
     );
 
   useEffect(() => {
     connect();
-
-    subscribe("/topic/chat", (message) => {
-      // setMessages((prevMessages) => [...prevMessages, message.text]);
-      console.log("New message received:", message);
-    });
-
     return () => {
-      unsubscribe("/topic/chat");
+      // /user/{userId}/topic/messages
+      unsubscribe(`/user/${userId}/topic/messages`);
       disconnect();
     };
   }, []);
@@ -88,30 +96,22 @@ const ContactPage = () => {
         <div
           className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}
         >
-          <ContactList
-            selectedRoom={selectedRoom}
-            setSelectedRoom={setSelectedRoom}
-            searchQuery=""
-          />
+          <ContactList searchQuery="" />
         </div>
 
         <ChatMessage
-          selectedRoom={selectedRoom}
+          // selectedRoom={selectedRoom}
           messageInput={messageInput}
           setMessageInput={setMessageInput}
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
           emojiRef={emojiRef}
-          messagesEndRef={messagesEndRef}
           handleSendMessage={handleSendMessage}
+          openList={() => setDisplayList(true)}
         />
       </div>
       <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
-        <ContactList
-          selectedRoom={selectedRoom}
-          setSelectedRoom={setSelectedRoom}
-          searchQuery=""
-        />
+        <ContactList searchQuery="" closeList={() => setDisplayList(false)} />
       </Dialog>
     </>
   );

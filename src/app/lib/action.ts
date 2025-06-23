@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { UserData } from "../types";
 import { redirect } from "next/navigation";
+import { decodeToken } from "./axios";
 
 export async function encrypt(plainData: string, encryptionKey: string) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -206,4 +207,18 @@ export async function getPermissions(): Promise<string[]> {
     }
   }
   return [];
+}
+
+export async function getUserId(): Promise<string> {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value || "";
+    if (accessToken) {
+      const userId = decodeToken(accessToken).userId;
+      return userId ?? "";
+    }
+    return "";
+  } catch (error) {
+    throw error;
+  }
 }

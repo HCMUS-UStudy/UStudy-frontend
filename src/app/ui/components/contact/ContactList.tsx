@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -9,92 +9,25 @@ import {
 } from "../_common/Card";
 import { BsPerson } from "react-icons/bs";
 import Image from "next/image";
-import { RoomChatItem } from "@/app/types";
 import { useQuery } from "@tanstack/react-query";
 import { getAllRooms } from "@/app/lib/services/chat";
-
-export const sampleRoomChats: RoomChatItem[] = [
-  {
-    roomChatId: "1",
-    user: {
-      id: "1",
-      genId: "T001",
-      email: "nguyenvana@example.com",
-      name: "Nguyễn Văn A",
-      avatar: "/avatars/teacher1.jpg",
-    },
-    listClassName: ["10A1", "10A2", "11A1"],
-    unreadCount: 3,
-  },
-  {
-    roomChatId: "2",
-    user: {
-      id: "2",
-      genId: "T002",
-      email: "tranthib@example.com",
-      name: "Trần Thị B",
-      avatar: "",
-    },
-    listClassName: ["9A1", "9A2"],
-    unreadCount: 0,
-  },
-  {
-    roomChatId: "3",
-    user: {
-      id: "3",
-      genId: "T003",
-      email: "levanc@example.com",
-      name: "Lê Văn C",
-      avatar: "",
-    },
-    listClassName: ["12A1", "12A2", "12A3"],
-    unreadCount: 1,
-  },
-  {
-    roomChatId: "4",
-    user: {
-      id: "4",
-      genId: "T004",
-      email: "phamthid@example.com",
-      name: "Phạm Thị D",
-      avatar: "/avatars/teacher4.jpg",
-    },
-    listClassName: ["8A1", "8A2"],
-    unreadCount: 5,
-  },
-  {
-    roomChatId: "5",
-    user: {
-      id: "5",
-      genId: "T005",
-      email: "hoangvane@example.com",
-      name: "Hoàng Văn E",
-      avatar: "",
-    },
-    listClassName: ["7A1", "7A2", "7A3"],
-    unreadCount: 0,
-  },
-];
+import { useAppDispatch, useAppSelector } from "@/app/store/store";
+import { setRoom } from "@/app/store/ChatSlice";
 
 interface Props {
-  selectedRoom: RoomChatItem | null;
-  setSelectedRoom: React.Dispatch<React.SetStateAction<RoomChatItem | null>>;
   searchQuery: string;
+  closeList?: () => void;
 }
 
-export const ContactList = ({
-  selectedRoom,
-  setSelectedRoom,
-  searchQuery,
-}: Props) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+export const ContactList = ({ searchQuery, closeList }: Props) => {
+  const dispatch = useAppDispatch();
+  const selectedRoom = useAppSelector((state) => state.chat.room);
 
   const { data: rooms, status } = useQuery({
-    queryKey: ["RoomChats", currentPage - 1, searchQuery],
-    queryFn: () => getAllRooms(currentPage - 1, 10, searchQuery, ""),
+    queryKey: ["RoomChats", 0, searchQuery],
+    queryFn: () => getAllRooms(0, 100, searchQuery, ""),
   });
 
-  // console.log(rooms);
   return (
     <Card className="h-full shadow-none hover:shadow-none bg-white border flex flex-col">
       <CardHeader className="h-[80px]">
@@ -135,7 +68,11 @@ export const ContactList = ({
                     ? "border-primary-dark bg-primary-lighter"
                     : "hover:bg-gray-50"
                 }`}
-                onClick={() => setSelectedRoom(room)}
+                onClick={() => {
+                  // setSelectedRoom(room);
+                  dispatch(setRoom(room));
+                  if (closeList) closeList();
+                }}
               >
                 <div className="absolute -top-2 -right-2">
                   {room.unreadCount > 0 && (
@@ -164,7 +101,7 @@ export const ContactList = ({
                   <p className="font-semibold text-primary-dark">
                     {room.user.name}
                   </p>
-                  {room.listClassName.length > 0 && (
+                  {room.listClassName && room.listClassName.length > 0 && (
                     <p className="text-xs text-gray-500">
                       Lớp phụ trách: {room.listClassName.join(", ")}
                     </p>

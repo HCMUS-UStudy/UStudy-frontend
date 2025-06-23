@@ -31,7 +31,6 @@ const BranchPage = () => {
 
   // const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
   const [mounted, setMounted] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
