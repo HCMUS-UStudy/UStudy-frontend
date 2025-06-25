@@ -182,3 +182,20 @@ export type StudentClassCount = {
   inProgressClasses: number;
   totalClasses: number;
 };
+
+export type StudentClassWithStats = BaseClassInfo & {
+  course: BaseCourseInfo;
+  grade: BaseGradeInfo;
+  status: string;
+  totalAssignments: number;
+  completedAssignments: number;
+  completionRate: number;
+};
+
+export type StudentClassWithGrades = BaseClassInfo & {
+  course: BaseCourseInfo;
+  grade: BaseGradeInfo;
+  status: string;
+  studentAverage: number;
+  classAverage: number;
+};

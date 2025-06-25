@@ -105,8 +105,10 @@ const Contacts: React.FC<ContactsProps> = ({
   setSelectedRoom,
   searchQuery,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentPage, setCurrentPage] = useState<number>(1);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: rooms, status } = useQuery({
     queryKey: ["RoomChats", currentPage - 1, searchQuery],
     queryFn: () => getAllRooms(currentPage - 1, 10, searchQuery, ""),
