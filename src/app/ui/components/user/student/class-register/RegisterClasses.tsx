@@ -43,6 +43,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     | "PENDING"
     | "OVERDUE";
   const [confirmRegister, setConfirmRegsiter] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [registeringClassId, setRegisteringClassId] = useState<string | null>(
     null,
   );

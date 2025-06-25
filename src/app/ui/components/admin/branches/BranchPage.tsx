@@ -23,7 +23,6 @@ import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { Eye } from "lucide-react";
 import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal";
 import { useEncodedRoute } from "@/app/lib/hooks";
-import { useRouter } from "next/navigation";
 
 const BranchPage = () => {
   // const { branches } = useSelector((state: RootState) => state.branch);

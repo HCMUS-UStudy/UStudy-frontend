@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaRegCommentDots } from "react-icons/fa";
 import { BsEmojiSmile, BsPerson } from "react-icons/bs";
 import {
@@ -56,9 +56,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   messagesEndRef,
   handleSendMessage,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data: messages, status } = useQuery({
+  const { data: messages } = useQuery({
     queryKey: ["Messages", selectedRoom, currentPage - 1],
     queryFn: () =>
       getAllMessages(selectedRoom?.roomChatId, currentPage - 1, 10),

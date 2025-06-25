@@ -107,6 +107,55 @@ Dự án sử dụng hai lớp mã hóa cookie:
 3. **Luôn tạo keys mới** cho mỗi môi trường (development, staging, production)
 4. Đảm bảo `COOKIES_SECRET_KEY` được giữ bí mật và chỉ được sử dụng ở phía server
 5. `NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY` sẽ được expose ra client, nhưng vẫn nên được thay đổi định kỳ
+
+## :warning: Xử lý lỗi thường gặp
+
+### 1. Memory Allocation Error
+
+Nếu gặp lỗi `memory allocation failed` khi compile, thực hiện một trong các cách sau:
+
+#### Cách 1: Tăng Node.js memory limit
+```bash
+# Windows (PowerShell hoặc CMD)
+set NODE_OPTIONS=--max-old-space-size=4096
+# hoặc
+$env:NODE_OPTIONS="--max-old-space-size=4096"
+
+# Linux/Mac
+export NODE_OPTIONS="--max-old-space-size=4096"
+```
+
+#### Cách 2: Thêm script trong package.json
+```json
+{
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev",
+    "build": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next build"
+  }
+}
+```
+Cài đặt cross-env:
+```bash
+npm install --save-dev cross-env
+```
+
+#### Cách 3: Tạo file .npmrc
+Tạo file `.npmrc` trong thư mục gốc của dự án:
+```
+node_options=--max-old-space-size=4096
+```
+
+### 2. Kiểm tra bộ nhớ hệ thống
+- Đảm bảo máy tính có đủ RAM trống (khuyến nghị tối thiểu 8GB)
+- Đóng các ứng dụng không cần thiết để giải phóng bộ nhớ
+- Xóa cache của Next.js:
+```bash
+# Xóa thư mục .next
+rm -rf .next
+# hoặc trên Windows
+rmdir /s /q .next
+```
+
 <!-- 
 ## :page_facing_up: License
 [MIT License](LICENSE)

@@ -99,9 +99,10 @@ const RoomChatList: React.FC<RoomChatListProps> = ({
   setSelectedRoom,
   searchQuery,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data: rooms, status } = useQuery({
+  const { data: rooms } = useQuery({
     queryKey: ["RoomChats", currentPage - 1, searchQuery],
     queryFn: () => getAllRooms(currentPage - 1, 10, searchQuery, ""),
   });

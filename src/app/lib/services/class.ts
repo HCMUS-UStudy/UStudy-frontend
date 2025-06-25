@@ -13,6 +13,8 @@ import {
   UpdateSchedule,
   BaseResponse,
   StudentClassCount,
+  StudentClassWithStats,
+  StudentClassWithGrades,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
@@ -299,6 +301,28 @@ export const updateSchedule = async ({
 export const getStudentClassCount = async (): Promise<StudentClassCount> => {
   try {
     const response = await axiosInstance.get("/class/count-student-classes");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentClassesWithStats = async (): Promise<
+  StudentClassWithStats[]
+> => {
+  try {
+    const response = await axiosInstance.get("/class/my-classes-with-stats");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentClassesWithGrades = async (): Promise<
+  StudentClassWithGrades[]
+> => {
+  try {
+    const response = await axiosInstance.get("/class/my-classes-with-grades");
     return response.data.data;
   } catch (error) {
     throw error;

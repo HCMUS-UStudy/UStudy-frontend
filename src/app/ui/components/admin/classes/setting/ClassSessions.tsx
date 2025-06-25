@@ -20,7 +20,7 @@ interface Props {
   }) => void;
 }
 
-const ClassSession = ({ classSessions, handleUpdateSchedule }: Props) => {
+const ClassSession = ({ classSessions }: Props) => {
   return (
     <>
       <Card>
