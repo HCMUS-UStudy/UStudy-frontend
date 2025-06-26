@@ -71,6 +71,7 @@ const NotificationSearchFilter: React.FC<NotificationSearchFilterProps> = ({
                   onFilterTypeChange(value as string)
                 }
                 className="w-full sm:w-48"
+                showClearButton={false}
               >
                 <SelectItem value="ALL">Tất cả loại</SelectItem>
                 <SelectItem value="SYSTEM">Hệ thống</SelectItem>
@@ -89,6 +90,7 @@ const NotificationSearchFilter: React.FC<NotificationSearchFilterProps> = ({
                   onFilterStatusChange(value as string)
                 }
                 className="w-full sm:w-48"
+                showClearButton={false}
               >
                 <SelectItem value="ALL">Tất cả trạng thái</SelectItem>
                 <SelectItem value="UNREAD">Chưa đọc</SelectItem>
@@ -103,7 +105,7 @@ const NotificationSearchFilter: React.FC<NotificationSearchFilterProps> = ({
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary-lighter rounded-lg">
               <svg
-                className="w-4 h-4 sm:w-5 sm:h-5 text-primary-dark animate-bounce"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-primary-dark"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"

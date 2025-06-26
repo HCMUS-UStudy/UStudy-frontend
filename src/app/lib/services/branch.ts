@@ -82,12 +82,22 @@ export const updateSessions = async (branchId: string, sessions: string[]) => {
 };
 
 export const updateAdmins = async (branchId: string, clerkIds: string[]) => {
-  console.log(clerkIds);
   const response = await axiosInstance.patch(
     `/branch/update-admins/${branchId}`,
     {
       clerkIds: clerkIds,
     },
   );
+  return response.data;
+};
+
+export const getUserBranches = async () => {
+  const response = await axiosInstance.get(`/branch/user-branches`, {
+    params: {
+      page: 0,
+      limit: 100,
+    },
+  });
+
   return response.data;
 };

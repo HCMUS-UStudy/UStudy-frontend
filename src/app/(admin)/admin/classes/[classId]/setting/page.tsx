@@ -17,12 +17,12 @@ import {
   getAllGrades,
   getClassById,
   updateClass,
-  updateSchedule,
+  // updateSchedule,
 } from "@/app/lib/services";
 import ClassForm from "@/app/ui/components/admin/classes/setting/ClassForm";
-import { ClassSchema, UpdateSchedule } from "@/app/types";
+import { ClassSchema } from "@/app/types";
 import { toast } from "react-toastify";
-import ClassSessions from "@/app/ui/components/admin/classes/setting/ClassSessions";
+// import ClassSessions from "@/app/ui/components/admin/classes/setting/ClassSessions";
 
 export type UpdateClassType = Pick<
   ClassSchema,
@@ -92,37 +92,37 @@ export default function ClassSetting() {
     [],
   );
 
-  const updateScheduleMutation = useMutation({
-    mutationFn: ({
-      classId,
-      data,
-    }: {
-      classId: string;
-      data: UpdateSchedule;
-    }) => updateSchedule({ classId, data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ClassDetails"] });
-      toast.success("Chỉnh sửa lớp học thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
-    },
-    onError: (error) => {
-      toast.error(error.message, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
-    },
-  });
+  // const updateScheduleMutation = useMutation({
+  //   mutationFn: ({
+  //     classId,
+  //     data,
+  //   }: {
+  //     classId: string;
+  //     data: UpdateSchedule;
+  //   }) => updateSchedule({ classId, data }),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["ClassDetails"] });
+  //     toast.success("Chỉnh sửa lớp học thành công", {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       hideProgressBar: true,
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     toast.error(error.message, {
+  //       position: "bottom-right",
+  //       autoClose: 3000,
+  //       hideProgressBar: true,
+  //     });
+  //   },
+  // });
 
-  const handleUpdateSchedule = useCallback(
-    ({ classId, data }: { classId: string; data: UpdateSchedule }) => {
-      updateScheduleMutation.mutate({ classId, data });
-    },
-    [],
-  );
+  // const handleUpdateSchedule = useCallback(
+  //   ({ classId, data }: { classId: string; data: UpdateSchedule }) => {
+  //     updateScheduleMutation.mutate({ classId, data });
+  //   },
+  //   [],
+  // );
 
   if (status === "pending") {
     return <ClassSettingLoading />;
@@ -136,10 +136,7 @@ export default function ClassSetting() {
           handleUpdate={handleUpdate}
         />
         <div className="space-y-3">
-          <ClassSessions
-            classSessions={classDetail.classSessions}
-            handleUpdateSchedule={handleUpdateSchedule}
-          />
+          {/* <ClassSessions classSessions={classDetail.classSessions} /> */}
         </div>
       </>
     );

@@ -106,7 +106,7 @@ const QuestionModal = ({
       ],
       isMultipleChoice: false,
     },
-    shouldFocusError: false, // Prevent focusing on errors when adding answers
+    shouldFocusError: false,
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -139,8 +139,6 @@ const QuestionModal = ({
         isCorrect: answer.correct,
       })),
     };
-
-    console.log("body", body);
 
     try {
       await createQuestion(body);

@@ -41,7 +41,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       case "CLASS":
         return (
           <svg
-            className="w-4 h-4 sm:w-6 sm:h-6 text-white animate-bounce"
+            className="w-4 h-4 sm:w-6 sm:h-6 text-white"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"

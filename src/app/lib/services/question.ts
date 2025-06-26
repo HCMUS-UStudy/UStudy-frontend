@@ -50,6 +50,7 @@ export const getQuestionList = async (
       createdBy: createdBy,
     },
   });
+  console.log("response", response.data);
   return response.data.data.content;
 };
 
