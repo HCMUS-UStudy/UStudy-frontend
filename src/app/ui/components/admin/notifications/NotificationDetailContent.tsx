@@ -15,7 +15,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
       case "SYSTEM":
         return (
           <svg
-            className="w-5 h-5 text-white animate-pulse"
+            className="w-5 h-5 text-white"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -32,7 +32,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
       case "CLASS":
         return (
           <svg
-            className="w-5 h-5 text-white animate-bounce"
+            className="w-5 h-5 text-white"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -53,7 +53,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
       default:
         return (
           <svg
-            className="w-5 h-5 text-white animate-pulse"
+            className="w-5 h-5 text-white"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -147,7 +147,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
                 </span>
                 {!notification.read && (
                   <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-red-100 to-red-200 text-red-700 border border-red-300 shadow-sm">
-                    <div className="w-2 h-2 bg-red-500 rounded-full mr-1.5 animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></div>
                     Chưa đọc
                   </span>
                 )}
@@ -169,7 +169,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
                   height={40}
                   className="rounded-full w-10 h-10 shadow-md object-cover ring-2 ring-white"
                 />
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div>
                 <div className="font-semibold text-primary-darkest text-base">
@@ -187,7 +187,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
               </div>
               <div className="p-2 bg-primary-lighter rounded-lg">
                 <svg
-                  className="w-4 h-4 text-primary-dark animate-pulse"
+                  className="w-4 h-4 text-primary-dark"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -219,7 +219,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
           <div className="bg-gradient-to-r from-primary-lighter to-primary-light/40 px-4 py-3 border-b border-primary-light/30">
             <div className="flex items-center gap-2">
               <svg
-                className="w-4 h-4 text-primary-dark animate-bounce"
+                className="w-4 h-4 text-primary-dark"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -255,7 +255,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
               <div className="text-center py-8">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-primary-lighter to-primary-light rounded-full flex items-center justify-center">
                   <svg
-                    className="w-8 h-8 text-primary-dark animate-pulse"
+                    className="w-8 h-8 text-primary-dark"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -280,7 +280,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between bg-white/90 backdrop-blur-sm rounded-lg p-3 border border-primary-light/40 shadow-sm gap-3">
           <div className="flex items-center gap-2 text-primary-dark">
             <svg
-              className="w-4 h-4 animate-pulse"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"

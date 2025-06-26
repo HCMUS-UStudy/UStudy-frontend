@@ -29,7 +29,7 @@ import {
 import { FiEdit3 } from "react-icons/fi";
 import { useQueries } from "@tanstack/react-query";
 import { getAllGrades } from "@/app/lib/services/grade";
-import { getAllCourses } from "@/app/lib/services/course";
+import { getCoursesByGradeId } from "@/app/lib/services/course";
 import {
   MdOutlineFileDownload,
   MdOutlineArrowForwardIos,
@@ -87,37 +87,49 @@ const fileTypeIcons = [
 ];
 
 export default function SystemMaterial() {
-  const results = useQueries({
+  const [selectedGradeId, setSelectedGradeId] = useState<string>("");
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+
+  const [gradesQuery, coursesQuery] = useQueries({
     queries: [
       {
         queryKey: ["Grades"],
         queryFn: () => getAllGrades("", 100, 0),
+        refetchOnWindowFocus: false,
       },
       {
-        queryKey: ["Courses"],
-        queryFn: () => getAllCourses("", 100, 0),
+        queryKey: ["Courses", selectedGradeId],
+        queryFn: () => getCoursesByGradeId(selectedGradeId),
+        enabled: !!selectedGradeId, // Only run this query if selectedGradeId is truthy
+        refetchOnWindowFocus: false,
       },
     ],
   });
-  const [grades, courses] = results;
-  const [selectedGradeId, setSelectedGradeId] = useState<string>(
-    grades.data?.content[0]?.id || "",
-  );
-  const [selectedCourseId, setSelectedCourseId] = useState<string>(
-    courses.data?.content[0]?.detailedCourseDto.id || "",
-  );
+  const [grades, courses] = [gradesQuery, coursesQuery];
 
+  // Effect to automatically select the first grade when the component loads
   useEffect(() => {
-    if (grades.data?.content?.length && selectedGradeId === "") {
+    if (grades.data?.content?.length && !selectedGradeId) {
       setSelectedGradeId(grades.data.content[0].id);
+      setSelectedCourseId(""); // Reset course selection when grade changes
     }
   }, [grades.data, selectedGradeId]);
 
   useEffect(() => {
-    if (courses.data?.content?.length && selectedCourseId === "") {
-      setSelectedCourseId(courses.data.content[0].detailedCourseDto.id);
+    if (courses.isFetching) {
+      setSelectedCourseId("");
+      return;
     }
-  }, [courses.data, selectedCourseId]);
+
+    if (courses.isSuccess) {
+      const coursesForGrade = courses.data?.content;
+      if (coursesForGrade && coursesForGrade.length > 0) {
+        setSelectedCourseId(coursesForGrade[0].id);
+      } else {
+        setSelectedCourseId("");
+      }
+    }
+  }, [courses.isFetching, courses.isSuccess, courses.data]);
 
   const [material, setMaterial] = useState<ClassMaterialItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,32 +175,45 @@ export default function SystemMaterial() {
   }, []);
 
   const fetchMaterial = useCallback(async () => {
+    if (!currentFolderId && (!selectedCourseId || !selectedGradeId)) {
+      setMaterial([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     try {
       setMaterial([]);
-      setLoading(true);
+
       const data = currentFolderId
-        ? await getListMaterial(currentFolderId || null)
+        ? await getListMaterial(currentFolderId)
         : await getListByCourseGrade(selectedCourseId, selectedGradeId);
-      const sortedData = data.content.sort(
-        (a: ClassMaterialItem, b: ClassMaterialItem) => {
-          if (a.material.type === "FOLDER" && b.material.type !== "FOLDER")
-            return -1;
-          if (a.material.type !== "FOLDER" && b.material.type === "FOLDER")
-            return 1;
-          return a.material.name.localeCompare(b.material.name);
-        },
-      );
-      setMaterial(sortedData);
+
+      if (data && Array.isArray(data.content)) {
+        const sortedData = [...data.content].sort(
+          (a: ClassMaterialItem, b: ClassMaterialItem) => {
+            if (a.material.type === "FOLDER" && b.material.type !== "FOLDER")
+              return -1;
+            if (a.material.type !== "FOLDER" && b.material.type === "FOLDER")
+              return 1;
+            return a.material.name.localeCompare(b.material.name);
+          },
+        );
+        setMaterial(sortedData);
+      } else {
+        setMaterial([]);
+      }
     } catch (error) {
       console.error("Error fetching material:", error);
+      setMaterial([]);
     } finally {
       setLoading(false);
     }
   }, [currentFolderId, selectedCourseId, selectedGradeId]);
 
   useEffect(() => {
-    if (selectedCourseId != "" && selectedGradeId != "") fetchMaterial();
-  }, [fetchMaterial, currentFolderId, selectedCourseId, selectedGradeId]);
+    fetchMaterial();
+  }, [fetchMaterial]);
 
   const handleClickFolder = useCallback(
     (folderId: string, folderName: string) => {
@@ -421,16 +446,13 @@ export default function SystemMaterial() {
             focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
           value={selectedGradeId}
           onChange={(e) => {
-            const selectedGradeId = e.target.value;
-            const selectedGrade = grades.data?.content.find(
-              (grade) => grade.id === selectedGradeId,
-            );
-            if (selectedGrade) {
-              setSelectedGradeId(selectedGradeId);
-              setCurrentFolderId(null);
-              setBreadcrumb([]);
-              fetchMaterial();
-            }
+            const newGradeId = e.target.value;
+            setSelectedGradeId(newGradeId);
+            setSelectedCourseId("");
+            setMaterial([]);
+            setCurrentFolderId(null);
+            setBreadcrumb([]);
+            setActiveFile(null);
           }}
         >
           {grades.data?.content.map((item) => (
@@ -443,66 +465,71 @@ export default function SystemMaterial() {
           className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
             focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
           value={selectedCourseId}
+          disabled={!selectedGradeId || courses.isLoading || courses.isFetching}
           onChange={(e) => {
-            const selectedCourseId = e.target.value;
-            const selectedCourse = courses.data?.content.find(
-              (course) => course.detailedCourseDto.id === selectedCourseId,
-            );
-            if (selectedCourse) {
-              setSelectedCourseId(selectedCourseId);
-              setCurrentFolderId(null);
-              setBreadcrumb([]);
-              fetchMaterial();
-            }
+            const newCourseId = e.target.value;
+            setSelectedCourseId(newCourseId);
+            setCurrentFolderId(null);
+            setBreadcrumb([]);
+            setActiveFile(null);
           }}
         >
-          {courses.data?.content.map((item) => (
-            <option
-              key={item.detailedCourseDto.id}
-              value={item.detailedCourseDto.id}
-            >
-              {item.detailedCourseDto.name}
+          {courses.isLoading || courses.isFetching ? (
+            <option value="" disabled>
+              Đang tải môn học...
             </option>
-          ))}
+          ) : courses.data?.content && courses.data.content.length > 0 ? (
+            courses.data.content.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))
+          ) : (
+            <option value="" disabled>
+              Không có môn học
+            </option>
+          )}
         </select>
       </div>
       <div className="flex flex-col gap-1 py-3">
-        <div className="flex items-center gap-4 mb-2">
-          <div
-            onClick={() => {
-              setShowUploadModal(true);
-            }}
-            className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
+        {selectedCourseId && selectedGradeId && (
+          <div className="flex items-center gap-4 mb-2">
+            <div
+              onClick={() => {
+                setShowUploadModal(true);
+              }}
+              className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
               hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
-          >
-            {isMobile ? (
-              <Tooltip text="Tải tài liệu lên">
-                <IoIosAdd className="w-6 h-6" />
-              </Tooltip>
-            ) : (
-              <IoIosAdd className="w-7 h-7" />
-            )}
-            <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[14px]">
-              Tải tài liệu lên
-            </span>
-          </div>
-          <div
-            className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
+            >
+              {isMobile ? (
+                <Tooltip text="Tải tài liệu lên">
+                  <IoIosAdd className="w-6 h-6" />
+                </Tooltip>
+              ) : (
+                <IoIosAdd className="w-7 h-7" />
+              )}
+              <span className="hidden px-[7px] md:inline md:text-[13px] lg:text-[14px]">
+                Tải tài liệu lên
+              </span>
+            </div>
+            <div
+              className="flex items-center justify-center flex-col gap-2 p-4 border cursor-pointer border-gray-200
             hover:bg-primary-lighter shadow-sm rounded-2xl select-none"
-            onClick={handleCreateFolder}
-          >
-            {isMobile ? (
-              <Tooltip text="Tạo thư mục mới">
-                <PiFolderPlus className="w-6 h-6" />
-              </Tooltip>
-            ) : (
-              <PiFolderPlus className="w-7 h-7" />
-            )}
-            <span className="hidden md:inline md:text-[13px] lg:text-[14px]">
-              Tạo thư mục mới
-            </span>
+              onClick={handleCreateFolder}
+            >
+              {isMobile ? (
+                <Tooltip text="Tạo thư mục mới">
+                  <PiFolderPlus className="w-6 h-6" />
+                </Tooltip>
+              ) : (
+                <PiFolderPlus className="w-7 h-7" />
+              )}
+              <span className="hidden md:inline md:text-[13px] lg:text-[14px]">
+                Tạo thư mục mới
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
         {activeFile ? (
           <div

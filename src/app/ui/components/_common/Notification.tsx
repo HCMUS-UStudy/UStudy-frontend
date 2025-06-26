@@ -42,57 +42,24 @@ export const Notification = ({ role }: { role: string }) => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       // Clear local read notifications state since all are now read
       setReadNotifications(new Set());
-
-      // Show success toast
-      toast.success(
-        <div className="flex items-center gap-2">
-          <IoCheckmarkDone className="text-green-500" size={16} />
-          <span>Đã đánh dấu tất cả thông báo là đã đọc</span>
-        </div>,
-        {
-          position: "bottom-right",
-          style: {
-            background: "#f0fdf4",
-            color: "#166534",
-            border: "1px solid #bbf7d0",
-          },
-        },
-      );
     },
     onError: (error) => {
       console.error("Error marking all notifications as read:", error);
 
       // Show error toast
-      toast.error(
-        <div className="flex items-center gap-2">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>Có lỗi xảy ra khi đánh dấu thông báo</span>
-        </div>,
-        {
-          position: "bottom-right",
-          style: {
-            background: "#fef2f2",
-            color: "#dc2626",
-            border: "1px solid #fecaca",
-          },
-        },
-      );
+      toast.error("Có lỗi xảy ra", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
     },
   });
 
-  const notifications = query.data || [];
+  const notifications = useMemo(() => query.data || [], [query.data]);
   const isLoading = query.isLoading;
 
   // Tính số thông báo chưa đọc
@@ -184,18 +151,17 @@ export const Notification = ({ role }: { role: string }) => {
           className={`relative flex items-center border-2 p-[10px] rounded-full shadow-sm cursor-pointer transition-all duration-200
             ${
               showDropdown
-                ? "bg-primary-light border-primary shadow-md"
+                ? "bg-primary-lighter border-primary-light shadow-md"
                 : "bg-white hover:shadow-md hover:bg-gray-50 border-gray-200"
             }`}
           onClick={() => setShowDropdown((v) => !v)}
         >
           <IoNotifications
             className={`size-5 md:size-6 transition-colors duration-200
-            ${showDropdown ? "text-primary-darkest" : "text-primary-dark"}`}
+            ${showDropdown ? "text-primary-darker" : "text-primary-dark"}`}
           />
-          {/* Badge hiển thị số thông báo chưa đọc */}
           {unreadCount > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-medium animate-pulse">
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-medium">
               {unreadCount > 99 ? "99+" : unreadCount}
             </div>
           )}
@@ -208,23 +174,18 @@ export const Notification = ({ role }: { role: string }) => {
           rounded-2xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-200"
         >
           {/* Header */}
-          <div className="p-4 flex justify-between items-center border-b border-gray-100 bg-gradient-to-r from-primary-light to-primary-lighter">
+          <div className="p-3 flex justify-between items-center border-b border-gray-200">
             <div className="flex items-center gap-2">
-              <IoNotifications className="text-primary-darkest size-5 animate-bounce" />
-              <div className="font-bold text-primary-darkest text-lg tracking-wide">
+              <div className="font-bold ml-1 text-primary-darkest text-lg">
                 Thông báo
               </div>
-              {unreadCount > 0 && (
-                <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-md border border-white">
-                  {unreadCount} mới
-                </div>
-              )}
             </div>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 disabled={markAllAsReadMutation.isPending}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white text-xs sm:text-sm rounded-lg hover:bg-primary-dark shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 text-[10px] sm:text-[12px] transition-all duration-200 disabled:opacity-50
+                  hover:text-primary-darkest disabled:cursor-not-allowed"
               >
                 {markAllAsReadMutation.isPending ? (
                   <div className="animate-spin rounded-full h-3 w-3 border border-white border-t-transparent"></div>
@@ -263,7 +224,7 @@ export const Notification = ({ role }: { role: string }) => {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-2 p-3">
+              <div className="flex flex-col">
                 {displayedNotifications.map(
                   (item: NotificationItem, idx: number) => {
                     // Tính số ngày trước
@@ -284,62 +245,6 @@ export const Notification = ({ role }: { role: string }) => {
 
                     const isItemRead = item.read || isRead(item.id);
 
-                    let typeIcon = null;
-                    if (item.receiverType === "CLASS")
-                      typeIcon = (
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z"
-                          />
-                        </svg>
-                      );
-                    else if (item.receiverType === "SYSTEM")
-                      typeIcon = (
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle cx="12" cy="12" r="10" />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 8v4l3 3"
-                          />
-                        </svg>
-                      );
-                    else if (item.receiverType === "USER")
-                      typeIcon = (
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                      );
-
                     return (
                       <div
                         key={item.id || idx}
@@ -358,51 +263,30 @@ export const Notification = ({ role }: { role: string }) => {
                             `/${navigationRole}/notifications/${item.id}`,
                           );
                         }}
-                        className={`relative flex items-start gap-3 p-3 rounded-xl border-l-4 transition-all shadow-sm cursor-pointer
-                        ${!isItemRead ? "border-primary-dark bg-primary-lighter shadow-md" : "border-gray-200 bg-white hover:shadow-md"}
-                        hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-primary-light group`}
+                        className={`relative flex items-start gap-3 px-4 py-[10px] transition-all shadow-sm cursor-pointer border-b
+                        border-gray-200 bg-white hover:shadow-md hover:bg-primary-lighter group`}
                       >
                         {/* Dot chưa đọc ở góc phải trên */}
                         {!isItemRead && item.id !== currentNotificationId && (
                           <span className="absolute top-2 right-2 w-2 h-2 rounded-full animate-pulse z-10 bg-primary-dark"></span>
                         )}
-                        {/* Icon loại thông báo trong vòng tròn màu nhỏ */}
-                        <div className="flex-shrink-0 mt-1">
-                          <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm
-                          ${item.receiverType === "CLASS" ? "bg-green-100" : item.receiverType === "SYSTEM" ? "bg-purple-100" : "bg-blue-100"}`}
-                          >
-                            {typeIcon}
-                          </div>
-                        </div>
-                        {/* Nội dung */}
-                        <div className="flex-1 min-w-0 flex flex-col gap-1">
+                        <div className="flex-1 min-w-0 flex flex-col gap-[2px]">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[15px] text-primary-darkest truncate leading-tight">
-                              {item.title}
+                            <span className="text-[15px] text-primary-darkest truncate">
+                              {item.receiverType === "CLASS"
+                                ? "Lớp " + item.className || "Lớp học"
+                                : item.receiverType === "SYSTEM"
+                                  ? "Hệ thống"
+                                  : "Cá nhân"}
                             </span>
                           </div>
-                          {item.content && (
-                            <div className="text-xs text-gray-500 mt-0.5 line-clamp-2 leading-snug">
-                              {item.content}
+                          {item.title && (
+                            <div className="text-[13px] text-gray-800">
+                              {item.title}
                             </div>
                           )}
-                          <div className="flex items-center justify-end gap-1 mt-1">
-                            <svg
-                              className="w-3 h-3 text-gray-300"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 8v4l3 3"
-                              />
-                              <circle cx="12" cy="12" r="10" />
-                            </svg>
-                            <span className="text-[11px] italic text-gray-400">
+                          <div className="flex items-center justify-end gap-1">
+                            <span className="text-[11px] italic text-gray-500">
                               {daysAgoLabel}
                             </span>
                           </div>
@@ -424,7 +308,7 @@ export const Notification = ({ role }: { role: string }) => {
 
                 {/* Thông báo đã load hết */}
                 {!hasMoreNotifications && displayedNotifications.length > 0 && (
-                  <div className="text-center py-3 text-xs text-gray-400 border-t border-gray-100">
+                  <div className="text-center py-2 text-xs text-gray-400 border-t border-gray-100">
                     <div className="flex items-center justify-center gap-1">
                       <svg
                         className="w-3 h-3"
@@ -456,24 +340,13 @@ export const Notification = ({ role }: { role: string }) => {
                     // Convert student and parent roles to member
                     const navigationRole =
                       role === "student" || role === "parent" ? "member" : role;
+                    setShowDropdown(false);
                     router.push(`/${navigationRole}/notifications`);
                   }}
-                  className="inline-flex items-center gap-1 text-primary-dark hover:text-primary-darkest text-sm font-semibold transition-colors duration-200 group"
+                  className="inline-flex items-center gap-1 text-[13px] transition-colors duration-200 group
+                   text-gray-700 hover:text-primary-darkest"
                 >
                   <span>Xem tất cả thông báo</span>
-                  <svg
-                    className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
                 </button>
               </div>
             </div>
