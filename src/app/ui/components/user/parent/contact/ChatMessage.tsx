@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaRegCommentDots } from "react-icons/fa";
 import { BsEmojiSmile, BsPerson } from "react-icons/bs";
 import {
@@ -12,27 +12,29 @@ import Image from "next/image";
 import EmojiPicker from "emoji-picker-react";
 import { Button } from "../../../_common/Button";
 import { FaPaperPlane } from "react-icons/fa6";
+import { useQuery } from "@tanstack/react-query";
+import { getAllMessages } from "@/app/lib/services/chat";
+import { RoomChatItem } from "@/app/types";
 
-type Message = {
-  id: number;
-  sender: string;
-  content: string;
-  timestamp: string;
-  isParent: boolean;
-};
+// type Message = {
+//   id: number;
+//   sender: string;
+//   content: string;
+//   timestamp: string;
+//   isParent: boolean;
+// };
 
-type Teacher = {
-  id: number;
-  name: string;
-  subject: string;
-  avatar: string;
-  lastActive: string;
-};
+// interface Teacher {
+//   id: number;
+//   name: string;
+//   avatar: string;
+//   classes: string[];
+// }
 
 type ChatMessageProps = {
-  selectedTeacher: string | null;
-  conversationHistory: { [key: string]: Message[] };
-  teachers: Teacher[];
+  selectedRoom: RoomChatItem | null;
+  // conversationHistory: { [key: string]: Message[] };
+  // teachers: Teacher[];
   messageInput: string;
   setMessageInput: React.Dispatch<React.SetStateAction<string>>;
   showEmojiPicker: boolean;
@@ -43,9 +45,9 @@ type ChatMessageProps = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
-  selectedTeacher,
-  conversationHistory,
-  teachers,
+  selectedRoom,
+  // conversationHistory,
+  // teachers,
   messageInput,
   setMessageInput,
   showEmojiPicker,
@@ -54,23 +56,44 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   messagesEndRef,
   handleSendMessage,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const { data: messages } = useQuery({
+    queryKey: ["Messages", selectedRoom, currentPage - 1],
+    queryFn: () =>
+      getAllMessages(selectedRoom?.roomChatId, currentPage - 1, 10),
+    enabled: !!selectedRoom?.roomChatId,
+  });
+
   return (
     <div className="md:col-span-3">
-      <Card className="h-full flex flex-col rounded shadow-md bg-white border min-h-[500px]">
+      <Card className="border-2 border-black h-full flex flex-col rounded shadow-md bg-white min-h-[500px]">
         <CardHeader className="border-b bg-primary-lighter h-sub-header-height">
-          {selectedTeacher ? (
+          {selectedRoom ? (
             <div className="flex items-center">
               <div className="relative w-11 h-11 mr-3">
                 <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100 flex items-center justify-center">
-                  {teachers.find((t) => t.name === selectedTeacher)?.avatar ? (
+                  {/*{teachers.find((t) => t.name === selectedRoom)?.avatar ? (*/}
+                  {/*  <Image*/}
+                  {/*    width={36}*/}
+                  {/*    height={36}*/}
+                  {/*    src={*/}
+                  {/*      teachers.find((t) => t.name === selectedRoom)?.avatar ||*/}
+                  {/*      "/default-avatar.jpg"*/}
+                  {/*    }*/}
+                  {/*    alt={selectedRoom}*/}
+                  {/*    className="w-full h-full object-cover"*/}
+                  {/*  />*/}
+                  {/*) : (*/}
+                  {/*  <BsPerson size={24} className="text-primary-dark" />*/}
+                  {/*)}*/}
+                  {selectedRoom.user?.avatar ? (
                     <Image
                       width={36}
                       height={36}
-                      src={
-                        teachers.find((t) => t.name === selectedTeacher)
-                          ?.avatar || "/default-avatar.jpg"
-                      }
-                      alt={selectedTeacher}
+                      src={selectedRoom.user.avatar}
+                      alt={selectedRoom.user.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -82,10 +105,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
               <div>
                 <CardTitle className="text-primary-darkest">
-                  {selectedTeacher}
+                  {selectedRoom?.user?.name}
                 </CardTitle>
                 <CardDescription className="text-sm text-gray-500">
-                  {teachers.find((t) => t.name === selectedTeacher)?.subject}
+                  Lớp phụ trách: {/*{teachers*/}
+                  {/*  .find((t) => t.name === selectedRoom)*/}
+                  {/*  ?.classes.join(", ")}*/}
+                  {selectedRoom?.listClassName.length > 0 &&
+                    selectedRoom.listClassName.join(", ")}
                 </CardDescription>
               </div>
             </div>
@@ -100,30 +127,38 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </CardHeader>
 
         <CardContent className="flex-grow px-4 py-4 space-y-4 max-h-chat-screen bg-white overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent">
-          {selectedTeacher &&
-          conversationHistory[selectedTeacher]?.length > 0 ? (
-            conversationHistory[selectedTeacher].map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.isParent ? "justify-end" : "justify-start"}`}
-              >
+          {selectedRoom && messages && messages.totalElements > 0 ? (
+            messages.content
+              .slice()
+              .reverse()
+              .map((message) => (
                 <div
-                  className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-sm text-sm ${
-                    message.isParent
-                      ? "bg-primary-dark text-white rounded-br-none"
-                      : "bg-gray-100 text-gray-800 rounded-bl-none"
-                  }`}
+                  key={message.id}
+                  className={`flex ${message.isSender ? "justify-end" : "justify-start"}`}
                 >
-                  <p>{message.content}</p>
-                  <p
-                    className={`text-xs mt-1 ${message.isParent ? "text-primary-lighter" : "text-gray-500"}`}
+                  <div
+                    className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-sm text-sm ${
+                      message.isSender
+                        ? "bg-primary-dark text-white rounded-br-none"
+                        : "bg-gray-100 text-gray-800 rounded-bl-none"
+                    }`}
                   >
-                    {message.timestamp}
-                  </p>
+                    <p>{message.content}</p>
+                    <p
+                      className={`text-xs mt-1 ${message.isSender ? "text-primary-lighter" : "text-gray-500"}`}
+                    >
+                      {new Date(message.sendTime).toLocaleTimeString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : selectedTeacher ? (
+              ))
+          ) : selectedRoom ? (
             <div className="flex items-center justify-center h-4/5">
               <div className="text-center text-gray-500">
                 <FaRegCommentDots size={40} className="mx-auto mb-2" />
@@ -143,7 +178,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           <div ref={messagesEndRef} />
         </CardContent>
 
-        {selectedTeacher && (
+        {selectedRoom && (
           <div className="min-h-chat-input-area">
             <div>
               <div className="py-4 px-3 border-t bg-background h-full">

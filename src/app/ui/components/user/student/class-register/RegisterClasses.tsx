@@ -20,6 +20,12 @@ import {
   RegisterClassResponse,
 } from "@/app/types/register-class";
 import { submitOrderPayment } from "@/app/lib/services/payment";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogFooter,
+} from "../../../_common/Dialog";
 
 interface ClassRegisterProps {
   searchQuery: string;
@@ -37,10 +43,13 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     | "PENDING"
     | "OVERDUE";
   const [confirmRegister, setConfirmRegsiter] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [registeringClassId, setRegisteringClassId] = useState<string | null>(
     null,
   );
   const [paymentPendingId, setPaymentPendingId] = useState<string | null>(null);
+  const [onConfirm, setOnConfirm] = useState<boolean>(false);
+  const [selectedClass, setSelectedClass] = useState<ClassToRegisterItem>();
 
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
@@ -110,7 +119,9 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
 
   const handleRegisterClass = (selectedClass: ClassToRegisterItem) => {
     setRegisteringClassId(selectedClass.classDto.id);
-    registerClassMutation.mutate(selectedClass.classDto.id);
+    setSelectedClass(selectedClass);
+    setOnConfirm(true);
+    // registerClassMutation.mutate(selectedClass.classDto.id);
   };
 
   const handlePayment = (classItem: ClassToRegisterItem) => {
@@ -127,7 +138,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         renderAction={(item) => (
           <Button
             onClick={() => handleRegisterClass(item)}
-            isPending={registeringClassId === item.classDto.id}
+            // isPending={registeringClassId === item.classDto.id}
           >
             Đăng ký học
           </Button>
@@ -158,6 +169,60 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         }}
         selectedClass={registrationSuccess}
       />
+      <Dialog isOpen={onConfirm} onClose={() => setOnConfirm(false)}>
+        <DialogHeader>Xác nhận đăng ký lớp học</DialogHeader>
+        <DialogContent>
+          <div className="space-y-4">
+            <p className="text-primary-darkest">
+              Bạn có chắc chắn muốn đăng ký lớp học này không?
+            </p>
+            {selectedClass && (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-medium text-gray-900">
+                  {selectedClass.classDto.name}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Mô tả: {selectedClass.classDto.description}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Khóa học: {selectedClass.classDto.course.name}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Khối: {selectedClass.classDto.grade.name}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Thời gian:{" "}
+                  {new Date(
+                    selectedClass.classDto.startDate,
+                  ).toLocaleDateString("vi-VN")}{" "}
+                  -{" "}
+                  {new Date(selectedClass.classDto.endDate).toLocaleDateString(
+                    "vi-VN",
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+        <DialogFooter>
+          <div className="flex justify-end gap-3">
+            <Button variant="basic" onClick={() => setOnConfirm(false)}>
+              Hủy
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedClass) {
+                  registerClassMutation.mutate(selectedClass.classDto.id);
+                  setOnConfirm(false);
+                }
+              }}
+              isPending={registerClassMutation.isPending}
+            >
+              Xác nhận
+            </Button>
+          </div>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 };

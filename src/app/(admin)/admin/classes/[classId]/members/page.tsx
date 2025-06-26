@@ -5,7 +5,7 @@ import { getListMembers, removeMembers } from "@/app/lib/services/class";
 import { useState, useEffect, useCallback } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import {
@@ -15,8 +15,8 @@ import {
   TableRow,
   TableCell,
 } from "@/app/ui/components/_common/Table";
-import { useParams } from "next/navigation";
 import Pagination from "@/app/ui/components/_common/Pagination";
+import { useEncodedRoute } from "@/app/lib/hooks";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-toastify";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
@@ -36,8 +36,9 @@ const MemberPage = () => {
     };
   }, []);
   const searchParams = useSearchParams();
-  const params = useParams();
-  const classId = params?.classId as string;
+  const params = useParams<{ classId: string }>();
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params.classId);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);

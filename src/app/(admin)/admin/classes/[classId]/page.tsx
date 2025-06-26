@@ -8,12 +8,14 @@ import Loading from "@/app/ui/components/_common/loading/Loading";
 import { getClassSchedule } from "@/app/lib/services/classSchedule";
 import { Button } from "@/app/ui/components/_common/Button";
 import AddingModal from "@/app/ui/components/user/teacher/AddingModal";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const ClassDetailPage = () => {
   const [addingModal, setAddingModal] = useState<boolean>(false);
   const [showAll, setShowAll] = useState<boolean>(false);
   const params = useParams<{ classId: string }>();
-  const classId = params?.classId as string;
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params?.classId as string);
 
   const [classQuery, classScheduleQuery] = useQueries({
     queries: [

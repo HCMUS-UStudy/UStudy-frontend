@@ -18,12 +18,18 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { RxCross1 } from "react-icons/rx";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Loading from "@/app/ui/components/_common/loading/Loading";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const Notification = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  // const params = useParams<{ classId: string }>();
+  // const classId = params?.classId as string;
+
   const params = useParams<{ classId: string }>();
-  const classId = params?.classId as string;
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params?.classId as string);
+
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);

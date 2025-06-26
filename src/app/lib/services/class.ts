@@ -9,12 +9,16 @@ import {
   ClassItem,
   GenderType,
   UserSummary,
+  ClassSchema,
+  UpdateSchedule,
+  BaseResponse,
   StudentClassCount,
+  StudentClassWithStats,
+  StudentClassWithGrades,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
 import { CreateClassInputs } from "@/app/ui/components/admin/classes/create/CreateClass";
-import { updateClassFormInputs } from "@/app/(admin)/admin/classes/[classId]/setting/page";
 
 export const getAllClasses = async (
   nameQuery: string,
@@ -256,7 +260,10 @@ export const getListClassToRegister = async (
 
 export const updateClass = async (
   classId: string,
-  data: updateClassFormInputs,
+  data: Pick<
+    ClassSchema,
+    "name" | "description" | "courseId" | "gradeId" | "fee"
+  >,
 ): Promise<
   ClassItem & {
     teacher: (UserSummary & { gender: GenderType })[];
@@ -273,9 +280,49 @@ export const updateClass = async (
   }
 };
 
+export const updateSchedule = async ({
+  classId,
+  data,
+}: {
+  classId: string;
+  data: UpdateSchedule;
+}): Promise<BaseResponse> => {
+  try {
+    const response = await axiosInstance.patch(
+      `/class/update-schedule/${classId}`,
+      data,
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getStudentClassCount = async (): Promise<StudentClassCount> => {
   try {
     const response = await axiosInstance.get("/class/count-student-classes");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentClassesWithStats = async (): Promise<
+  StudentClassWithStats[]
+> => {
+  try {
+    const response = await axiosInstance.get("/class/my-classes-with-stats");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentClassesWithGrades = async (): Promise<
+  StudentClassWithGrades[]
+> => {
+  try {
+    const response = await axiosInstance.get("/class/my-classes-with-grades");
     return response.data.data;
   } catch (error) {
     throw error;

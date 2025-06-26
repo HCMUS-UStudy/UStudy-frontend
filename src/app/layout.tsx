@@ -4,6 +4,7 @@ import { nunito } from "@/app/ui/fonts";
 import Providers from "./store/Provider";
 import ToastProvider from "./_provider/ToastProvider";
 import QueryClientProviders from "./_provider/QueryClientProviders";
+import ChatProvider from "./_provider/ChatProvider";
 
 export const metadata: Metadata = {
   title: "UStudy",
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body className={`${nunito.className} antialiased bg-background`}>
         <Providers>
           <QueryClientProviders>
-            <ToastProvider>{children}</ToastProvider>
+            <ChatProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </ChatProvider>
           </QueryClientProviders>
         </Providers>
       </body>

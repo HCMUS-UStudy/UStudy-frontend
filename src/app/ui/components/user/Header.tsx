@@ -11,9 +11,10 @@ import { handleLogoutCookies } from "@/app/lib/action";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { Select, SelectItem } from "../_common/Select";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
-import { setSelectedChild } from "@/app/store/ChildrenSlice";
+import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
 import { IoMenuOutline } from "react-icons/io5";
+import Image from "next/image";
 
 const Header = ({
   role,
@@ -38,10 +39,21 @@ const Header = ({
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
       setUserInfo(userInfo);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userInfoWithChildren = userInfo as UserData & { children?: any[] };
+      if (
+        userInfoWithChildren?.role.defaultRoute === "PARENT" &&
+        userInfoWithChildren.children &&
+        userInfoWithChildren.children.length > 0 &&
+        children.length === 0
+      ) {
+        dispatch(setChildren(userInfoWithChildren.children));
+        dispatch(setSelectedChild(userInfoWithChildren.children[0]));
+      }
     };
     console.log(children.at(0));
     fetchData();
-  }, [children]);
+  }, []);
 
   useEffect(() => {
     if (role === "student") {
@@ -89,29 +101,85 @@ const Header = ({
         <IoMenuOutline className="text-primary-darkest" size={20} />
       </div>
       <div className="text-md sm:text-lg font-bold mt-[1px] md:mt-0">
-        {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title}
+        {SIDENAV_ITEMS.find((item) => pathname?.includes(item.path))?.title ??
+          "Thông tin cá nhân"}
       </div>
       <div className="flex flex-1 gap-6 justify-end md:justify-end items-center">
         <div className="flex gap-2 sm:gap-3 items-center">
           {userInfo?.role.defaultRoute === "PARENT" &&
-            pathname?.includes("/member/tuition") && (
-              <Select
-                defaultValue={selectedChild?.id}
-                label="Chọn tài khoản"
-                defaultLabel={selectedChild?.name}
-                showClearButton={false}
-                onValueChange={(child) => {
-                  console.log(child);
-                  dispatch(setSelectedChild(selectedChild));
-                }}
-              >
-                {children.map((child) => (
-                  <SelectItem key={child.id} value={JSON.stringify(child)}>
-                    {child.name}
-                  </SelectItem>
-                ))}
-              </Select>
-            )}
+            (pathname?.includes("/member/tuition") ||
+              pathname?.includes("/member/schedule") ||
+              pathname?.includes("/member/academic-result")) &&
+            (children.length === 1 ? (
+              <div className="flex flex-col items-start gap-0.5">
+                <label className="block text-xs font-medium text-primary-darkest mb-0.5">
+                  Chọn học sinh
+                </label>
+                <div className="flex items-center gap-1 border border-gray-200 rounded-md bg-white px-1.5 py-0.5 text-sm max-w-[140px]">
+                  {children[0].avatar ? (
+                    <Image
+                      src={children[0].avatar}
+                      alt="avatar"
+                      width={20}
+                      height={20}
+                      className="w-5 h-5 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-lg">👦</span>
+                  )}
+                  <span className="font-medium">{children[0].name}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-start gap-1">
+                <label className="block text-xs font-medium text-primary-darkest">
+                  Chọn học sinh
+                </label>
+                <Select
+                  className="min-w-[160px] w-auto max-w-none rounded-lg border border-primary-light bg-white shadow text-sm px-2 py-1"
+                  defaultLabel={selectedChild?.name}
+                  showClearButton={false}
+                  onValueChange={(value) => {
+                    if (typeof value === "string" && value.trim() !== "") {
+                      try {
+                        const child = JSON.parse(value);
+                        dispatch(setSelectedChild(child));
+                      } catch (e) {
+                        console.log(e);
+                      }
+                    }
+                  }}
+                >
+                  {children.map((child) => {
+                    const content = (
+                      <span className="flex items-center gap-2">
+                        {child.avatar ? (
+                          <Image
+                            src={child.avatar}
+                            alt="avatar"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 rounded-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-xl">👦</span>
+                        )}
+                        <span className="font-medium">{child.name}</span>
+                      </span>
+                    );
+                    return (
+                      <SelectItem
+                        key={child.id}
+                        value={JSON.stringify(child)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-light/30 focus:bg-primary-light/50 transition-all text-sm"
+                      >
+                        {content}
+                      </SelectItem>
+                    );
+                  })}
+                </Select>
+              </div>
+            ))}
           {/* <Tooltip text="Thông báo" position="bottom">
             <div className="p-2 hidden md:flex rounded-3xl bg-primary cursor-pointer hover:shadow-md hover:bg-hover-primary transition-all">
               <IoNotificationsOutline size={24} />

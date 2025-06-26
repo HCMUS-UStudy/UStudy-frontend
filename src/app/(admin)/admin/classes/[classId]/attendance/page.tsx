@@ -9,7 +9,7 @@ import {
 import { useState, useEffect, useMemo } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { useQueries, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { ClassScheduleItem } from "@/app/types";
@@ -20,13 +20,14 @@ import {
   TableRow,
   TableCell,
 } from "@/app/ui/components/_common/Table";
-import { useParams } from "next/navigation";
+// import { useParams } from "next/navigation";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import { Button } from "@/app/ui/components/_common/Button";
 import { MdEdit } from "react-icons/md";
 import { AttendanceItem } from "@/app/types";
 import { toast } from "react-toastify";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 
@@ -42,7 +43,8 @@ const AttendancePage = () => {
   const [date, setDate] = useState<string>("");
 
   const params = useParams<{ classId: string }>();
-  const classId = params?.classId as string;
+  const { decodeId } = useEncodedRoute();
+  const classId = decodeId(params?.classId || "");
 
   const [currentPage, setCurrentPage] = useState(0);
   // const [totalPages, setTotalPages] = useState<number>(0);

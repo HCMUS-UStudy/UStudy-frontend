@@ -13,6 +13,37 @@ export async function middleware(request: NextRequest) {
   const userData = await getUserDataFromCookies();
   const permissions = await getPermissions();
   let response: NextResponse;
+
+  const referer = request.headers.get("referer");
+
+  if (!accessToken) {
+    if (
+      pathname === "/verify-token" &&
+      (!referer || !referer.includes("/forgot-password"))
+    ) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (
+      pathname === "/reset-password" &&
+      (!referer || !referer.includes("/verify-token"))
+    ) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    if (
+      pathname === "/admin/verify-token" &&
+      (!referer || !referer.includes("/admin/forgot-password"))
+    ) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    if (
+      pathname === "/admin/reset-password" &&
+      (!referer || !referer.includes("/admin/verify-token"))
+    ) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
+
   if (accessToken) {
     // if(!userData) {
     //   // cập nhật userData
@@ -37,7 +68,16 @@ export async function middleware(request: NextRequest) {
       }
     }
     const defaultRoute = userData?.role.defaultRoute;
-    if (pathname === "/login" || pathname === "/admin/login") {
+    if (
+      pathname === "/login" ||
+      pathname === "/admin/login" ||
+      pathname === "/forgot-password" ||
+      pathname === "/admin/forgot-password" ||
+      pathname === "/verify-token" ||
+      pathname === "/admin/verify-token" ||
+      pathname === "/reset-password" ||
+      pathname === "/admin/reset-password"
+    ) {
       switch (defaultRoute) {
         case "TEACHER":
           return NextResponse.redirect(
@@ -113,6 +153,12 @@ export async function middleware(request: NextRequest) {
     if (
       pathname === "/login" ||
       pathname === "/admin/login" ||
+      pathname === "/forgot-password" ||
+      pathname === "/admin/forgot-password" ||
+      pathname === "/verify-token" ||
+      pathname === "/admin/verify-token" ||
+      pathname === "/reset-password" ||
+      pathname === "/admin/reset-password" ||
       pathname === "/"
     ) {
       return NextResponse.next();
@@ -157,6 +203,12 @@ export const config = {
     "/",
     "/admin/login",
     "/login",
+    "/forgot-password",
+    "/admin/forgot-password",
+    "/verify-token",
+    "/admin/verify-token",
+    "/reset-password",
+    "/admin/reset-password",
     "/admin/:path*",
     "/teacher/:path*",
     "/member/:path*",
@@ -168,3 +220,14 @@ export const config = {
 // export async function middleware() {
 //   return NextResponse.next();
 // }
+
+// export const config = {
+//   matcher: [
+//     "/",
+//     "/admin/login",
+//     "/login",
+//     "/admin/:path*",
+//     "/teacher/:path*",
+//     "/member/:path*",
+//   ],
+// };

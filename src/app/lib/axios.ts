@@ -26,7 +26,7 @@ const axiosInstance = axios.create({
 //   interpretHeader: false,
 // });
 
-const decodeToken = (token: string) => {
+export const decodeToken = (token: string) => {
   return JSON.parse(atob(token.split(".")[1]));
 };
 

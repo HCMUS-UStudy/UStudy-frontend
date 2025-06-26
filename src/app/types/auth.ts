@@ -51,3 +51,24 @@ export type ChangePasswordPayload = {
   newPassword: string;
   confirmNewPassword: string;
 };
+
+export type VerifyOtpPayload = {
+  email: string;
+  otp: string;
+};
+
+export type GenerateOtpPayload = {
+  email: string;
+};
+
+export type ForgotPasswordWithOtpPayload = {
+  email: string;
+  otp: string;
+  newPassword: string;
+};
+
+export type SimpleApiResponse = {
+  message: string;
+  status: string;
+  data: null;
+};

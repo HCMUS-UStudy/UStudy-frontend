@@ -8,38 +8,60 @@ import {
 } from "../../../_common/Card";
 import { Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
+import { ChildClassScore, ChildClassDetails } from "@/app/types";
 
-export const SubjectScoreChart = () => {
+interface SubjectScoreChartProps {
+  data: ChildClassScore[] | ChildClassDetails;
+}
+
+export const SubjectScoreChart = ({ data }: SubjectScoreChartProps) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  const isArray = Array.isArray(data);
+
+  const getLabels = () => {
+    if (!isArray) {
+      return [(data as ChildClassDetails).course.name];
+    }
+    const scores = data as ChildClassScore[];
+    const nameCounts = scores.reduce(
+      (acc, score) => {
+        acc[score.course.name] = (acc[score.course.name] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    return scores.map((score) => {
+      if (nameCounts[score.course.name] > 1) {
+        return `${score.course.name} - ${score.grade.name}`;
+      }
+      return score.course.name;
+    });
+  };
+
   // Dữ liệu điểm số theo môn học
   const subjectScores = {
-    labels: [
-      "Toán học",
-      "Ngữ văn",
-      "Tiếng Anh",
-      "Vật lý",
-      "Hóa học",
-      "Sinh học",
-      "Lịch sử",
-      "Địa lý",
-      "GDCD",
-    ],
+    labels: getLabels(),
     datasets: [
       {
         label: "Điểm của con",
-        data: [8.5, 7.8, 8.2, 7.5, 8.0, 9.2, 7.6, 8.4, 8.8],
+        data: isArray
+          ? (data as ChildClassScore[]).map((item) => item.studentAverage)
+          : [(data as ChildClassDetails).studentAverage],
         backgroundColor: "rgba(190, 229, 209, 0.7)",
         borderColor: "rgba(120, 174, 145, 1)",
         borderWidth: 1,
       },
       {
         label: "Điểm trung bình lớp",
-        data: [7.8, 7.2, 7.5, 7.0, 7.3, 8.1, 7.0, 7.8, 8.0],
+        data: isArray
+          ? (data as ChildClassScore[]).map((item) => item.classAverage)
+          : [(data as ChildClassDetails).classAverage],
         backgroundColor: "rgba(217, 217, 217, 0.5)",
         borderColor: "rgba(150, 150, 150, 1)",
         borderWidth: 1,

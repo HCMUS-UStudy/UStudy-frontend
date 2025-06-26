@@ -5,8 +5,9 @@ import StudentClassesLoading from "../../../_common/loading/StudentClassesLoadin
 import EmptyListOrTable from "../../../_common/EmptyListOrTable";
 import { ClassRegisterResponseItem, UserClassData } from "@/app/types";
 import { Button } from "../../../_common/Button";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Eye } from "lucide-react";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 export interface Course {
   name?: string;
@@ -33,9 +34,11 @@ const ClassList: React.FC<ClassListProps> = ({
   classes,
   type = "grid",
 }) => {
-  const router = useRouter();
+  // const router = useRouter();
+  const { handleNavigate } = useEncodedRoute();
   const handleDetail = (id: string) => {
-    router.push(`/member/classes/${id}`);
+    handleNavigate(id, "/member/classes");
+    // router.push(`/member/classes/${id}`);
   };
 
   if (status === "pending") {

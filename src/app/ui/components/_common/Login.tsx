@@ -1,7 +1,5 @@
 "use client";
-
-import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -17,6 +15,8 @@ import { useDispatch } from "react-redux";
 import { setPermissions } from "@/app/store/PermissionScreenSlice";
 import { useMutation } from "@tanstack/react-query";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
+import Loading from "./loading/Loading";
+import Cookies from "js-cookie";
 
 const LogInSchema = z.object({
   username: z
@@ -29,18 +29,71 @@ const LogInSchema = z.object({
 
 type LogInInputs = z.infer<typeof LogInSchema>;
 
+// Hàm mã hóa phía client (AES-GCM, base64 key)
+async function encryptClient(
+  plainData: string,
+  base64Key: string,
+): Promise<{ encryptedData: string; iv: string }> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encoder = new TextEncoder();
+  const encoded = encoder.encode(plainData);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    Uint8Array.from(atob(base64Key), (c) => c.charCodeAt(0)),
+    { name: "AES-GCM" },
+    false,
+    ["encrypt"],
+  );
+  const encrypted = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    encoded,
+  );
+  return {
+    encryptedData: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
+    iv: btoa(String.fromCharCode(...iv)),
+  };
+}
+
+async function decryptClient(
+  encryptedData: string,
+  iv: string,
+  base64Key: string,
+): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    Uint8Array.from(atob(base64Key), (c) => c.charCodeAt(0)),
+    { name: "AES-GCM" },
+    false,
+    ["decrypt"],
+  );
+  const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) =>
+    c.charCodeAt(0),
+  );
+  const ivBytes = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0));
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: ivBytes },
+    key,
+    encryptedBytes,
+  );
+  return new TextDecoder().decode(decrypted);
+}
+
 export default function Login() {
   const router = useRouter();
   // const [isLoading, setIsLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const isUser = pathname === "/login";
   const dispatch = useDispatch();
+  const [isLoadingForgot, setIsLoadingForgot] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const {
     register,
     formState: { errors },
     handleSubmit,
     setError,
+    setValue,
   } = useForm<LogInInputs>({ resolver: zodResolver(LogInSchema) });
 
   const useLoginMutation = useMutation({
@@ -53,10 +106,19 @@ export default function Login() {
     },
     onSuccess: (response) => {
       const defaultRoute = response.data.user.role.defaultRoute;
+      let userDataToSave = response.data.user;
+      if (defaultRoute === "PARENT") {
+        userDataToSave = {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...(response.data.user as any),
+          children: response.data.children ?? [],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as typeof response.data.user & { children?: any[] };
+      }
       setTokensAndUserDataCookies(
         response.data.access_token,
         response.data.refresh_token,
-        JSON.stringify(response.data.user),
+        JSON.stringify(userDataToSave),
         JSON.stringify(response.data.screens),
       );
       dispatch(setPermissions(response.data.screens));
@@ -97,7 +159,52 @@ export default function Login() {
     },
   });
 
-  const onSubmit = (data: LogInInputs) => {
+  // Thêm hàm helper để lấy cookie prefix
+  const getCookiePrefix = () => (isUser ? "user_" : "admin_");
+
+  useEffect(() => {
+    const getRemembered = async () => {
+      const prefix = getCookiePrefix();
+      const encrypted = Cookies.get(`${prefix}rememberedLogin`);
+      const iv = Cookies.get(`${prefix}rememberedLogin_iv`);
+      const key = process.env.NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY;
+      if (encrypted && iv && key) {
+        try {
+          const decrypted = await decryptClient(encrypted, iv, key);
+          const { username, password } = JSON.parse(decrypted);
+          setValue("username", username);
+          setValue("password", password);
+          setRememberMe(true);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+          Cookies.remove(`${prefix}rememberedLogin`);
+          Cookies.remove(`${prefix}rememberedLogin_iv`);
+        }
+      }
+    };
+    getRemembered();
+  }, [setValue, isUser]);
+
+  const onSubmit = async (data: LogInInputs) => {
+    const key = process.env.NEXT_PUBLIC_COOKIES_SECRET_LOGIN_KEY;
+    const prefix = getCookiePrefix();
+    if (rememberMe && key) {
+      const expireDays = 3;
+      const encrypted = await encryptClient(JSON.stringify(data), key);
+      Cookies.set(`${prefix}rememberedLogin`, encrypted.encryptedData, {
+        expires: expireDays,
+        secure: true,
+        sameSite: "strict",
+      });
+      Cookies.set(`${prefix}rememberedLogin_iv`, encrypted.iv, {
+        expires: expireDays,
+        secure: true,
+        sameSite: "strict",
+      });
+    } else {
+      Cookies.remove(`${prefix}rememberedLogin`);
+      Cookies.remove(`${prefix}rememberedLogin_iv`);
+    }
     useLoginMutation.mutate(data);
   };
 
@@ -165,7 +272,6 @@ export default function Login() {
             </div>
             <div className="mt-6 mb-4 w-[250px] md:w-[350px]">
               <Input
-                className="text-base md:text-[14px]"
                 type="text"
                 placeholder="Nhập tên tài khoản"
                 label="Tên tài khoản"
@@ -176,7 +282,6 @@ export default function Login() {
             </div>
             <div>
               <Input
-                className="text-[14px]"
                 type="password"
                 placeholder="Nhập mật khẩu"
                 label="Mật khẩu"
@@ -187,7 +292,13 @@ export default function Login() {
             </div>
             <div className="flex flex-col gap-2 md:flex-row w-full justify-between mt-4 px-1">
               <div className="flex items-center">
-                <input type="checkbox" id="rememberMe" className="mr-1" />
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  className="mr-1"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />
                 <label
                   htmlFor="rememberMe"
                   className="text-sm text-gray-600 cursor-pointer"
@@ -196,12 +307,27 @@ export default function Login() {
                 </label>
               </div>
               <div className="flex">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-gray-600 hover:underline"
+                <button
+                  type="button"
+                  className="text-sm text-gray-600 hover:underline focus:outline-none flex items-center"
+                  onClick={() => {
+                    setIsLoadingForgot(true);
+                    router.push(
+                      isUser ? "/forgot-password" : "/admin/forgot-password",
+                    );
+                  }}
+                  disabled={isLoadingForgot}
                 >
+                  {isLoadingForgot && (
+                    <Loading
+                      className="mr-1"
+                      customStyle={{
+                        spinner: "w-4 h-4 border-gray-600",
+                      }}
+                    />
+                  )}
                   Quên mật khẩu?
-                </Link>
+                </button>
               </div>
             </div>
             <Button
