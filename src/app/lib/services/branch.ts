@@ -99,5 +99,5 @@ export const getUserBranches = async () => {
     },
   });
 
-  return response.data;
+  return response.data.data;
 };
