@@ -312,6 +312,7 @@ export const getStudentClassesWithStats = async (): Promise<
 > => {
   try {
     const response = await axiosInstance.get("/class/my-classes-with-stats");
+    console.log(response);
     return response.data.data;
   } catch (error) {
     throw error;
