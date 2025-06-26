@@ -6,7 +6,7 @@ import { RootState } from "@/app/store/store";
 import { setSelectedBranch, setBranches } from "../../../store/branch-slice";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Branch } from "@/app/types";
-import { getUserDataFromCookies } from "@/app/lib/action";
+import { getUserBranches } from "@/app/lib/services";
 
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,13 +19,13 @@ const BranchSelector: React.FC = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const userData = await getUserDataFromCookies();
-        if (!userData?.branches) {
+        const branches = await getUserBranches();
+        if (!branches) {
           console.error("No branches found in user data");
           return;
         }
 
-        const branchData = [...userData.branches].sort((a: Branch, b: Branch) =>
+        const branchData = [...branches].sort((a: Branch, b: Branch) =>
           a.name.localeCompare(b.name),
         );
 
