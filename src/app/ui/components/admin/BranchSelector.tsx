@@ -67,7 +67,7 @@ const BranchSelector: React.FC = () => {
     <div className="relative w-fit" ref={dropdownRef}>
       {branches.length > 0 ? (
         <div
-          className="relative cursor-pointer rounded-[20px]"
+          className="relative cursor-pointer rounded-[20px] select-none"
           onClick={() => setIsOpen(!isOpen)}
         >
           <div className="px-3 sm:px-4 py-1.5 md:py-[10px] rounded-xl md:rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-sm md:text-[15px] items-center transition-all">

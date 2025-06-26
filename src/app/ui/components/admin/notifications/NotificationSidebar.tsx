@@ -44,7 +44,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       case "CLASS":
         return (
           <svg
-            className="w-5 h-5 text-white animate-bounce"
+            className="w-5 h-5 text-white"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -148,7 +148,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         <div className="flex items-center justify-between mb-4 lg:hidden">
           <h2 className="text-lg font-bold text-primary-darkest flex items-center gap-2">
             <svg
-              className="w-5 h-5 text-primary-dark animate-bounce"
+              className="w-5 h-5 text-primary-dark"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -171,7 +171,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         </div>
         <h2 className="text-lg font-bold text-primary-darkest mb-4 items-center gap-2 hidden lg:flex">
           <svg
-            className="w-5 h-5 text-primary-dark animate-bounce"
+            className="w-5 h-5 text-primary-dark"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"

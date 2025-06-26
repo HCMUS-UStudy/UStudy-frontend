@@ -148,12 +148,12 @@ const SingleNotification = () => {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-pulse">
             <Loading />
           </div>
-          <p className="mt-4 text-primary-darkest font-medium animate-pulse">
+          <p className="mt-4 text-primary-darkest font-medium">
             Đang tải thông báo...
           </p>
         </div>
@@ -163,12 +163,12 @@ const SingleNotification = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-pulse">
             <Loading />
           </div>
-          <p className="mt-4 text-primary-darkest font-medium animate-pulse">
+          <p className="mt-4 text-primary-darkest font-medium">
             Đang tải thông báo...
           </p>
         </div>
@@ -179,7 +179,7 @@ const SingleNotification = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
       {/* Navigation Loading Overlay */}
-      {navigating && (
+      {/* {navigating && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 shadow-2xl flex items-center gap-4">
             <div className="animate-spin">
@@ -197,12 +197,12 @@ const SingleNotification = () => {
                 />
               </svg>
             </div>
-            <span className="text-primary-darkest font-medium animate-pulse">
+            <span className="text-primary-darkest font-medium">
               Đang chuyển trang...
             </span>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Header */}
       <NotificationDetailHeader
@@ -268,7 +268,7 @@ const SingleNotification = () => {
         }
 
         .h-screen-minus-header {
-          height: calc(100vh - 80px);
+          height: calc(100vh - 75px);
         }
       `}</style>
     </div>

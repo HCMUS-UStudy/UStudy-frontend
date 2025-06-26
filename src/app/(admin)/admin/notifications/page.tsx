@@ -148,7 +148,7 @@ const Notification = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loading />
           <p className="mt-4 text-primary-darkest font-medium">
@@ -160,7 +160,7 @@ const Notification = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+    <div className="min-h-screen">
       {/* Header */}
       <NotificationHeader onRefresh={fetchData} />
 
