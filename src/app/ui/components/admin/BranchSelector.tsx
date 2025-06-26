@@ -95,7 +95,7 @@ const BranchSelector: React.FC = () => {
           )}
         </div>
       ) : (
-        <p>Không có chi nhánh nào</p>
+        <p className="text-error">Không có chi nhánh nào</p>
       )}
     </div>
   );

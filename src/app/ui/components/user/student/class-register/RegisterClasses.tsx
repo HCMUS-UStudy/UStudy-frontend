@@ -43,9 +43,9 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     | "PENDING"
     | "OVERDUE";
   const [confirmRegister, setConfirmRegsiter] = useState<boolean>(false);
-  const [registeringClassId, setRegisteringClassId] = useState<string | null>(
-    null,
-  );
+  // const [registeringClassId, setRegisteringClassId] = useState<string | null>(
+  //   null,
+  // );
   const [paymentPendingId, setPaymentPendingId] = useState<string | null>(null);
   const [onConfirm, setOnConfirm] = useState<boolean>(false);
   const [selectedClass, setSelectedClass] = useState<ClassToRegisterItem>();
@@ -88,13 +88,13 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         autoClose: 3000,
         pauseOnHover: false,
       });
-      setRegisteringClassId(null);
+      // setRegisteringClassId(null);
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["Classes"] });
       setRegistrationSuccess(res);
       setConfirmRegsiter(true);
-      setRegisteringClassId(null);
+      // setRegisteringClassId(null);
     },
   });
 
@@ -117,7 +117,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   });
 
   const handleRegisterClass = (selectedClass: ClassToRegisterItem) => {
-    setRegisteringClassId(selectedClass.classDto.id);
+    // setRegisteringClassId(selectedClass.classDto.id);
     setSelectedClass(selectedClass);
     setOnConfirm(true);
     // registerClassMutation.mutate(selectedClass.classDto.id);

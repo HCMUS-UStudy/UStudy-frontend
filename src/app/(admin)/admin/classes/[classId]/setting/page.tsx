@@ -100,7 +100,7 @@ export default function ClassSetting() {
       classId: string;
       data: UpdateSchedule;
     }) => updateSchedule({ classId, data }),
-    onSuccess: (res) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ClassDetails"] });
       toast.success("Chỉnh sửa lớp học thành công", {
         position: "bottom-right",
@@ -136,7 +136,10 @@ export default function ClassSetting() {
           handleUpdate={handleUpdate}
         />
         <div className="space-y-3">
-          <ClassSessions classSessions={classDetail.classSessions} />
+          <ClassSessions
+            classSessions={classDetail.classSessions}
+            handleUpdateSchedule={handleUpdateSchedule}
+          />
         </div>
       </>
     );

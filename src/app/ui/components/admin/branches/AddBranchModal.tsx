@@ -12,6 +12,7 @@ import SmallCheckbox from "../../_common/SmallCheckbox";
 import Loading from "../../_common/loading/Loading";
 import { addBranch } from "@/app/lib/services/branch";
 import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const CreateBranchSchema = z.object({
   name: z.string().min(1, "Đây là trường bắt buộc"),
@@ -26,8 +27,13 @@ const CreateBranchSchema = z.object({
     .int("Đây là trường bắt buộc")
     .positive("Phải có ít nhất một phòng học"),
   sessions: z
-    .array(z.string().min(1, "Vui lòng chọn ít nhất 1 ca học cho chi nhánh"))
-    .min(1, "Vui lòng chọn ít nhất 1 ca học cho chi nhánh"),
+    .array(
+      z
+        .string({ message: "Vui lòng chọn ít nhất 1 ca học" })
+        .min(1, "Vui lòng chọn ít nhất 1 ca học"),
+      { message: "Vui lòng chọn ít nhất 1 ca học" },
+    )
+    .min(1, "Vui lòng chọn ít nhất 1 ca học"),
 });
 
 export type CreateBranchInputs = z.infer<typeof CreateBranchSchema>;
@@ -47,13 +53,21 @@ const CreateBranchModal = ({
     resolver: zodResolver(CreateBranchSchema),
   });
 
+  const { addToast } = useCustomToast();
+
   const { data: sessions, status } = useQuery({
     queryKey: ["Sessions"],
     queryFn: () => getSession(0, 100),
   });
+  console.log(sessions);
 
   const onSubmit = (data: CreateBranchInputs) => {
-    console.log(data);
+    console.log("here");
+    if (sessions?.content.length === 0) {
+      console.log("here");
+      addToast.error("Chưa có ca học nào");
+      return;
+    }
     useCreateBranchMutation.mutate(data);
   };
   const queryClient = useQueryClient();
@@ -69,11 +83,7 @@ const CreateBranchModal = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Branches"] });
-      toast.success("Tạo chi nhánh thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Tạo chi nhánh thành công");
       onClose();
     },
   });
@@ -120,35 +130,43 @@ const CreateBranchModal = ({
             />
             {/* Phần chọn Ca học với checkbox */}
             <div>
-              <div className="flex gap-2 items-center ml-2 text-gray-700">
+              <div className="flex gap-2 items-center text-gray-700">
                 Ca học {status === "pending" && <Loading className="size-6" />}
               </div>
-              {status === "success" && (
-                <div className="mt-2 max-h-40 overflow-y-auto border p-2 rounded-lg">
-                  {sessions.content.map((item) => (
-                    <SmallCheckbox
-                      key={item.id}
-                      type="checkbox"
-                      value={item.id}
-                      className="truncate"
-                      variant="label"
-                      labelText={`${item.name} - ${item.startTime} - ${item.endTime}`}
-                      {...register("sessions")}
-                    />
-                  ))}
+              {sessions?.content.length === 0 ? (
+                <div className="px-2 py-1 text-center text-xs md:text-[13px] text-error border-error border rounded bg-error/10">
+                  Chưa có ca học nào
                 </div>
+              ) : (
+                <>
+                  {status === "success" && (
+                    <div className="mt-2 max-h-40 overflow-y-auto border p-2 rounded-lg">
+                      {sessions.content.map((item) => (
+                        <SmallCheckbox
+                          key={item.id}
+                          type="checkbox"
+                          value={item.id}
+                          className="truncate"
+                          variant="label"
+                          labelText={`${item.name} - ${item.startTime} - ${item.endTime}`}
+                          {...register("sessions")}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
-              <span className="text-[13px] text-error">
-                {errors.sessions?.message}
-              </span>
             </div>
+            <span className="text-[13px] text-error">
+              {errors.sessions?.message}
+            </span>
 
             <Button
               isPending={useCreateBranchMutation.status === "pending"}
               type="submit"
               className=""
             >
-              Thêm ca học
+              Thêm chi nhánh
             </Button>
           </form>
         </DialogContent>

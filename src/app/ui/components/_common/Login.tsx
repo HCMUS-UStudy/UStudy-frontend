@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
 import { setTokensAndUserDataCookies } from "@/app/lib/action";
 import { usePathname, useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import { login } from "@/app/lib/services/auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -17,6 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import Loading from "./loading/Loading";
 import Cookies from "js-cookie";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const LogInSchema = z.object({
   username: z
@@ -87,6 +87,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const [isLoadingForgot, setIsLoadingForgot] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { addToast } = useCustomToast();
 
   const {
     register,
@@ -130,12 +131,13 @@ export default function Login() {
           ),
         );
       }
-      toast.success("Đăng nhập thành công", {
-        position: "bottom-right",
-        autoClose: 5000,
-        closeOnClick: false,
-        pauseOnHover: false,
-      });
+      addToast.success("Đăng nhập thành công");
+      // toast.success("Đăng nhập thành công", {
+      //   position: "bottom-right",
+      //   autoClose: 5000,
+      //   closeOnClick: false,
+      //   pauseOnHover: false,
+      // });
       switch (defaultRoute) {
         case "TEACHER":
           router.push("/teacher/classes");
