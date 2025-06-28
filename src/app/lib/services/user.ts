@@ -6,10 +6,23 @@ import {
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
-export const createNewAccount = async (data: AccountItem) => {
+export const createNewAccount = async (
+  data: Pick<
+    AccountItem,
+    "name" | "phone" | "email" | "address" | "birthday" | "gender"
+  > & { roleId: string },
+): Promise<AccountItem> => {
   try {
-    const response = await axiosInstance.post("/user/create", data);
-    return response.data;
+    const response = await axiosInstance.post("/user/create", {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      birthday: data.birthday,
+      gender: data.gender,
+      roleId: data.roleId,
+    });
+    return response.data.data;
   } catch (error) {
     throw error;
   }
