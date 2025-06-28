@@ -26,6 +26,7 @@ interface SelectProps {
   id?: string;
   label?: string;
   isLoading?: boolean;
+  showClearButton?: boolean;
   customStyle?: {
     labelBg?: string;
   };
@@ -86,6 +87,7 @@ const Select: React.FC<SelectProps> = ({
   label,
   customStyle,
   isLoading = false,
+  showClearButton = true,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | number>(
     defaultValue,
@@ -163,7 +165,12 @@ const Select: React.FC<SelectProps> = ({
           <button
             type="button"
             className={cn(
-              "w-full px-3 py-2 border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
+              "w-full px-3 py-2 text-xs md:text-sm border border-control-border rounded-md flex items-center justify-between gap-2 focus:ring-2 focus:ring-control-ring truncate transition-all",
+              {
+                "opacity-100 cursor-not-allowed bg-slate-100 hover:bg-slate-100":
+                  disabled,
+                "hover:bg-gray-50": !disabled,
+              },
               className,
             )}
             onClick={(e) => {
@@ -172,8 +179,10 @@ const Select: React.FC<SelectProps> = ({
             }}
             disabled={disabled}
           >
-            {selectedLabel}
-            {selectedValue ? (
+            <span className={cn("truncate", { "text-slate-500": disabled })}>
+              {selectedLabel}
+            </span>
+            {selectedValue && showClearButton && !disabled ? (
               <>
                 <XIcon
                   onClick={(e) => {
@@ -183,12 +192,15 @@ const Select: React.FC<SelectProps> = ({
                   className="peer z-[1000] hover:text-primary-darkest transition-colors cursor-pointer"
                   size={20}
                 />
-                <div className="absolute bottom-10 right-0 bg-gray-700 z-[999] text-white text-[12px] py-1 px-2 rounded opacity-0 peer-hover:opacity-100 transition-all">
+                <div className="absolute bottom-10 right-0 bg-gray-700 z-[999] text-white text-[10px] md:text-[12px] py-1 px-2 rounded opacity-0 peer-hover:opacity-100 transition-all">
                   Xóa bộ lọc
                 </div>
               </>
             ) : (
-              <IoChevronDown size={18} />
+              <IoChevronDown
+                size={18}
+                className={cn({ "text-slate-700": disabled })}
+              />
             )}
           </button>
           {label && (
@@ -207,7 +219,13 @@ const Select: React.FC<SelectProps> = ({
           )}
           {isOpen ? (
             <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
-              {children}
+              {React.Children.count(children) === 0 ? (
+                <div className="px-3 py-2 text-xs md:text-sm text-slate-500 text-center">
+                  Không có dữ liệu
+                </div>
+              ) : (
+                children
+              )}
             </div>
           ) : null}
         </div>
@@ -252,7 +270,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
   return (
     <div
       className={cn(
-        "px-3 py-2 cursor-pointer hover:bg-primary truncate",
+        "px-3 py-2 cursor-pointer text-xs md:text-sm hover:bg-primary truncate transition-all",
         {
           "bg-primary": selectedValue === value,
         },

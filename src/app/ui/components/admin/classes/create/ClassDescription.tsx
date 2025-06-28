@@ -6,12 +6,12 @@ export default function ClassDescription() {
   const { register } = useFormContext<CreateClassInputs>();
   return (
     <div className="flex flex-col">
-      <h1 className="font-bold">Mô tả về lớp học</h1>
+      <h1 className="font-bold text-sm md:text-base">Mô tả về lớp học</h1>
       <div className="">
         <textarea
           id="classDescription"
           placeholder="Nhập mô tả về lớp học..."
-          className="border-2 mt-3 border-slate-200 p-2.5 w-full outline-none rounded max-h-[200px] h-[200px] overflow-y-auto"
+          className="border-2 mt-3 border-slate-200 p-2.5 w-full text-sm md:text-base outline-none rounded max-h-[200px] h-[150px] md:h-[200px] overflow-y-auto"
           {...register("description")}
         ></textarea>
       </div>

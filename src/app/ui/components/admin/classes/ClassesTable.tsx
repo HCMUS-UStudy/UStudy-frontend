@@ -20,7 +20,7 @@ import ClassPagination from "./ClassPagination";
 // import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
 import Tooltip from "../../_common/Tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const MemoizedClassPagination = memo(ClassPagination);
 
@@ -31,6 +31,12 @@ export default function ClassesTable({
   query: string;
   currentPage: number;
 }) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     data: fetchClasses,
     status,
@@ -39,12 +45,40 @@ export default function ClassesTable({
     queryKey: ["Classes", query, currentPage],
     queryFn: () => getAllClasses(query, currentPage - 1, 5),
     placeholderData: (prevData) => prevData,
+    enabled: mounted, // Only run query after component is mounted
   });
 
-  const router = useRouter();
+  const { handleNavigate } = useEncodedRoute();
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedId, setSelectedId] = useState<string>("");
+
+  if (!mounted) {
+    return (
+      <div>
+        <Table>
+          <TableHeader
+            columns={[
+              "Tên lớp",
+              "Môn học",
+              "Khối",
+              "Học phí",
+              "Ngày bắt đầu",
+              "Ngày kết thúc",
+              "",
+            ]}
+          />
+          <TableBody isLoading={true}>
+            <TableRow>
+              <TableCell colSpan={7}>
+                <div className="bg-slate-200 h-3 my-1 rounded"></div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
 
   if (error) {
     return <div>{error.message}</div>;
@@ -75,7 +109,12 @@ export default function ClassesTable({
               <TableCell>{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
                 {/* Nút xem lớp */}
-                <div onClick={() => router.push(`/admin/classes/${c.id}`)}>
+                <div
+                  onClick={() => {
+                    handleNavigate(c.id, "/admin/classes");
+                    // router.push(`/admin/classes/${c.id}`);
+                  }}
+                >
                   <Tooltip text="Xem lớp học">
                     <Eye className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
                   </Tooltip>

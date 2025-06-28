@@ -208,7 +208,7 @@
 // };
 
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/app/lib/utils";
 
 interface DropdownContextProps {
@@ -322,19 +322,22 @@ const DropdownMenuContent = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const { isOpen, setIsOpen } = useDropdownContext();
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      // Close the menu
-      setIsOpen(false);
-    }
-  };
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        // Close the menu
+        setIsOpen(false);
+      }
+    },
+    [setIsOpen],
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [handleClickOutside]);
 
   return (
     isOpen && (

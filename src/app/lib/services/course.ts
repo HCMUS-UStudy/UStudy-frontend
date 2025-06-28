@@ -1,6 +1,7 @@
 import {
-  CourseData,
+  BasePaginationResponse,
   CourseDto,
+  CourseItem,
   CourseSchema,
   CreateCourseResponse,
 } from "@/app/types";
@@ -10,7 +11,7 @@ export const getAllCourses = async (
   query: string,
   limit: number,
   currentPage: number,
-): Promise<CourseData> => {
+): Promise<BasePaginationResponse<CourseItem>> => {
   try {
     const response = await axiosInstance.get("/course/list", {
       params: {
@@ -27,11 +28,7 @@ export const getAllCourses = async (
 
 export const getCoursesByGradeId = async (
   gradeId: string,
-): Promise<{
-  content: CourseDto[];
-  totalPages: number;
-  totalElements: number;
-}> => {
+): Promise<BasePaginationResponse<CourseDto>> => {
   try {
     const response = await axiosInstance.get(`/course/list/${gradeId}`, {
       params: {
@@ -60,4 +57,22 @@ export const createNewCourse = async (
 export const getCourseById = async (courseId: string) => {
   const response = await axiosInstance.get(`/course/details/${courseId}`);
   return response.data.data;
+};
+
+export const updateCourse = async ({
+  courseId,
+  data,
+}: {
+  courseId: string;
+  data: CourseSchema;
+}): Promise<CreateCourseResponse> => {
+  try {
+    const response = await axiosInstance.put(`/course/update/${courseId}`, {
+      name: data.name,
+      description: data.description,
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };

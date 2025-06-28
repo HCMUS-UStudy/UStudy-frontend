@@ -25,6 +25,7 @@ import EditSessionModal from "@/app/ui/components/admin/branches/EditSessionModa
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { FiCheck } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 type Clerk = {
   id: string;
@@ -45,8 +46,13 @@ type Session = {
 const BranchDetail = () => {
   const { branches } = useSelector((state: RootState) => state.branch);
   const [branches_, setBranches_] = useState<Branch[]>(branches);
-  const params = useParams();
-  const branchID = (params?.branchID ?? "") as string;
+  // const params = useParams();
+  // const branchID = (params?.branchID ?? "") as string;
+
+  const params = useParams<{ branchID: string }>();
+  const { decodeId } = useEncodedRoute();
+  const branchID = decodeId(params?.branchID as string);
+
   const [branch, setBranch] = useState<Branch>();
   const router = useRouter();
   const dispatch = useDispatch();

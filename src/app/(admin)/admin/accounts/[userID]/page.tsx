@@ -10,12 +10,15 @@ import { AccountDetailItem, ClassUserItem } from "@/app/types";
 import { getListUserClass } from "@/app/lib/services/class";
 import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
 import Image from "next/image";
+import { useEncodedRoute } from "@/app/lib/hooks";
 
 const AccountDetail = () => {
-  const params = useParams();
-  const userId = Array.isArray(params?.userID)
-    ? params.userID[0]
-    : params?.userID;
+  const params = useParams<{ userId: string }>();
+  const { decodeId } = useEncodedRoute();
+  const userId = decodeId(params?.userId as string);
+  // const userId = Array.isArray(params?.userID)
+  //   ? params.userID[0]
+  //   : params?.userID;
   const [user, setUser] = useState<AccountDetailItem>();
   const [classes, setClasses] = useState<ClassUserItem[]>([]);
   const router = useRouter();
@@ -57,12 +60,23 @@ const AccountDetail = () => {
 
   useEffect(() => {
     if (!userId) return;
+
+    const fetchClasses = async (role: string) => {
+      if (!["Student", "Teacher"].includes(role)) return;
+
+      try {
+        const response = await getListUserClass(userId as string, "", 0, 100);
+        setClasses(response.content);
+      } catch (error) {
+        console.error("Failed to fetch user classes:", error);
+      }
+    };
+
     const fetchUser = async () => {
       try {
         const response = await getListUserDetail(userId as string);
         setUser(response.data);
 
-        // Chỉ gọi API lấy danh sách lớp học nếu user là Student hoặc Teacher
         if (["Student", "Teacher"].includes(response.data.role?.name)) {
           fetchClasses(response.data.role?.name);
         }
@@ -70,19 +84,9 @@ const AccountDetail = () => {
         console.error("Failed to fetch user details:", error);
       }
     };
+
     fetchUser();
   }, [userId]);
-
-  const fetchClasses = async (role: string) => {
-    if (!["Student", "Teacher"].includes(role)) return; // Kiểm tra lại role
-
-    try {
-      const response = await getListUserClass(userId as string, "", 0, 100);
-      setClasses(response.content);
-    } catch (error) {
-      console.error("Failed to fetch user classes:", error);
-    }
-  };
 
   const handleBack = () => {
     setIsExiting(true);

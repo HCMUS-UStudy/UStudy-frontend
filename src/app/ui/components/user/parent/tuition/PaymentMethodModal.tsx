@@ -153,7 +153,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             <div>
               <p className="text-sm text-gray-600">Tổng số tiền</p>
               <p className="text-xl font-bold text-primary-darker">
-                {formatCurrency(payment.paymentPeriodDto.amount)}
+                {formatCurrency(payment.amount)}
               </p>
             </div>
           </div>

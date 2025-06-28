@@ -1,17 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import StudentClasses from "@/app/ui/components/user/student/classes/StudentClasses";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
+import { useSearchParams } from "next/navigation";
 
-export default async function StudentClassesPage(props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-    classQuery?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-  const query = searchParams?.query || "";
-  // const classQuery = searchParams?.classQuery || "All";
+export default function StudentClassesPage() {
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    const searchQuery = searchParams?.get("query") || "";
+    setQuery(searchQuery);
+  }, [searchParams]);
 
   return (
     <div className=" bg-foreground">

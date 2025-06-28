@@ -46,9 +46,8 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
         />
         <TableBody>
           {payments.map((payment) => {
-            const student = payment.paymentPeriodDto.student;
-            const enrolledClass = payment.paymentPeriodDto.enrolledClass;
-            const semester = `${formatDate(payment.paymentPeriodDto.startDate)} - ${formatDate(payment.paymentPeriodDto.endDate)}`;
+            const student = payment.student;
+            const classDto = payment.classDto;
             const dueDate = payment.paymentDate;
             const isOverdue =
               payment.status === "PENDING" && new Date(dueDate) < new Date();
@@ -58,26 +57,24 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                 <TableCell>{payment.invoiceId}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
-                      <FaUser className="h-4 w-4" />
-                    </div>
+                    <FaUser className="h-4 w-4" />
                     <span>{student.name}</span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <p className="font-medium">{enrolledClass.name}</p>
-                    <p className="text-sm text-gray-500">{semester}</p>
+                    <p className="font-medium">{classDto.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {classDto.course.name} - {classDto.grade.name}
+                    </p>
                   </div>
                 </TableCell>
                 <TableCell className="font-medium text-primary-darker">
-                  {formatCurrency(payment.paymentPeriodDto.amount)}
+                  {formatCurrency(payment.amount)}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center justify-center">
-                    {payment.status === "COMPLETED"
-                      ? formatDate(payment.paymentDate)
-                      : formatDate(payment.paymentDate)}
+                  <div className="flex items-center justify-left">
+                    {formatDate(payment.paymentDate)}
                     {isOverdue && (
                       <FaInfoCircle
                         className="ml-2 text-red-500"
@@ -96,9 +93,13 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                   </span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Button onClick={() => onViewDetails(payment)}>
-                      <FaEye className="size-5 text-primary hover:text-primary-darkest" />
+                  <div className="flex items-left justify-left space-x-2">
+                    <Button
+                      onClick={() => onViewDetails(payment)}
+                      variant="outlined"
+                      className="rounded-full p-0 min-w-0 flex"
+                    >
+                      <FaEye className="size-4" />
                     </Button>
                     {payment.status === "PENDING" ? (
                       <Button
@@ -111,9 +112,9 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                     ) : (
                       <Button
                         variant="outlined"
-                        className="rounded-full w-8 h-8 p-0 min-w-0 flex items-center justify-center"
+                        className="rounded-full p-0 min-w-0 flex"
                       >
-                        <FaDownload className="h-4 w-4" title="Tải biên lai" />
+                        <FaDownload className="size-4" title="Tải biên lai" />
                       </Button>
                     )}
                   </div>

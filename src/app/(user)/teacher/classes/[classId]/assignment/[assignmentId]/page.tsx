@@ -7,11 +7,13 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import StudentSubmissionInfo from "@/app/ui/components/user/teacher/StudentSubmissionInfo";
 import { AssignmentItem, SubmissionDetail, SubmissionItem } from "@/app/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 const mockAssignment: AssignmentItem = {
   id: "ass1",
   title: "Bài tập chương 1: Định lý Pythagoras",
   duration: 45,
+  mode: "PRACTICE",
   format: "ESSAY", // hoặc "MULTIPLE_CHOICE", "MIXED"
   numAttempts: 1,
   startTime: "2025-05-05T17:14:30.531Z",
@@ -313,6 +315,7 @@ export default function AssignmentDetail() {
   const [selectedStudent, setSelectedStudent] = useState<SubmissionItem | null>(
     null,
   );
+  const router = useRouter();
   const [submissionDetail, setSubmissionDetail] =
     useState<SubmissionDetail | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -347,6 +350,7 @@ export default function AssignmentDetail() {
   const handleBack = () => {
     setSelectedStudent(null);
     setSubmissionDetail(null);
+    router.back();
   };
 
   useEffect(() => {
@@ -385,7 +389,7 @@ export default function AssignmentDetail() {
       <div className="flex items-center mb-6 gap-4">
         <Tooltip text="Quay lại">
           <IoReturnUpBack
-            className="cursor-pointer text-2xl text-blue-600 hover:text-blue-800"
+            className="cursor-pointer text-2xl text-primary-dark hover:text-primary-darkest"
             onClick={handleBack}
           />
         </Tooltip>

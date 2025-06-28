@@ -162,7 +162,7 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({
   return (
     <div
       className={clsx(
-        "sticky top-0 left-0 z-10 pt-4 pb-3 px-8 border-b-2 bg-white font-bold text-xl",
+        "sticky top-0 left-0 z-10 pt-4 pb-3 px-10 md:px-14 border-b-2 bg-white font-bold text-base md:text-xl",
         className,
       )}
     >
@@ -170,10 +170,11 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({
 
       {displayCloseButton && (
         <button
+          type="button"
           className="hover:text-black hover:bg-gray-200 p-1 rounded-lg absolute top-[calc(50%-14px)] right-4"
           onClick={onClose}
         >
-          <LiaTimesSolid size={20} />
+          <LiaTimesSolid className="size-4 md:size-6" />
         </button>
       )}
     </div>

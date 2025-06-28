@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { UserData } from "../types";
 import { redirect } from "next/navigation";
+import { decodeToken } from "./axios";
 
 export async function encrypt(plainData: string, encryptionKey: string) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -106,6 +107,7 @@ export async function setTokensAndUserDataCookies(
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
     } catch (error) {
       throw error;
@@ -118,11 +120,13 @@ export async function setTokensAndUserDataCookies(
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
       cookieStore.set("permissions_iv", iv, {
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
     } catch (error) {
       console.error("Error encrypting permissions:", error);
@@ -172,11 +176,22 @@ export async function getCreatorFromCookies(): Promise<string | null> {
 export async function handleLogoutCookies() {
   const cookieStore = await cookies();
   const defaultRoute = (await getUserDataFromCookies())?.role.defaultRoute;
-  cookieStore.delete("accessToken");
-  cookieStore.delete("permissions");
-  cookieStore.delete("permissions_iv");
-  cookieStore.delete("refreshToken");
-  cookieStore.delete("userData");
+
+  // Chỉ xóa các cookies liên quan đến session
+  const sessionCookies = [
+    "accessToken",
+    "refreshToken",
+    "userData",
+    "userData_iv",
+    "permissions",
+    "permissions_iv",
+    "creator",
+  ];
+
+  sessionCookies.forEach((cookieName) => {
+    cookieStore.delete(cookieName);
+  });
+
   switch (defaultRoute) {
     case "ADMIN":
       redirect("/admin/login");
@@ -205,4 +220,18 @@ export async function getPermissions(): Promise<string[]> {
     }
   }
   return [];
+}
+
+export async function getUserId(): Promise<string> {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value || "";
+    if (accessToken) {
+      const userId = decodeToken(accessToken).userId;
+      return userId ?? "";
+    }
+    return "";
+  } catch (error) {
+    throw error;
+  }
 }

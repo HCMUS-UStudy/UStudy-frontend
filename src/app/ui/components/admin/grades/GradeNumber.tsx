@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { GradeItem } from "@/app/types";
 import { getAllGrades } from "@/app/lib/services/grade";
 
@@ -18,7 +18,7 @@ const GradeNumber: React.FC<GradeNumberProps> = ({
 
   const defaultGrade = gradeQuery === "All" ? "" : gradeQuery;
 
-  const fetchGrades = async () => {
+  const fetchGrades = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -32,7 +32,6 @@ const GradeNumber: React.FC<GradeNumberProps> = ({
       const filteredData: GradeItem[] = response.content.map((item) => ({
         id: item.id,
         name: item.name,
-        // description: item.description,
       }));
 
       setGrades(filteredData);
@@ -41,15 +40,15 @@ const GradeNumber: React.FC<GradeNumberProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, defaultGrade, setGrades, setLoading]);
 
   useEffect(() => {
     fetchGrades();
-  }, [searchQuery, gradeQuery]);
+  }, [searchQuery, gradeQuery, fetchGrades]);
 
   return (
     <h2
-      className={`text-2xl font-bold ${
+      className={`text-lg md:text-2xl font-bold ${
         loading ? "animate-pulse text-gray-400" : ""
       }`}
     >

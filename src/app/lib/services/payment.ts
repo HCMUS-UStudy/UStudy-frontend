@@ -69,22 +69,31 @@ export const createVnPayPayment = async (
 // };
 
 export const getPaymentByStuId = async (
-  studentId: string,
+  studentId: string | undefined,
   currentPage: number,
   limit: number,
   status: string,
 ): Promise<PaymentData> => {
   try {
-    const response = await axiosInstance.get(`/payment/list/${studentId}`, {
+    // Tạo endpoint dựa trên studentId có hay không
+    // const endpoint = studentId ? `/payment/list/${studentId}` : `/payment/list`;
+    const response = await axiosInstance.get("/payment/list", {
       params: {
+        studentId: studentId ?? "",
         page: currentPage,
         limit: limit,
         status: status,
       },
     });
+
     return response.data.data;
   } catch (error) {
-    throw error;
+    console.log(error);
+    return {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+    };
   }
 };
 

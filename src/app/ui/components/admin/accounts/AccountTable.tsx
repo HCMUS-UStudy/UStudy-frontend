@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import {
@@ -12,9 +12,7 @@ import {
   TableRow,
 } from "@/app/ui/components/_common/Table";
 import { deleteUser, getAllAccount } from "@/app/lib/services/user";
-import { useRouter } from "next/navigation";
 import Tooltip from "../../_common/Tooltip";
-import { toast } from "react-toastify";
 import { accountStatus } from "@/app/lib/utils";
 import {
   keepPreviousData,
@@ -23,6 +21,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Eye } from "lucide-react";
+import { useEncodedRoute } from "@/app/lib/hooks";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -38,8 +38,11 @@ const AccountTable: React.FC<AccountTableProps> = ({
   // const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const router = useRouter();
+  // const router = useRouter();
   // const [trigger, setTrigger] = useState<boolean>(false);
+
+  const { handleNavigate } = useEncodedRoute();
+  const { addToast } = useCustomToast();
 
   const {
     data: fetchAccounts,
@@ -67,76 +70,24 @@ const AccountTable: React.FC<AccountTableProps> = ({
     setTotalPages(fetchAccounts?.totalPages || 1);
   }, [fetchAccounts]);
 
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const roleQueryUp = (roleQuery || "All").toUpperCase();
-  //       const defaultRole = roleQueryUp === "ALL" ? "" : roleQueryUp;
-
-  //       const response = await getAllAccount(
-  //         searchQuery,
-  //         5,
-  //         defaultRole,
-  //         currentPage - 1,
-  //       );
-  //       // console.log(response.content);
-  //       setUsers(response.content);
-  //       setTotalPages(response.totalPages || 1);
-  //     } catch (error) {
-  //       console.log(error);
-  //       setError("Error fetching users.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchUsers();
-  // }, [currentPage, searchQuery, roleQuery, trigger]); // Use searchQueryState in the dependency array
-
   const handleDetail = (userId: string) => {
-    router.push(`/admin/accounts/${userId}`);
+    handleNavigate(userId, "/admin/accounts");
+    // router.push(`/admin/accounts/${userId}`);
   };
 
   const queryClient = useQueryClient();
   const useDeleteAccountMutation = useMutation({
     mutationFn: (userId: string) => deleteUser(userId),
     onSuccess: () => {
-      toast.success("Xóa tài khoản thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Xóa tài khoản thành công");
       queryClient.invalidateQueries({ queryKey: ["Accounts"] });
     },
     onError: () => {
-      toast.error("Xóa tài khoản thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Xóa tài khoản thất bại");
     },
   });
 
   const handleDeleteAccount = async (userId: string) => {
-    // try {
-    //   // setLoading(true);
-    //   await deleteUser(userId, searchQuery, 5, roleQuery, currentPage);
-    //   // setTrigger((prev) => !prev);
-    //   toast.success("Xóa tài khoản thành công", {
-    //     position: "bottom-right",
-    //     autoClose: 3000,
-    //     pauseOnHover: false,
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error("Xóa tài khoản thất bại", {
-    //     position: "bottom-right",
-    //     autoClose: 3000,
-    //     pauseOnHover: false,
-    //   });
-    // } finally {
-    //   // setLoading(false);
-    // }
     useDeleteAccountMutation.mutate(userId);
   };
 
@@ -190,12 +141,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
                   </span>
                 </TableCell>
                 <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
-                <TableCell className="flex justify-center items-center gap-2">
-                  <button className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors">
-                    <Tooltip text="Chỉnh sửa tài khoản">
-                      <FaEdit className="size-5" />
-                    </Tooltip>
-                  </button>
+                <TableCell className="flex justify-start items-center gap-2">
                   <button
                     onClick={() => handleDeleteAccount(user.id)}
                     className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"

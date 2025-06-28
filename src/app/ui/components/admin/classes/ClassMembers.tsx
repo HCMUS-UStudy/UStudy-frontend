@@ -69,19 +69,11 @@ export default function ClassMembers({
     <div>
       <Table>
         <TableHeader
-          columns={[
-            "STT",
-            "GenId",
-            "Họ tên",
-            "Email",
-            "Giới tính",
-            "Hành động",
-          ]}
+          columns={["GenId", "Họ tên", "Email", "Giới tính", "Hành động"]}
         />
         <TableBody isLoading={loading}>
           {members.map((member, index) => (
             <TableRow key={index}>
-              <TableCell>{index}</TableCell>
               <TableCell>{member.genId}</TableCell>
               <TableCell>{member.name}</TableCell>
               <TableCell>{member.email}</TableCell>

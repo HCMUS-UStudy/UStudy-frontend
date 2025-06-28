@@ -23,6 +23,7 @@ export type ClassTeacher = BaseClassInfo & {
   grade: GradeItem;
   course: Course;
   status: string | null;
+  studentAmount: number;
   classSessions: classSessions[];
 };
 
@@ -166,3 +167,71 @@ export type ClassRegisterResponseItem = BaseClassInfo & {
 
 export type ClassRegisterResponse =
   BasePaginationResponse<ClassRegisterResponseItem>;
+
+export type UpdateSchedule = {
+  startDate: string;
+  numLessons: number;
+  classSessions: {
+    day: DaysInWeek;
+    branchSessionId: string;
+    roomId: string;
+  };
+};
+
+export type StudentClassCount = {
+  inProgressClasses: number;
+  totalClasses: number;
+};
+
+export type StudentClassWithStats = BaseClassInfo & {
+  course: BaseCourseInfo;
+  grade: BaseGradeInfo;
+  status: string;
+  totalAssignments: number;
+  completedAssignments: number;
+  completionRate: number;
+};
+
+export type StudentClassWithGrades = BaseClassInfo & {
+  course: BaseCourseInfo;
+  grade: BaseGradeInfo;
+  status: string;
+  studentAverage: number;
+  classAverage: number;
+};
+
+export type ClassScore = {
+  classId: string;
+  className: string;
+  description: string;
+  course: {
+    id: string;
+    name: string;
+  };
+  grade: {
+    id: string;
+    name: string;
+  };
+  studentAverage: number;
+  classAverage: number;
+  percentageDifference: number;
+};
+
+export type ClassScoreDetail = {
+  classId: string;
+  className: string;
+  description: string;
+  course: {
+    id: string;
+    name: string;
+  };
+  grade: {
+    id: string;
+    name: string;
+  };
+  startDate: string;
+  studentAverage: number;
+  classAverage: number;
+  studentRank: number;
+  totalStudents: number;
+};

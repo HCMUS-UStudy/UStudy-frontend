@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
-import { ClassTeacher, AssignmentItem } from "@/app/types";
+import { AssignmentItem, ClassDetail } from "@/app/types";
 import { getClassById } from "@/app/lib/services/class";
 import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -155,7 +155,7 @@ export default function Assignment() {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [classDetail, setClassDetail] = useState<ClassTeacher | null>(null);
+  const [classDetail, setClassDetail] = useState<ClassDetail | null>(null);
   const handleGoBack = () => {
     setAdding(false);
   };
@@ -298,7 +298,6 @@ export default function Assignment() {
                 key={index}
                 className="p-5 border-2 rounded-lg transition-opacity duration-500 opacity-50"
               >
-                <div className="h-40 bg-gray-300 rounded-lg animate-pulse"></div>
                 <div className="h-5 w-3/4 bg-gray-300 rounded-lg mt-4"></div>
                 <div className="h-4 w-1/2 bg-gray-300 rounded-lg mt-2"></div>
                 <div className="flex items-center mt-4">

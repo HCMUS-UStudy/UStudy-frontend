@@ -39,14 +39,17 @@ const ClassDetailPage = () => {
     ? classSchedule.filter((s: ClassScheduleItem) => !s.isPassed)
     : [];
 
-  const lastCompleted = completed
+  // 2 buổi đã hoàn thành gần nhất (theo ngày giảm dần)
+  const lastCompletedList = completed
     .slice()
     .sort(
       (a: ClassScheduleItem, b: ClassScheduleItem) =>
         new Date(b.date).getTime() - new Date(a.date).getTime(),
-    )[0];
+    )
+    .slice(0, 2)
+    .reverse();
 
-  // 4 buổi chưa hoàn thành tiếp theo (theo ngày tăng dần)
+  // 3 buổi chưa hoàn thành tiếp theo (theo ngày tăng dần)
   const nextUpcoming = upcoming
     .slice()
     .sort(
@@ -59,9 +62,10 @@ const ClassDetailPage = () => {
   const displayList = showAll
     ? classSchedule
     : [
-        ...(lastCompleted ? [lastCompleted] : []),
+        ...lastCompletedList,
         ...nextUpcoming.filter(
-          (s: ClassScheduleItem) => !lastCompleted || s.id !== lastCompleted.id,
+          (s: ClassScheduleItem) =>
+            !lastCompletedList.some((c) => c.id === s.id),
         ),
       ];
 
@@ -84,25 +88,24 @@ const ClassDetailPage = () => {
 
   return (
     <>
-      {/* <button
-        className="mt-2 ml-4 text-primary-dark hover:text-primary-darkest"
-        onClick={() => router.back()}
-      >
-        ← Trở về
-      </button> */}
       <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-center">
-          <Button onClick={() => setAddingModal(true)}>+ Nội dung mới</Button>
+        <div className="flex justify-center w-full mt-3">
+          <Button
+            className="w-full md:w-auto"
+            onClick={() => setAddingModal(true)}
+          >
+            + Nội dung mới
+          </Button>
         </div>
-        <div className="shadow-md rounded-2xl p-6 my-4 border border-gray-100">
-          <h2 className="text-2xl font-bold text-primary-darker mb-2">
+        <div className="shadow-md rounded-2xl p-4 md:p-6 my-4 border border-gray-100">
+          <h2 className="text-lg md:text-2xl font-bold text-primary-darker mb-2">
             {classDetail?.name}
           </h2>
           <p className="text-gray-600 italic mb-4">
             {classDetail?.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
+          <div className="grid grid-cols-2 gap-4 text-xs md:text-sm text-gray-800">
             <div>
               <span className="font-semibold">Môn:</span>
               <div>{classDetail?.course.name}</div>
@@ -133,16 +136,16 @@ const ClassDetailPage = () => {
           </div>
         </div>
 
-        <div className="shadow-md rounded-2xl p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="shadow-md rounded-2xl p-4 md:p-6 border border-gray-100">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 md:mb-4">
             Danh sách buổi học
           </h3>
-          {classSchedule.length > 0 ? (
+          {classSchedule ? (
             <>
               <ul className="space-y-3">
-                {displayList.map((schedule: ClassScheduleItem) => (
+                {displayList.map((schedule: ClassScheduleItem, idx: number) => (
                   <li
-                    key={schedule.id}
+                    key={schedule.id ?? `schedule-${idx}`}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow transition"
                   >
                     <div className="flex justify-between items-center">
@@ -161,22 +164,22 @@ const ClassDetailPage = () => {
                           )[schedule.classSession.day.toLowerCase()] ||
                             schedule.classSession.day}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs md:text-sm text-gray-500">
                           Ngày: {formatDate(schedule.date)}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs md:text-sm text-gray-500">
                           Phòng: {schedule.classSession.room.name}
                         </div>
                       </div>
                       {schedule.isPassed ? (
                         <span
-                          className={`text-xs px-2 py-1 rounded bg-green-100 text-green-700`}
+                          className={`text-xs md:text-xs px-2 py-1 rounded bg-green-100 text-green-700`}
                         >
                           Đã hoàn thành
                         </span>
                       ) : (
                         <span
-                          className={`text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700`}
+                          className={`text-xs md:text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700`}
                         >
                           Chưa hoàn thành
                         </span>
@@ -188,7 +191,7 @@ const ClassDetailPage = () => {
               {!showAll && classSchedule.length > displayList.length ? (
                 <div className="flex justify-center mt-4">
                   <button
-                    className="text-primary-darker underline"
+                    className="text-primary-darker text-sm md:text-base underline"
                     onClick={() => setShowAll(true)}
                   >
                     Xem tất cả

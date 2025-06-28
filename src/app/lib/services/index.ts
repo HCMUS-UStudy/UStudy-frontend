@@ -1,0 +1,32 @@
+export * from "./user";
+export * from "./notification";
+export * from "./classSchedule";
+export * from "./class";
+export * from "./auth";
+export * from "./attendance";
+export * from "./chat";
+
+import * as ClassMaterial from "./class-material";
+import * as Material from "./material";
+import * as SystemMaterial from "./system-material";
+import * as Question from "./question";
+export { ClassMaterial, Material, SystemMaterial, Question };
+
+export * from "./payment";
+export * from "./submission";
+export * from "./role";
+export * from "./register";
+export * from "./register-class";
+export * from "./permission";
+export * from "./course";
+export * from "./AI";
+export * from "./room";
+export * from "./branch";
+export * from "./childClasses";
+export * from "./grade";
+export * from "./personal-material";
+export * from "./quiz";
+export * from "./session";
+export * from "./academicResult";
+export * from "./assignment";
+export * from "./chapter";

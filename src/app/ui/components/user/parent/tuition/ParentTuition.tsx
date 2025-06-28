@@ -18,7 +18,7 @@ import PaymentLoadingSkeleton from "./PaymentLoadingSkeleton";
 export default function ParentTuition() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages] = useState(5);
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("all");
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(
     null,
   );
@@ -27,7 +27,7 @@ export default function ParentTuition() {
 
   const statusParam = activeTab === "all" ? "" : activeTab.toUpperCase();
   const selectedChild = useAppSelector(
-    (state: RootState) => state.children.selectedId,
+    (state: RootState) => state.children.selectedChild,
   );
   const {
     data: paymentData,
@@ -35,10 +35,11 @@ export default function ParentTuition() {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["payments", activeTab, selectedChild, currentPage - 1],
+    queryKey: ["payments", activeTab, selectedChild?.id, currentPage - 1],
     queryFn: () =>
-      getPaymentByStuId(selectedChild, currentPage - 1, 1, statusParam),
+      getPaymentByStuId(selectedChild?.id, currentPage - 1, 5, statusParam),
     placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 
   const payments = paymentData?.content || [];
@@ -137,9 +138,9 @@ export default function ParentTuition() {
 
             <Tabs value={activeTab} onTabChange={setActiveTab}>
               <TabList>
+                <Tab value="all" label="Tất cả" />
                 <Tab value="pending" label="Chờ thanh toán" />
                 <Tab value="completed" label="Đã thanh toán" />
-                <Tab value="all" label="Tất cả" />
               </TabList>
 
               <TabPanel value="pending">

@@ -54,18 +54,20 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                       <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
                         <FaUser className="h-4 w-4" />
                       </div>
-                      <span>{payment.paymentPeriodDto.student.name}</span>
+                      <span>{payment.student.name}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="font-medium">
-                        {payment.paymentPeriodDto.enrolledClass.name}
+                      <p className="font-medium">{payment.classDto.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {payment.classDto.course.name} -{" "}
+                        {payment.classDto.grade.name}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-primary-darker">
-                    {formatCurrency(payment.paymentPeriodDto.amount)}
+                    {formatCurrency(payment.amount)}
                   </TableCell>
                   <TableCell>
                     {payment.paymentDate && formatDate(payment.paymentDate)}
@@ -78,19 +80,19 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                     </span>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-center space-x-2">
+                    <div className="flex items-left justify-left space-x-2">
                       <Button
                         onClick={() => onViewDetails(payment)}
                         variant="outlined"
-                        className="rounded-full w-8 h-8 p-0 min-w-0 flex items-center justify-center"
+                        className="rounded-full p-0 min-w-0 flex"
                       >
-                        <FaEye className="h-4 w-4" />
+                        <FaEye className="size-4" />
                       </Button>
                       <Button
                         variant="outlined"
-                        className="rounded-full w-8 h-8 p-0 min-w-0 flex items-center justify-center"
+                        className="rounded-full p-0 min-w-0 flex"
                       >
-                        <FaDownload className="h-4 w-4" title="Tải biên lai" />
+                        <FaDownload className="size-4" title="Tải biên lai" />
                       </Button>
                     </div>
                   </TableCell>

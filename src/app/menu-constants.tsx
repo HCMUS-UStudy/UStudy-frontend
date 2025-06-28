@@ -2,21 +2,16 @@ import { SideNavItem } from "@/app/types";
 import {
   BsBook,
   BsCalendar,
-  // BsCardChecklist,
   BsCreditCard,
   BsHouseDoor,
   BsLayers,
   BsPerson,
   BsPersonWorkspace,
   BsShieldLock,
-  BsList,
+  // BsList,
   BsDoorOpen,
-  // BsFillPeopleFill,
-  // BsQuestionCircle,
-  // BsWallet2,
 } from "react-icons/bs";
 import { MdAppRegistration, MdOutlineFileCopy } from "react-icons/md";
-
 import { SiGoogleclassroom } from "react-icons/si";
 import { GiMoneyStack } from "react-icons/gi";
 import { RiDashboard2Line } from "react-icons/ri";
@@ -26,7 +21,7 @@ import { HiOutlineDocumentText } from "react-icons/hi";
 import {
   FaClipboardList,
   FaRegCommentDots,
-  FaUserCheck,
+  FaRegCircleQuestion,
 } from "react-icons/fa6";
 import {
   MdOutlineAssignment,
@@ -39,44 +34,29 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     path: "/admin/dashboard",
     icon: <RiDashboard2Line size={20} />,
   },
-  {
-    title: "Quản lý chi nhánh",
-    path: "/admin/branches",
-    icon: <GrMapLocation size={20} />,
-  },
-  {
-    title: "Quản lý ca học",
-    path: "/admin/sessions",
-    icon: <AiOutlineSchedule size={20} />,
-  },
-  {
-    title: "Quản lý chức vụ",
-    path: "/admin/roles",
-    icon: <BsShieldLock size={20} />,
-  },
-  {
-    title: "Quản lý chung",
-    path: "/admin/general",
-    submenu: true,
-    icon: <BsList size={20} />,
-    subMenuItems: [
-      {
-        title: "Quản lý chi nhánh",
-        path: "/admin/branches",
-        icon: <GrMapLocation size={20} />,
-      },
-      {
-        title: "Quản lý ca học",
-        path: "/admin/sessions",
-        icon: <AiOutlineSchedule size={20} />,
-      },
-      {
-        title: "Quản lý chức vụ",
-        path: "/admin/roles",
-        icon: <BsShieldLock size={20} />,
-      },
-    ],
-  },
+  // {
+  //   title: "Quản lý chung",
+  //   path: "/admin/general",
+  //   submenu: true,
+  //   icon: <BsList size={20} />,
+  //   subMenuItems: [
+  //     {
+  //       title: "Quản lý chi nhánh",
+  //       path: "/admin/branches",
+  //       icon: <GrMapLocation size={20} />,
+  //     },
+  //     {
+  //       title: "Quản lý ca học",
+  //       path: "/admin/sessions",
+  //       icon: <AiOutlineSchedule size={20} />,
+  //     },
+  //     {
+  //       title: "Quản lý chức vụ",
+  //       path: "/admin/roles",
+  //       icon: <BsShieldLock size={20} />,
+  //     },
+  //   ],
+  // },
   {
     title: "Thông báo",
     path: "/admin/notifications",
@@ -114,25 +94,45 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <HiOutlineDocumentText size={20} />,
   },
   {
+    title: "Quản lý câu hỏi",
+    path: "/admin/questions",
+    icon: <FaRegCircleQuestion size={20} />,
+  },
+  {
     title: "Quản lý học phí",
     path: "/admin/fees",
     icon: <GiMoneyStack size={20} />,
   },
+  {
+    title: "Quản lý chi nhánh",
+    path: "/admin/branches",
+    icon: <GrMapLocation size={20} />,
+  },
+  {
+    title: "Quản lý ca học",
+    path: "/admin/sessions",
+    icon: <AiOutlineSchedule size={20} />,
+  },
+  {
+    title: "Quản lý chức vụ",
+    path: "/admin/roles",
+    icon: <BsShieldLock size={20} />,
+  },
+  {
+    title: "Liên hệ",
+    path: "/admin/contact",
+    icon: <FaRegCommentDots size={20} />,
+  },
 ];
 
 export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
-  {
-    title: "Trang chủ",
-    path: "/teacher/home",
-    icon: <BsHouseDoor size={20} />,
-  },
   {
     title: "Lớp học",
     path: "/teacher/classes",
     icon: <SiGoogleclassroom size={20} />,
   },
   {
-    title: "Lịch học",
+    title: "Lịch dạy",
     path: "/teacher/schedule",
     icon: <BsCalendar size={20} />,
   },
@@ -152,9 +152,9 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
     icon: <MdOutlineNotificationsActive size={20} />,
   },
   {
-    title: "Điểm danh",
-    path: "/teacher/attendance",
-    icon: <FaUserCheck size={20} />,
+    title: "Quản lý câu hỏi",
+    path: "/teacher/questions",
+    icon: <FaRegCircleQuestion size={20} />,
   },
 ];
 

@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { AssignmentItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
+import { FaBook, FaClipboardCheck } from "react-icons/fa";
 
 interface Props {
   assignment: AssignmentItem;
@@ -29,28 +32,51 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
     });
   }
 
+  const getModeIcon = () => {
+    return assignment.mode === "PRACTICE" ? (
+      <FaBook className="w-4 h-4" />
+    ) : (
+      <FaClipboardCheck className="w-4 h-4" />
+    );
+  };
+
+  const getModeColor = () => {
+    return assignment.mode === "PRACTICE"
+      ? "bg-green-100 text-green-800 border-green-200"
+      : "bg-purple-100 text-purple-800 border-purple-200";
+  };
+
   return (
     <div
-      className={`rounded-lg shadow-lg border-2 transition-shadow duration-300 p-5 ${
+      className={`rounded-lg shadow-lg border-2 transition-all duration-300 ${
         viewMode === "list"
-          ? "flex items-center gap-6 p-5 hover:bg-gray-100"
-          : ""
+          ? "flex items-center gap-4 p-4 hover:bg-gray-50"
+          : "p-5"
       }`}
     >
       <div
         className={`relative rounded-lg overflow-hidden ${
-          viewMode === "list" ? "w-32 h-20 flex-shrink-0" : ""
+          viewMode === "list" ? "w-56 h-32 flex-shrink-0" : ""
         }`}
       >
         <Image
-          width={128}
-          height={20}
+          width={224}
+          height={128}
           src={randomImage}
           alt="Quiz banner"
           className={`object-cover rounded-lg ${
-            viewMode === "list" ? "w-32 h-20" : "w-full h-40"
+            viewMode === "list" ? "w-56 h-32" : "w-full h-40"
           }`}
         />
+
+        <div className="absolute top-2 left-2 flex gap-2">
+          <div
+            className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm flex items-center gap-1 border ${getModeColor()}`}
+          >
+            {getModeIcon()}
+            {assignment.mode === "PRACTICE" ? "Luyện tập" : "Kiểm tra"}
+          </div>
+        </div>
 
         <div
           className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
@@ -70,15 +96,19 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
       </div>
 
       <div
-        className={`flex-1 ${viewMode === "list" ? "flex flex-col gap-1" : ""}`}
+        className={`flex-1 min-w-0 ${
+          viewMode === "list" ? "flex flex-col justify-center gap-2" : ""
+        }`}
       >
-        <h2
-          className={`text-xl font-semibold text-primary-darker truncate ${
-            viewMode === "list" ? "" : "mt-2 mb-2"
-          }`}
-        >
-          {assignment.title}
-        </h2>
+        <div className="flex items-center gap-2 mb-1">
+          <h2
+            className={`font-semibold text-primary-darker truncate ${
+              viewMode === "list" ? "text-lg" : "text-xl mt-2 mb-2"
+            }`}
+          >
+            {assignment.title}
+          </h2>
+        </div>
 
         <div className="flex items-center text-primary-dark text-sm">
           <span>📅 {formatDateToVN(assignment.startTime)}</span>
@@ -88,8 +118,8 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
 
         <div className="flex items-center mt-2 space-x-3">
           <Image
-            width={40}
-            height={40}
+            width={32}
+            height={32}
             src={assignment.createdBy.avatar || "/student.png"}
             alt={assignment.createdBy.name}
             className="w-8 h-8 rounded-full border border-gray-300 shadow-sm"
@@ -103,18 +133,22 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
       <div
         className={`${
           viewMode === "list"
-            ? "flex items-center space-x-3"
+            ? "flex items-center ml-auto"
             : "flex items-center justify-end mt-4"
         }`}
       >
-        <div className="flex space-x-2">
-          <Button
-            className="px-3 py-1 text-sm bg-primary-darkest hover:bg-white text-white hover:text-primary-darkest border border-primary-darkest transition-all"
-            onClick={() => onStart(assignment)}
-          >
-            Bắt đầu
-          </Button>
-        </div>
+        <Button
+          className={`px-4 py-2 text-sm transition-all ${
+            assignment.mode === "PRACTICE"
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-purple-600 hover:bg-purple-700 text-white"
+          }`}
+          onClick={() => onStart(assignment)}
+        >
+          {assignment.mode === "PRACTICE"
+            ? "Luyện tập ngay"
+            : "Bắt đầu kiểm tra"}
+        </Button>
       </div>
     </div>
   );

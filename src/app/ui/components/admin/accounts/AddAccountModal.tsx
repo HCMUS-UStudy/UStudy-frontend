@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +17,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import { useRouter } from "next/navigation";
 import { getAllRoles } from "@/app/lib/services/role";
 import { GenderType } from "@/app/types";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { createNewAccount } from "@/app/lib/services";
 
 interface AddAccountModalProps {
   buttonLabel: string;
@@ -66,60 +67,37 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
     resolver: zodResolver(CreateUserSchema),
   });
 
-  // const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
-
-  // const router = useRouter();
-
-  // Gọi API để lấy danh sách roles khi component render
-  // useEffect(() => {
-  //   const fetchRoles = async () => {
-  //     try {
-  //       const response = await getAllRoles();
-  //       if (response.statusCode === "OK") {
-  //         setRoles(response.data); // Lưu danh sách roles
-  //       } else {
-  //         toast.error("Lỗi khi tải danh sách quyền");
-  //       }
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy roles:", error);
-  //       toast.error("Không thể lấy danh sách quyền");
-  //     }
-  //   };
-
-  //   fetchRoles();
-  // }, []);
+  const { addToast } = useCustomToast();
 
   const { data: roles, status: rolesStatus } = useQuery({
     queryKey: ["Roles"],
     queryFn: () => getAllRoles(),
   });
-
-  const onSubmit = async (data: CreateUserInputs) => {
-    try {
-      console.log(data);
-      // const response = await createNewAccount(data);
-      // console.log(response);
-
-      // if (response.statusCode === "OK") {
-      //   toast.success("Tạo tài khoản thành công!", {
-      //     position: "bottom-right",
-      //     autoClose: 3000,
-      //   });
-      //   setShowModal(false);
-      //   router.push("/admin/accounts");
-      // } else {
-      //   toast.error("Đã xảy ra lỗi khi tạo tài khoản.", {
-      //     position: "bottom-right",
-      //     autoClose: 3000,
-      //   });
-      // }
-    } catch (error) {
-      console.error("API error:", error);
-      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
-        position: "bottom-right",
-        autoClose: 3000,
+  const queryClient = useQueryClient();
+  const createUserMutation = useMutation({
+    mutationFn: (data: CreateUserInputs) => {
+      return createNewAccount({
+        name: data.name,
+        birthday: data.birthday,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        gender: data.gender,
+        roleId: data.roleId,
       });
-    }
+    },
+    onError: () => {
+      addToast.error("Lỗi hệ thống");
+    },
+    onSuccess: () => {
+      addToast.success("Tạo tài khoản thành công");
+      queryClient.invalidateQueries({ queryKey: ["Accounts"] });
+      setShowModal(false);
+    },
+  });
+
+  const onSubmit = (data: CreateUserInputs) => {
+    createUserMutation.mutate(data);
   };
   const [showModal, setShowModal] = useState(false);
 
@@ -255,6 +233,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
               variant="primary"
               form="add-account-admin-form"
               type="submit"
+              isPending={createUserMutation.status === "pending"}
               className="w-full"
             >
               Tạo người dùng mới

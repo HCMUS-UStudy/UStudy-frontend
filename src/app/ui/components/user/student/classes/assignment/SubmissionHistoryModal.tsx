@@ -1,3 +1,5 @@
+"use client";
+
 import { AssignmentItem, SubmissionItem } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
 import {
@@ -154,32 +156,60 @@ const SubmissionHistoryModal: React.FC<Props> = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2 justify-center">
-                          {isExpired(assignment.endTime) ? (
-                            <Tooltip text="Xem lại">
-                              <button
-                                type="button"
-                                onClick={() => onReview(submission)}
-                                className="p-2 text-primary-dark hover:text-primary-darkest transition-colors"
-                                title="Xem lại"
-                              >
-                                <FaEye className="text-xl" />
-                              </button>
-                            </Tooltip>
-                          ) : assignment.format === "MULTIPLE_CHOICE" ? (
-                            <div>Bài tập chưa hết hạn</div>
-                          ) : null}
+                          {assignment.mode === "PRACTICE" ? (
+                            <>
+                              <Tooltip text="Xem lại">
+                                <button
+                                  type="button"
+                                  onClick={() => onReview(submission)}
+                                  className="p-2 text-primary-dark hover:text-primary-darkest transition-colors"
+                                  title="Xem lại"
+                                >
+                                  <FaEye className="text-xl" />
+                                </button>
+                              </Tooltip>
+                              {(assignment.format === "ESSAY" ||
+                                assignment.format === "MIXED") &&
+                                !isExpired(assignment.endTime) && (
+                                  <button
+                                    onClick={() => onEdit(submission.id)}
+                                    className="p-2 text-green-600 hover:text-green-800"
+                                    title="Chỉnh sửa"
+                                  >
+                                    <FaEdit className="text-xl" />
+                                  </button>
+                                )}
+                            </>
+                          ) : (
+                            <>
+                              {isExpired(assignment.endTime) ? (
+                                <Tooltip text="Xem lại">
+                                  <button
+                                    type="button"
+                                    onClick={() => onReview(submission)}
+                                    className="p-2 text-primary-dark hover:text-primary-darkest transition-colors"
+                                    title="Xem lại"
+                                  >
+                                    <FaEye className="text-xl" />
+                                  </button>
+                                </Tooltip>
+                              ) : assignment.format === "MULTIPLE_CHOICE" ? (
+                                <div>Bài tập chưa hết hạn</div>
+                              ) : null}
 
-                          {(assignment.format === "ESSAY" ||
-                            assignment.format === "MIXED") &&
-                            !isExpired(assignment.endTime) && (
-                              <button
-                                onClick={() => onEdit(submission.id)}
-                                className="p-2 text-green-600 hover:text-green-800"
-                                title="Chỉnh sửa"
-                              >
-                                <FaEdit className="text-xl" />
-                              </button>
-                            )}
+                              {(assignment.format === "ESSAY" ||
+                                assignment.format === "MIXED") &&
+                                !isExpired(assignment.endTime) && (
+                                  <button
+                                    onClick={() => onEdit(submission.id)}
+                                    className="p-2 text-green-600 hover:text-green-800"
+                                    title="Chỉnh sửa"
+                                  >
+                                    <FaEdit className="text-xl" />
+                                  </button>
+                                )}
+                            </>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

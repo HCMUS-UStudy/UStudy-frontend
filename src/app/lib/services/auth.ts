@@ -1,5 +1,12 @@
 import axiosInstance from "@/app/lib/axios";
-import { AuthResponse } from "@/app/types";
+import {
+  AuthResponse,
+  ChangePasswordPayload,
+  VerifyOtpPayload,
+  GenerateOtpPayload,
+  ForgotPasswordWithOtpPayload,
+  SimpleApiResponse,
+} from "@/app/types/auth";
 
 export const login = async (
   username: string,
@@ -38,6 +45,48 @@ export const verifyToken = async (): Promise<boolean> => {
   try {
     const response = await axiosInstance.get("/auth/verify-token");
     return response.data.statusCode === "OK";
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const changePassword = async (data: ChangePasswordPayload) => {
+  try {
+    const response = await axiosInstance.put("/auth/change-password", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const verifyOtp = async (
+  data: VerifyOtpPayload,
+): Promise<SimpleApiResponse> => {
+  try {
+    const response = await axiosInstance.post("/auth/verify-otp", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const generateOtp = async (
+  data: GenerateOtpPayload,
+): Promise<SimpleApiResponse> => {
+  try {
+    const response = await axiosInstance.post("/auth/generate-otp", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const forgotPasswordWithOtp = async (
+  data: ForgotPasswordWithOtpPayload,
+): Promise<SimpleApiResponse> => {
+  try {
+    const response = await axiosInstance.post("/auth/forgot-password", data);
+    return response.data;
   } catch (error) {
     throw error;
   }

@@ -3,22 +3,38 @@
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import Image from "next/image";
 import { UserData } from "@/app/types";
+import { useRef, useEffect, useState } from "react";
 
 const DropdownProfile = ({
   userInfo,
-  handleToggle,
-  toggleCollapse,
   handleProfileClick,
   handleLogout,
-  dropdownRef,
 }: {
   userInfo: UserData | null;
-  handleToggle: () => void;
-  toggleCollapse: boolean;
   handleProfileClick: () => void;
   handleLogout: () => void;
-  dropdownRef: React.RefObject<HTMLDivElement>;
 }) => {
+  const [toggleCollapse, setToggleCollapse] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleToggle = () => setToggleCollapse((prev) => !prev);
+
+  useEffect(() => {
+    if (!toggleCollapse) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setToggleCollapse(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [toggleCollapse]);
+
   return (
     <div className="flex items-center" ref={dropdownRef}>
       <div
@@ -55,16 +71,16 @@ const DropdownProfile = ({
             className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-t-lg transition-all"
             onClick={handleProfileClick}
           >
-            <div className="flex gap-3 items-center">
-              <FaUserCircle size={18} className="" /> Hồ sơ
+            <div className="flex gap-3 items-center text-gray-800">
+              <FaUserCircle size={18} /> Hồ sơ
             </div>
           </div>
           <div
             className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-b-lg"
             onClick={handleLogout}
           >
-            <div className="flex gap-3 items-center">
-              <FaSignOutAlt size={18} className="" /> Đăng xuất
+            <div className="flex gap-3 items-center text-gray-800">
+              <FaSignOutAlt size={18} /> Đăng xuất
             </div>
           </div>
         </div>
