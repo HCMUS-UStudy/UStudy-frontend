@@ -1,32 +1,19 @@
-import { BsGraphUp, BsCalendar3, BsFileText } from "react-icons/bs";
+import { BsGraphUp, BsTrophy, BsBook } from "react-icons/bs";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../../_common/Card";
-import { FaGraduationCap } from "react-icons/fa6";
+import { ClassScoreDetail } from "@/app/types/class";
 
 interface HeaderProps {
-  overallAverage: number;
-  ranking: {
-    color: string;
-    label: string;
-  };
-  selectedSemester: string;
-  selectedYear: string;
-  totalSubjects: number;
+  details: ClassScoreDetail;
 }
 
-export const Header = ({
-  overallAverage,
-  ranking,
-  selectedSemester,
-  selectedYear,
-  totalSubjects,
-}: HeaderProps) => {
+export const Header = ({ details }: HeaderProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {/* Điểm trung bình */}
       <Card className="border-primary-light hover:shadow-lg transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -36,65 +23,44 @@ export const Header = ({
           <BsGraphUp className="h-5 w-5 text-primary-darker" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-primary-darkest">
-              {overallAverage.toFixed(1)}
-            </div>
-            <p className={`text-lg font-medium ${ranking.color}`}>
-              {ranking.label}
-            </p>
+          <div className="text-3xl font-bold text-primary-darkest">
+            {details.studentAverage.toFixed(1)}
           </div>
+          <p className="text-sm text-gray-500">
+            TB lớp: {details.classAverage.toFixed(1)}
+          </p>
         </CardContent>
       </Card>
 
+      {/* Xếp hạng */}
       <Card className="border-primary-light hover:shadow-lg transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-lg font-medium text-gray-700">
             Xếp hạng
           </CardTitle>
-          <FaGraduationCap className="h-5 w-5 text-primary-darker" />
+          <BsTrophy className="h-5 w-5 text-primary-darker" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-primary-darkest">5/30</div>
-            <p className="text-sm font-medium text-gray-600">Trong lớp</p>
+          <div className="text-3xl font-bold text-primary-darkest">
+            {`${details.studentRank}/${details.totalStudents}`}
           </div>
+          <p className="text-sm text-gray-500">Trong lớp</p>
         </CardContent>
       </Card>
 
-      {/* Học kỳ hiện tại */}
+      {/* Môn học */}
       <Card className="border-primary-light hover:shadow-lg transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-lg font-medium text-gray-700">
-            Học kỳ hiện tại
+            Môn học
           </CardTitle>
-          <BsCalendar3 className="h-5 w-5 text-primary-darker" />
+          <BsBook className="h-5 w-5 text-primary-darker" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-primary-darkest">
-              {selectedSemester}
-            </div>
-            <p className="text-sm font-medium text-gray-600">{selectedYear}</p>
+          <div className="text-3xl font-bold text-primary-darkest">
+            {details.course.name}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Tổng số môn học */}
-      <Card className="border-primary-light hover:shadow-lg transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-lg font-medium text-gray-700">
-            Tổng số môn học
-          </CardTitle>
-          <BsFileText className="h-5 w-5 text-primary-darker" />
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-primary-darkest">
-              {totalSubjects}
-            </div>
-            <p className="text-sm font-medium text-gray-600">Tổng số môn</p>
-          </div>
+          <p className="text-sm text-gray-500">{details.grade.name}</p>
         </CardContent>
       </Card>
     </div>
