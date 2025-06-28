@@ -58,3 +58,21 @@ export const getCourseById = async (courseId: string) => {
   const response = await axiosInstance.get(`/course/details/${courseId}`);
   return response.data.data;
 };
+
+export const updateCourse = async ({
+  courseId,
+  data,
+}: {
+  courseId: string;
+  data: CourseSchema;
+}): Promise<CreateCourseResponse> => {
+  try {
+    const response = await axiosInstance.put(`/course/update/${courseId}`, {
+      name: data.name,
+      description: data.description,
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
