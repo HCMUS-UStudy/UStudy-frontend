@@ -15,6 +15,8 @@ import {
   StudentClassCount,
   StudentClassWithStats,
   StudentClassWithGrades,
+  ClassScore,
+  ClassScoreDetail,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { MemberData } from "@/app/types/member";
@@ -324,6 +326,26 @@ export const getStudentClassesWithGrades = async (): Promise<
 > => {
   try {
     const response = await axiosInstance.get("/class/my-classes-with-grades");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAllClassScores = async (): Promise<ClassScore[]> => {
+  try {
+    const response = await axiosInstance.get("/class/scores-all-classes");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getClassScoreDetail = async (
+  classId: string,
+): Promise<ClassScoreDetail> => {
+  try {
+    const response = await axiosInstance.get(`/class/score-details/${classId}`);
     return response.data.data;
   } catch (error) {
     throw error;

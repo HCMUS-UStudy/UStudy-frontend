@@ -1,12 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/ui/components/_common/Card";
+import { useState } from "react";
 import { Tabs, TabList, Tab, TabPanel } from "@/app/ui/components/_common/Tabs";
 import {
   Chart as ChartJS,
@@ -15,25 +9,33 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend,
   Filler,
 } from "chart.js";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getAllClassScores,
+  getClassScoreDetail,
+} from "@/app/lib/services/class";
+import { ClassScore, ClassScoreDetail } from "@/app/types/class";
+import { Header } from "@/app/ui/components/user/student/academic-results/Header";
 import { SubjectScoreChart } from "./SubjectScoreChart";
 import { ProgressChart } from "./ProgressChart";
+import { SkillChart } from "./SkillChart";
 import DetailedScoresTable from "./DetailedScoresTable";
-import { Select, SelectItem } from "../../../_common/Select";
-import { useQuery } from "@tanstack/react-query";
-import { getAllClasses } from "@/app/lib/services/class";
+import { AcademicResultsSkeleton } from "./AcademicResultsSkeleton";
+import { MessageCard } from "./MessageCard";
 
-// Đăng ký các components cho Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
   BarElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend,
@@ -41,214 +43,138 @@ ChartJS.register(
 );
 
 export default function AcademicResultsView() {
-  // const [selectedSemester, setSelectedSemester] = useState("HK1");
-  // const [selectedYear, setSelectedYear] = useState("2023-2024");
+  const [selectedClassId, setSelectedClassId] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("charts");
 
-  // // Chi tiết điểm số
-  // const detailedScores = [
-  //   {
-  //     subject: "Toán học",
-  //     midterm: 8.0,
-  //     final: 9.0,
-  //     average: 8.5,
-  //     grade: "A",
-  //     teacher: "Nguyễn Văn A",
-  //   },
-  //   {
-  //     subject: "Ngữ văn",
-  //     midterm: 7.5,
-  //     final: 8.0,
-  //     average: 7.8,
-  //     grade: "B+",
-  //     teacher: "Trần Thị B",
-  //   },
-  //   {
-  //     subject: "Tiếng Anh",
-  //     midterm: 8.0,
-  //     final: 8.5,
-  //     average: 8.2,
-  //     grade: "A-",
-  //     teacher: "Lê Văn C",
-  //   },
-  //   {
-  //     subject: "Vật lý",
-  //     midterm: 7.0,
-  //     final: 8.0,
-  //     average: 7.5,
-  //     grade: "B",
-  //     teacher: "Phạm Thị D",
-  //   },
-  //   {
-  //     subject: "Hóa học",
-  //     midterm: 7.5,
-  //     final: 8.5,
-  //     average: 8.0,
-  //     grade: "B+",
-  //     teacher: "Võ Văn E",
-  //   },
-  //   {
-  //     subject: "Sinh học",
-  //     midterm: 9.0,
-  //     final: 9.5,
-  //     average: 9.2,
-  //     grade: "A+",
-  //     teacher: "Nguyễn Thị F",
-  //   },
-  //   {
-  //     subject: "Lịch sử",
-  //     midterm: 7.0,
-  //     final: 8.0,
-  //     average: 7.6,
-  //     grade: "B",
-  //     teacher: "Trần Văn G",
-  //   },
-  //   {
-  //     subject: "Địa lý",
-  //     midterm: 8.0,
-  //     final: 8.5,
-  //     average: 8.4,
-  //     grade: "A-",
-  //     teacher: "Lê Thị H",
-  //   },
-  //   {
-  //     subject: "GDCD",
-  //     midterm: 8.5,
-  //     final: 9.0,
-  //     average: 8.8,
-  //     grade: "A",
-  //     teacher: "Phạm Văn I",
-  //   },
-  // ];
-  const [selectedClass, setSelectedClass] = useState<string>("");
-  const { data: classes, status } = useQuery({
-    queryKey: ["Classes"],
-    queryFn: () => getAllClasses("", 0, 100),
+  // Lấy điểm tổng thể tất cả các lớp
+  const {
+    data: allScores,
+    isLoading: isLoadingScores,
+    error: scoresError,
+  } = useQuery<ClassScore[], Error>({
+    queryKey: ["allClassScores"],
+    queryFn: getAllClassScores,
   });
 
-  useEffect(() => {
-    console.log(classes?.content);
-  }, [classes]);
+  // Lấy danh sách lớp từ allScores
+  const classList = allScores || [];
 
-  // Tính điểm trung bình tổng
-  // const overallAverage =
-  //   detailedScores.reduce((sum, item) => sum + item.average, 0) /
-  //   detailedScores.length;
+  // Lấy chi tiết điểm lớp khi chọn 1 lớp cụ thể
+  const {
+    data: classDetails,
+    isLoading: isLoadingDetails,
+    error: detailsError,
+  } = useQuery<ClassScoreDetail, Error>({
+    queryKey: ["classScoreDetail", selectedClassId],
+    queryFn: () => getClassScoreDetail(selectedClassId),
+    enabled: selectedClassId !== "all",
+  });
 
-  // // Xếp loại học lực
-  // const getAcademicRanking = (score: number) => {
-  //   if (score >= 9.0) return { label: "Xuất sắc", color: "text-red-600" };
-  //   if (score >= 8.0) return { label: "Giỏi", color: "text-green-600" };
-  //   if (score >= 7.0) return { label: "Khá", color: "text-blue-600" };
-  //   if (score >= 5.0) return { label: "Trung bình", color: "text-yellow-600" };
-  //   return { label: "Yếu", color: "text-gray-600" };
-  // };
+  // Lấy năm học từ classDetails
+  const academicYear = classDetails?.startDate
+    ? new Date(classDetails.startDate).getFullYear() +
+      "-" +
+      (new Date(classDetails.startDate).getFullYear() + 1)
+    : "";
 
-  // const ranking = getAcademicRanking(overallAverage);
+  const handleClassChange = (classId: string) => setSelectedClassId(classId);
+
+  if (isLoadingScores) {
+    return <AcademicResultsSkeleton />;
+  }
+  if (scoresError || detailsError) {
+    return <MessageCard message="Lỗi khi tải dữ liệu." />;
+  }
+  if (!allScores || allScores.length === 0) {
+    return <MessageCard message="Chưa có dữ liệu điểm tổng thể." />;
+  }
+
+  const renderCharts = () => {
+    if (selectedClassId === "all") {
+      return (
+        <div className="space-y-6">
+          <SubjectScoreChart data={allScores} />
+          <ProgressChart data={allScores} />
+          <SkillChart data={allScores} />
+        </div>
+      );
+    }
+    if (isLoadingDetails) return <AcademicResultsSkeleton />;
+    if (!classDetails) {
+      return (
+        <MessageCard message="Không có dữ liệu cho lớp học này. Vui lòng chọn lớp khác." />
+      );
+    }
+    return <SubjectScoreChart data={classDetails} />;
+  };
 
   return (
     <div className="space-y-6">
-      {/* Thông tin chung */}
-      {/* <Header
-        overallAverage={overallAverage}
-        ranking={ranking}
-        selectedSemester={selectedSemester}
-        selectedYear={selectedYear}
-        totalSubjects={detailedScores.length}
-      /> */}
-
-      {/* Bộ lọc học kỳ và năm học */}
       <div className="flex flex-wrap gap-6 items-center bg-white p-6 rounded-lg border border-primary-light shadow-md">
-        {/* Học kỳ */}
         <div className="flex-1 min-w-[200px]">
-          {/* <label
-            htmlFor="semester"
+          <label
+            htmlFor="class"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Chọn lớp học
+            Lớp học
           </label>
           <select
-            id="semester"
-            value={selectedSemester}
-            onChange={(e) => setSelectedSemester(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+            id="class"
+            value={selectedClassId}
+            onChange={(e) => handleClassChange(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-3 py-2"
           >
-            <option value="HK1">Học kỳ 1</option>
-            <option value="HK2">Học kỳ 2</option>
-          </select> */}
-          <Select
-            defaultLabel="Chọn lớp học để xem kết quả"
-            isLoading={status === "pending"}
-            onValueChange={(value) => setSelectedClass(value as string)}
-          >
-            {classes?.content.map((item) => (
-              <SelectItem key={item.id} value={item.id}>
-                {item.name} - {item.course.name} - {item.grade.name}
-              </SelectItem>
+            <option value="all">Tất cả</option>
+            {classList.map((cls) => (
+              <option key={cls.classId} value={cls.classId}>
+                {cls.className} - {cls.course.name} ({cls.grade.name})
+              </option>
             ))}
-          </Select>
+          </select>
         </div>
-
-        {/* Năm học */}
-        {/* <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[200px]">
           <label
-            htmlFor="year"
+            htmlFor="academicYear"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
             Năm học
           </label>
-          <select
-            id="year"
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
-          >
-            <option value="2022-2023">2022-2023</option>
-            <option value="2023-2024">2023-2024</option>
-          </select>
-        </div> */}
+          <input
+            id="academicYear"
+            type="text"
+            value={academicYear}
+            readOnly
+            className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-50"
+          />
+        </div>
       </div>
 
-      {/* Tabs cho biểu đồ và bảng điểm */}
+      {selectedClassId !== "all" && classDetails && (
+        <Header details={classDetails} />
+      )}
+
       <Tabs value={activeTab} onTabChange={setActiveTab} className="w-full">
         <TabList className="grid w-full max-w-md grid-cols-2 mx-auto mb-4">
           <Tab label="Biểu đồ" value="charts" />
           <Tab label="Chi tiết" value="details" />
         </TabList>
-
         <TabPanel value="charts" className="space-y-6">
-          {/* Biểu đồ điểm theo môn học */}
-          <SubjectScoreChart />
-
-          {/* Biểu đồ tiến độ học tập */}
-          <ProgressChart />
+          {renderCharts()}
         </TabPanel>
-
         <TabPanel value="details">
-          <DetailedScoresTable classId={selectedClass} />
+          {selectedClassId !== "all" ? (
+            isLoadingDetails ? (
+              <AcademicResultsSkeleton />
+            ) : classDetails ? (
+              <DetailedScoresTable details={classDetails} />
+            ) : (
+              <MessageCard message="Không có dữ liệu cho lớp học này." />
+            )
+          ) : (
+            <MessageCard message="Vui lòng chọn một lớp học cụ thể để xem chi tiết." />
+          )}
         </TabPanel>
       </Tabs>
-
-      {/* Nhận xét của giáo viên */}
-      <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
-        <CardHeader>
-          <CardTitle>Nhận xét của giáo viên</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="p-4 bg-primary-lighter rounded-lg border border-primary-light">
-            <p className="text-gray-700 italic">
-              &quot;Học sinh có khả năng học tập tốt, đặc biệt trong các môn
-              khoa học tự nhiên. Cần cố gắng hơn trong môn Ngữ văn và tích cực
-              tham gia các hoạt động nhóm. Tinh thần học tập nghiêm túc, có tiềm
-              năng phát triển tốt trong tương lai.&quot;
-            </p>
-            <div className="mt-3 text-right text-sm text-gray-600">
-              <p className="font-medium">Cô Nguyễn Thị Hương</p>
-              <p>Giáo viên chủ nhiệm</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
