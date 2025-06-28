@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { getStudentClassesWithStats } from "@/app/lib/services/class";
 import { StudentClassWithStats } from "@/app/types/class";
-import { FaClipboardList, FaClock } from "react-icons/fa6";
-import { FaCalendar } from "react-icons/fa";
+import {
+  FaClock,
+  FaCalendar,
+  FaBook,
+  FaGraduationCap,
+  FaCheckCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 
 export default function Homework() {
@@ -27,20 +33,72 @@ export default function Homework() {
     fetchData();
   }, []);
 
+  const getStatusInfo = (status: string, completionRate: number) => {
+    if (completionRate === 100) {
+      return {
+        text: "Hoàn thành",
+        color: "text-green-600",
+        bgColor: "bg-green-50",
+        borderColor: "border-green-200",
+        icon: <FaCheckCircle className="text-green-500" />,
+      };
+    } else if (status === "OVERDUE") {
+      return {
+        text: "Quá hạn",
+        color: "text-red-600",
+        bgColor: "bg-red-50",
+        borderColor: "border-red-200",
+        icon: <FaExclamationTriangle className="text-red-500" />,
+      };
+    } else {
+      return {
+        text: "Đang học",
+        color: "text-blue-600",
+        bgColor: "bg-blue-50",
+        borderColor: "border-blue-200",
+        icon: <FaClock className="text-blue-500" />,
+      };
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const getProgressColor = (rate: number) => {
+    if (rate >= 80) return "#10B981";
+    if (rate >= 60) return "#F59E0B";
+    if (rate >= 40) return "#F97316";
+    return "#EF4444";
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white p-6 rounded-xl border hover:shadow-xl transition-shadow flex flex-col h-full"
+      className="bg-white p-4 rounded-xl border hover:shadow-xl transition-shadow flex flex-col h-full"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-semibold text-gray-800">Bài tập về nhà</h3>
-        <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center">
-          <span>Xem thêm</span>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+            <FaBook className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">Bài tập về nhà</h3>
+            <p className="text-xs text-gray-500">Theo dõi tiến độ học tập</p>
+          </div>
+        </div>
+        <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm">
+          <span>Xem tất cả</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
+            className="h-3 w-3 ml-1"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -57,96 +115,101 @@ export default function Homework() {
 
       <div className="flex-1 min-h-0">
         {loading ? (
-          <div className="text-center text-gray-500 py-8">
-            Đang tải dữ liệu...
+          <div className="flex flex-col items-center justify-center py-6">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <p className="text-gray-500 text-sm">Đang tải...</p>
           </div>
         ) : error ? (
-          <div className="text-center text-red-500 py-8">{error}</div>
+          <div className="flex flex-col items-center justify-center py-6">
+            <div className="text-red-500 text-4xl mb-2">⚠️</div>
+            <p className="text-red-500 text-center text-sm">{error}</p>
+          </div>
         ) : (
-          <ul className="space-y-4 max-h-72 overflow-y-auto pr-2">
+          <ul className="space-y-3 max-h-90 overflow-y-auto pr-1">
             {homeworkList.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                Không có bài tập nào.
+              <div className="flex flex-col items-center justify-center py-6">
+                <div className="text-gray-400 text-4xl mb-2">📚</div>
+                <p className="text-gray-500 text-center text-sm">
+                  Chưa có bài tập nào
+                </p>
               </div>
             ) : (
               homeworkList.slice(0, 3).map((homework) => {
-                const isOverdue = homework.status === "OVERDUE";
+                const statusInfo = getStatusInfo(
+                  homework.status,
+                  homework.completionRate,
+                );
+                const progressColor = getProgressColor(homework.completionRate);
+
                 return (
                   <motion.li
                     key={homework.id}
-                    whileHover={{ scale: 1.02 }}
-                    className={`flex flex-col py-4 px-5 rounded-lg ${
-                      isOverdue
-                        ? "bg-red-50 border border-red-200"
-                        : "bg-gray-50 hover:bg-gray-100"
-                    } transition-colors`}
+                    className={`flex flex-col py-3 px-4 rounded-lg border ${statusInfo.borderColor} ${statusInfo.bgColor} hover:bg-blue-100 hover:shadow-md transition-all duration-200 overflow-hidden`}
                   >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center">
-                        <div
-                          className={`text-2xl ${
-                            isOverdue ? "text-red-500" : "text-blue-500"
-                          }`}
-                        >
-                          <FaClipboardList className="h-5 w-5" />
+                    <div className="flex items-start justify-between w-full mb-2">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className="p-2 bg-white rounded-lg shadow-sm">
+                          {statusInfo.icon}
                         </div>
-                        <div className="ml-3">
-                          <p className="text-lg font-medium text-gray-700">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-base font-bold text-gray-800 truncate mb-1">
                             {homework.name}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {homework.course?.name}
-                          </p>
+                          </h4>
+                          <div className="flex items-center space-x-1 text-xs text-gray-600">
+                            <FaBook className="text-gray-400" />
+                            <span className="truncate">
+                              {homework.course?.name}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="w-32 bg-gray-200 h-2 rounded-full">
-                          <div
-                            className={`h-2 rounded-full transition-all duration-300`}
-                            style={{
-                              width: `${homework.completionRate}%`,
-                              backgroundColor:
-                                homework.completionRate > 50
-                                  ? "#4CAF50"
-                                  : "#FF6F61",
-                            }}
-                          />
-                        </div>
+                      <div className="flex flex-col items-end space-y-1 ml-3">
                         <span
-                          className={`text-sm font-medium ${
-                            homework.completionRate < 50
-                              ? "text-red-600"
-                              : "text-green-600"
-                          }`}
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.color} ${statusInfo.bgColor} flex-shrink-0`}
+                        >
+                          {statusInfo.text}
+                        </span>
+                        <div className="flex items-center space-x-1 text-xs text-gray-600">
+                          <FaGraduationCap className="text-gray-400" />
+                          <span>{homework.grade?.name}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-gray-700">
+                          Tiến độ
+                        </span>
+                        <span
+                          className="text-xs font-bold"
+                          style={{ color: progressColor }}
                         >
                           {homework.completionRate}%
                         </span>
                       </div>
-                    </div>
+                      <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${homework.completionRate}%` }}
+                          transition={{ duration: 0.8, ease: "easeOut" }}
+                          className="h-2 rounded-full transition-all duration-300"
+                          style={{ backgroundColor: progressColor }}
+                        />
+                      </div>
 
-                    <div className="mt-3 flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <FaClock className="text-gray-400 mr-1" />
-                        <span
-                          className={
-                            isOverdue
-                              ? "text-red-500 font-semibold"
-                              : "text-gray-500"
-                          }
-                        >
-                          {isOverdue ? "Đã quá hạn" : homework.status}
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <FaCalendar className="text-gray-400 mr-1" />
-                        <span className="text-gray-500">
-                          {/* Hạn nộp: {homework.dueDate} */}
-                          {/* No dueDate in API, so leave blank or add logic if available */}
-                        </span>
-                      </div>
-                      <div className="text-gray-500">
-                        {homework.completedAssignments}/
-                        {homework.totalAssignments} bài tập
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center space-x-1">
+                          <FaCalendar className="text-gray-400" />
+                          <span className="text-gray-600">
+                            {formatDate(homework.startDate)} -{" "}
+                            {formatDate(homework.endDate)}
+                          </span>
+                        </div>
+                        <div className="text-gray-600 font-medium">
+                          {homework.completedAssignments}/
+                          {homework.totalAssignments}
+                        </div>
                       </div>
                     </div>
                   </motion.li>
@@ -157,15 +220,15 @@ export default function Homework() {
         )}
       </div>
 
-      <div className="pt-4 border-t border-gray-100 mt-4">
+      <div className="pt-3 border-t border-gray-100 mt-3">
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-500">
-            Tổng số bài tập:{" "}
+          <p className="text-xs text-gray-500">
+            Tổng bài tập:{" "}
             <span className="font-semibold text-gray-700">
               {homeworkList.reduce((acc, cur) => acc + cur.totalAssignments, 0)}
             </span>
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             Hoàn thành:{" "}
             <span className="font-semibold text-green-600">
               {homeworkList.length > 0
