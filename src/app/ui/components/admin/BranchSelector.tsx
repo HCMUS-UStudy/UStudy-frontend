@@ -6,7 +6,7 @@ import { RootState } from "@/app/store/store";
 import { setSelectedBranch, setBranches } from "../../../store/branch-slice";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Branch } from "@/app/types";
-import { getUserBranches } from "@/app/lib/services";
+import { getUserDataFromCookies } from "@/app/lib/action";
 
 const BranchSelector: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,13 +19,13 @@ const BranchSelector: React.FC = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const branches = await getUserBranches();
-        if (!branches) {
+        const userData = await getUserDataFromCookies();
+        if (!userData?.branches) {
           console.error("No branches found in user data");
           return;
         }
 
-        const branchData = [...branches].sort((a: Branch, b: Branch) =>
+        const branchData = [...userData.branches].sort((a: Branch, b: Branch) =>
           a.name.localeCompare(b.name),
         );
 
@@ -67,7 +67,7 @@ const BranchSelector: React.FC = () => {
     <div className="relative w-fit" ref={dropdownRef}>
       {branches.length > 0 ? (
         <div
-          className="relative cursor-pointer rounded-[20px] select-none"
+          className="relative cursor-pointer rounded-[20px]"
           onClick={() => setIsOpen(!isOpen)}
         >
           <div className="px-3 sm:px-4 py-1.5 md:py-[10px] rounded-xl md:rounded-[14px] bg-primary hover:bg-hover-primary gap-5 flex justify-between text-sm md:text-[15px] items-center transition-all">
@@ -95,7 +95,7 @@ const BranchSelector: React.FC = () => {
           )}
         </div>
       ) : (
-        <p>Không có chi nhánh nào</p>
+        <p className="text-error">Không có chi nhánh nào</p>
       )}
     </div>
   );

@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createSession, updateSession } from "@/app/lib/services/session";
 import { toast } from "react-toastify";
 import { Session } from "@/app/types";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const CreateSessionSchema = z
   .object({
@@ -70,17 +71,14 @@ const SessionModal = ({
     }
     return useCreateSessionMutation.mutate(data);
   };
+  const { addToast } = useCustomToast();
   const queryClient = useQueryClient();
   const useCreateSessionMutation = useMutation({
     mutationFn: (data: CreateSessionInputs) => createSession(data),
     onSuccess: (res) => {
       console.log(res);
       queryClient.invalidateQueries({ queryKey: ["Sessions"] });
-      toast.success("Tạo ca học mới thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Tạo ca học mới thành công");
       onClose();
     },
     onError: () => {
@@ -163,61 +161,6 @@ const SessionModal = ({
         )}
       </DialogFooter>
     </Dialog>
-    //   <div>
-    //     <div
-    //       onClick={handleCloseModal}
-    //       className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50"
-    //     >
-    //       <div
-    //         onClick={(e) => e.stopPropagation()}
-    //         className="bg-white p-8 rounded-xl shadow-lg w-96 max-w-lg"
-    //       >
-    //         <h3 className="text-xl font-semibold mb-6 text-center text-gray-800">
-    //           Tạo chi nhánh mới
-    //         </h3>
-    //         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-    //           <Input
-    //             name="name"
-    //             label="Tên ca học"
-    //             placeholder="Tên ca học"
-    //             value={session.name}
-    //             onChange={handleInputChange}
-    //             required
-    //           />
-    //           <Input
-    //             name="startTime"
-    //             label="Thời gian bắt đầu"
-    //             placeholder="Thời gian bắt đầu"
-    //             value={session.startTime}
-    //             onChange={handleInputChange}
-    //             required
-    //           />
-    //           <Input
-    //             name="endTime"
-    //             label="Thời gian kết thúc"
-    //             placeholder="Thời gian kết thúc"
-    //             value={session.endTime}
-    //             onChange={handleInputChange}
-    //             required
-    //           />
-
-    //           <div className="flex justify-end mt-2 gap-4">
-    //             <Button
-    //               type="button"
-    //               className="bg-gray-200 hover:bg-gray-300 text-sm"
-    //               onClick={handleCloseModal}
-    //             >
-    //               Hủy
-    //             </Button>
-    //             <Button type="submit" className="text-sm">
-    //               Thêm
-    //             </Button>
-    //           </div>
-    //         </form>
-    //       </div>
-    //     </div>
-    //   </div>
-    // );
   );
 };
 

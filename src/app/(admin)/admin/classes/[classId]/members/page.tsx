@@ -5,7 +5,7 @@ import { getListMembers, removeMembers } from "@/app/lib/services/class";
 import { useState, useEffect, useCallback } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams, useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import {
@@ -38,7 +38,7 @@ const MemberPage = () => {
   const searchParams = useSearchParams();
   const params = useParams<{ classId: string }>();
   const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params.classId);
+  const classId = decodeId(params?.classId || "");
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);

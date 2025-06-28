@@ -103,6 +103,13 @@ export default function DayRoomSessionSelector() {
 
   const handleSelectDaysInWeek = async (day: DaysInWeek) => {
     if (!selectedBranchId) {
+      toast.error("Hiện đang không có chi nhánh", {
+        theme: "colored",
+        position: "bottom-right",
+        pauseOnHover: false,
+        hideProgressBar: true,
+        autoClose: 3000,
+      });
       return;
     }
     setSelecting(true);

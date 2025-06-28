@@ -9,9 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../_common/Card";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getAllRooms } from "@/app/lib/services/chat";
 import { RoomChatItem } from "@/app/types";
 
 export interface Contact {
@@ -103,16 +100,13 @@ const Contacts: React.FC<ContactsProps> = ({
   // displayList,
   selectedRoom,
   setSelectedRoom,
-  searchQuery,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  // const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data: rooms, status } = useQuery({
-    queryKey: ["RoomChats", currentPage - 1, searchQuery],
-    queryFn: () => getAllRooms(currentPage - 1, 10, searchQuery, ""),
-  });
+  // const { data: rooms, status } = useQuery({
+  //   queryKey: ["RoomChats", currentPage - 1, searchQuery],
+  //   queryFn: () => getAllRooms(currentPage - 1, 10, searchQuery, ""),
+  // });
   return (
     <div className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}>
       <Card className="h-full shadow-md bg-white border flex flex-col">

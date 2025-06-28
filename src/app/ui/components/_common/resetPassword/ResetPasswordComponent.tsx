@@ -37,8 +37,8 @@ export default function ResetPasswordComponent() {
     resolver: zodResolver(ResetPasswordSchema),
   });
 
-  const email = searchParams.get("email") || "";
-  const otp = searchParams.get("otp") || "";
+  const email = searchParams?.get("email") || "";
+  const otp = searchParams?.get("otp") || "";
 
   const mutation = useMutation({
     mutationFn: ({

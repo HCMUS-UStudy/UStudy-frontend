@@ -24,7 +24,7 @@ export default function VerifyTokenPage({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
+  const email = searchParams?.get("email") || "";
 
   const mutation = useMutation({
     mutationFn: ({ email, otp }: { email: string; otp: string }) =>

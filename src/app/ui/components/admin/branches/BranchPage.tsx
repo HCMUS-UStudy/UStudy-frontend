@@ -25,10 +25,6 @@ import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal
 import { useEncodedRoute } from "@/app/lib/hooks";
 
 const BranchPage = () => {
-  // const { branches } = useSelector((state: RootState) => state.branch);
-  // const [branches_, setBranches_] = useState<Branch[]>(branches);
-
-  // const [filteredBranches, setFilteredBranches] = useState<Branch[]>([]);
   const [mounted, setMounted] = useState(false);
   const dispatch = useDispatch();
 
@@ -80,7 +76,6 @@ const BranchPage = () => {
           <div className="text-lg md:text-xl font-semibold">
             Tổng số chi nhánh (0)
           </div>
-          <Button className="text-nowrap">Thêm chi nhánh</Button>
         </div>
         <div className="flex items-center justify-between mt-2 gap-14">
           <SearchField
