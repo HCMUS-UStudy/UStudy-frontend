@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { Grade, GradeData } from "@/app/types";
+import { Grade, GradeData, GradeResponse } from "@/app/types";
 import { CreateGradeInputs } from "@/app/ui/components/admin/grades/AddGradeModal";
 
 export const getAllGrades = async (
@@ -47,6 +47,23 @@ export const createNewGrade = async (
   try {
     const response = await axiosInstance.post("/grade/create", data);
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateGrade = async ({
+  gradeId,
+  name,
+}: {
+  gradeId: string;
+  name: string;
+}): Promise<GradeResponse> => {
+  try {
+    const response = await axiosInstance.put(`/grade/update/${gradeId}`, {
+      name,
+    });
+    return response.data.data;
   } catch (error) {
     throw error;
   }
