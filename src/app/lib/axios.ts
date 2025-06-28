@@ -12,10 +12,10 @@ import { redirect } from "next/navigation";
 
 const requestUrl = ["/auth/login"];
 
-// const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const axiosInstance = axios.create({
-  baseURL: "http://34.126.186.7:8000/api",
+  baseURL: `${backendUrl}/api`,
   headers: {
     "Content-Type": "application/json",
   },
