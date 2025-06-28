@@ -11,12 +11,12 @@ FROM base AS builder
 WORKDIR /app
 
 # Define build arguments for environment variables
-ARG NEXT_PUBLIC_BACKEND_URL=https://api.ustudy.io.vn
+ARG NEXT_PUBLIC_BACKEND_URL=https://api2.ustudy.io.vn
 ARG NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ARG COOKIES_SECRET_KEY
 
 # Set environment variables from build args with defaults
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-https://api.ustudy.io.vn}
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-https://api2.ustudy.io.vn}
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
 ENV COOKIES_SECRET_KEY=$COOKIES_SECRET_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -38,7 +38,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Set environment variables with defaults
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-https://api.ustudy.io.vn}
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-https://api2.ustudy.io.vn}
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
 ENV COOKIES_SECRET_KEY=${COOKIES_SECRET_KEY:-55EGu/ZYyTDY1GxKWPyDfOVM5FtFYqRNcadpy8fAT+w=}
 
