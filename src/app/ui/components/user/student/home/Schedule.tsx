@@ -126,24 +126,27 @@ export default function Schedule() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="bg-white p-6 rounded-xl border hover:shadow-xl transition-shadow mt-6"
+      className="bg-white p-4 rounded-xl border hover:shadow-xl transition-shadow mt-6"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
-        <div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-1">
-            Lịch học
-          </h3>
-          <p className="text-sm text-gray-500">{displayDate}</p>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
+            <FaCalendarAlt className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">Lịch học</h3>
+            <p className="text-xs text-gray-500">{displayDate}</p>
+          </div>
         </div>
-        <div className="flex items-center mt-3 sm:mt-0">
-          <div className="mr-4 flex items-center">
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center">
             <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">
               {selectedDaySchedules.length}
             </span>
-            <span className="text-sm text-gray-600">lớp trong ngày</span>
+            <span className="text-xs text-gray-600">lớp trong ngày</span>
           </div>
-          <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center">
-            Xem tất cả
+          <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm">
+            <span>Xem tất cả</span>
             <FaArrowRight className="ml-1 h-3 w-3" />
           </button>
         </div>
