@@ -199,3 +199,39 @@ export type StudentClassWithGrades = BaseClassInfo & {
   studentAverage: number;
   classAverage: number;
 };
+
+export type ClassScore = {
+  classId: string;
+  className: string;
+  description: string;
+  course: {
+    id: string;
+    name: string;
+  };
+  grade: {
+    id: string;
+    name: string;
+  };
+  studentAverage: number;
+  classAverage: number;
+  percentageDifference: number;
+};
+
+export type ClassScoreDetail = {
+  classId: string;
+  className: string;
+  description: string;
+  course: {
+    id: string;
+    name: string;
+  };
+  grade: {
+    id: string;
+    name: string;
+  };
+  startDate: string;
+  studentAverage: number;
+  classAverage: number;
+  studentRank: number;
+  totalStudents: number;
+};
