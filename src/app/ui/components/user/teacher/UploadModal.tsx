@@ -18,7 +18,7 @@ import {
 import { FiEdit3 } from "react-icons/fi";
 import { FaCheck } from "react-icons/fa";
 import Tooltip from "../../_common/Tooltip";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface UploadModalProps {
   onClose: () => void;
@@ -72,6 +72,7 @@ export default function UploadModal({ onClose, onUpload }: UploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [customBaseName, setCustomBaseName] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
+  const { addToast } = useCustomToast();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
@@ -79,10 +80,7 @@ export default function UploadModal({ onClose, onUpload }: UploadModalProps) {
       const file = acceptedFiles[0];
       if (file) {
         if (file.size > 10 * 1024 * 1024) {
-          toast.error("Tệp quá lớn. Vui lòng chọn tệp nhỏ hơn 10MB.", {
-            closeOnClick: true,
-            autoClose: 3000,
-          });
+          addToast.error("Tệp quá lớn. Vui lòng chọn tệp nhỏ hơn 10MB.");
           return;
         }
         setSelectedFile(file);
@@ -101,11 +99,7 @@ export default function UploadModal({ onClose, onUpload }: UploadModalProps) {
   const handleUpload = () => {
     if (!selectedFile) return;
     if (!customBaseName) {
-      toast.error("Tên tệp không được để trống.", {
-        pauseOnHover: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
+      addToast.error("Tên tệp không được để trống.");
       return;
     }
 

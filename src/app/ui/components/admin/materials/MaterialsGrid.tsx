@@ -18,7 +18,7 @@ import {
 import SearchField from "../../_common/text-field/SearchField";
 import { Button } from "../../_common/Button";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import ConfirmModal from "../../_common/ConfirmModal";
 import MaterialLoader from "./MaterialsLoader";
 
@@ -38,6 +38,8 @@ const MaterialsGrid: React.FC = () => {
     id: string;
     name: string;
   } | null>(null);
+
+  const { addToast } = useCustomToast();
 
   const fetchRootMaterial = async () => {
     setLoading(true);
@@ -98,12 +100,7 @@ const MaterialsGrid: React.FC = () => {
       a.click();
     } catch (error) {
       console.error("Lỗi khi tải file:", error);
-      toast.error("Tải file thất bại!", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tải file thất bại!");
     }
   };
 

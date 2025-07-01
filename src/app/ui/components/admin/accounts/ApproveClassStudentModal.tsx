@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,7 @@ import {
   getListUserClass,
 } from "@/app/lib/services/class";
 import ApproveAccountTable from "./ApproveAccountTable";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface ApproveClassStudentModalProps {
   isOpen: boolean;
@@ -51,6 +51,8 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
   const [totalPagesCl, setTotalPagesCl] = useState(0);
   const [totalPagesStuCl, setTotalPagesStuCl] = useState(0);
 
+  const { addToast } = useCustomToast();
+
   const fetchClasses = useCallback(async () => {
     setLoading(true);
 
@@ -70,7 +72,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
 
   const fetchClassStudentsIn = useCallback(async () => {
     if (!userId) {
-      toast.error("Vui lòng chọn một học sinh.");
+      addToast.error("Vui lòng chọn một học sinh.");
       return;
     }
     setLoading(true);
@@ -136,12 +138,12 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
 
   const handleBulkAction = async () => {
     if (selectedClasses.length === 0) {
-      toast.error("Vui lòng chọn ít nhất một lớp học.");
+      addToast.error("Vui lòng chọn ít nhất một lớp học.");
       return;
     }
 
     if (!userId) {
-      toast.error("Vui lòng chọn một học sinh.");
+      addToast.error("Vui lòng chọn một học sinh.");
       return;
     }
 
@@ -158,18 +160,12 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       responses.forEach((response, index: number) => {
         if (response.failedCount > 0) {
           failedCount++;
-          toast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`, {
-            position: "bottom-right",
-            autoClose: 5000,
-          });
+          addToast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`);
         }
       });
 
       if (failedCount === 0) {
-        toast.success("Thêm học viên vào tất cả lớp thành công!", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
+        addToast.success("Thêm học viên vào tất cả lớp thành công!");
       }
 
       setSelectedClasses([]);
@@ -181,7 +177,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       }, 500);
     } catch (error) {
       console.error("Lỗi khi thêm thành viên:", error);
-      toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+      addToast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -191,7 +187,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
 
     if (!userId) {
-      toast.error("Vui lòng chọn một học sinh.");
+      addToast.error("Vui lòng chọn một học sinh.");
       return;
     }
 
@@ -199,25 +195,16 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       const response = await addMembers([userId], classId, "STUDENT");
 
       if (response.failedCount > 0) {
-        toast.error(`Thêm không thành công vào lớp ${classId}`, {
-          position: "bottom-right",
-          autoClose: 5000,
-        });
+        addToast.error(`Thêm không thành công vào lớp ${classId}`);
       } else {
-        toast.success(`Thêm học viên vào lớp ${classId} thành công!`, {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
+        addToast.success(`Thêm học viên vào lớp ${classId} thành công!`);
       }
 
       fetchClassStudentsIn();
       fetchClasses();
     } catch (error) {
       console.log(error);
-      toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
+      addToast.error("Có lỗi xảy ra, vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }

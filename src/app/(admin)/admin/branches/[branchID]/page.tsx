@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import { IoChevronBackOutline } from "react-icons/io5";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Branch } from "@/app/types";
-import { toast } from "react-toastify";
 import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
 import { RootState } from "@/app/store/store";
 import {
@@ -26,6 +25,7 @@ import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { FiCheck } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 import { useEncodedRoute } from "@/app/lib/hooks";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type Clerk = {
   id: string;
@@ -76,6 +76,8 @@ const BranchDetail = () => {
   const [isEditingContactNumber, setIsEditingContactNumber] = useState(false);
   const [editedAddress, setEditedAddress] = useState("");
   const [editedContactNumber, setEditedContactNumber] = useState("");
+
+  const { addToast } = useCustomToast();
 
   useEffect(() => {
     if (branches.length > 0) return;
@@ -181,12 +183,7 @@ const BranchDetail = () => {
     };
     try {
       await updateBranch(updatedData);
-      toast.success("Cập nhật chi nhánh thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Cập nhật chi nhánh thành công");
       setBranch(
         (prev) =>
           prev && {
@@ -197,12 +194,7 @@ const BranchDetail = () => {
       );
     } catch (error) {
       console.error("Failed to update branch:", error);
-      toast.error("Cập nhật chi nhánh thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Cập nhật chi nhánh thất bại");
       setEditedAddress(branch?.address || "");
       setEditedContactNumber(branch?.contactNumber || "");
     }
@@ -215,21 +207,11 @@ const BranchDetail = () => {
     };
     try {
       await updateAdmins(updatedData.branchId, updatedData.clerkIds);
-      toast.success("Cập nhật danh sách thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Cập nhật danh sách thành công");
       setClerks(selectedClerks);
     } catch (error) {
       console.error("Failed to update branch:", error);
-      toast.error("Cập nhật chi nhánh thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Cập nhật chi nhánh thất bại");
     }
   };
 
@@ -240,21 +222,11 @@ const BranchDetail = () => {
     };
     try {
       await updateSessions(updatedData.branchId, updatedData.sessions);
-      toast.success("Cập nhật danh sách thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Cập nhật danh sách thành công");
       setSessions(selectedSessions);
     } catch (error) {
       console.error("Failed to update branch:", error);
-      toast.error("Cập nhật chi nhánh thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Cập nhật chi nhánh thất bại");
     }
   };
 

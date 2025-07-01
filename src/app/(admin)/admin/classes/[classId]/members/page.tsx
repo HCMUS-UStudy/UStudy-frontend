@@ -18,7 +18,7 @@ import {
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { useEncodedRoute } from "@/app/lib/hooks";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
 
 const MemberPage = () => {
@@ -79,6 +79,7 @@ const MemberPage = () => {
   } | null>(null);
 
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const removeFunction = useMutation({
     mutationFn: async ({
       classId,
@@ -90,21 +91,11 @@ const MemberPage = () => {
       return removeMembers(classId, memberRemove);
     },
     onSuccess: () => {
-      toast.success("Xóa thành viên thành công", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
+      addToast.success("Xóa thành viên thành công");
       queryClient.invalidateQueries({ queryKey: ["ListMembers", currentPage] });
     },
     onError: () => {
-      toast.error("Xóa thành viên thất bại", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
+      addToast.error("Xóa thành viên thất bại");
     },
   });
 

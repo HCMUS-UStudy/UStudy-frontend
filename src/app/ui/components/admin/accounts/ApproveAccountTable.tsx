@@ -12,10 +12,10 @@ import {
 import Pagination from "../../_common/Pagination";
 import SearchField from "../../_common/text-field/SearchField";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { ClassItem, ClassUserItem } from "@/app/types";
 import DropdownCourse from "../courses/DropdownCourse";
 import DropdownGrade from "../grades/DropdownGrade";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface ApproveAccountTableProps {
   title: string;
@@ -74,6 +74,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const { addToast } = useCustomToast();
 
   // // Fetch dữ liệu khi searchQuery hoặc currentPage thay đổi
   useEffect(() => {
@@ -91,7 +92,7 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
         setTotalPages(totalPages || 1);
       } catch (error) {
         console.error(error);
-        toast.error("Lỗi khi tải dữ liệu");
+        addToast.error("Lỗi khi tải dữ liệu");
       } finally {
         setLoading(false);
       }
