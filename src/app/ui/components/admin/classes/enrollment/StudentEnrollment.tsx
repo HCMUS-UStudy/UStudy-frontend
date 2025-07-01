@@ -10,7 +10,6 @@ import {
 import { Button } from "../../../_common/Button";
 import { FaCheck, FaPlus } from "react-icons/fa6";
 import { addMembers, getListMembers } from "@/app/lib/services/class";
-import { toast } from "react-toastify";
 import { getStuClassRegister } from "@/app/lib/services/register";
 import {
   keepPreviousData,
@@ -20,6 +19,7 @@ import {
 } from "@tanstack/react-query";
 import Pagination from "../../../_common/Pagination";
 import Loading from "../../../_common/loading/Loading";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 export default function StudentEnrollment({ classId }: { classId: string }) {
   const [multiSelect, setMultiSelect] = useState<boolean>(false);
@@ -105,6 +105,8 @@ export default function StudentEnrollment({ classId }: { classId: string }) {
   //   fetchData();
   // }, [trigger, fetchData]);
 
+  const { addToast } = useCustomToast();
+
   const useApproveMutation = useMutation({
     mutationFn: (singleId?: string) => {
       const ids = singleId ? [singleId] : selectedIds;
@@ -115,27 +117,15 @@ export default function StudentEnrollment({ classId }: { classId: string }) {
         const failedMembers = response.failedMembers
           .map((member) => `ID: ${member.genId} - ${member.name}`)
           .join("\n");
-        toast.error(`Duyệt không thành công: \n${failedMembers}`, {
-          position: "bottom-right",
-          autoClose: 5000,
-          pauseOnHover: true,
-        });
+        addToast.error(`Duyệt không thành công: \n${failedMembers}`);
       } else {
-        toast.success("Duyệt thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
+        addToast.success("Duyệt thành công");
       }
       queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
       queryClient.invalidateQueries({ queryKey: ["ClassStudents"] });
     },
     onError: () => {
-      toast.error("Thêm không thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Thêm không thành công");
     },
   });
 

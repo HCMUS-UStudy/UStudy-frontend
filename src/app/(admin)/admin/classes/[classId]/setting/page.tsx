@@ -21,7 +21,7 @@ import {
 } from "@/app/lib/services";
 import ClassForm from "@/app/ui/components/admin/classes/setting/ClassForm";
 import { ClassSchema } from "@/app/types";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 // import ClassSessions from "@/app/ui/components/admin/classes/setting/ClassSessions";
 
 export type UpdateClassType = Pick<
@@ -57,6 +57,8 @@ export default function ClassSetting() {
   const grades = results[1].data;
   const courses = results[0].data;
 
+  const { addToast } = useCustomToast();
+
   const updateClassMutation = useMutation({
     mutationFn: ({
       classId,
@@ -68,19 +70,11 @@ export default function ClassSetting() {
     onSuccess: (response) => {
       console.log(response);
       queryClient.invalidateQueries({ queryKey: ["ClassDetails"] });
-      toast.success("Chỉnh sửa lớp học thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
+      addToast.success("Chỉnh sửa lớp học thành công");
     },
     onError: (error) => {
       console.log(error);
-      toast.error(error.message, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
+      addToast.error(error.message);
     },
   });
 

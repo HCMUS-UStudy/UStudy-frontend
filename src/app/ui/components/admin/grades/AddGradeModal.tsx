@@ -3,7 +3,6 @@
 import React from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const CreateGradeSchema = z.object({
   name: z
@@ -43,23 +43,16 @@ const AddGradeModal = ({
     useCreateGradeMutation.mutate(data);
   };
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const useCreateGradeMutation = useMutation({
     mutationFn: (data: CreateGradeInputs) => createNewGrade(data),
     onError: (error) => {
       console.log(error.message);
-      toast.error("Tạo khối học thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Tạo khối học thất bại");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Grades"] });
-      toast.success("Tạo khối học thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Tạo khối học thành công");
       onClose();
     },
   });

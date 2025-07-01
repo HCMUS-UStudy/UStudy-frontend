@@ -6,7 +6,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import StudentBasicInformation from "../ui/components/user/student/create/StudentBasicInformation";
 import { studentRegister } from "../lib/services/register";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import RegisterSuccessfully from "../ui/components/user/student/create/StudentRegisterSuccessfully";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CustomError } from "../types";
@@ -77,6 +77,7 @@ export default function StudentRegister() {
     },
   });
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const useRegisterMutation = useMutation({
     mutationFn: (data: StudentRegisterInputs) => studentRegister(data),
     onSuccess: () => {
@@ -86,11 +87,7 @@ export default function StudentRegister() {
     onError: (error) => {
       const customError = error as CustomError;
       methods.setError("email", { message: String(customError.data) });
-      toast.error(String(customError.data), {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: true,
-      });
+      addToast.error(String(customError.data));
     },
   });
   // const [loadingRegister, setLoadingRegister] = useState<boolean>(false);

@@ -18,7 +18,7 @@ import { FaCheck } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import { Button } from "../../_common/Button";
 import { getAllRolesByDefault } from "@/app/lib/services/role";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import Tooltip from "../../_common/Tooltip";
 import SearchField from "../../_common/text-field/SearchField";
 import { useSearchParams } from "next/navigation";
@@ -35,6 +35,7 @@ export default function TeacherRegister() {
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(false);
   const searchParams = useSearchParams();
+  const { addToast } = useCustomToast();
 
   const nextPage = useCallback(() => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -63,25 +64,13 @@ export default function TeacherRegister() {
       );
       setTrigger((prev) => !prev);
       if (response.statusCode === "OK") {
-        toast.success("Duyệt tài khoản thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
+        addToast.success("Duyệt tài khoản thành công");
       } else {
-        toast.error("Duyệt tài khoản thất bại", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
+        addToast.error("Duyệt tài khoản thất bại");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Duyệt tài khoản thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Duyệt tài khoản thất bại");
     } finally {
       setLoading(false);
     }
@@ -92,25 +81,13 @@ export default function TeacherRegister() {
       const response = await rejectRegister(userId ? [userId] : selectedIds);
       setTrigger((prev) => !prev);
       if (response.statusCode === "OK") {
-        toast.success("Từ chối tài khoản thành công", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
+        addToast.success("Từ chối tài khoản thành công");
       } else {
-        toast.error("Từ chối tài khoản thất bại", {
-          position: "bottom-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-        });
+        addToast.error("Từ chối tài khoản thất bại");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Từ chối tài khoản thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Từ chối tài khoản thất bại");
     } finally {
       setLoading(false);
     }
