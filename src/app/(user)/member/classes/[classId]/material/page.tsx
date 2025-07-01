@@ -31,7 +31,7 @@ import { GrView } from "react-icons/gr";
 
 import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { getUserDataFromCookies } from "@/app/lib/action";
 const fileTypeIcons = [
   {
@@ -95,6 +95,8 @@ export default function PersonalMaterial() {
   const { classId } = useParams() as { classId: string };
 
   const [user, setUser] = useState<UserData | null>(null);
+  const { addToast } = useCustomToast();
+
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
@@ -177,11 +179,7 @@ export default function PersonalMaterial() {
         link.click();
         document.body.removeChild(link);
       } catch {
-        toast.error("Tải xuống thất bại", {
-          autoClose: 2500,
-          pauseOnHover: false,
-          closeOnClick: true,
-        });
+        addToast.error("Tải xuống thất bại");
       }
     },
     [material],
