@@ -9,6 +9,7 @@ import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingIma
 import ResetPasswordForm from "@/app/ui/components/_common/resetPassword/ResetPasswordForm";
 import { forgotPasswordWithOtp } from "@/app/lib/services/auth";
 import { useMutation } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const ResetPasswordSchema = z
   .object({
@@ -40,6 +41,8 @@ export default function ResetPasswordComponent() {
   const email = searchParams?.get("email") || "";
   const otp = searchParams?.get("otp") || "";
 
+  const { addToast } = useCustomToast();
+
   const mutation = useMutation({
     mutationFn: ({
       email,
@@ -52,13 +55,13 @@ export default function ResetPasswordComponent() {
     }) => forgotPasswordWithOtp({ email, otp, newPassword }),
     onSuccess: () => {
       setIsLoading(false);
-      alert("Đặt lại mật khẩu thành công!");
+      addToast.success("Đặt lại mật khẩu thành công!");
       router.push("/login");
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       setIsLoading(false);
-      alert(error?.response?.data?.message || "Có lỗi xảy ra!");
+      addToast.error(error?.response?.data?.message || "Có lỗi xảy ra!");
     },
   });
 
@@ -66,7 +69,7 @@ export default function ResetPasswordComponent() {
     setIsLoading(true);
     if (!email || !otp) {
       setIsLoading(false);
-      alert("Thiếu thông tin email hoặc mã xác thực!");
+      addToast.error("Thiếu thông tin email hoặc mã xác thực!");
       return;
     }
     mutation.mutate({ email, otp, newPassword: data.password });

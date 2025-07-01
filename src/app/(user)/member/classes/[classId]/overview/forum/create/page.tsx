@@ -11,9 +11,11 @@ import {
 } from "@/app/ui/components/_common/Card";
 import { Button } from "@/app/ui/components/_common/Button";
 import { FaArrowLeft, FaPaperclip, FaTimes, FaTag } from "react-icons/fa";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 export default function CreateForumPostPage() {
   const router = useRouter();
+  const { addToast } = useCustomToast();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tag, setTag] = useState("");
@@ -51,7 +53,7 @@ export default function CreateForumPostPage() {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {
-      alert("Vui lòng nhập tiêu đề và nội dung bài viết.");
+      addToast.error("Vui lòng nhập tiêu đề và nội dung bài viết.");
       return;
     }
 
@@ -73,7 +75,7 @@ export default function CreateForumPostPage() {
       router.push("/member/forum");
     } catch (error) {
       console.error("Error creating post:", error);
-      alert("Có lỗi xảy ra khi đăng bài viết. Vui lòng thử lại sau.");
+      addToast.error("Có lỗi xảy ra khi đăng bài viết. Vui lòng thử lại sau.");
     } finally {
       setIsSubmitting(false);
     }

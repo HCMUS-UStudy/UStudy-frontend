@@ -10,6 +10,7 @@ import FallingImages from "@/app/ui/components/_common/forgetPassword/FallingIma
 import ForgotPasswordForm from "@/app/ui/components/_common/forgetPassword/ForgotPasswordForm";
 import { generateOtp } from "@/app/lib/services/auth";
 import { useMutation } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const ForgotPasswordSchema = z.object({
   email: z
@@ -30,6 +31,7 @@ export default function ForgotPassword() {
   } = useForm<ForgotPasswordInputs>({
     resolver: zodResolver(ForgotPasswordSchema),
   });
+  const { addToast } = useCustomToast();
 
   const mutation = useMutation({
     mutationFn: generateOtp,
@@ -39,7 +41,7 @@ export default function ForgotPassword() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       setIsLoading(false);
-      alert(error?.response?.data?.message || "Có lỗi xảy ra!");
+      addToast.error(error?.response?.data?.message || "Có lỗi xảy ra!");
     },
   });
 
