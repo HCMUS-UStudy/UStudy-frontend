@@ -1,8 +1,16 @@
+import ManageScoresClientWrapper from "@/app/ui/components/admin/manage-scores/ManageScoresClientWrapper";
+import React, { Suspense } from "react";
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center h-64">
+    <div className="w-12 h-12 border-4 border-dashed rounded-full animate-spin border-primary"></div>
+  </div>
+);
+
 export default function ManageScoresPage() {
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">Quản lý điểm học sinh</h1>
-      <p className="mt-2 text-gray-600">Hello from Manage Scores Page</p>
-    </div>
+    <Suspense fallback={<LoadingFallback />}>
+      <ManageScoresClientWrapper />
+    </Suspense>
   );
 }
