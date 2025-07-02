@@ -109,6 +109,16 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <GrMapLocation size={20} />,
   },
   {
+    title: "Quản lý lịch trình lớp học",
+    path: "/admin/schedule",
+    icon: <BsCalendar size={20} />,
+  },
+  {
+    title: "Quản lý thành tích học tập",
+    path: "/admin/manage-scores",
+    icon: <BsPersonWorkspace size={20} />,
+  },
+  {
     title: "Quản lý ca học",
     path: "/admin/sessions",
     icon: <AiOutlineSchedule size={20} />,

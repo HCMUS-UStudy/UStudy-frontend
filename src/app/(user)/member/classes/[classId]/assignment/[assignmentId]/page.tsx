@@ -147,11 +147,11 @@ const AssignmentPage = () => {
         console.log("Asssignment submitted successfully:", result);
         setModalOpen(true);
       } else {
-        alert("Failed to submit Asssignment!");
+        addToast.error("Failed to submit Asssignment!");
       }
     } catch (error) {
       console.error("Error submitting Asssignment:", error);
-      alert(
+      addToast.error(
         "An error occurred while submitting the Asssignment. Please try again!",
       );
     } finally {
