@@ -51,6 +51,17 @@ describe("Admin AddAccountModal Component", () => {
       status: "success",
       data: mockRoles,
     });
+
+    // Patch useMutation to always return a valid mutation object
+    (reactQuery.useMutation as jest.Mock).mockReturnValue({
+      status: "idle",
+      mutate: jest.fn(),
+      isPending: false,
+      isSuccess: false,
+      isError: false,
+      error: null,
+      reset: jest.fn(),
+    });
   });
 
   it("should open the modal when the button is clicked and then close it", async () => {
