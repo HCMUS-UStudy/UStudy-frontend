@@ -1,120 +1,204 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getQuestionDetail, editQuestion } from "@/app/lib/services/question";
+import { Question } from "@/app/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { IoReturnUpBack } from "react-icons/io5";
+import { MdOutlineEdit } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
+import Checkbox from "@/app/ui/components/_common/Checkbox";
+import FileUpload from "@/app/ui/components/_common/FileUpload";
+import isEqual from "lodash/isEqual";
+import Loading from "@/app/ui/components/_common/loading/Loading";
+import { toast } from "react-toastify";
 
-const mockData = [
-  {
-    id: "1",
-    description: "Câu hỏi mẫu: Thủ đô của Việt Nam là gì?",
-    fileName: "question1.pdf",
-    grade: { id: "10", name: "Lớp 10" },
-    course: { id: "math", name: "Toán" },
-    questionType: "MULTIPLE_CHOICE",
-    isManyAnswers: false,
-    createdAt: "2025-06-21T10:00:00Z",
-    options: [
-      { id: "a", description: "Hà Nội", isCorrect: true },
-      { id: "b", description: "Hải Phòng", isCorrect: false },
-      { id: "c", description: "Đà Nẵng", isCorrect: false },
-      { id: "d", description: "TP.HCM", isCorrect: false },
-    ],
-  },
-  {
-    id: "2",
-    description: "Chọn các số nguyên tố dưới 10",
-    fileName: "question2.pdf",
-    grade: { id: "5", name: "Lớp 5" },
-    course: { id: "math", name: "Toán" },
-    questionType: "MULTIPLE_CHOICE",
-    isManyAnswers: true,
-    createdAt: "2025-06-20T09:00:00Z",
-    options: [
-      { id: "a", description: "2", isCorrect: true },
-      { id: "b", description: "3", isCorrect: true },
-      { id: "c", description: "4", isCorrect: false },
-      { id: "d", description: "5", isCorrect: true },
-      { id: "e", description: "6", isCorrect: false },
-      { id: "f", description: "7", isCorrect: true },
-    ],
-  },
-  {
-    id: "3",
-    description: "Phân tích ý nghĩa của bài thơ Sóng (Xuân Quỳnh)",
-    fileName: "bai_tap_tu_luan.docx",
-    grade: { id: "12", name: "Lớp 12" },
-    course: { id: "lit", name: "Ngữ văn" },
-    questionType: "ESSAY",
-    createdAt: "2025-06-19T15:00:00Z",
-  },
-  {
-    id: "4",
-    description: "Trình bày quan điểm của em về bảo vệ môi trường.",
-    fileName: "de_tu_luan.pdf",
-    grade: { id: "9", name: "Lớp 9" },
-    course: { id: "bio", name: "Sinh học" },
-    questionType: "ESSAY",
-    createdAt: "2025-06-18T08:00:00Z",
-  },
-];
+type QuestionEdit = Question & {
+  isManyAnswers?: boolean;
+};
 
 const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
   const router = useRouter();
-  const params = React.use(props.params);
-  const question = mockData.find((q) => q.id === params.questionId);
+  const { questionId } = React.use(props.params);
+  const queryClient = useQueryClient();
+
+  const {
+    data: question,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<Question>({
+    queryKey: ["question-detail", questionId],
+    queryFn: () => getQuestionDetail(questionId),
+    enabled: !!questionId,
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (data: {
+      description: string;
+      file?: File | null;
+      gradeId?: string;
+      courseId?: string;
+      questionType?: string;
+      options?: { id: string; description: string; isCorrect: boolean }[];
+      scoringCriteria?: string;
+      isDeleteFile?: boolean;
+    }) => {
+      return editQuestion(
+        questionId,
+        data.description,
+        data.file,
+        data.gradeId,
+        data.courseId,
+        data.questionType,
+        data.options,
+        data.scoringCriteria,
+        data.isDeleteFile,
+      );
+    },
+    onSuccess: () => {
+      toast.success("Cập nhật câu hỏi thành công!", {
+        position: "top-right",
+        autoClose: 2000,
+        closeOnClick: true,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+      });
+      setIsEdit(false);
+      refetch();
+      queryClient.invalidateQueries({
+        queryKey: ["question-detail", questionId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["Questions", question?.course?.id, question?.grade?.id],
+      });
+    },
+  });
+
   const [isEdit, setIsEdit] = useState(false);
-  const [editData, setEditData] = useState<typeof question | undefined>(
-    question,
-  );
+  const [editData, setEditData] = useState<QuestionEdit | undefined>(undefined);
+  const [isDeleteFile, setIsDeleteFile] = useState(false);
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [customBaseName, setCustomBaseName] = useState("");
+  const [isEditingFileName, setIsEditingFileName] = useState(false);
 
-  if (!question) return <div className="p-8">Không tìm thấy câu hỏi.</div>;
+  useEffect(() => {
+    if (question) {
+      // Đếm số đáp án đúng
+      const correctCount =
+        question.options?.filter((o) => o.isCorrect).length || 0;
+      setEditData({
+        ...question,
+        isManyAnswers: correctCount > 1,
+      });
+    }
+  }, [question]);
 
-  const handleChange = (field: string, value: unknown) => {
-    setEditData((prev) => ({ ...prev!, [field]: value }));
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loading />
+      </div>
+    );
+  if (isError || !question)
+    return <div className="p-8">Không tìm thấy câu hỏi.</div>;
+
+  const handleChange = (field: keyof QuestionEdit, value: unknown) => {
+    setEditData((prev) => ({ ...prev!, [field]: value }) as QuestionEdit);
   };
 
   const handleSave = () => {
-    // Thực tế sẽ gọi API cập nhật, ở đây chỉ demo
-    setIsEdit(false);
-    // Bạn có thể cập nhật lại mockData nếu muốn
+    if (!editData) return;
+    mutation.mutate({
+      description: editData.description,
+      file: isDeleteFile ? newFile : undefined,
+      gradeId: editData.grade?.id,
+      courseId: editData.course?.id,
+      questionType: editData.questionType,
+      options: editData.options,
+      scoringCriteria: editData.scoringCriteria || undefined,
+      isDeleteFile: isDeleteFile,
+    });
   };
 
+  const isChanged = (() => {
+    if (!editData || !question) return false;
+    // So sánh các trường quan trọng (chỉ các trường có trong Question)
+    const compareFields: (keyof Question)[] = [
+      "description",
+      "scoringCriteria",
+      "options",
+      "fileName",
+    ];
+    for (const field of compareFields) {
+      if (!isEqual(editData[field], question[field])) {
+        return true;
+      }
+    }
+    const normalizeOptions = (
+      opts?: { id: string; description: string; isCorrect: boolean }[],
+    ) =>
+      (opts || []).map(({ id, description, isCorrect }) => ({
+        id,
+        description,
+        isCorrect,
+      }));
+
+    // ...trong isChanged:
+    if (
+      !isEqual(
+        normalizeOptions(editData.options),
+        normalizeOptions(question.options),
+      )
+    ) {
+      return true;
+    }
+    if (isDeleteFile) return true;
+    if (newFile) return true;
+    return false;
+  })();
+
   return (
-    <div className="p-8 w-full">
+    <div className="p-4 w-full">
       <div className="flex items-center gap-4 mb-6">
         <button
-          className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold shadow border border-gray-200"
+          className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
           onClick={() => router.back()}
         >
-          ← Quay lại danh sách
+          <IoReturnUpBack className="inline-block mr-2" />
+          Trở về
         </button>
         {!isEdit && (
           <button
-            className="px-4 py-2 rounded-lg bg-orange-100 hover:bg-orange-200 text-orange-700 font-semibold shadow border border-orange-200"
+            className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
             onClick={() => setIsEdit(true)}
           >
-            ✏️ Chỉnh sửa câu hỏi
+            <MdOutlineEdit className="inline-block mr-2" />
+            Chỉnh sửa câu hỏi
           </button>
         )}
       </div>
-      <h1 className="text-2xl font-bold mb-4 text-primary-darker">
+      <h1 className="text-xl font-bold mb-4 text-primary-darker">
         Chi tiết câu hỏi
       </h1>
       <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
         {isEdit ? (
           <>
-            <div className="mb-3">
-              <span className="font-semibold">Mô tả:</span>
-              <input
-                className="ml-2 border rounded px-2 py-1 w-2/3"
-                value={editData!.description}
+            <div className="mb-3 flex">
+              <span className="font-semibold mt-1">Mô tả:</span>
+              <textarea
+                className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-3/5
+                min-h-[40px] max-h-[180px] resize-y"
+                value={editData?.description || ""}
                 onChange={(e) => handleChange("description", e.target.value)}
               />
             </div>
             <div className="mb-3">
               <span className="font-semibold">Khối:</span>
               <input
-                className="ml-2 border rounded px-2 py-1 w-32"
-                value={editData!.grade.name}
+                className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-32"
+                value={editData?.grade?.name || ""}
+                disabled
                 onChange={(e) =>
                   handleChange("grade", {
                     ...editData!.grade,
@@ -126,8 +210,9 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             <div className="mb-3">
               <span className="font-semibold">Môn:</span>
               <input
-                className="ml-2 border rounded px-2 py-1 w-32"
-                value={editData!.course.name}
+                className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-32"
+                value={editData?.course?.name || ""}
+                disabled
                 onChange={(e) =>
                   handleChange("course", {
                     ...editData!.course,
@@ -138,53 +223,97 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             </div>
             <div className="mb-3">
               <span className="font-semibold">Loại:</span>
-              <select
-                className="ml-2 border rounded px-2 py-1"
-                value={editData!.questionType}
-                onChange={(e) => handleChange("questionType", e.target.value)}
-              >
-                <option value="MULTIPLE_CHOICE">Trắc nghiệm</option>
-                <option value="ESSAY">Tự luận</option>
-              </select>
+              <input
+                className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-48 bg-gray-100 text-gray-700"
+                value={
+                  editData?.questionType === "MULTIPLE_CHOICE"
+                    ? "Trắc nghiệm"
+                    : "Tự luận"
+                }
+                disabled
+              />
             </div>
-            {editData!.fileName && (
-              <div className="mb-3">
+            {editData?.fileName && editData.questionType === "ESSAY" && (
+              <div className="mb-3 flex items-center gap-3">
                 <span className="font-semibold">File đính kèm:</span>
+                <span
+                  className={`ml-2 text-primary-darker ${
+                    isDeleteFile ? "line-through text-gray-400" : ""
+                  }`}
+                >
+                  {editData.fileName}
+                </span>
+                <button
+                  type="button"
+                  className={`px-2 py-1 rounded text-xs ${
+                    isDeleteFile
+                      ? "bg-gray-200 text-gray-700"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                  onClick={() => setIsDeleteFile((prev) => !prev)}
+                >
+                  {isDeleteFile ? "Hủy xóa" : "Xóa file"}
+                </button>
+              </div>
+            )}
+            {editData?.questionType === "ESSAY" &&
+              (isDeleteFile || !editData?.fileName) && (
+                <div className="mb-3 w-1/3 items-center">
+                  <span className="font-semibold">Tải lên file mới:</span>
+                  <FileUpload
+                    value={newFile}
+                    onChange={(file, baseName) => {
+                      setNewFile(file);
+                      setCustomBaseName(baseName);
+                    }}
+                    customBaseName={customBaseName}
+                    setCustomBaseName={setCustomBaseName}
+                    isEditing={isEditingFileName}
+                    setIsEditing={setIsEditingFileName}
+                    error={undefined}
+                  />
+                </div>
+              )}
+            {editData?.questionType === "ESSAY" && (
+              <div className="mb-3">
+                <span className="font-semibold">Tiêu chí chấm điểm:</span>
                 <input
-                  className="ml-2 border rounded px-2 py-1 w-1/2"
-                  value={editData!.fileName}
-                  onChange={(e) => handleChange("fileName", e.target.value)}
+                  className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-2/3"
+                  value={editData?.scoringCriteria || ""}
+                  onChange={(e) =>
+                    handleChange("scoringCriteria", e.target.value)
+                  }
                 />
               </div>
             )}
-            <div className="mb-3">
-              <span className="font-semibold">Ngày tạo:</span>
-              <input
-                className="ml-2 border rounded px-2 py-1 w-56"
-                value={editData!.createdAt}
-                onChange={(e) => handleChange("createdAt", e.target.value)}
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                className="px-4 py-2 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 font-semibold border border-green-200"
-                onClick={handleSave}
-              >
-                Lưu
-              </button>
-              <button
-                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold border border-gray-200"
-                onClick={() => {
-                  setIsEdit(false);
-                  setEditData(question);
-                }}
-              >
-                Hủy
-              </button>
-            </div>
             {editData && editData.questionType === "MULTIPLE_CHOICE" && (
               <div className="mb-3">
-                <span className="font-semibold">Đáp án:</span>
+                <div className="flex items-center mb-2">
+                  <span className="font-semibold mr-3">Đáp án:</span>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <Checkbox
+                      checked={!!editData.isManyAnswers}
+                      label="Chọn nhiều đáp án"
+                      onChange={(checked: boolean) => {
+                        if (!checked && editData.options) {
+                          // Nếu chuyển sang chỉ chọn 1 đáp án, chỉ giữ lại đáp án đúng đầu tiên
+                          const firstCorrectIdx = editData.options.findIndex(
+                            (o) => o.isCorrect,
+                          );
+                          const newOptions = editData.options.map((o, i) =>
+                            i === firstCorrectIdx
+                              ? { ...o, isCorrect: true }
+                              : { ...o, isCorrect: false },
+                          );
+                          handleChange("isManyAnswers", false);
+                          handleChange("options", newOptions);
+                        } else {
+                          handleChange("isManyAnswers", checked);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
                 <ul className="mt-2 space-y-2">
                   {editData.options?.map((opt, idx) => (
                     <li key={opt.id} className="flex items-center gap-2">
@@ -192,7 +321,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                         {String.fromCharCode(65 + idx)}.
                       </span>
                       <input
-                        className="border rounded px-2 py-1 w-1/2"
+                        className="border focus:outline-primary-dark rounded px-2 py-1 w-1/2"
                         value={opt.description}
                         onChange={(e) => {
                           const newOptions = editData.options!.map((o, i) =>
@@ -204,16 +333,15 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                         }}
                       />
                       <label className="flex items-center gap-1 cursor-pointer">
-                        <input
-                          type={editData.isManyAnswers ? "checkbox" : "radio"}
+                        <Checkbox
                           checked={!!opt.isCorrect}
-                          onChange={(e) => {
+                          label="Đúng"
+                          labelClassName="text-sm text-gray-700"
+                          onChange={(checked: boolean) => {
                             let newOptions;
                             if (editData.isManyAnswers) {
                               newOptions = editData.options!.map((o, i) =>
-                                i === idx
-                                  ? { ...o, isCorrect: e.target.checked }
-                                  : o,
+                                i === idx ? { ...o, isCorrect: checked } : o,
                               );
                             } else {
                               newOptions = editData.options!.map((o, i) =>
@@ -225,7 +353,6 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                             handleChange("options", newOptions);
                           }}
                         />
-                        <span className="text-xs">Đúng</span>
                       </label>
                       <button
                         type="button"
@@ -243,33 +370,62 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                             : "Xóa đáp án"
                         }
                       >
-                        🗑️
+                        <FaRegTrashAlt
+                          className={`
+                          ${editData.options!.length <= 2 ? "opacity-50" : ""}`}
+                        />
                       </button>
                     </li>
                   ))}
                 </ul>
                 <button
                   type="button"
-                  className="mt-2 px-3 py-1 rounded bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-200"
+                  className={`mt-2 px-3 py-1 rounded-lg text-primary-darkest ${
+                    (editData.options?.length || 0) >= 6
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
                   onClick={() => {
-                    const nextId = String.fromCharCode(
-                      97 + (editData.options?.length || 0),
-                    );
-                    const newOption = {
-                      id: nextId,
-                      description: "",
-                      isCorrect: false,
-                    };
-                    handleChange("options", [
-                      ...(editData.options || []),
-                      newOption,
-                    ]);
+                    if ((editData.options?.length || 0) < 6) {
+                      const nextId = String.fromCharCode(
+                        97 + (editData.options?.length || 0),
+                      );
+                      const newOption = {
+                        id: nextId,
+                        description: "",
+                        isCorrect: false,
+                      };
+                      handleChange("options", [
+                        ...(editData.options || []),
+                        newOption,
+                      ]);
+                    }
                   }}
+                  disabled={(editData.options?.length || 0) >= 6}
                 >
                   + Thêm đáp án
                 </button>
               </div>
             )}
+            <div className="flex gap-3 mt-6">
+              <button
+                className="px-4 py-2 rounded-lg bg-primary-light hover:bg-primary text-primary-darkest
+                disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
+                onClick={handleSave}
+                disabled={!isChanged}
+              >
+                Lưu
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
+                onClick={() => {
+                  setIsEdit(false);
+                  setEditData(question);
+                }}
+              >
+                Hủy
+              </button>
+            </div>
           </>
         ) : (
           <>
@@ -286,7 +442,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             <div className="mb-3">
               <span className="font-semibold">Loại:</span>{" "}
               {question.questionType === "MULTIPLE_CHOICE"
-                ? question.isManyAnswers
+                ? (question.options?.filter((o) => o.isCorrect).length || 0) > 1
                   ? "Trắc nghiệm nhiều đáp án"
                   : "Trắc nghiệm 1 đáp án"
                 : "Tự luận"}
@@ -294,15 +450,23 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             {question.fileName && (
               <div className="mb-3">
                 <span className="font-semibold">File đính kèm:</span>{" "}
-                <span className="text-blue-700 underline cursor-pointer">
+                <span className="text-primary-darker underline cursor-pointer">
                   {question.fileName}
                 </span>
               </div>
             )}
             <div className="mb-3">
-              <span className="font-semibold">Ngày tạo:</span>{" "}
-              {new Date(question.createdAt).toLocaleString("vi-VN")}
+              <span className="font-semibold">Cập nhật lần cuối:</span>{" "}
+              {new Date(question.lastModified).toLocaleString("vi-VN")}
             </div>
+            {question.questionType === "ESSAY" && (
+              <div className="mb-3">
+                <span className="font-semibold">Tiêu chí chấm điểm:</span>{" "}
+                {question.scoringCriteria || (
+                  <span className="italic text-gray-400">(Không có)</span>
+                )}
+              </div>
+            )}
             {question.questionType === "MULTIPLE_CHOICE" &&
               question.options && (
                 <div className="mb-3">
@@ -322,7 +486,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                         </span>{" "}
                         {opt.description}{" "}
                         {opt.isCorrect && (
-                          <span className="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
+                          <span className="ml-2 bg-primary-light text-primary-darkest px-2 py-0.5 rounded-full text-xs">
                             Đúng
                           </span>
                         )}

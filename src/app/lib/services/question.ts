@@ -10,12 +10,14 @@ export const createQuestion = async (body: {
     description: string;
     isCorrect: boolean;
   }[];
+  scoringCriteria: string;
 }) => {
   const formData = new FormData();
   formData.append("description", body.description);
   formData.append("gradeId", body.gradeId);
   formData.append("courseId", body.courseId);
   formData.append("questionType", body.questionType);
+  formData.append("scoringCriteria", body.scoringCriteria || "");
 
   if (body.file) {
     formData.append("file", body.file);
@@ -73,4 +75,56 @@ export const handleDownloadFile = async (questionId: string) => {
     responseType: "blob", // Quan trọng để xử lý file
   });
   return response;
+};
+
+export const getQuestionDetail = async (questionId: string) => {
+  const response = await axiosInstance.get(`/question/details/${questionId}`);
+  return response.data.data;
+};
+
+export const editQuestion = async (
+  questionId: string,
+  description: string,
+  file?: File | null,
+  gradeId?: string,
+  courseId?: string,
+  questionType?: string,
+  options?: {
+    id: string;
+    description: string;
+    isCorrect: boolean;
+  }[],
+  scoringCriteria?: string,
+  isDeleteFile?: boolean,
+) => {
+  const formData = new FormData();
+  formData.append("description", description);
+  if (gradeId) formData.append("gradeId", gradeId);
+  if (courseId) formData.append("courseId", courseId);
+  if (questionType) formData.append("questionType", questionType);
+  formData.append("scoringCriteria", scoringCriteria || "");
+  formData.append("isDeleteFile", String(isDeleteFile));
+
+  if (file) {
+    formData.append("file", file);
+  }
+
+  if (options) {
+    options.forEach((option, index) => {
+      formData.append(`options[${index}].id`, option.id);
+      formData.append(`options[${index}].description`, option.description);
+      formData.append(`options[${index}].isCorrect`, String(option.isCorrect));
+    });
+  }
+
+  const response = await axiosInstance.patch(
+    `/question/update/${questionId}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return response.data.data;
 };
