@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import permissionScreenReducer from "@/app/store/PermissionScreenSlice";
 import childrenReducer from "@/app/store/ChildrenSlice";
-import { toast } from "react-toastify";
 import * as authService from "@/app/lib/services/auth";
 import * as actionService from "@/app/lib/action";
 import * as cookieService from "js-cookie";
@@ -51,14 +50,19 @@ jest.mock("next/image", () => ({
   },
 }));
 
-// Mock react-toastify
-jest.mock("react-toastify", () => ({
-  toast: {
-    success: jest.fn(),
-    error: jest.fn(),
-    warning: jest.fn(),
-    info: jest.fn(),
-  },
+// Define addToast mock at the top
+const addToast = {
+  success: jest.fn(),
+  error: jest.fn(),
+  warning: jest.fn(),
+  info: jest.fn(),
+};
+
+// Mock useCustomToast to always return the same addToast instance
+jest.mock("@/app/lib/hooks/useToast", () => ({
+  useCustomToast: () => ({
+    addToast,
+  }),
 }));
 
 // Mock js-cookie
@@ -346,10 +350,7 @@ describe("Admin Login Page", () => {
           expect.any(String),
           expect.any(String),
         );
-        expect(toast.success).toHaveBeenCalledWith(
-          "Đăng nhập thành công",
-          expect.any(Object),
-        );
+        expect(addToast.success).toHaveBeenCalledWith("Đăng nhập thành công");
         expect(mockRouter.push).toHaveBeenCalledWith("/admin/dashboard");
       });
     });

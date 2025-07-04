@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SmallCheckbox from "../../_common/SmallCheckbox";
 import Loading from "../../_common/loading/Loading";
 import { addBranch } from "@/app/lib/services/branch";
-import { toast } from "react-toastify";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const CreateBranchSchema = z.object({
@@ -75,11 +74,7 @@ const CreateBranchModal = ({
     mutationFn: (data: CreateBranchInputs) => addBranch(data),
     onError: (error) => {
       console.log(error);
-      toast.error("Tạo chi nhánh thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Tạo chi nhánh thất bại");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Branches"] });

@@ -57,25 +57,32 @@ export default function HeaderHome() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 mb-4">
       {/* Tổng số lớp học */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="rounded-lg border hover:shadow-lg transition-all duration-300 p-3 bg-white hover:bg-blue-50 hover:border-blue-200">
-          <CardHeader className="flex flex-row items-center justify-between p-1 pb-2 rounded-t-lg">
-            <CardTitle className="text-base font-semibold text-gray-800">
-              Tổng số lớp học
-            </CardTitle>
-            <div className="p-2 rounded-full bg-blue-100">
-              <FaBook className="h-5 w-5 text-blue-600" />
+        <Card className="rounded-xl border hover:shadow-lg transition-all duration-300 p-2 bg-white hover:bg-blue-50 hover:border-blue-200">
+          <CardHeader className="flex flex-row items-center justify-between p-0 pb-1.5">
+            <div className="flex items-center space-x-1.5">
+              <div className="p-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
+                <FaBook className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold text-gray-800">
+                  Tổng số lớp học
+                </CardTitle>
+                <p className="text-xs text-gray-500">
+                  Theo dõi tiến độ học tập
+                </p>
+              </div>
             </div>
           </CardHeader>
-          <CardContent className="p-1">
+          <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-gray-900 flex items-center">
+              <div className="text-lg font-bold text-gray-900 flex items-center">
                 {classData?.totalClasses || 0}
               </div>
 
@@ -90,8 +97,8 @@ export default function HeaderHome() {
             </div>
 
             {/* Tiến độ */}
-            <div className="mt-2 mb-2">
-              <div className="flex justify-between items-center mb-1">
+            <div className="mt-1.5 mb-1.5">
+              <div className="flex justify-between items-center mb-0.5">
                 <span className="text-xs font-medium text-gray-700">
                   Tiến độ học tập
                 </span>
@@ -105,9 +112,9 @@ export default function HeaderHome() {
                   %
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div className="w-full bg-gray-200 rounded-full h-1">
                 <div
-                  className="bg-blue-600 h-1.5 rounded-full"
+                  className="bg-blue-600 h-1 rounded-full"
                   style={{
                     width: `${classData ? (classData.inProgressClasses / classData.totalClasses) * 100 : 0}%`,
                   }}
@@ -116,8 +123,8 @@ export default function HeaderHome() {
             </div>
 
             {/* Thêm nút xem chi tiết */}
-            <div className="mt-2 flex justify-end items-end text-xs border-t border-gray-100 pt-2">
-              <button className="text-blue-600 hover:text-blue-800 transition-colors flex items-center">
+            <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
+              <button className="text-blue-600 hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-1.5 py-0.5 rounded hover:bg-blue-100">
                 Chi tiết
                 <FaChevronRight className="ml-1 h-2 w-2" />
               </button>
@@ -132,28 +139,33 @@ export default function HeaderHome() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <Card className="rounded-lg border hover:shadow-lg transition-all duration-300 p-3 bg-white hover:bg-green-50 hover:border-green-200">
-          <CardHeader className="flex flex-row items-center justify-between p-1 pb-2 rounded-t-lg">
-            <CardTitle className="text-base font-semibold text-gray-800">
-              Bài tập thực hành
-            </CardTitle>
-            <div className="p-2 rounded-full bg-green-100">
-              <FaTasks className="h-5 w-5 text-green-600" />
+        <Card className="rounded-xl border hover:shadow-lg transition-all duration-300 p-2 bg-white hover:bg-green-50 hover:border-green-200">
+          <CardHeader className="flex flex-row items-center justify-between p-0 pb-1.5">
+            <div className="flex items-center space-x-1.5">
+              <div className="p-1 bg-gradient-to-r from-green-500 to-green-600 rounded-lg">
+                <FaTasks className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold text-gray-800">
+                  Bài tập thực hành
+                </CardTitle>
+                <p className="text-xs text-gray-500">Theo dõi bài tập về nhà</p>
+              </div>
             </div>
           </CardHeader>
-          <CardContent className="p-1">
+          <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-gray-900 flex items-center">
+              <div className="text-lg font-bold text-gray-900 flex items-center">
                 {practiceData?.total || 0}
               </div>
 
-              <div className="flex gap-2 text-xs">
-                <div className="px-1.5 py-0.5 bg-red-50 rounded-md">
+              <div className="flex gap-1 text-xs">
+                <div className="px-1 py-0.5 bg-red-50 rounded-md">
                   <span className="font-semibold text-red-600">
                     {practiceData?.overdue || 0} cần nộp
                   </span>
                 </div>
-                <div className="px-1.5 py-0.5 bg-green-50 rounded-md">
+                <div className="px-1 py-0.5 bg-green-50 rounded-md">
                   <span className="font-semibold text-green-600">
                     {practiceData?.submitted || 0} đã nộp
                   </span>
@@ -162,8 +174,8 @@ export default function HeaderHome() {
             </div>
 
             {/* Trạng thái hoàn thành */}
-            <div className="mt-2 mb-2">
-              <div className="flex justify-between items-center mb-1">
+            <div className="mt-1.5 mb-1.5">
+              <div className="flex justify-between items-center mb-0.5">
                 <span className="text-xs font-medium text-gray-700">
                   Đã hoàn thành
                 </span>
@@ -173,9 +185,9 @@ export default function HeaderHome() {
                     : "0/0"}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div className="w-full bg-gray-200 rounded-full h-1">
                 <div
-                  className="bg-green-600 h-1.5 rounded-full"
+                  className="bg-green-600 h-1 rounded-full"
                   style={{
                     width: `${practiceData ? (practiceData.submitted / practiceData.total) * 100 : 0}%`,
                   }}
@@ -184,8 +196,8 @@ export default function HeaderHome() {
             </div>
 
             {/* Footer */}
-            <div className="mt-2 flex justify-end items-end text-xs border-t border-gray-100 pt-2">
-              <button className="text-green-600 hover:text-green-800 transition-colors flex items-center">
+            <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
+              <button className="text-green-600 hover:text-green-800 transition-colors flex items-center bg-green-50 px-1.5 py-0.5 rounded hover:bg-green-100">
                 Xem tất cả
                 <FaChevronRight className="ml-1 h-2 w-2" />
               </button>
@@ -200,28 +212,33 @@ export default function HeaderHome() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <Card className="rounded-lg border hover:shadow-lg transition-all duration-300 p-3 bg-white hover:bg-red-50 hover:border-red-200">
-          <CardHeader className="flex flex-row items-center justify-between p-1 pb-2 rounded-t-lg">
-            <CardTitle className="text-base font-semibold text-gray-800">
-              Bài kiểm tra
-            </CardTitle>
-            <div className="p-2 rounded-full bg-red-100">
-              <FaQuestionCircle className="h-5 w-5 text-red-600" />
+        <Card className="rounded-xl border hover:shadow-lg transition-all duration-300 p-2 bg-white hover:bg-red-50 hover:border-red-200">
+          <CardHeader className="flex flex-row items-center justify-between p-0 pb-1.5">
+            <div className="flex items-center space-x-1.5">
+              <div className="p-1 bg-gradient-to-r from-red-500 to-red-600 rounded-lg">
+                <FaQuestionCircle className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold text-gray-800">
+                  Bài kiểm tra
+                </CardTitle>
+                <p className="text-xs text-gray-500">Theo dõi bài kiểm tra</p>
+              </div>
             </div>
           </CardHeader>
-          <CardContent className="p-1">
+          <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-gray-900 flex items-center">
+              <div className="text-lg font-bold text-gray-900 flex items-center">
                 {testData?.total || 0}
               </div>
 
-              <div className="flex items-center gap-2 text-xs">
-                <div className="px-1.5 py-0.5 bg-red-50 rounded-md">
+              <div className="flex items-center gap-1 text-xs">
+                <div className="px-1 py-0.5 bg-red-50 rounded-md">
                   <span className="font-semibold text-red-600">
                     {testData?.overdue || 0} cần làm
                   </span>
                 </div>
-                <div className="px-1.5 py-0.5 bg-green-50 rounded-md">
+                <div className="px-1 py-0.5 bg-green-50 rounded-md">
                   <span className="font-semibold text-green-600">
                     {testData?.submitted || 0} đã làm
                   </span>
@@ -230,8 +247,8 @@ export default function HeaderHome() {
             </div>
 
             {/* Tiến độ */}
-            <div className="mt-2 mb-2">
-              <div className="flex justify-between items-center mb-1">
+            <div className="mt-1.5 mb-1.5">
+              <div className="flex justify-between items-center mb-0.5">
                 <span className="text-xs font-medium text-gray-700">
                   Hoàn thành
                 </span>
@@ -239,9 +256,9 @@ export default function HeaderHome() {
                   {testData ? `${testData.submitted}/${testData.total}` : "0/0"}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div className="w-full bg-gray-200 rounded-full h-1">
                 <div
-                  className="bg-red-600 h-1.5 rounded-full"
+                  className="bg-red-600 h-1 rounded-full"
                   style={{
                     width: `${testData ? (testData.submitted / testData.total) * 100 : 0}%`,
                   }}
@@ -250,8 +267,8 @@ export default function HeaderHome() {
             </div>
 
             {/* Footer */}
-            <div className="mt-2 flex justify-end items-end text-xs border-t border-gray-100 pt-2">
-              <button className="text-red-600 hover:text-red-800 transition-colors flex items-center">
+            <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
+              <button className="text-red-600 hover:text-red-800 transition-colors flex items-center bg-red-50 px-1.5 py-0.5 rounded hover:bg-red-100">
                 Làm ngay
                 <FaChevronRight className="ml-1 h-2 w-2" />
               </button>

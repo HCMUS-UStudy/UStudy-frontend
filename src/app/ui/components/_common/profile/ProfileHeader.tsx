@@ -8,7 +8,7 @@ import { useState } from "react";
 import EditProfileModal from "./EditProfileModal";
 import EditAvatarModal from "./EditAvatarModal";
 import { updateProfile, updateAvatar } from "@/app/lib/services/user";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const ProfileHeader = ({
   user,
@@ -19,6 +19,7 @@ const ProfileHeader = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const { addToast } = useCustomToast();
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-6 sm:px-10 py-8 border-b border-gray-200 bg-gradient-to-r from-primary-light to-white">
@@ -59,7 +60,7 @@ const ProfileHeader = ({
         user={user}
         onSave={async (data) => {
           await updateProfile(data);
-          toast.success("Cập nhật thông tin thành công");
+          addToast.success("Cập nhật thông tin thành công");
           onSuccess?.();
         }}
       />
@@ -71,7 +72,7 @@ const ProfileHeader = ({
         onSave={async (file) => {
           // Gọi API upload avatar
           await updateAvatar(file);
-          toast.success("Cập nhật avatar thành công");
+          addToast.success("Cập nhật avatar thành công");
           onSuccess?.();
         }}
       />

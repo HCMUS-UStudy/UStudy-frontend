@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { Button } from "@/app/ui/components/_common/Button";
-import { toast } from "react-toastify";
 import { createNewCourse } from "@/app/lib/services/course";
 import {
   Dialog,
@@ -17,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCreatorFromCookies } from "@/app/lib/action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const CreateGradeSchema = z.object({
   creator: z.string(),
@@ -47,25 +47,20 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
   });
 
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
 
   const handleOpenModal = () => setShowModal(true);
 
   const createCourseMutation = useMutation({
     mutationFn: (data: CreateGradeInputs) => createNewCourse(data),
     onSuccess: () => {
-      toast.success("Tạo môn học thành công!", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
+      addToast.success("Tạo môn học thành công!");
       setShowModal(false);
       queryClient.invalidateQueries({ queryKey: ["Courses"] });
     },
     onError: (error) => {
       console.error("Error creating course:", error);
-      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.", {
-        position: "bottom-right",
-        autoClose: 3000,
-      });
+      addToast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
     },
   });
 

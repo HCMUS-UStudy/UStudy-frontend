@@ -7,7 +7,7 @@ import { Input } from "../text-field/Input";
 import { Button } from "../Button";
 import { Select, SelectItem } from "../Select";
 import { FiEdit2, FiLock } from "react-icons/fi";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { changePassword } from "@/app/lib/services/auth";
 
 interface EditProfileModalProps {
@@ -45,6 +45,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     confirmNewPassword: "",
   });
 
+  const { addToast } = useCustomToast();
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -80,7 +82,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const handlePasswordSubmit = async () => {
     try {
       if (passwordData.newPassword !== passwordData.confirmNewPassword) {
-        toast.error("Mật khẩu mới không khớp");
+        addToast.error("Mật khẩu mới không khớp");
         return;
       }
 
@@ -91,7 +93,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         confirmNewPassword: passwordData.confirmNewPassword,
       });
 
-      toast.success("Đổi mật khẩu thành công");
+      addToast.success("Đổi mật khẩu thành công");
       setShowPasswordModal(false);
       setPasswordData({
         oldPassword: "",
@@ -100,7 +102,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(
+      addToast.error(
         error.response?.data?.message || "Có lỗi xảy ra khi đổi mật khẩu",
       );
     } finally {

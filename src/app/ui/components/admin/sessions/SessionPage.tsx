@@ -22,7 +22,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { Session } from "@/app/types";
 
 const SessionManagement = () => {
@@ -56,22 +56,15 @@ const SessionManagement = () => {
     useDeleteSessionMutation.mutate(sessionId);
   };
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const useDeleteSessionMutation = useMutation({
     mutationFn: (sessionId: string) => deleteSession(sessionId),
     onError: () => {
-      toast.error("Xóa ca học thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Xóa ca học thất bại");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Sessions"] });
-      toast.success("Xóa ca học thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Xóa ca học thành công");
     },
   });
 

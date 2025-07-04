@@ -4,11 +4,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { routeMap } from "@/app/menu-constants";
 import { useRouter, usePathname } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { getPermissions } from "@/app/lib/services/permission";
 import { RxCross2 } from "react-icons/rx";
 import { motion, AnimatePresence } from "framer-motion";
 import Tooltip from "../Tooltip";
+import { useAppSelector } from "@/app/store/store";
 
 const Sidebar = ({
   isOpen,
@@ -23,11 +22,9 @@ const Sidebar = ({
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  const { data: permissions, status } = useQuery({
-    queryKey: ["Permissions"],
-    queryFn: () => getPermissions(),
-  });
+  const { status, screens: permissions } = useAppSelector(
+    (state) => state.permission,
+  );
 
   useEffect(() => {
     setMounted(true);

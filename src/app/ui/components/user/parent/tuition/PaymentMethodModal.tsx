@@ -5,7 +5,7 @@ import { Button } from "@/app/ui/components/_common/Button";
 import { FaCheck, FaWallet } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
 import { submitOrderPayment } from "@/app/lib/services/payment";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { PaymentItem } from "@/app/types";
 
 interface PaymentMethodModalProps {
@@ -24,6 +24,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("");
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { addToast } = useCustomToast();
 
   // Format currency (VND)
   const formatCurrency = (amount: number) => {
@@ -83,7 +84,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
         if (response) {
           window.location.href = response;
         } else {
-          toast.error("Không thể kết nối tới cổng thanh toán VNPay");
+          addToast.error("Không thể kết nối tới cổng thanh toán VNPay");
           setIsLoading(false);
           return;
         }
@@ -96,7 +97,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       }, 2000);
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error(
+      addToast.error(
         "Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại.",
       );
       setIsLoading(false);

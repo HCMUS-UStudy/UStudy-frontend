@@ -11,7 +11,7 @@ import ReviewQuizLoading from "@/app/ui/components/_common/loading/ReviewQuizLoa
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle, FaSave, FaTimesCircle } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface EditExerciseProps {
   submissionId: string;
@@ -33,6 +33,8 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
   const [updatedFiles, setUpdatedFiles] = useState<{ [key: string]: File[] }>(
     {},
   );
+
+  const { addToast } = useCustomToast();
 
   const fetchEditExercise = async () => {
     try {
@@ -159,18 +161,18 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
 
       if (answers.length > 0) {
         await updateSubmission(submissionId, { answers });
-        toast.success("Cập nhật bài làm thành công!");
+        addToast.success("Cập nhật bài làm thành công!");
         setIsConfirmModalOpen(false);
 
         if (typeof window !== "undefined") {
           window.location.reload();
         }
       } else {
-        toast.error("Không có câu trả lời nào để cập nhật.");
+        addToast.error("Không có câu trả lời nào để cập nhật.");
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
-      toast.error("Đã có lỗi xảy ra khi cập nhật bài làm.");
+      addToast.error("Đã có lỗi xảy ra khi cập nhật bài làm.");
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { RxCross1 } from "react-icons/rx";
 import { Button } from "../../_common/Button";
-import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { IoReturnUpBack } from "react-icons/io5";
 import { Input } from "../../_common/text-field/Input";
@@ -11,6 +10,7 @@ import {
 } from "@/app/lib/services/notification";
 import TextArea from "../../_common/text-field/TextArea";
 import Tooltip from "../../_common/Tooltip";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const NotificationModal = ({
   onGoBack,
@@ -32,6 +32,7 @@ const NotificationModal = ({
 }) => {
   const [title, setTittle] = useState<string | undefined>("");
   const [content, setContent] = useState<string | undefined>("");
+  const { addToast } = useCustomToast();
 
   const handleSubmit = async () => {
     try {
@@ -51,29 +52,17 @@ const NotificationModal = ({
       } else {
         await createNotification(body);
       }
-      toast.success(
+      addToast.success(
         notification
           ? "Chỉnh sửa thông báo thành công"
           : "Thêm thông báo thành công",
-        {
-          position: "top-right",
-          autoClose: 2500,
-          pauseOnHover: false,
-          closeOnClick: true,
-        },
       );
     } catch (error) {
       console.error("Failed to create question:", error);
-      toast.error(
+      addToast.error(
         notification
           ? "CHỉnh sửa thông báo thất bại"
           : "Thêm thông báo thất bại",
-        {
-          position: "top-right",
-          autoClose: 2500,
-          pauseOnHover: false,
-          closeOnClick: true,
-        },
       );
     }
     setTittle("");

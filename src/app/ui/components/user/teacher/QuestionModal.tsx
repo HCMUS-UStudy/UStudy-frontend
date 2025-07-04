@@ -1,7 +1,6 @@
 import { RxCross1 } from "react-icons/rx";
 import { useState } from "react";
 import { Button } from "../../_common/Button";
-import { toast } from "react-toastify";
 import Checkbox from "../../_common/Checkbox";
 import { motion } from "framer-motion";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -15,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Tooltip from "../../_common/Tooltip";
 import { AnimatePresence } from "framer-motion";
 import FileUpload from "../../_common/FileUpload";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type FormValues = {
   question: string;
@@ -73,6 +73,8 @@ const QuestionModal = ({
   };
 
   const [mcCorrectError, setMcCorrectError] = useState("");
+  const { addToast } = useCustomToast();
+
   const onSubmit = async (data: FormValues) => {
     let valid = true;
     if (!data.question.trim()) {
@@ -110,24 +112,14 @@ const QuestionModal = ({
 
     try {
       await createQuestion(body);
-      toast.success("Tạo câu hỏi thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Tạo câu hỏi thành công");
       onClose(false);
       queryClient.invalidateQueries({
         queryKey: ["Questions", courseId, gradeId],
       });
     } catch (error) {
       console.error("Failed to create question:", error);
-      toast.error("Tạo câu hỏi thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tạo câu hỏi thất bại");
     }
   };
 
@@ -157,11 +149,7 @@ const QuestionModal = ({
       setScoringCriteriaError("");
     }
     if (!customBaseName && selectedFile) {
-      toast.error("Tên tệp không được để trống.", {
-        pauseOnHover: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
+      addToast.error("Tên tệp không được để trống");
       valid = false;
     }
     if (!valid) return;
@@ -187,21 +175,11 @@ const QuestionModal = ({
 
     try {
       await createQuestion(body);
-      toast.success("Tạo câu hỏi thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Tạo câu hỏi thành công");
       onClose(false);
     } catch (error) {
       console.error("Failed to create question:", error);
-      toast.error("Tạo câu hỏi thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tạo câu hỏi thất bại");
     }
   };
 

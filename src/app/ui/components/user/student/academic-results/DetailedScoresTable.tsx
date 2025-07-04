@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -6,16 +5,16 @@ import {
   CardTitle,
 } from "../../../_common/Card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHeader,
-  TableRow,
-} from "../../../_common/Table";
-import { useQuery } from "@tanstack/react-query";
-import { getAcademicResult } from "@/app/lib/services/academicResult";
-import Pagination from "../../../_common/Pagination";
+  BsBook,
+  BsCalendarEvent,
+  BsCardHeading,
+  BsLayers,
+  BsPeople,
+  BsPersonCheck,
+  BsTextParagraph,
+  BsTrophy,
+} from "react-icons/bs";
+import { ClassScoreDetail } from "@/app/types/class";
 
 // interface Score {
 //   subject: string;
@@ -75,158 +74,81 @@ import Pagination from "../../../_common/Pagination";
 //   },
 // ];
 
-export default function DetailedScoresTable({ classId }: { classId: string }) {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data: academicRes, status } = useQuery({
-    queryKey: ["AcademicResults", currentPage - 1, classId],
-    queryFn: () => getAcademicResult(classId, currentPage - 1, 5),
-    enabled: classId !== "",
-  });
+interface DetailItemProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+}
+
+const DetailItem = ({ icon, label, value }: DetailItemProps) => (
+  <div className="flex items-center p-3 transition-colors hover:bg-gray-50 rounded-lg">
+    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-primary-lighter text-primary-darker rounded-full mr-4">
+      {icon}
+    </div>
+    <div className="flex-1">
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="text-md font-semibold text-gray-800">{value}</p>
+    </div>
+  </div>
+);
+
+interface DetailedScoresTableProps {
+  details: ClassScoreDetail;
+}
+
+export default function DetailedScoresTable({
+  details,
+}: DetailedScoresTableProps) {
+  const detailItems = [
+    {
+      icon: <BsCardHeading size={20} />,
+      label: "Tên lớp",
+      value: details.className,
+    },
+    {
+      icon: <BsBook size={20} />,
+      label: "Môn học",
+      value: details.course.name,
+    },
+    { icon: <BsLayers size={20} />, label: "Khối", value: details.grade.name },
+    {
+      icon: <BsCalendarEvent size={20} />,
+      label: "Ngày bắt đầu",
+      value: new Date(details.startDate).toLocaleDateString("vi-VN"),
+    },
+    {
+      icon: <BsPersonCheck size={20} />,
+      label: "Điểm của bạn",
+      value: details.studentAverage.toFixed(1),
+    },
+    {
+      icon: <BsPeople size={20} />,
+      label: "Điểm TB Lớp",
+      value: details.classAverage.toFixed(1),
+    },
+    {
+      icon: <BsTrophy size={20} />,
+      label: "Xếp hạng",
+      value: `${details.studentRank}/${details.totalStudents}`,
+    },
+    {
+      icon: <BsTextParagraph size={20} />,
+      label: "Mô tả",
+      value: details.description || "Không có",
+    },
+  ];
+
   return (
     <Card className="border-primary-light bg-white hover:shadow-xl transition-shadow">
       <CardHeader>
-        <CardTitle>Chi tiết điểm số</CardTitle>
+        <CardTitle>Chi tiết lớp học</CardTitle>
       </CardHeader>
       <CardContent>
-        {classId ? (
-          <>
-            <Table>
-              <TableHeader
-                columns={[
-                  "Bài kiểm tra",
-                  "Điểm",
-                  "Điểm trung bình",
-                  "Ngày làm bài",
-                  "",
-                ]}
-              />
-              <TableBody isLoading={status === "pending"}>
-                {academicRes?.assignmentScores.content.map((result) => (
-                  <TableRow key={result.title}>
-                    <TableCell>{result.title}</TableCell>
-                    <TableCell>{result.studentScore}</TableCell>
-                    <TableCell>{result.classAverageScore}</TableCell>
-                    <TableCell>
-                      {new Date(result.submissionDate).toLocaleDateString(
-                        "vi-VN",
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter
-                columns={[
-                  "ID",
-                  "Bài kiểm tra",
-                  "Điểm",
-                  "Điểm trung bình",
-                  "Ngày làm bài",
-                ]}
-                footerData={[
-                  "Điểm trung bình",
-                  "",
-                  "",
-                  "",
-                  academicRes?.averageScore.toString() || "",
-                ]}
-              />
-            </Table>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={academicRes?.assignmentScores.totalPages || 1}
-              handlePageClick={(page) => setCurrentPage(page)}
-              handleNextPage={() =>
-                setCurrentPage((prev) =>
-                  Math.min(
-                    academicRes?.assignmentScores.totalPages || 1,
-                    prev + 1,
-                  ),
-                )
-              }
-              handlePreviousPage={() =>
-                setCurrentPage((prev) => Math.max(1, prev - 1))
-              }
-            />
-          </>
-        ) : (
-          <div className="text-primary-darkest">
-            Vui lòng chọn lớp học để xem chi tiết
-          </div>
-        )}
-        {/* <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-primary-lighter border-b border-primary-light">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                  Môn học
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Điểm giữa kỳ
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Điểm cuối kỳ
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Điểm TB
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Điểm chữ
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                  Giáo viên
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {detailedScores.map((score, index) => (
-                <tr
-                  key={index}
-                  className={`border-b border-gray-200 hover:bg-primary-lighter transition-colors ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
-                  <td className="px-4 py-3 text-sm font-medium text-gray-800">
-                    {score.subject}
-                  </td>
-                  <td className="px-4 py-3 text-center text-sm text-gray-700">
-                    {score.midterm.toFixed(1)}
-                  </td>
-                  <td className="px-4 py-3 text-center text-sm text-gray-700">
-                    {score.final.toFixed(1)}
-                  </td>
-                  <td className="px-4 py-3 text-center text-sm font-medium text-primary-darkest">
-                    {score.average.toFixed(1)}
-                  </td>
-                  <td className="px-4 py-3 text-center text-sm font-medium text-primary-darkest">
-                    {score.grade}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">
-                    {score.teacher}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="bg-primary-lighter border-t border-primary-light">
-                <td className="px-4 py-3 text-sm font-semibold text-gray-800">
-                  Điểm trung bình tổng
-                </td>
-                <td colSpan={2} className="px-4 py-3" />
-                <td className="px-4 py-3 text-center text-sm font-bold text-primary-darkest">
-                  {overallAverage.toFixed(1)}
-                </td>
-                <td
-                  colSpan={2}
-                  className="px-4 py-3 text-center text-sm font-bold text-primary-darkest"
-                >
-                  <span className={`font-bold ${ranking.color}`}>
-                    {ranking.label}
-                  </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div> */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+          {detailItems.map((item, index) => (
+            <DetailItem key={index} {...item} />
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
