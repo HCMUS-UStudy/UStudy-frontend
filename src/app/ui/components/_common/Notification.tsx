@@ -124,7 +124,9 @@ export const Notification = ({ role }: { role: string }) => {
       }
     }
     if (showDropdown) {
-      document.addEventListener("mousedown", handleClickOutside);
+      if (typeof document !== "undefined") {
+        document.addEventListener("mousedown", handleClickOutside);
+      }
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);

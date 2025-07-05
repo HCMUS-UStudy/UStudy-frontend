@@ -17,6 +17,11 @@ import {
   CardDescription,
   CardContent,
 } from "../../_common/Card";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store/store";
+import { getBranchSchedule } from "@/app/lib/services/classSchedule";
+import { BranchSchedule } from "@/app/types";
+import BranchSelector from "../BranchSelector";
 
 interface AdminScheduleRecord {
   classId: string;
@@ -25,6 +30,7 @@ interface AdminScheduleRecord {
   grade: string;
   teachers: { id: string; name: string; avatar?: string }[];
   time: string;
+  room: string;
 }
 
 interface AdminScheduleData {
@@ -44,6 +50,8 @@ export default function AdminSchedule() {
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
 
+  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleActiveStartDateChange = (args: any) => {
     if (args.activeStartDate) {
@@ -51,99 +59,83 @@ export default function AdminSchedule() {
     }
   };
 
-  // TODO: Thay thế bằng API thực tế lấy lịch lớp cho admin
   const fetchSchedule = async (month: number, year: number) => {
+    if (!selectedBranchId) {
+      console.log("No branch selected");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Mock data
-      const mockData: AdminScheduleData = {
-        dates: {
-          [`${year}-${String(month).padStart(2, "0")}-10`]: [
-            {
-              classId: "1",
-              class: "10A1",
-              subject: "Toán",
-              grade: "10",
-              teachers: [
-                { id: "t1", name: "Nguyễn Văn A", avatar: undefined },
-                { id: "t2", name: "Trần Thị B", avatar: undefined },
-              ],
-              time: "07:00 - 09:00",
-            },
-          ],
-          [`${year}-${String(month).padStart(2, "0")}-15`]: [
-            {
-              classId: "2",
-              class: "11B2",
-              subject: "Văn",
-              grade: "11",
-              teachers: [{ id: "t3", name: "Lê Văn C", avatar: undefined }],
-              time: "09:30 - 11:00",
-            },
-            {
-              classId: "8",
-              class: "10C1",
-              subject: "Anh",
-              grade: "10",
-              teachers: [{ id: "t8", name: "Trịnh Văn H", avatar: undefined }],
-              time: "14:45 - 16:15",
-            },
-          ],
-          [`${year}-${String(month).padStart(2, "0")}-20`]: [
-            {
-              classId: "3",
-              class: "12A1",
-              subject: "Lý",
-              grade: "12",
-              teachers: [{ id: "t4", name: "Phạm Văn D", avatar: undefined }],
-              time: "07:00 - 08:30",
-            },
-            {
-              classId: "4",
-              class: "12A2",
-              subject: "Hóa",
-              grade: "12",
-              teachers: [{ id: "t5", name: "Ngô Thị E", avatar: undefined }],
-              time: "08:45 - 10:15",
-            },
-            {
-              classId: "5",
-              class: "11A1",
-              subject: "Sinh",
-              grade: "11",
-              teachers: [{ id: "t6", name: "Đỗ Văn F", avatar: undefined }],
-              time: "10:30 - 12:00",
-            },
-            {
-              classId: "6",
-              class: "10B1",
-              subject: "Toán",
-              grade: "10",
-              teachers: [{ id: "t7", name: "Lý Thị G", avatar: undefined }],
-              time: "13:00 - 14:30",
-            },
-            {
-              classId: "7",
-              class: "10C1",
-              subject: "Anh",
-              grade: "10",
-              teachers: [{ id: "t8", name: "Trịnh Văn H", avatar: undefined }],
-              time: "14:45 - 16:15",
-            },
-          ],
-        },
+      const response = await getBranchSchedule(selectedBranchId, month, year);
+      const branchSchedules: BranchSchedule[] = response.data.data;
+
+      console.log("Branch schedule response:", response.data);
+      console.log("Branch schedules:", branchSchedules);
+
+      // Transform API data to our format
+      const transformedData: AdminScheduleData = {
+        dates: {},
       };
-      setScheduleData(mockData);
+
+      branchSchedules.forEach((schedule) => {
+        if (schedule.classSession && schedule.classSession.clazz) {
+          const dateStr = schedule.date;
+          const classSession = schedule.classSession;
+          const clazz = classSession.clazz;
+
+          const record: AdminScheduleRecord = {
+            classId: clazz.id || "",
+            class: clazz.name || "",
+            subject: clazz.course?.name || "",
+            grade: clazz.grade?.name || "",
+            teachers: Array.isArray(classSession.clazz.teacher)
+              ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                classSession.clazz.teacher.map((teacher: any) => ({
+                  id: teacher.id,
+                  name: teacher.name,
+                  avatar: undefined, // API không trả về avatar
+                }))
+              : classSession.clazz.teacher
+                ? [
+                    {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      id: (classSession.clazz.teacher as any).id,
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      name: (classSession.clazz.teacher as any).name,
+                      avatar: undefined,
+                    },
+                  ]
+                : [],
+            time: `${classSession.session?.startTime || ""} - ${classSession.session?.endTime || ""}`,
+            room: classSession.room?.name || "Chưa có phòng",
+          };
+
+          if (!transformedData.dates[dateStr]) {
+            transformedData.dates[dateStr] = [];
+          }
+          transformedData.dates[dateStr].push(record);
+        }
+      });
+
+      console.log(transformedData);
+      setScheduleData(transformedData);
+    } catch (error) {
+      console.error("Failed to fetch branch schedule:", error);
+      // Fallback to empty data
+      setScheduleData({ dates: {} });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const month = activeStartDate.getMonth() + 1;
-    const year = activeStartDate.getFullYear();
-    fetchSchedule(month, year);
-  }, [activeStartDate]);
+    if (selectedBranchId) {
+      const month = activeStartDate.getMonth() + 1;
+      const year = activeStartDate.getFullYear();
+      fetchSchedule(month, year);
+    }
+  }, [activeStartDate, selectedBranchId]);
 
   function formatDateLocal(date: Date): string {
     const year = date.getFullYear();
@@ -207,6 +199,14 @@ export default function AdminSchedule() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 p-2 md:p-6">
+      {/* Branch Selector */}
+      <div className="w-full lg:hidden mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm font-medium text-gray-700">Chi nhánh:</span>
+          <BranchSelector />
+        </div>
+      </div>
+
       {/* Calendar Section */}
       <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
@@ -214,9 +214,13 @@ export default function AdminSchedule() {
             <CardTitle className="text-2xl font-bold text-primary-darkest">
               🗓️ Quản lý lịch dạy
             </CardTitle>
-            <CardDescription className="text-gray-600">
-              Chọn ngày để xem chi tiết
-            </CardDescription>
+            <div className="hidden lg:block">
+              <div className="flex items-center gap-2">
+                <CardDescription className="text-gray-600">
+                  Chọn ngày để xem chi tiết
+                </CardDescription>
+              </div>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-6 pt-0 overflow-visible relative">
@@ -269,7 +273,12 @@ export default function AdminSchedule() {
         </CardHeader>
 
         <CardContent className="p-8 pt-0">
-          {loading ? (
+          {!selectedBranchId ? (
+            <div className="text-center py-10 text-gray-400 flex flex-col items-center">
+              <p className="text-2xl mb-2">🏢</p>
+              <p>Vui lòng chọn chi nhánh để xem lịch học</p>
+            </div>
+          ) : loading ? (
             <div className="flex flex-col items-center justify-center py-10 text-primary animate-pulse">
               <FaSpinner className="animate-spin text-5xl mb-2" />
               <p>Đang tải lịch lớp...</p>
@@ -300,6 +309,13 @@ export default function AdminSchedule() {
                     <span className="font-medium">Khối:</span>
                     <span className="inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-sm font-semibold">
                       {record.grade}
+                    </span>
+                  </div>
+                  {/* Phòng học */}
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Phòng học:</span>
+                    <span className="inline-block bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-sm font-semibold">
+                      {record.room}
                     </span>
                   </div>
                   {/* Giáo viên */}
@@ -394,14 +410,18 @@ export default function AdminSchedule() {
           border-radius: 8px;
         }
         .tile-admin-has-class {
-          background: linear-gradient(
-            135deg,
-            #e0f7fa 60%,
-            #e6ffe6 100%
-          ) !important;
+          background: #e8f5e8 !important;
           border-radius: 8px;
-          border: 2px solid #3aa97a;
-          box-shadow: 0 2px 8px 0 #3aa97a22;
+          border: 2px solid #4ade80;
+          box-shadow: 0 2px 8px 0 #22c55e22;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .tile-admin-has-class:hover {
+          background: #d1f2d1 !important;
+          border-color: #22c55e;
+          box-shadow: 0 4px 12px 0 #22c55e33;
+          transform: translateY(-1px);
         }
         .tile-outside-month {
           color: #9ca3af;
@@ -420,12 +440,17 @@ export default function AdminSchedule() {
           background: #add7c1;
         }
         .react-calendar__tile--active {
-          background: #3aa97a;
-          color: white;
+          background: #22c55e !important;
+          color: white !important;
+          border: 2px solid #16a34a !important;
+          box-shadow: 0 4px 12px 0 #22c55e44 !important;
+          font-weight: bold;
         }
         .react-calendar__tile--active:enabled:hover,
         .react-calendar__tile--active:enabled:focus {
-          background: #1f845a;
+          background: #16a34a !important;
+          border-color: #15803d !important;
+          box-shadow: 0 6px 16px 0 #22c55e55 !important;
         }
       `}</style>
     </div>
