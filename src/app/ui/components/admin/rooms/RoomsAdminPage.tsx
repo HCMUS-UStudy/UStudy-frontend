@@ -30,6 +30,7 @@ const RoomsAdminPage: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [mounted, setMounted] = useState(false);
 
   const { selectedBranchId } = useSelector((state: RootState) => state.branch);
   const [rooms, setRooms] = useState<RoomItem[]>([]);
@@ -43,9 +44,14 @@ const RoomsAdminPage: React.FC = () => {
   const [deletingRoomId, setDeletingRoomId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // URL state management
-  const query = searchParams.get("query") || "";
-  const page = Number(searchParams.get("page")) || 1;
+  // Set mounted state after component mounts
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // URL state management - only access after mounting
+  const query = mounted ? searchParams.get("query") || "" : "";
+  const page = mounted ? Number(searchParams.get("page")) || 1 : 1;
 
   // Handler cập nhật URL
   const updateUrl = (paramsObj: Record<string, string>) => {
@@ -99,15 +105,17 @@ const RoomsAdminPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (selectedBranchId) {
+    if (selectedBranchId && mounted) {
       fetchRooms(page);
     }
-  }, [page, selectedBranchId, query]);
+  }, [page, selectedBranchId, query, mounted]);
 
   // Reset page when branch changes
   useEffect(() => {
-    updateUrl({ page: "1" });
-  }, [selectedBranchId]);
+    if (mounted) {
+      updateUrl({ page: "1" });
+    }
+  }, [selectedBranchId, mounted]);
 
   // Open modal for create/edit
   const openModal = (mode: "create" | "edit", room?: RoomItem) => {
@@ -172,6 +180,18 @@ const RoomsAdminPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Show loading while not mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!selectedBranchId) {
     return (
@@ -353,7 +373,7 @@ const RoomsAdminPage: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold"
+                    className="px-4 py-2 rounded-lg bg-primary-dark text-white hover:bg-primary-darker font-semibold"
                     disabled={loading}
                   >
                     Lưu

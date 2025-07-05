@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { ChevronDown } from "lucide-react";
 
 interface DropdownLocalProps {
   label: string;
@@ -45,29 +46,38 @@ export default function DropdownLocal({
     "bottom-right": "top-full right-0 mt-2",
   }[position || "bottom-left"];
 
+  const selectedItem = items.find((item) => item.key === selected);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-primary-lighter transition-colors"
+        className="flex items-center justify-between w-full px-4 py-3 text-left bg-white border border-gray-300 rounded-lg shadow-sm hover:border-primary-light hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-nowrap text-xs md:text-base">
-          {items.find((item) => item.key === selected)?.label || label}
+        <span
+          className={`text-md ${selectedItem ? "text-gray-900 font-medium" : "text-gray-500"}`}
+        >
+          {selectedItem?.label || label}
         </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {isOpen && (
         <div
-          className={`absolute ${positionClasses} bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10`}
+          className={`absolute ${positionClasses} bg-white border border-gray-200 shadow-lg rounded-lg w-full z-10 max-h-60 overflow-y-auto`}
         >
           {items.map(({ key, label }) => (
             <button
               type="button"
               key={key}
-              className={`block w-full text-left text-xs md:text-base px-4 py-2 hover:bg-primary transition-colors ${
-                selected === key ? "bg-primary-lighter" : ""
-              }`}
+              className={`block w-full text-left px-4 py-3 text-md hover:bg-primary-light hover:text-primary-dark transition-colors duration-150 ${
+                selected === key
+                  ? "bg-primary-lighter text-primary-dark font-medium"
+                  : "text-gray-700"
+              } ${key === "" ? "border-b border-gray-100" : ""}`}
               onClick={() => handleSelect(key)}
             >
               {label}
