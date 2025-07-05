@@ -47,6 +47,76 @@ export type ClassSession = {
   } | null;
 };
 
+// Branch schedule class session structure (extended version for branch API)
+export type BranchClassSession = {
+  id: string;
+  day:
+    | "MONDAY"
+    | "TUESDAY"
+    | "WEDNESDAY"
+    | "THURSDAY"
+    | "FRIDAY"
+    | "SATURDAY"
+    | "SUNDAY";
+  clazz: {
+    id: string;
+    name: string;
+    description: string;
+    fee: number;
+    startDate: string; // Format: YYYY-MM-DD
+    endDate: string; // Format: YYYY-MM-DD
+    numLessons: number;
+    grade: {
+      id: string;
+      name: string;
+    };
+    course: {
+      id: string;
+      name: string;
+    };
+    teacher: Teacher[];
+    classSessions: {
+      id: string;
+      day:
+        | "MONDAY"
+        | "TUESDAY"
+        | "WEDNESDAY"
+        | "THURSDAY"
+        | "FRIDAY"
+        | "SATURDAY"
+        | "SUNDAY";
+      session: {
+        id: string;
+        name: string;
+        startTime: string; // Format: HH:mm:ss
+        endTime: string; // Format: HH:mm:ss
+      };
+      room: {
+        id: string;
+        name: string;
+      };
+    }[];
+  };
+  session: {
+    id: string;
+    name: string;
+    startTime: string; // Format: HH:mm:ss
+    endTime: string; // Format: HH:mm:ss
+  };
+  room: {
+    id: string;
+    name: string;
+  };
+};
+
+// Branch schedule structure
+export type BranchSchedule = {
+  id: string;
+  date: string; // Format: YYYY-MM-DD
+  classSession: BranchClassSession;
+  isPassed: boolean;
+};
+
 // Assignment structure
 export type Assignment = {
   id: string;

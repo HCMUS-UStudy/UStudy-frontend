@@ -26,7 +26,7 @@ import Checkbox from "@/app/ui/components/_common/Checkbox";
 import { Button } from "@/app/ui/components/_common/Button";
 import { MdEdit } from "react-icons/md";
 import { AttendanceItem } from "@/app/types";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 
@@ -179,6 +179,7 @@ const AttendancePage = () => {
   };
 
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const mutation = useMutation({
     mutationFn: async ({
       studentStatusList,
@@ -194,12 +195,7 @@ const AttendancePage = () => {
       return recordAttendances(classId, recordDate, studentStatusList);
     },
     onSuccess: () => {
-      toast.success("Lưu điểm danh thành công", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
+      addToast.success("Lưu điểm danh thành công");
       queryClient.invalidateQueries({
         queryKey: ["ClassSchedule", classId],
       });
@@ -212,12 +208,7 @@ const AttendancePage = () => {
       }
     },
     onError: () => {
-      toast.error("Lưu điểm danh thất bại", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
+      addToast.error("Lưu điểm danh thất bại");
     },
   });
 

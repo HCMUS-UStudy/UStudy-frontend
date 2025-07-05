@@ -13,7 +13,6 @@ import {
 } from "react-icons/bs";
 import { MdAppRegistration, MdOutlineFileCopy } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
-import { GiMoneyStack } from "react-icons/gi";
 import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
 import { AiOutlineSchedule } from "react-icons/ai";
@@ -98,15 +97,25 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     path: "/admin/questions",
     icon: <FaRegCircleQuestion size={20} />,
   },
-  {
-    title: "Quản lý học phí",
-    path: "/admin/fees",
-    icon: <GiMoneyStack size={20} />,
-  },
+  // {
+  //   title: "Quản lý học phí",
+  //   path: "/admin/fees",
+  //   icon: <GiMoneyStack size={20} />,
+  // },
   {
     title: "Quản lý chi nhánh",
     path: "/admin/branches",
     icon: <GrMapLocation size={20} />,
+  },
+  {
+    title: "Quản lý lịch trình lớp học",
+    path: "/admin/schedule",
+    icon: <BsCalendar size={20} />,
+  },
+  {
+    title: "Quản lý thành tích học tập",
+    path: "/admin/manage-scores",
+    icon: <BsPersonWorkspace size={20} />,
   },
   {
     title: "Quản lý ca học",

@@ -31,10 +31,10 @@ import { GrView } from "react-icons/gr";
 
 import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
-import { toast } from "react-toastify";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { useEncodedRoute } from "@/app/lib/hooks";
 import { useParams } from "next/navigation";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const fileTypeIcons = [
   {
@@ -101,6 +101,8 @@ export default function ClassMaterial() {
   const classId = decodeId(params?.classId as string);
 
   const [user, setUser] = useState<UserData | null>(null);
+  const { addToast } = useCustomToast();
+
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
@@ -183,32 +185,22 @@ export default function ClassMaterial() {
         link.click();
         document.body.removeChild(link);
       } catch {
-        toast.error("Tải xuống thất bại", {
-          autoClose: 2500,
-          pauseOnHover: false,
-          closeOnClick: true,
-        });
+        addToast.error("Tải xuống thất bại");
       }
     },
-    [material],
+    [material, addToast],
   );
 
   const handleDelete = useCallback(async () => {
     try {
       await deleteMaterial(classId, deleteItem || "");
       fetchMaterial();
-      toast.success("Xóa tài liệu thành công", {
-        autoClose: 2500,
-        pauseOnHover: false,
-      });
+      addToast.success("Xóa tài liệu thành công");
     } catch (error) {
       console.error("Error deleting file:", error);
-      toast.error("Xóa tài liệu thất bại", {
-        autoClose: 2500,
-        pauseOnHover: false,
-      });
+      addToast.error("Xóa tài liệu thất bại");
     }
-  }, [fetchMaterial, deleteItem, classId]);
+  }, [fetchMaterial, deleteItem, classId, addToast]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
@@ -224,10 +216,12 @@ export default function ClassMaterial() {
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -242,10 +236,12 @@ export default function ClassMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsidePopUp);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsidePopUp);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsidePopUp);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutsidePopUp);
+      };
+    }
   }, [openOptionsId]);
 
   useEffect(() => {
@@ -260,10 +256,15 @@ export default function ClassMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsideCreateFolder);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideCreateFolder);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsideCreateFolder);
+      return () => {
+        document.removeEventListener(
+          "mousedown",
+          handleClickOutsideCreateFolder,
+        );
+      };
+    }
   }, [creatingFolder]);
 
   const [popUpLeft, setPopUpLeft] = useState(false);
@@ -504,7 +505,7 @@ export default function ClassMaterial() {
                               <button
                                 className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                                 onClick={() => {
-                                  toast.info(
+                                  addToast.info(
                                     "Chức năng đổi tên chưa được cài đặt",
                                   );
                                   setOpenOptionsId(null);

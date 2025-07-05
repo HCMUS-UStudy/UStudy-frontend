@@ -14,7 +14,6 @@ import RegisterClassesGrid from "../classes/RegisterClassesGrid";
 import { Button } from "../../../_common/Button";
 import StudentConfirmRegisterClass from "./StudentConfirmRegisterClass";
 import { studentRegisterClass } from "@/app/lib/services/register-class";
-import { toast } from "react-toastify";
 import {
   ClassToRegisterItem,
   RegisterClassResponse,
@@ -26,6 +25,7 @@ import {
   DialogContent,
   DialogFooter,
 } from "../../../_common/Dialog";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface ClassRegisterProps {
   searchQuery: string;
@@ -53,6 +53,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
 
   const { data: classes, status } = useQuery({
     queryKey: [
@@ -83,11 +84,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         classId,
       }),
     onError: () => {
-      toast.error("Đăng ký lớp học thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Đăng ký lớp học thất bại");
       // setRegisteringClassId(null);
     },
     onSuccess: (res) => {
@@ -107,11 +104,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
       setPaymentPendingId(null);
     },
     onError: (error) => {
-      toast.error(error.message, {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error(error.message);
       setPaymentPendingId(null);
     },
   });

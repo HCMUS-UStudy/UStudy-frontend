@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createSession, updateSession } from "@/app/lib/services/session";
-import { toast } from "react-toastify";
 import { Session } from "@/app/types";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 
@@ -82,11 +81,7 @@ const SessionModal = ({
       onClose();
     },
     onError: () => {
-      toast.error("Tạo ca học thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Tạo ca học thất bại");
     },
   });
   const useUpdateSessionMutation = useMutation({
@@ -94,19 +89,11 @@ const SessionModal = ({
     onSuccess: (res) => {
       console.log(res);
       queryClient.invalidateQueries({ queryKey: ["Sessions"] });
-      toast.success("Chỉnh sửa ca học mới thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Chỉnh sửa ca học mới thành công");
       onClose();
     },
     onError: () => {
-      toast.error("Chỉnh sửa ca học thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Chỉnh sửa ca học thất bại");
     },
   });
   return (

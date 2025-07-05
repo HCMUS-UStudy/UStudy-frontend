@@ -112,7 +112,9 @@ const Select: React.FC<SelectProps> = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };

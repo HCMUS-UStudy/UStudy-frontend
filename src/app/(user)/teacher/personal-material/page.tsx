@@ -35,9 +35,9 @@ import { GrView } from "react-icons/gr";
 
 import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
-import { toast } from "react-toastify";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import UploadModal from "@/app/ui/components/user/teacher/UploadModal";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const fileTypeIcons = [
   {
@@ -103,6 +103,7 @@ export default function PersonalMaterial() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const buttonRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
+  const { addToast } = useCustomToast();
 
   useEffect(() => {
     const checkScreen = () => {
@@ -158,23 +159,15 @@ export default function PersonalMaterial() {
     if (!newFolderName.trim()) return;
     try {
       await createFolder(newFolderName, currentFolderId || null);
-      toast.success("Tạo thư mục thành công", {
-        autoClose: 2500,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Tạo thư mục thành công");
       fetchMaterial();
     } catch (error) {
-      toast.error("Tạo thư mục thất bại", {
-        autoClose: 2500,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tạo thư mục thất bại");
       console.error("Error creating folder:", error);
     } finally {
       setCreatingFolder(false);
     }
-  }, [newFolderName, currentFolderId, fetchMaterial]);
+  }, [newFolderName, currentFolderId, fetchMaterial, addToast]);
 
   const handleViewFile = useCallback(
     async (id: string, canViewFile: boolean = false) => {
@@ -216,14 +209,10 @@ export default function PersonalMaterial() {
         link.click();
         document.body.removeChild(link);
       } catch {
-        toast.error("Tải xuống thất bại", {
-          autoClose: 2500,
-          pauseOnHover: false,
-          closeOnClick: true,
-        });
+        addToast.error("Tải xuống thất bại");
       }
     },
-    [material],
+    [material, addToast],
   );
 
   const handleFileUpload = useCallback(
@@ -238,37 +227,25 @@ export default function PersonalMaterial() {
       try {
         await uploadMaterial(formData);
         fetchMaterial();
-        toast.success("Tải tài liệu lên thành công", {
-          autoClose: 2500,
-          pauseOnHover: false,
-        });
+        addToast.success("Tải tài liệu lên thành công");
       } catch (error) {
         console.error("Error uploading material:", error);
-        toast.error("Tải tài liệu lên thất bại", {
-          autoClose: 2500,
-          pauseOnHover: false,
-        });
+        addToast.error("Tải tài liệu lên thất bại");
       }
     },
-    [currentFolderId, fetchMaterial],
+    [currentFolderId, fetchMaterial, addToast],
   );
 
   const handleDelete = useCallback(async () => {
     try {
       await deleteMaterial(deleteItem || "");
       fetchMaterial();
-      toast.success("Xóa tài liệu thành công", {
-        autoClose: 2500,
-        pauseOnHover: false,
-      });
+      addToast.success("Xóa tài liệu thành công");
     } catch (error) {
       console.error("Error deleting file:", error);
-      toast.error("Xóa tài liệu thất bại", {
-        autoClose: 2500,
-        pauseOnHover: false,
-      });
+      addToast.error("Xóa tài liệu thất bại");
     }
-  }, [fetchMaterial, deleteItem]);
+  }, [fetchMaterial, deleteItem, addToast]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
@@ -284,10 +261,12 @@ export default function PersonalMaterial() {
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -302,10 +281,12 @@ export default function PersonalMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsidePopUp);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsidePopUp);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsidePopUp);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutsidePopUp);
+      };
+    }
   }, [openOptionsId]);
 
   useEffect(() => {
@@ -320,10 +301,15 @@ export default function PersonalMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsideCreateFolder);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideCreateFolder);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsideCreateFolder);
+      return () => {
+        document.removeEventListener(
+          "mousedown",
+          handleClickOutsideCreateFolder,
+        );
+      };
+    }
   }, [creatingFolder]);
 
   const [popUpLeft, setPopUpLeft] = useState(false);
@@ -638,7 +624,7 @@ export default function PersonalMaterial() {
                             <button
                               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                               onClick={() => {
-                                toast.info(
+                                addToast.info(
                                   "Chức năng đổi tên chưa được cài đặt",
                                 );
                                 setOpenOptionsId(null);

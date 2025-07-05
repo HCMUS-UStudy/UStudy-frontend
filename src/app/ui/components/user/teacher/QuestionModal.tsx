@@ -1,7 +1,6 @@
 import { RxCross1 } from "react-icons/rx";
 import { useState } from "react";
 import { Button } from "../../_common/Button";
-import { toast } from "react-toastify";
 import Checkbox from "../../_common/Checkbox";
 import { motion } from "framer-motion";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -29,6 +28,7 @@ import {
 } from "react-icons/tb";
 import Tooltip from "../../_common/Tooltip";
 import { AnimatePresence } from "framer-motion";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type FormValues = {
   question: string;
@@ -128,6 +128,8 @@ const QuestionModal = ({
     }
   };
 
+  const { addToast } = useCustomToast();
+
   const onSubmit = async (data: FormValues) => {
     const body = {
       description: data.question,
@@ -142,21 +144,11 @@ const QuestionModal = ({
 
     try {
       await createQuestion(body);
-      toast.success("Tạo câu hỏi thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Tạo câu hỏi thành công");
       onClose(false);
     } catch (error) {
       console.error("Failed to create question:", error);
-      toast.error("Tạo câu hỏi thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tạo câu hỏi thất bại");
     }
   };
 
@@ -172,10 +164,7 @@ const QuestionModal = ({
       const file = acceptedFiles[0];
       if (file) {
         if (file.size > 10 * 1024 * 1024) {
-          toast.error("Tệp quá lớn. Vui lòng chọn tệp nhỏ hơn 10MB.", {
-            closeOnClick: true,
-            autoClose: 3000,
-          });
+          addToast.error("Tệp quá lớn. Vui lòng chọn tệp nhỏ hơn 10MB.");
           return;
         }
         setSelectedFile(file);
@@ -193,11 +182,7 @@ const QuestionModal = ({
 
   const handleSubmitEssay = async () => {
     if (!customBaseName) {
-      toast.error("Tên tệp không được để trống.", {
-        pauseOnHover: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
+      addToast.error("Tên tệp không được để trống.");
       return;
     }
 
@@ -220,21 +205,11 @@ const QuestionModal = ({
 
     try {
       await createQuestion(body);
-      toast.success("Tạo câu hỏi thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Tạo câu hỏi thành công");
       onClose(false);
     } catch (error) {
       console.error("Failed to create question:", error);
-      toast.error("Tạo câu hỏi thất bại", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tạo câu hỏi thất bại");
     }
   };
 

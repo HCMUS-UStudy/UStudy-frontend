@@ -17,7 +17,6 @@ import { FaCheck } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import { Button } from "../../_common/Button";
 import { getAllRolesByDefault } from "@/app/lib/services/role";
-import { toast } from "react-toastify";
 import Tooltip from "../../_common/Tooltip";
 import SearchField from "../../_common/text-field/SearchField";
 import { useSearchParams } from "next/navigation";
@@ -27,6 +26,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const MemoizedPagination = memo(Pagination);
 
@@ -88,6 +88,7 @@ export default function StudentRegister() {
     useApproveMutation.mutate(userId);
   };
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const useApproveMutation = useMutation({
     mutationFn: (userId?: string) =>
       confirmRegister(userId ? [userId] : selectedIds, studentRoleId),
@@ -96,11 +97,7 @@ export default function StudentRegister() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
-      toast.success("Duyệt tài khoản thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Duyệt tài khoản thành công");
     },
   });
   const handleReject = async (userId?: string) => {
@@ -111,18 +108,10 @@ export default function StudentRegister() {
       rejectRegister(userId ? [userId] : selectedIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["RegisterStudents"] });
-      toast.success("Từ chối tài khoản thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Từ chối tài khoản thành công");
     },
     onError: () => {
-      toast.error("Từ chối tài khoản thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Từ chối tài khoản thất bại");
     },
   });
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { RxCross1 } from "react-icons/rx";
 import { Button } from "../../_common/Button";
-import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { IoReturnUpBack } from "react-icons/io5";
 import Tooltip from "../../_common/Tooltip";
@@ -9,6 +8,7 @@ import { Question, UserData } from "@/app/types";
 import { getQuestionList } from "@/app/lib/services/question";
 import { createAssignment } from "@/app/lib/services/assignment";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const AssignmentModal = ({
   returnButton = false,
@@ -106,6 +106,8 @@ const AssignmentModal = ({
 
   const [userData, setUserData] = useState<UserData | null>(null);
 
+  const { addToast } = useCustomToast();
+
   useEffect(() => {
     const fetchUserData = async () => {
       const data = await getUserDataFromCookies();
@@ -162,18 +164,10 @@ const AssignmentModal = ({
         duration: 30,
         numAttempts: 1,
       });
-      toast.success("Tạo bài tập thành công!", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.success("Tạo bài tập thành công!");
     } catch (error) {
       console.error("Failed to create assignment:", error);
-      toast.error("Tạo bài tập thất bại!", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tạo bài tập thất bại!");
     }
   };
 
@@ -268,7 +262,7 @@ const AssignmentModal = ({
                 className="px-4 py-2 rounded-lg"
                 onClick={() => {
                   if (selectedQuestions.length === 0) {
-                    toast.error("Vui lòng chọn ít nhất một câu hỏi!");
+                    addToast.error("Vui lòng chọn ít nhất một câu hỏi!");
                   } else {
                     setStep(2);
                   }

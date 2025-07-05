@@ -10,7 +10,7 @@ import { RegisterClassResponse } from "@/app/types/register-class";
 import { CheckCircle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { submitOrderPayment } from "@/app/lib/services/payment";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 export default function StudentConfirmRegisterClass({
   isOpen,
@@ -21,6 +21,7 @@ export default function StudentConfirmRegisterClass({
   onClose: () => void;
   selectedClass?: RegisterClassResponse;
 }) {
+  const { addToast } = useCustomToast();
   const handlePaymentMutation = useMutation({
     mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
     onSuccess: (response) => {
@@ -34,11 +35,7 @@ export default function StudentConfirmRegisterClass({
       onClose();
     },
     onError: (error) => {
-      toast.error(error.message, {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error(error.message);
     },
   });
   const handlePayment = () => {

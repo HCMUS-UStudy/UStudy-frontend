@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { z } from "zod";
 
 const today = new Date().toISOString().split("T")[0];
@@ -84,23 +84,16 @@ export default function CreateClass() {
 
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { addToast } = useCustomToast();
   const useCreateClassMutation = useMutation({
     mutationFn: (classData: CreateClassInputs) => createNewClass(classData),
     onError: (error) => {
       console.log(error.message);
-      toast.error("Tạo lớp học thất bại", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Tạo lớp học thất bại");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Classes"] });
-      toast.success("Tạo lớp học thành công", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.success("Tạo lớp học thành công");
       router.push("/admin/classes");
     },
   });
