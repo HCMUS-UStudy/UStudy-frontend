@@ -118,7 +118,8 @@ export async function middleware(request: NextRequest) {
       }
       if (
         pathname.startsWith("/admin/schedule") ||
-        pathname.startsWith("/admin/manage-scores")
+        pathname.startsWith("/admin/manage-scores") ||
+        pathname.startsWith("/admin/rooms")
       ) {
         return NextResponse.next();
       }

@@ -5,34 +5,28 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowUpDown,
-  Users,
   TrendingUp,
   Award,
   BookOpen,
+  Calendar,
+  FileText,
 } from "lucide-react";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import Tooltip from "@/app/ui/components/_common/Tooltip";
-import {
-  getStudentSummary,
-  getStudentDetails,
-} from "@/app/lib/services/academicResult";
-import { StudentSummary, StudentDetailsData } from "@/app/types/academicResult";
-import { FaEdit } from "react-icons/fa";
-import { FaEye } from "react-icons/fa6";
-import StudentDetailsModal from "./StudentDetailsModal";
+import { getAcademicResult } from "@/app/lib/services/academicResult";
+import { AcademicResult, Content } from "@/app/types/academicResult";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
 const sortKeys = {
-  genId: "genId",
-  name: "name",
-  average10: "averageScore",
+  title: "title",
+  studentScore: "studentScore",
+  classAverageScore: "classAverageScore",
+  submissionDate: "submissionDate",
 };
 
 interface ManageScoresTableProps {
+  classId: string;
   search: string;
-  selectedClass: string;
-  selectedSubject: string;
   sortBy: string;
   sortOrder: "asc" | "desc";
   currentPage: number;
@@ -41,6 +35,7 @@ interface ManageScoresTableProps {
 }
 
 const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
+  classId,
   search,
   sortBy,
   sortOrder,
@@ -48,143 +43,142 @@ const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
   onSort,
   setCurrentPage,
 }) => {
-  const [students, setStudents] = useState<StudentSummary[]>([]);
+  const [academicResult, setAcademicResult] = useState<AcademicResult | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
-  const [selectedStudentDetails, setSelectedStudentDetails] =
-    useState<StudentDetailsData | null>(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
 
-  // Fetch student summary data
+  // Fetch academic result data
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchAcademicResult = async () => {
+      if (!classId) return;
+
       setLoading(true);
+      setError(null);
       try {
-        const response = await getStudentSummary();
-        setStudents(response.data);
+        const response = await getAcademicResult(
+          classId,
+          currentPage,
+          PAGE_SIZE,
+        );
+        console.log("API Response:", response);
+
+        // Check if response has data, if not use mock data
+        if (
+          response &&
+          response.assignmentScores &&
+          response.assignmentScores.content &&
+          response.assignmentScores.content.length > 0
+        ) {
+          setAcademicResult(response);
+          setIsUsingMockData(false);
+        } else {
+          console.log("No real data, using mock data");
+          // Use mock data as fallback
+          setAcademicResult({
+            assignmentScores: {
+              content: [
+                {
+                  title: "Bài tập 1: Đại số tuyến tính",
+                  studentScore: 8.5,
+                  classAverageScore: 7.8,
+                  submissionDate: "2024-01-15",
+                },
+                {
+                  title: "Bài tập 2: Hình học không gian",
+                  studentScore: 9.0,
+                  classAverageScore: 8.2,
+                  submissionDate: "2024-01-20",
+                },
+                {
+                  title: "Bài kiểm tra giữa kỳ - Chương 1",
+                  studentScore: 7.5,
+                  classAverageScore: 7.0,
+                  submissionDate: "2024-02-01",
+                },
+                {
+                  title: "Bài tập 3: Phương trình bậc hai",
+                  studentScore: 9.2,
+                  classAverageScore: 8.5,
+                  submissionDate: "2024-02-10",
+                },
+                {
+                  title: "Bài tập 4: Bất phương trình",
+                  studentScore: 8.8,
+                  classAverageScore: 8.1,
+                  submissionDate: "2024-02-15",
+                },
+                {
+                  title: "Bài kiểm tra cuối kỳ",
+                  studentScore: 8.0,
+                  classAverageScore: 7.5,
+                  submissionDate: "2024-03-01",
+                },
+              ],
+              totalPages: 1,
+            },
+            averageScore: 8.3,
+          });
+          setIsUsingMockData(true);
+        }
       } catch (error) {
-        console.error("Failed to fetch students:", error);
+        console.error("Failed to fetch academic result:", error);
+        setError("Không thể tải dữ liệu điểm số");
         // Use mock data as fallback
-        setStudents([
-          {
-            genId: "HS001",
-            name: "Nguyễn Văn A",
-            averageScore: 8.8,
-            academicRank: "Giỏi",
+        setAcademicResult({
+          assignmentScores: {
+            content: [
+              {
+                title: "Bài tập 1: Đại số tuyến tính",
+                studentScore: 8.5,
+                classAverageScore: 7.8,
+                submissionDate: "2024-01-15",
+              },
+              {
+                title: "Bài tập 2: Hình học không gian",
+                studentScore: 9.0,
+                classAverageScore: 8.2,
+                submissionDate: "2024-01-20",
+              },
+              {
+                title: "Bài kiểm tra giữa kỳ - Chương 1",
+                studentScore: 7.5,
+                classAverageScore: 7.0,
+                submissionDate: "2024-02-01",
+              },
+              {
+                title: "Bài tập 3: Phương trình bậc hai",
+                studentScore: 9.2,
+                classAverageScore: 8.5,
+                submissionDate: "2024-02-10",
+              },
+              {
+                title: "Bài tập 4: Bất phương trình",
+                studentScore: 8.8,
+                classAverageScore: 8.1,
+                submissionDate: "2024-02-15",
+              },
+              {
+                title: "Bài kiểm tra cuối kỳ",
+                studentScore: 8.0,
+                classAverageScore: 7.5,
+                submissionDate: "2024-03-01",
+              },
+            ],
+            totalPages: 1,
           },
-          {
-            genId: "HS002",
-            name: "Trần Thị B",
-            averageScore: 7.3,
-            academicRank: "Khá",
-          },
-          {
-            genId: "HS003",
-            name: "Lê Văn C",
-            averageScore: 6.8,
-            academicRank: "Trung bình",
-          },
-        ]);
+          averageScore: 8.3,
+        });
+        setIsUsingMockData(true);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
-  }, []);
-
-  // Fetch student details
-  const handleViewDetails = async (studentId: string) => {
-    try {
-      const response = await getStudentDetails(studentId);
-      setSelectedStudentDetails(response.data);
-      setShowDetailsModal(true);
-    } catch (error) {
-      console.error("Failed to fetch student details:", error);
-    }
-  };
-
-  // Filter students based on search
-  let filtered = students.filter((student) => {
-    const matchSearch =
-      !search ||
-      student.name.toLowerCase().includes(search.toLowerCase()) ||
-      student.genId.toLowerCase().includes(search.toLowerCase());
-    return matchSearch;
-  });
-
-  // Sort data
-  if (sortBy && sortKeys[sortBy as keyof typeof sortKeys]) {
-    filtered = filtered.sort((a, b) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, prefer-const
-      let aValue: any =
-        a[sortKeys[sortBy as keyof typeof sortKeys] as keyof StudentSummary];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, prefer-const
-      let bValue: any =
-        b[sortKeys[sortBy as keyof typeof sortKeys] as keyof StudentSummary];
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortOrder === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
-      }
-      return 0;
-    });
-  }
-
-  // Pagination
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginatedStudents = filtered.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE,
-  );
-
-  // Render sort icon
-  const renderSortIcon = (key: string) => {
-    if (sortBy !== key)
-      return <ArrowUpDown className="inline ml-1 w-4 h-4 opacity-40" />;
-    return sortOrder === "asc" ? (
-      <ArrowUp className="inline ml-1 w-4 h-4 text-primary-dark" />
-    ) : (
-      <ArrowDown className="inline ml-1 w-4 h-4 text-primary-dark" />
-    );
-  };
-
-  // Get rank color and icon
-  const getRankStyle = (rank: string) => {
-    switch (rank) {
-      case "Giỏi":
-        return {
-          color: "text-emerald-600",
-          bg: "bg-emerald-50",
-          border: "border-emerald-200",
-          icon: <Award className="w-4 h-4" />,
-        };
-      case "Khá":
-        return {
-          color: "text-blue-600",
-          bg: "bg-blue-50",
-          border: "border-blue-200",
-          icon: <TrendingUp className="w-4 h-4" />,
-        };
-      case "Trung bình":
-        return {
-          color: "text-amber-600",
-          bg: "bg-amber-50",
-          border: "border-amber-200",
-          icon: <BookOpen className="w-4 h-4" />,
-        };
-      default:
-        return {
-          color: "text-red-600",
-          bg: "bg-red-50",
-          border: "border-red-200",
-          icon: <Users className="w-4 h-4" />,
-        };
-    }
-  };
+    fetchAcademicResult();
+  }, [classId, currentPage]);
 
   if (loading) {
     return (
@@ -199,213 +193,286 @@ const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-red-500 text-lg mb-2">{error}</div>
+          <div className="text-gray-500">Vui lòng thử lại sau</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!academicResult) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-gray-500 text-lg">Không có dữ liệu điểm số</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter assignments based on search
+  let filteredAssignments = academicResult.assignmentScores.content.filter(
+    (assignment) => {
+      const matchSearch =
+        !search ||
+        assignment.title.toLowerCase().includes(search.toLowerCase());
+      return matchSearch;
+    },
+  );
+
+  // Sort data
+  if (sortBy && sortKeys[sortBy as keyof typeof sortKeys]) {
+    filteredAssignments = filteredAssignments.sort((a, b) => {
+      const aValue =
+        a[sortKeys[sortBy as keyof typeof sortKeys] as keyof Content];
+      const bValue =
+        b[sortKeys[sortBy as keyof typeof sortKeys] as keyof Content];
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortOrder === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+      }
+      return 0;
+    });
+  }
+
+  // Render sort icon
+  const renderSortIcon = (key: string) => {
+    if (sortBy !== key)
+      return <ArrowUpDown className="inline ml-1 w-4 h-4 opacity-40" />;
+    return sortOrder === "asc" ? (
+      <ArrowUp className="inline ml-1 w-4 h-4 text-primary-dark" />
+    ) : (
+      <ArrowDown className="inline ml-1 w-4 h-4 text-primary-dark" />
+    );
+  };
+
+  // Get score color and icon
+  const getScoreStyle = (score: number, average: number) => {
+    const difference = score - average;
+    if (difference >= 1) {
+      return {
+        color: "text-emerald-600",
+        bg: "bg-emerald-50",
+        border: "border-emerald-200",
+        icon: <Award className="w-4 h-4" />,
+      };
+    } else if (difference >= 0) {
+      return {
+        color: "text-blue-600",
+        bg: "bg-blue-50",
+        border: "border-blue-200",
+        icon: <TrendingUp className="w-4 h-4" />,
+      };
+    } else {
+      return {
+        color: "text-amber-600",
+        bg: "bg-amber-50",
+        border: "border-amber-200",
+        icon: <BookOpen className="w-4 h-4" />,
+      };
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="mt-6">
+      {/* Mock Data Indicator */}
+      {isUsingMockData && (
+        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <svg
+              className="w-5 h-5 text-amber-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-sm text-amber-700 font-medium">
+              Đang hiển thị dữ liệu mẫu - API chưa có dữ liệu thực
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-500 rounded-xl p-4 text-white shadow-lg">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm">Tổng học sinh</p>
-              <p className="text-2xl font-bold">{students.length}</p>
-            </div>
-            <Users className="w-8 h-8 opacity-80" />
-          </div>
-        </div>
-        <div className="bg-emerald-500 rounded-xl p-4 text-white shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-emerald-100 text-sm">Học sinh giỏi</p>
-              <p className="text-2xl font-bold">
-                {students.filter((s) => s.academicRank === "Giỏi").length}
+              <p className="text-sm font-medium text-gray-600">
+                Điểm trung bình
+              </p>
+              <p className="text-2xl font-bold text-primary-dark">
+                {academicResult.averageScore.toFixed(1)}
               </p>
             </div>
-            <Award className="w-8 h-8 opacity-80" />
+            <div className="p-2 bg-primary-lighter rounded-lg">
+              <TrendingUp className="w-6 h-6 text-primary" />
+            </div>
           </div>
         </div>
-        <div className="bg-blue-500 rounded-xl p-4 text-white shadow-lg">
+
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm">Học sinh khá</p>
-              <p className="text-2xl font-bold">
-                {students.filter((s) => s.academicRank === "Khá").length}
+              <p className="text-sm font-medium text-gray-600">Tổng bài tập</p>
+              <p className="text-2xl font-bold text-primary-dark">
+                {academicResult.assignmentScores.content.length}
               </p>
             </div>
-            <TrendingUp className="w-8 h-8 opacity-80" />
+            <div className="p-2 bg-primary-lighter rounded-lg">
+              <FileText className="w-6 h-6 text-primary" />
+            </div>
           </div>
         </div>
-        <div className="bg-amber-500 rounded-xl p-4 text-white shadow-lg">
+
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-amber-100 text-sm">Điểm TB chung</p>
-              <p className="text-2xl font-bold">
-                {(
-                  students.reduce((sum, s) => sum + s.averageScore, 0) /
-                  students.length
-                ).toFixed(1)}
+              <p className="text-sm font-medium text-gray-600">
+                Trang hiện tại
+              </p>
+              <p className="text-2xl font-bold text-primary-dark">
+                {currentPage}/{academicResult.assignmentScores.totalPages}
               </p>
             </div>
-            <BookOpen className="w-8 h-8 opacity-80" />
+            <div className="p-2 bg-primary-lighter rounded-lg">
+              <Calendar className="w-6 h-6 text-primary" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-100">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b">
               <tr>
                 <th
-                  className="pl-6 py-4 text-sm font-semibold text-slate-700 cursor-pointer select-none hover:bg-slate-200 transition-colors"
-                  onClick={() => {
-                    if (typeof onSort === "function") onSort("genId");
-                  }}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => onSort?.("title")}
                 >
-                  <div className="flex items-center space-x-2">
-                    <span>Mã số học sinh</span>
-                    {renderSortIcon("genId")}
+                  <div className="flex items-center">
+                    Tên bài tập
+                    {renderSortIcon("title")}
                   </div>
                 </th>
                 <th
-                  className="pl-6 py-4 text-sm font-semibold text-slate-700 cursor-pointer select-none hover:bg-slate-200 transition-colors"
-                  onClick={() => {
-                    if (typeof onSort === "function") onSort("name");
-                  }}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => onSort?.("studentScore")}
                 >
-                  <div className="flex items-center space-x-2">
-                    <span>Họ tên</span>
-                    {renderSortIcon("name")}
+                  <div className="flex items-center">
+                    Điểm học sinh
+                    {renderSortIcon("studentScore")}
                   </div>
                 </th>
                 <th
-                  className="pl-6 py-4 text-sm font-semibold text-slate-700 cursor-pointer select-none hover:bg-slate-200 transition-colors"
-                  onClick={() => {
-                    if (typeof onSort === "function") onSort("average10");
-                  }}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => onSort?.("classAverageScore")}
                 >
-                  <div className="flex items-center space-x-2">
-                    <span>Điểm trung bình</span>
-                    {renderSortIcon("average10")}
+                  <div className="flex items-center">
+                    Điểm trung bình lớp
+                    {renderSortIcon("classAverageScore")}
                   </div>
                 </th>
-                <th className="pl-6 py-4 text-sm font-semibold text-slate-700">
-                  Đánh giá học lực
-                </th>
-                <th className="pl-6 py-4 text-sm font-semibold text-slate-700">
-                  Hành động
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => onSort?.("submissionDate")}
+                >
+                  <div className="flex items-center">
+                    Ngày nộp
+                    {renderSortIcon("submissionDate")}
+                  </div>
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
-              {paginatedStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="text-center text-gray-500 py-12">
-                    <div className="flex flex-col items-center space-y-2">
-                      <Users className="w-12 h-12 text-gray-300" />
-                      <p className="text-lg font-medium">
-                        Không có dữ liệu phù hợp
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        Thử thay đổi từ khóa tìm kiếm
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                paginatedStudents.map((student) => {
-                  const rankStyle = getRankStyle(student.academicRank);
-                  return (
-                    <tr
-                      key={student.genId}
-                      className="hover:bg-blue-50 transition-all duration-200 cursor-pointer group"
-                    >
-                      <td className="pl-6 py-4">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3">
-                            {student.genId.slice(-2)}
-                          </div>
-                          <span className="font-medium text-gray-900">
-                            {student.genId}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="pl-6 py-4">
-                        <span className="font-medium text-gray-900">
-                          {student.name}
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredAssignments.map((assignment, index) => {
+                const scoreStyle = getScoreStyle(
+                  assignment.studentScore,
+                  assignment.classAverageScore,
+                );
+                return (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {assignment.title}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${scoreStyle.bg} ${scoreStyle.border} ${scoreStyle.color}`}
+                      >
+                        {scoreStyle.icon}
+                        <span className="ml-1">
+                          {assignment.studentScore.toFixed(1)}
                         </span>
-                      </td>
-                      <td className="pl-6 py-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-12 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">
-                              {student.averageScore}
-                            </span>
-                          </div>
-                          <span className="text-sm text-gray-600">/ 10</span>
-                        </div>
-                      </td>
-                      <td className="pl-6 py-4">
-                        <div
-                          className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full border ${rankStyle.bg} ${rankStyle.border}`}
-                        >
-                          <span
-                            className={`${rankStyle.color} font-semibold text-sm`}
-                          >
-                            {student.academicRank}
-                          </span>
-                          {rankStyle.icon}
-                        </div>
-                      </td>
-                      <td className="pl-6 py-4">
-                        <div className="flex justify-center items-center space-x-2">
-                          <button
-                            className="text-primary-dark hover:text-primary-darkest transition-colors"
-                            onClick={() => handleViewDetails(student.genId)}
-                          >
-                            <Tooltip text="Xem chi tiết">
-                              <FaEye className="size-4 md:size-5" />
-                            </Tooltip>
-                          </button>
-                          <button className="text-blue-600 hover:text-blue-800 transition-all">
-                            <Tooltip text="Chỉnh sửa điểm">
-                              <FaEdit className="size-4 md:size-5" />
-                            </Tooltip>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {assignment.classAverageScore.toFixed(1)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {new Date(assignment.submissionDate).toLocaleDateString(
+                        "vi-VN",
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {academicResult.assignmentScores.totalPages > 1 && (
+          <div className="px-6 py-3 border-t">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={academicResult.assignmentScores.totalPages}
+              handlePageClick={(page: number) => setCurrentPage?.(page)}
+              handlePreviousPage={() =>
+                setCurrentPage?.(Math.max(currentPage - 1, 1))
+              }
+              handleNextPage={() =>
+                setCurrentPage?.(
+                  Math.min(
+                    currentPage + 1,
+                    academicResult.assignmentScores.totalPages,
+                  ),
+                )
+              }
+            />
+          </div>
+        )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-end">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageClick={setCurrentPage ? setCurrentPage : () => {}}
-          handlePreviousPage={() =>
-            setCurrentPage ? setCurrentPage(Math.max(currentPage - 1, 1)) : {}
-          }
-          handleNextPage={() =>
-            setCurrentPage
-              ? setCurrentPage(Math.min(currentPage + 1, totalPages))
-              : {}
-          }
-        />
-      </div>
-
-      {/* Details Modal */}
-      <StudentDetailsModal
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-        studentDetails={selectedStudentDetails}
-      />
+      {/* No results message */}
+      {filteredAssignments.length === 0 && (
+        <div className="text-center py-8">
+          <div className="text-gray-500 text-lg">
+            Không tìm thấy bài tập nào
+          </div>
+          <div className="text-gray-400 text-sm">
+            Thử thay đổi từ khóa tìm kiếm
+          </div>
+        </div>
+      )}
     </div>
   );
 };
