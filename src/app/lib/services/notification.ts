@@ -1,14 +1,21 @@
 import axiosInstance from "@/app/lib/axios";
+import { NotificationItem } from "@/app/types";
 
-export const getListNotification = async () => {
-  const response = await axiosInstance.get("/notification/list", {
-    params: {
-      page: 0,
-      limit: 100,
-    },
-  });
-  // console.log("response", response.data);
-  return response.data.data.content;
+export const getListNotification = async (
+  page: number = 0,
+  limit: number = 100,
+): Promise<NotificationItem[]> => {
+  try {
+    const response = await axiosInstance.get("/notification/list", {
+      params: {
+        page,
+        limit,
+      },
+    });
+    return response.data.data.content;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getListNotificationByClass = async (classId: string) => {

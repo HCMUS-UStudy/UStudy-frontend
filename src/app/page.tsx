@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/app/ui/components/_common/landingPage/Footer";
 // import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageSideBar";
-import CreateTeacher from "./ui/components/user/CreateTeacher";
 // import { IoLogInOutline } from "react-icons/io5";
 import Logo from "@/app/ui/components/_common/Logo";
 
@@ -160,7 +159,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-hero rounded-t-[70px] lg:rounded-t-[100px] mt-[200px] py-8 flex items-center justify-evenly">
+      {/* <div className="bg-hero rounded-t-[70px] lg:rounded-t-[100px] mt-[200px] py-8 flex items-center justify-evenly">
         <div className="relative xl:h-[500px] xl:w-[500px] lg:h-[350px] lg:w-[350px] hidden lg:flex">
           <Image
             className="object-contain"
@@ -175,8 +174,10 @@ export default async function Home() {
         <div>
           <CreateTeacher />
         </div>
+      </div> */}
+      <div className="mt-52">
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }

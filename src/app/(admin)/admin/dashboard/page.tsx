@@ -1,13 +1,5 @@
 "use client";
-import {
-  Users,
-  GraduationCap,
-  Bell,
-  MessageSquare,
-  AlertTriangle,
-  BookOpen,
-  TrendingUp,
-} from "lucide-react";
+import { Users, GraduationCap, Bell, BookOpen, TrendingUp } from "lucide-react";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -22,6 +14,7 @@ import {
   Legend,
 } from "chart.js";
 import { Card } from "@/app/ui/components/_common/Card";
+import Notifications from "../../../ui/components/admin/dashboard/notifications";
 
 // Register ChartJS components
 ChartJS.register(
@@ -94,38 +87,6 @@ const studentLevelData = {
   ],
 };
 
-// Mock data for recent notifications
-const recentNotifications = [
-  {
-    type: "registration",
-    title: "Đơn đăng ký mới",
-    content: "Học viên Nguyễn Văn D đăng ký khóa học Toán 10",
-    time: "5 phút trước",
-    icon: Bell,
-  },
-  {
-    type: "message",
-    title: "Tin nhắn từ giáo viên",
-    content: "Giáo viên Trần Thị B gửi báo cáo tuần",
-    time: "30 phút trước",
-    icon: MessageSquare,
-  },
-  {
-    type: "error",
-    title: "Báo lỗi hệ thống",
-    content: "Lỗi kết nối database",
-    time: "1 giờ trước",
-    icon: AlertTriangle,
-  },
-  {
-    type: "class",
-    title: "Lớp mới",
-    content: "Lớp Vật lý 11D được tạo",
-    time: "2 giờ trước",
-    icon: BookOpen,
-  },
-];
-
 const StatCard = ({
   title,
   value,
@@ -196,27 +157,8 @@ const DashboardPage = () => {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Student Registration Chart */}
-        <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
-          <h3 className="text-lg font-semibold mb-4">
-            Học viên đăng ký theo tháng
-          </h3>
-          <div className="h-[300px]">
-            <Line
-              data={studentRegistrationData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-              }}
-            />
-          </div>
-        </Card>
-
+        {/* Recent Notifications */}
+        <Notifications />
         {/* Class Completion Rate */}
         <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
           <h3 className="text-lg font-semibold mb-4">
@@ -277,31 +219,24 @@ const DashboardPage = () => {
           </div>
         </Card>
 
-        {/* Recent Notifications */}
+        {/* Student Registration Chart */}
         <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
-          <h3 className="text-lg font-semibold mb-4">Thông báo gần đây</h3>
-          <div className="space-y-4">
-            {recentNotifications.map((notification, index) => (
-              <div
-                key={index}
-                className="flex items-start space-x-4 p-2 rounded-lg transition-all duration-300 hover:bg-primary-lighter"
-              >
-                <div className="p-2 bg-blue-50 rounded-full">
-                  <notification.icon className="w-5 h-5 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium">{notification.title}</p>
-                    <span className="text-sm text-gray-500">
-                      {notification.time}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {notification.content}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <h3 className="text-lg font-semibold mb-4">
+            Học viên đăng ký theo tháng
+          </h3>
+          <div className="h-[300px]">
+            <Line
+              data={studentRegistrationData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+              }}
+            />
           </div>
         </Card>
       </div>

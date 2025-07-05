@@ -6,12 +6,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import StudentBasicInformation from "../ui/components/user/student/create/StudentBasicInformation";
 import { studentRegister } from "../lib/services/register";
-import { toast } from "react-toastify";
 import RegisterSuccessfully from "../ui/components/user/student/create/StudentRegisterSuccessfully";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CustomError } from "../types";
 import registeringAnimation from "@/app/ui/lotties/registering.json";
 import dynamic from "next/dynamic";
+import { useCustomToast } from "../lib/hooks/useToast";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -76,6 +76,7 @@ export default function StudentRegister() {
       gender: "MALE",
     },
   });
+  const { addToast } = useCustomToast();
   const queryClient = useQueryClient();
   const useRegisterMutation = useMutation({
     mutationFn: (data: StudentRegisterInputs) => studentRegister(data),
@@ -85,12 +86,13 @@ export default function StudentRegister() {
     },
     onError: (error) => {
       const customError = error as CustomError;
-      methods.setError("email", { message: String(customError.data) });
-      toast.error(String(customError.data), {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: true,
-      });
+      // methods.setError("email", { message: String(customError.data) });
+      addToast.error(String(customError.data));
+      // toast.error(String(customError.data), {
+      //   position: "bottom-right",
+      //   autoClose: 3000,
+      //   pauseOnHover: true,
+      // });
     },
   });
   // const [loadingRegister, setLoadingRegister] = useState<boolean>(false);

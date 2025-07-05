@@ -13,10 +13,6 @@ import { addMessage } from "@/app/store/ChatSlice";
 const ContactPage = () => {
   const room = useAppSelector((state) => state.chat.room);
   const dispatch = useAppDispatch();
-  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem>(
-  //   teacherParam ?? "",
-  // );
-  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem | null>(null);
   const [messageInput, setMessageInput] = useState("");
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);

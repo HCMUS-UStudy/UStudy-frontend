@@ -1,0 +1,14 @@
+export { default as AdminNotificationsLoading } from "./AdminNotificationsLoading";
+export { default as ClassSettingLoading } from "./ClassSettingLoading";
+export { default as RegisterClassesLoading } from "./RegisterClassesLoading";
+export { default as StudentClassesLoading } from "./StudentClassesLoading";
+export { default as ClassDetailLoading } from "./ClassDetailLoading";
+export { default as ClassMaterialLoading } from "./ClassMaterialLoading";
+export { default as ExerciseLoading } from "./ExerciseLoading";
+export { default as Loading } from "./Loading";
+export { default as QuizListLoading } from "./QuizListLoading";
+export { default as QuizLoading } from "./QuizLoading";
+export { default as ReviewQuizLoading } from "./ReviewQuizLoading";
+export { default as SelectorLoading } from "./SelectorLoading";
+export { default as SelectorLoadingHorizon } from "./SelectorLoadingHorizon";
+export { default as ContactsLoading } from "./ContactsLoading";
