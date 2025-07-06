@@ -14,6 +14,7 @@ import {
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { getAcademicResult } from "@/app/lib/services/academicResult";
 import { AcademicResult, Content } from "@/app/types/academicResult";
+import Loading from "../../_common/loading/Loading";
 
 const PAGE_SIZE = 10;
 
@@ -43,11 +44,13 @@ const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
   onSort,
   setCurrentPage,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [academicResult, setAcademicResult] = useState<AcademicResult | null>(
     null,
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   // Fetch academic result data
@@ -66,112 +69,112 @@ const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
         console.log("API Response:", response);
 
         // Check if response has data, if not use mock data
-        if (
-          response &&
-          response.assignmentScores &&
-          response.assignmentScores.content &&
-          response.assignmentScores.content.length > 0
-        ) {
-          setAcademicResult(response);
-          setIsUsingMockData(false);
-        } else {
-          console.log("No real data, using mock data");
-          // Use mock data as fallback
-          setAcademicResult({
-            assignmentScores: {
-              content: [
-                {
-                  title: "Bài tập 1: Đại số tuyến tính",
-                  studentScore: 8.5,
-                  classAverageScore: 7.8,
-                  submissionDate: "2024-01-15",
-                },
-                {
-                  title: "Bài tập 2: Hình học không gian",
-                  studentScore: 9.0,
-                  classAverageScore: 8.2,
-                  submissionDate: "2024-01-20",
-                },
-                {
-                  title: "Bài kiểm tra giữa kỳ - Chương 1",
-                  studentScore: 7.5,
-                  classAverageScore: 7.0,
-                  submissionDate: "2024-02-01",
-                },
-                {
-                  title: "Bài tập 3: Phương trình bậc hai",
-                  studentScore: 9.2,
-                  classAverageScore: 8.5,
-                  submissionDate: "2024-02-10",
-                },
-                {
-                  title: "Bài tập 4: Bất phương trình",
-                  studentScore: 8.8,
-                  classAverageScore: 8.1,
-                  submissionDate: "2024-02-15",
-                },
-                {
-                  title: "Bài kiểm tra cuối kỳ",
-                  studentScore: 8.0,
-                  classAverageScore: 7.5,
-                  submissionDate: "2024-03-01",
-                },
-              ],
-              totalPages: 1,
-            },
-            averageScore: 8.3,
-          });
-          setIsUsingMockData(true);
-        }
+        // if (
+        //   response &&
+        //   response.assignmentScores &&
+        //   response.assignmentScores.content &&
+        //   response.assignmentScores.content.length > 0
+        // ) {
+        //   setAcademicResult(response);
+        //   setIsUsingMockData(false);
+        // } else {
+        //   console.log("No real data, using mock data");
+        //   // Use mock data as fallback
+        //   setAcademicResult({
+        //     assignmentScores: {
+        //       content: [
+        //         {
+        //           title: "Bài tập 1: Đại số tuyến tính",
+        //           studentScore: 8.5,
+        //           classAverageScore: 7.8,
+        //           submissionDate: "2024-01-15",
+        //         },
+        //         {
+        //           title: "Bài tập 2: Hình học không gian",
+        //           studentScore: 9.0,
+        //           classAverageScore: 8.2,
+        //           submissionDate: "2024-01-20",
+        //         },
+        //         {
+        //           title: "Bài kiểm tra giữa kỳ - Chương 1",
+        //           studentScore: 7.5,
+        //           classAverageScore: 7.0,
+        //           submissionDate: "2024-02-01",
+        //         },
+        //         {
+        //           title: "Bài tập 3: Phương trình bậc hai",
+        //           studentScore: 9.2,
+        //           classAverageScore: 8.5,
+        //           submissionDate: "2024-02-10",
+        //         },
+        //         {
+        //           title: "Bài tập 4: Bất phương trình",
+        //           studentScore: 8.8,
+        //           classAverageScore: 8.1,
+        //           submissionDate: "2024-02-15",
+        //         },
+        //         {
+        //           title: "Bài kiểm tra cuối kỳ",
+        //           studentScore: 8.0,
+        //           classAverageScore: 7.5,
+        //           submissionDate: "2024-03-01",
+        //         },
+        //       ],
+        //       totalPages: 1,
+        //     },
+        //     averageScore: 8.3,
+        //   });
+        //   setIsUsingMockData(true);
+        // }
       } catch (error) {
         console.error("Failed to fetch academic result:", error);
         setError("Không thể tải dữ liệu điểm số");
         // Use mock data as fallback
-        setAcademicResult({
-          assignmentScores: {
-            content: [
-              {
-                title: "Bài tập 1: Đại số tuyến tính",
-                studentScore: 8.5,
-                classAverageScore: 7.8,
-                submissionDate: "2024-01-15",
-              },
-              {
-                title: "Bài tập 2: Hình học không gian",
-                studentScore: 9.0,
-                classAverageScore: 8.2,
-                submissionDate: "2024-01-20",
-              },
-              {
-                title: "Bài kiểm tra giữa kỳ - Chương 1",
-                studentScore: 7.5,
-                classAverageScore: 7.0,
-                submissionDate: "2024-02-01",
-              },
-              {
-                title: "Bài tập 3: Phương trình bậc hai",
-                studentScore: 9.2,
-                classAverageScore: 8.5,
-                submissionDate: "2024-02-10",
-              },
-              {
-                title: "Bài tập 4: Bất phương trình",
-                studentScore: 8.8,
-                classAverageScore: 8.1,
-                submissionDate: "2024-02-15",
-              },
-              {
-                title: "Bài kiểm tra cuối kỳ",
-                studentScore: 8.0,
-                classAverageScore: 7.5,
-                submissionDate: "2024-03-01",
-              },
-            ],
-            totalPages: 1,
-          },
-          averageScore: 8.3,
-        });
-        setIsUsingMockData(true);
+        // setAcademicResult({
+        //   assignmentScores: {
+        //     content: [
+        //       {
+        //         title: "Bài tập 1: Đại số tuyến tính",
+        //         studentScore: 8.5,
+        //         classAverageScore: 7.8,
+        //         submissionDate: "2024-01-15",
+        //       },
+        //       {
+        //         title: "Bài tập 2: Hình học không gian",
+        //         studentScore: 9.0,
+        //         classAverageScore: 8.2,
+        //         submissionDate: "2024-01-20",
+        //       },
+        //       {
+        //         title: "Bài kiểm tra giữa kỳ - Chương 1",
+        //         studentScore: 7.5,
+        //         classAverageScore: 7.0,
+        //         submissionDate: "2024-02-01",
+        //       },
+        //       {
+        //         title: "Bài tập 3: Phương trình bậc hai",
+        //         studentScore: 9.2,
+        //         classAverageScore: 8.5,
+        //         submissionDate: "2024-02-10",
+        //       },
+        //       {
+        //         title: "Bài tập 4: Bất phương trình",
+        //         studentScore: 8.8,
+        //         classAverageScore: 8.1,
+        //         submissionDate: "2024-02-15",
+        //       },
+        //       {
+        //         title: "Bài kiểm tra cuối kỳ",
+        //         studentScore: 8.0,
+        //         classAverageScore: 7.5,
+        //         submissionDate: "2024-03-01",
+        //       },
+        //     ],
+        //     totalPages: 1,
+        //   },
+        //   averageScore: 8.3,
+        // });
+        // setIsUsingMockData(true);
       } finally {
         setLoading(false);
       }
@@ -181,16 +184,7 @@ const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
   }, [classId, currentPage]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 bg-primary rounded-full animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {

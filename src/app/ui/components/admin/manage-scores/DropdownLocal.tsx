@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
 
 interface DropdownLocalProps {
   label: string;
-  items: { key: string; label: string }[];
+  items: { key: string; label: string; description?: string }[];
   selected?: string;
   position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
   onSelect?: (key: string) => void;
@@ -19,6 +19,7 @@ export default function DropdownLocal({
 }: DropdownLocalProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const dropdownListRef = React.useRef<HTMLDivElement>(null);
 
   // Đóng dropdown khi click bên ngoài
   React.useEffect(() => {
@@ -38,6 +39,25 @@ export default function DropdownLocal({
     if (onSelect) onSelect(key);
     setIsOpen(false);
   };
+
+  // Auto-scroll to selected item when dropdown opens
+  React.useEffect(() => {
+    if (isOpen && selected && dropdownListRef.current) {
+      const selectedElement = dropdownListRef.current.querySelector(
+        `[data-key="${selected}"]`,
+      ) as HTMLElement;
+
+      if (selectedElement) {
+        // Add a small delay to ensure the dropdown is fully rendered
+        setTimeout(() => {
+          selectedElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }, 100);
+      }
+    }
+  }, [isOpen, selected]);
 
   const positionClasses = {
     "top-left": "bottom-full left-0 mb-2",
@@ -67,20 +87,34 @@ export default function DropdownLocal({
 
       {isOpen && (
         <div
+          ref={dropdownListRef}
           className={`absolute ${positionClasses} bg-white border border-gray-200 shadow-lg rounded-lg w-full z-10 max-h-60 overflow-y-auto`}
         >
-          {items.map(({ key, label }) => (
+          {items.map(({ key, label, description }) => (
             <button
               type="button"
               key={key}
+              data-key={key}
               className={`block w-full text-left px-4 py-3 text-md hover:bg-primary-light hover:text-primary-dark transition-colors duration-150 ${
                 selected === key
-                  ? "bg-primary-lighter text-primary-dark font-medium"
+                  ? "bg-primary-lighter text-primary-dark font-medium border-l-4 border-primary"
                   : "text-gray-700"
               } ${key === "" ? "border-b border-gray-100" : ""}`}
               onClick={() => handleSelect(key)}
             >
-              {label}
+              <div className="flex items-start justify-between">
+                <div className="flex flex-col flex-1">
+                  <span className="font-medium">{label}</span>
+                  {description && (
+                    <span className="text-sm text-gray-500 mt-1 line-clamp-2">
+                      {description}
+                    </span>
+                  )}
+                </div>
+                {selected === key && (
+                  <Check className="w-4 h-4 text-primary ml-2 flex-shrink-0" />
+                )}
+              </div>
             </button>
           ))}
         </div>

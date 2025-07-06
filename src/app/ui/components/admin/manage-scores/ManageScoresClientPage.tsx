@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import ManageScoresTable from "@/app/ui/components/admin/manage-scores/ManageScoresTable";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import DropdownLocal from "@/app/ui/components/admin/manage-scores/DropdownLocal";
 import { getAllClasses } from "@/app/lib/services/class";
 import { ClassItem } from "@/app/types";
+import Loading from "../../_common/loading/Loading";
+import { RootState } from "@/app/store/store";
 
 export default function ManageScoresClientPage() {
+  const { selectedBranchId } = useSelector((state: RootState) => state.branch);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -24,7 +28,14 @@ export default function ManageScoresClientPage() {
         console.log("Fetching classes...");
 
         // Use page 0 like in ApproveClassStudentModal
-        const response = await getAllClasses("", 0, 100);
+        const response = await getAllClasses(
+          "",
+          0,
+          100,
+          undefined,
+          undefined,
+          selectedBranchId || undefined,
+        );
         console.log("API Response:", response);
         console.log("Response content:", response.content);
         console.log("Response type:", typeof response);
@@ -44,21 +55,17 @@ export default function ManageScoresClientPage() {
     };
 
     fetchClasses();
-  }, []);
+  }, [selectedBranchId]);
 
-  // Convert classes to dropdown format
-  const classOptions = selectedClassId
-    ? classes.map((cls) => ({
-        key: cls.id,
-        label: cls.name,
-      }))
-    : [
-        { key: "", label: "Chọn lớp" },
-        ...classes.map((cls) => ({
-          key: cls.id,
-          label: cls.name,
-        })),
-      ];
+  // Convert classes to dropdown format - always show all classes including selected one
+  const classOptions = [
+    { key: "", label: "Chọn lớp" },
+    ...classes.map((cls) => ({
+      key: cls.id,
+      label: cls.name,
+      description: cls.description,
+    })),
+  ];
 
   // Handler khi click vào header để sort
   const handleSort = (column: string) => {
@@ -71,16 +78,7 @@ export default function ManageScoresClientPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 bg-primary rounded-full animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
