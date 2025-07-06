@@ -29,12 +29,12 @@ const ProfileHeader = ({
           onClick={() => setIsAvatarModalOpen(true)}
           title="Click để thay đổi avatar"
         >
-          <img
+          <Image
             src={user?.avatar || "/bg-login.jpg"}
             alt="User Avatar"
-            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white shadow-lg"
+            fill
+            className="rounded-full object-cover border-4 border-white shadow-lg"
           />
-
         </div>
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
