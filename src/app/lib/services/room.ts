@@ -72,7 +72,7 @@ export const createRoom = async (
 ): Promise<RoomResponse> => {
   try {
     const response = await axiosInstance.post(
-      `/room/create/${branchId}`,
+      `/room/create/branch/${branchId}`,
       roomData,
     );
     return response.data;
@@ -92,7 +92,7 @@ export const updateRoom = async (
   roomData: RoomRequest,
 ): Promise<RoomResponse> => {
   try {
-    const response = await axiosInstance.put(
+    const response = await axiosInstance.patch(
       `/room/update/${roomId}`,
       roomData,
     );
