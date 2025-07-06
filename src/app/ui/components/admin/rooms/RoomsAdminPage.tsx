@@ -175,6 +175,7 @@ const RoomsAdminPage: React.FC<RoomsAdminPageProps> = ({
                 <TableCell>{room.capacity || 30} học sinh</TableCell>
                 <TableCell className="flex justify-start items-center gap-2">
                   <button
+                    data-testid="edit-room-button"
                     onClick={() => openEditModal(room)}
                     className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors"
                   >
@@ -183,6 +184,7 @@ const RoomsAdminPage: React.FC<RoomsAdminPageProps> = ({
                     </Tooltip>
                   </button>
                   <button
+                    data-testid="delete-room-button"
                     onClick={() => setDeletingRoomId(room.id)}
                     className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
                   >
