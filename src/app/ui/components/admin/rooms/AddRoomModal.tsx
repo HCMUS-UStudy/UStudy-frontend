@@ -105,6 +105,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
                   onChange={(e) => setRoomName(e.target.value)}
                   placeholder="Nhập tên phòng học..."
                   required
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -119,6 +120,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
                   value={roomCapacity}
                   onChange={(e) => setRoomCapacity(Number(e.target.value))}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="flex justify-end space-x-2">

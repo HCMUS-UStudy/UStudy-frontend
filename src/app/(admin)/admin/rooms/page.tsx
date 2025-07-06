@@ -12,7 +12,7 @@ export default async function RoomPage(props: {
   const query = searchParams?.query || "";
 
   return (
-    <div className="px-2">
+    <div className="px-2" data-testid="rooms-root">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between ">
         <RoomNumber searchQuery={query} />
         <div className="flex items-center">
@@ -27,9 +27,7 @@ export default async function RoomPage(props: {
         />
       </div>
 
-      <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <RoomsAdminPage searchQuery={query} />
-      </div>
+      <RoomsAdminPage searchQuery={query} />
     </div>
   );
 }
