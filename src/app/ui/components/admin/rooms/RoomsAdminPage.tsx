@@ -145,59 +145,64 @@ const RoomsAdminPage: React.FC<RoomsAdminPageProps> = ({
 
   return (
     <div>
-      <Table>
-        <TableHeader
-          columns={["Tên phòng", "Sức chứa", "Hành động"]}
-          className="bg-gray-100"
-        />
-        <TableBody isLoading={status === "pending"}>
-          {error ? (
-            <TableRow>
-              <TableCell colSpan={3} className="text-red-500">
-                {error.message}
-              </TableCell>
-            </TableRow>
-          ) : filteredRooms.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={3} className="text-center py-8 text-gray-400">
-                {searchQuery
-                  ? "Không tìm thấy phòng học phù hợp."
-                  : "Không có phòng học nào."}
-              </TableCell>
-            </TableRow>
-          ) : (
-            filteredRooms.map((room) => (
-              <TableRow
-                key={room.id}
-                className="hover:bg-primary-lighter cursor-pointer"
-              >
-                <TableCell className="font-medium">{room.name}</TableCell>
-                <TableCell>{room.capacity || 30} học sinh</TableCell>
-                <TableCell className="flex justify-start items-center gap-2">
-                  <button
-                    data-testid="edit-room-button"
-                    onClick={() => openEditModal(room)}
-                    className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    <Tooltip text="Chỉnh sửa phòng học">
-                      <FaEdit className="size-4 md:size-4" />
-                    </Tooltip>
-                  </button>
-                  <button
-                    data-testid="delete-room-button"
-                    onClick={() => setDeletingRoomId(room.id)}
-                    className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
-                  >
-                    <Tooltip text="Xóa phòng học">
-                      <FaTrashAlt className="size-4 md:size-4" />
-                    </Tooltip>
-                  </button>
+      <div className="overflow-x-auto mt-6 max-h-[400px]">
+        <Table>
+          <TableHeader
+            columns={["Tên phòng", "Sức chứa", "Hành động"]}
+            className="bg-gray-100"
+          />
+          <TableBody isLoading={status === "pending"}>
+            {error ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-red-500">
+                  {error.message}
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : filteredRooms.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  className="text-center py-8 text-gray-400"
+                >
+                  {searchQuery
+                    ? "Không tìm thấy phòng học phù hợp."
+                    : "Không có phòng học nào."}
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRooms.map((room) => (
+                <TableRow
+                  key={room.id}
+                  className="hover:bg-primary-lighter cursor-pointer"
+                >
+                  <TableCell className="font-medium">{room.name}</TableCell>
+                  <TableCell>{room.capacity || 30} học sinh</TableCell>
+                  <TableCell className="flex justify-start items-center gap-2">
+                    <button
+                      data-testid="edit-room-button"
+                      onClick={() => openEditModal(room)}
+                      className="flex justify-center items-center text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <Tooltip text="Chỉnh sửa phòng học">
+                        <FaEdit className="size-4 md:size-4" />
+                      </Tooltip>
+                    </button>
+                    <button
+                      data-testid="delete-room-button"
+                      onClick={() => setDeletingRoomId(room.id)}
+                      className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
+                    >
+                      <Tooltip text="Xóa phòng học">
+                        <FaTrashAlt className="size-4 md:size-4" />
+                      </Tooltip>
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       <Pagination
         currentPage={currentPage}

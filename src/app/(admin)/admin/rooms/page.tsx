@@ -27,9 +27,7 @@ export default async function RoomPage(props: {
         />
       </div>
 
-      <div className="overflow-x-auto mt-6 max-h-[400px]">
-        <RoomsAdminPage searchQuery={query} />
-      </div>
+      <RoomsAdminPage searchQuery={query} />
     </div>
   );
 }
