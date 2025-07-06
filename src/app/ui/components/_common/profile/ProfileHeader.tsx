@@ -32,7 +32,6 @@ const ProfileHeader = ({
           <img
             src={user?.avatar || "/bg-login.jpg"}
             alt="User Avatar"
-            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white shadow-lg"
           />
 
         </div>
