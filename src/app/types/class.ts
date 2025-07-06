@@ -60,7 +60,7 @@ export type ClassSchema = {
 
 export type ClassItem = Pick<
   BaseClassInfo,
-  "id" | "name" | "startDate" | "endDate"
+  "id" | "name" | "description" | "startDate" | "endDate"
 > & {
   fee: number;
   course: CourseDto;

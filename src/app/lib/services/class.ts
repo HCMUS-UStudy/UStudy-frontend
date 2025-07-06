@@ -28,6 +28,7 @@ export const getAllClasses = async (
   limit: number,
   courseQuery?: string,
   gradeQuery?: string,
+  branchId?: string,
 ): Promise<ClassData> => {
   try {
     const response = await axiosInstance.get("/class/list", {
@@ -37,6 +38,7 @@ export const getAllClasses = async (
         name: nameQuery,
         course: courseQuery,
         grade: gradeQuery,
+        branchId: branchId,
       },
     });
     return response.data.data;
