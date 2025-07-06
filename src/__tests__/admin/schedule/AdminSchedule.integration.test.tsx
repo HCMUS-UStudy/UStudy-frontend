@@ -356,7 +356,7 @@ describe("AdminSchedule Integration Tests", () => {
 
       await waitFor(() => {
         // Check if Vietnamese date format is displayed
-        const dateText = screen.getByText(/Thứ/);
+        const dateText = screen.getByText(/Chủ Nhật/);
         expect(dateText).toBeInTheDocument();
       });
     });
