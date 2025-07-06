@@ -116,6 +116,13 @@ export async function middleware(request: NextRequest) {
       if (defaultRoute !== "ADMIN") {
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
+      // if (
+      //   pathname.startsWith("/admin/schedule") ||
+      //   pathname.startsWith("/admin/manage-scores") ||
+      //   pathname.startsWith("/admin/rooms")
+      // ) {
+      //   return NextResponse.next();
+      // }
       if (!permissions.some((path) => pathname.startsWith(path))) {
         return NextResponse.redirect(new URL("/admin/dashboard", request.url));
       }

@@ -18,6 +18,7 @@ export default function page() {
 //   FaClock,
 //   FaCheckCircle,
 // } from "react-icons/fa";
+// import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 // const QuizPage = () => {
 //   const params = useParams();
@@ -38,6 +39,8 @@ export default function page() {
 //   const [isModalOpen, setModalOpen] = useState(false);
 //   const [isSubmit, setIsSubmit] = useState(false);
 //   const [finalScore, setFinalScore] = useState<number | null>(null);
+
+//   const { addToast } = useCustomToast();
 
 //   // Hàm đóng modal
 //   const closeModal = () => {
@@ -110,11 +113,11 @@ export default function page() {
 //     //     setModalOpen(true);
 //     //     setFinalScore(result.data.score); // Cập nhật điểm vào state
 //     //   } else {
-//     //     alert("Failed to submit quiz!");
+//     //     addToast.error("Failed to submit quiz!");
 //     //   }
 //     // } catch (error) {
 //     //   console.error("Error submitting quiz:", error);
-//     //   alert("An error occurred while submitting the quiz. Please try again!");
+//     //   addToast.error("An error occurred while submitting the quiz. Please try again!");
 //     // } finally {
 //     //   setIsLoading(false); // Tắt loading sau khi có kết quả
 //     // }

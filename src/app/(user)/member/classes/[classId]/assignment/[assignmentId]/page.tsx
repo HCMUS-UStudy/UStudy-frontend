@@ -14,7 +14,7 @@ import ReviewAnswers from "@/app/ui/components/user/student/classes/assignment/R
 import ScoreModal from "@/app/ui/components/user/student/classes/quiz/ScoreModal";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const AssignmentPage = () => {
   const params = useParams();
@@ -52,6 +52,8 @@ const AssignmentPage = () => {
   // const [submissionDetail, setSubmissionDetail] = useState<SubmissionDetail[]>(
   //   [],
   // );
+
+  const { addToast } = useCustomToast();
 
   // Hàm đóng modal
   const closeModal = () => {
@@ -145,11 +147,11 @@ const AssignmentPage = () => {
         console.log("Asssignment submitted successfully:", result);
         setModalOpen(true);
       } else {
-        alert("Failed to submit Asssignment!");
+        addToast.error("Failed to submit Asssignment!");
       }
     } catch (error) {
       console.error("Error submitting Asssignment:", error);
-      alert(
+      addToast.error(
         "An error occurred while submitting the Asssignment. Please try again!",
       );
     } finally {
@@ -179,28 +181,20 @@ const AssignmentPage = () => {
   const downloadFile = async (fileName: string, questionId: string) => {
     try {
       const response = await handleDownloadFile(questionId as string);
-
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
       });
       const url = window.URL.createObjectURL(blob);
-
       const a = document.createElement("a");
       a.href = url;
-      a.download = fileName; // Sử dụng tên file được truyền vào
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
-
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
       console.error("Lỗi khi tải file:", error);
-      toast.error("Tải file thất bại!", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-        closeOnClick: true,
-      });
+      addToast.error("Tải file thất bại!");
     }
   };
 

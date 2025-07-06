@@ -17,8 +17,8 @@ import { getFreeUsers } from "@/app/lib/services/user";
 import { AccountItem } from "@/app/types";
 import { addMembers } from "@/app/lib/services/class";
 import { useParams } from "next/navigation";
-import { toast } from "react-toastify";
 import Loading from "@/app/ui/components/_common/loading/Loading";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 export default function MemberList({
   onClose,
@@ -37,6 +37,7 @@ export default function MemberList({
   const classId = params?.classId as string;
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { addToast } = useCustomToast();
 
   const { data: memberList } = useQuery({
     queryKey: [
@@ -102,23 +103,13 @@ export default function MemberList({
   const useAddMembersMutation = useMutation({
     mutationFn: (ids: string[]) => addMembers(ids, classId, "STUDENT"),
     onSuccess: () => {
-      toast.success("Thêm thành công", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
+      addToast.success("Thêm thành công");
       onClose();
       queryClient.invalidateQueries({ queryKey: ["ListMembers", currentPage] });
       queryClient.invalidateQueries({ queryKey: ["ListMembersToAdd"] });
     },
     onError: () => {
-      toast.error("Thêm thất bại", {
-        autoClose: 2000,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
+      addToast.error("Thêm thất bại");
     },
   });
 

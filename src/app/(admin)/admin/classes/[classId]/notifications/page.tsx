@@ -11,7 +11,6 @@ import { NotificationItem, UserData } from "@/app/types";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import NotificationModal from "@/app/ui/components/user/teacher/NotificationModal";
-import { toast } from "react-toastify";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -19,6 +18,7 @@ import { RxCross1 } from "react-icons/rx";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useEncodedRoute } from "@/app/lib/hooks";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const Notification = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +40,8 @@ const Notification = () => {
   const [deleteItem, setShowDeleteModal] = useState<string[]>([]);
 
   const [userData, setUserData] = useState<UserData | null>(null);
+  const { addToast } = useCustomToast();
+
   useEffect(() => {
     const fetchUserData = async () => {
       const data = await getUserDataFromCookies();
@@ -73,22 +75,12 @@ const Notification = () => {
       try {
         await deleteClassNotiForUser(classId, ids);
         fetchData();
-        toast.success("Xóa thông báo thành công", {
-          position: "top-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-          closeOnClick: true,
-        });
+        addToast.success("Xóa thông báo thành công");
       } catch {
-        toast.error("Xóa thông báo thất bại", {
-          position: "top-right",
-          autoClose: 3000,
-          pauseOnHover: false,
-          closeOnClick: true,
-        });
+        addToast.error("Xóa thông báo thất bại");
       }
     },
-    [classId, fetchData],
+    [classId, fetchData, addToast],
   );
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -101,15 +93,17 @@ const Notification = () => {
   };
 
   useEffect(() => {
-    if (popupId) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+    if (typeof document !== "undefined") {
+      if (popupId) {
+        document.addEventListener("mousedown", handleClickOutside);
+      } else {
+        document.removeEventListener("mousedown", handleClickOutside);
+      }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
   }, [popupId]);
 
   if (isLoading) {

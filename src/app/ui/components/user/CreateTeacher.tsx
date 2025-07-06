@@ -10,7 +10,7 @@ import SelectorLoading from "../_common/loading/SelectorLoading";
 import { getGradesByCourseId } from "@/app/lib/services/grade";
 // import { getAllCourses } from "@/app/lib/services/course";
 import { teacherRegister } from "@/app/lib/services/register";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "@/app/lib/services/course";
 
@@ -59,6 +59,7 @@ export default function CreateTeacher() {
       grades: [],
     },
   });
+  const { addToast } = useCustomToast();
   const onSubmit = async (data: TeacherRegisterInputs) => {
     console.log(data);
     // call api
@@ -75,16 +76,10 @@ export default function CreateTeacher() {
         gender: data.gender,
       });
       if (response.status === 200) {
-        toast.success("Đăng ký dạy thành công!", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
+        addToast.success("Đăng ký dạy thành công!");
         reset();
       } else {
-        toast.error("Đăng ký dạy thất bại!", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
+        addToast.error("Đăng ký dạy thất bại!");
       }
     } catch (error) {
       console.error(error);

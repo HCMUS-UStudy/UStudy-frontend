@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader } from "../../../_common/Dialog";
 import { Button } from "../../../_common/Button";
 import { DaysInWeek, RoomItem, SessionItem } from "@/app/types";
 import { FaCheck } from "react-icons/fa6";
-import { toast } from "react-toastify";
 import {
   Table,
   TableBody,
@@ -18,6 +17,7 @@ import { useAppSelector } from "@/app/store/store";
 import { getAvailableRooms } from "@/app/lib/services/room";
 import SelectorLoadingHorizon from "../../../_common/loading/SelectorLoadingHorizon";
 import { CreateClassInputs } from "./CreateClass";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type OverviewItem = {
   day: DaysInWeek;
@@ -56,6 +56,8 @@ export default function DayRoomSessionSelector() {
   const [loadingSessions, setLoadingSessions] = useState<boolean>(false);
   const [loadingRooms, setLoadingRooms] = useState<boolean>(false);
   const [overview, setOverview] = useState<OverviewItem[]>([]);
+
+  const { addToast } = useCustomToast();
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -103,13 +105,7 @@ export default function DayRoomSessionSelector() {
 
   const handleSelectDaysInWeek = async (day: DaysInWeek) => {
     if (!selectedBranchId) {
-      toast.error("Hiện đang không có chi nhánh", {
-        theme: "colored",
-        position: "bottom-right",
-        pauseOnHover: false,
-        hideProgressBar: true,
-        autoClose: 3000,
-      });
+      addToast.error("Hiện đang không có chi nhánh");
       return;
     }
     setSelecting(true);
@@ -129,19 +125,11 @@ export default function DayRoomSessionSelector() {
   };
   const handleSelectDayRoomSession = () => {
     if (selectedSession === null) {
-      toast.error("Vui lòng chọn ca học", {
-        position: "bottom-right",
-        autoClose: 3000,
-        pauseOnHover: false,
-      });
+      addToast.error("Vui lòng chọn ca học");
       return;
     }
     // if (selectedRoom === null) {
-    //   toast.error("Vui lòng chọn phòng học", {
-    //     position: "bottom-right",
-    //     autoClose: 3000,
-    //     pauseOnHover: false,
-    //   });
+    //   addToast.error("Vui lòng chọn phòng học");
     //   return;
     // }
     const _classTimes = [...classTimes];
@@ -179,11 +167,7 @@ export default function DayRoomSessionSelector() {
       ]);
     }
     setValue("classTimes", _classTimes);
-    toast.success("Thêm ngày học thành công !", {
-      position: "bottom-right",
-      autoClose: 3000,
-      pauseOnHover: false,
-    });
+    addToast.success("Thêm ngày học thành công !");
     setSelecting(false);
   };
   const handleDeleteDay = (day: DaysInWeek) => {

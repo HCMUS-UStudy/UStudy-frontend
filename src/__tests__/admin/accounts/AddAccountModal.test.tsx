@@ -6,10 +6,18 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as reactQuery from "@tanstack/react-query";
 import * as reactHookForm from "react-hook-form";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock external hooks
-jest.mock("@tanstack/react-query");
-jest.mock("react-hook-form");
+jest.mock("@tanstack/react-query", () => ({
+  ...jest.requireActual("@tanstack/react-query"),
+  useQuery: jest.fn(),
+  useMutation: jest.fn(),
+}));
+jest.mock("react-hook-form", () => ({
+  ...jest.requireActual("react-hook-form"),
+  useForm: jest.fn(),
+}));
 
 const useQueryMock = reactQuery.useQuery as jest.Mock;
 const useFormMock = reactHookForm.useForm as jest.Mock;
@@ -19,6 +27,19 @@ const mockRoles = [
   { id: "2", name: "TEACHER" },
   { id: "3", name: "STUDENT" },
 ];
+
+const renderWithQueryClient = (component: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>{component}</QueryClientProvider>,
+  );
+};
 
 describe("Admin AddAccountModal Component", () => {
   const mockSetValue = jest.fn();
@@ -51,11 +72,22 @@ describe("Admin AddAccountModal Component", () => {
       status: "success",
       data: mockRoles,
     });
+
+    // Patch useMutation to always return a valid mutation object
+    (reactQuery.useMutation as jest.Mock).mockReturnValue({
+      status: "idle",
+      mutate: jest.fn(),
+      isPending: false,
+      isSuccess: false,
+      isError: false,
+      error: null,
+      reset: jest.fn(),
+    });
   });
 
   it("should open the modal when the button is clicked and then close it", async () => {
     const user = userEvent.setup();
-    render(<AddAccountModal buttonLabel="Tạo người dùng mới" />);
+    renderWithQueryClient(<AddAccountModal buttonLabel="Tạo người dùng mới" />);
     const openModalButton = screen.getByRole("button", {
       name: /tạo người dùng mới/i,
     });
@@ -93,7 +125,7 @@ describe("Admin AddAccountModal Component", () => {
       },
     });
 
-    render(<AddAccountModal buttonLabel="Tạo người dùng mới" />);
+    renderWithQueryClient(<AddAccountModal buttonLabel="Tạo người dùng mới" />);
     await user.click(
       screen.getByRole("button", {
         name: /tạo người dùng mới/i,
@@ -115,7 +147,7 @@ describe("Admin AddAccountModal Component", () => {
 
   it("should call setValue when a role is selected", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithQueryClient(
       <>
         <AddAccountModal buttonLabel="Tạo người dùng mới" />
         <ToastContainer />

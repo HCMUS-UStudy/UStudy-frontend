@@ -10,9 +10,10 @@ import Tooltip from "./Tooltip";
 import { useRef, useEffect, useState, useMemo } from "react";
 import { NotificationItem } from "@/app/types";
 import { useRouter, useParams, usePathname } from "next/navigation";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 export const Notification = ({ role }: { role: string }) => {
+  const { addToast } = useCustomToast();
   const [showDropdown, setShowDropdown] = useState(false);
   const [readNotifications, setReadNotifications] = useState<
     Set<string | number>
@@ -43,19 +44,8 @@ export const Notification = ({ role }: { role: string }) => {
       // Clear local read notifications state since all are now read
       setReadNotifications(new Set());
     },
-    onError: (error) => {
-      console.error("Error marking all notifications as read:", error);
-
-      // Show error toast
-      toast.error("Có lỗi xảy ra", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-      });
+    onError: () => {
+      addToast.error("Có lỗi xảy ra");
     },
   });
 
@@ -134,7 +124,9 @@ export const Notification = ({ role }: { role: string }) => {
       }
     }
     if (showDropdown) {
-      document.addEventListener("mousedown", handleClickOutside);
+      if (typeof document !== "undefined") {
+        document.addEventListener("mousedown", handleClickOutside);
+      }
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
