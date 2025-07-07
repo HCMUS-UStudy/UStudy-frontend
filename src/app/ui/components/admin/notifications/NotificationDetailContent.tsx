@@ -277,7 +277,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between bg-white/90 backdrop-blur-sm rounded-lg p-3 border border-primary-light/40 shadow-sm gap-3">
+        {/* <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between bg-white/90 backdrop-blur-sm rounded-lg p-3 border border-primary-light/40 shadow-sm gap-3">
           <div className="flex items-center gap-2 text-primary-dark">
             <svg
               className="w-4 h-4"
@@ -331,7 +331,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
               Chia sẻ
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
