@@ -11,14 +11,14 @@ export const fetchChatHistory = createAsyncThunk(
   },
 );
 
-interface Props {
+export interface ChatState {
   userId: string;
   room: RoomChatItem | null;
   chatHistory: Pick<MessageItem, "id" | "isSender" | "content" | "sendTime">[];
   status: "pending" | "success" | "error";
 }
 
-const initialState: Props = {
+const initialState: ChatState = {
   userId: "",
   room: null,
   chatHistory: [],
