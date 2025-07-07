@@ -137,6 +137,10 @@ export async function middleware(request: NextRequest) {
           new URL(`${pathname}/overview`, request.url),
         );
       }
+      // Allow access to attendance without permission check
+      if (pathname.startsWith("/member/attendance")) {
+        return NextResponse.next();
+      }
       if (!permissions.some((path) => pathname.startsWith(path))) {
         if (defaultRoute === "STUDENT") {
           if (!userData?.hadClass) {
