@@ -17,7 +17,7 @@ export type AssignmentItem = {
   numAttempts: number;
   startTime: string;
   endTime: string;
-  createdBy: UserSummary & { gender: GenderType };
+  createdBy: UserSummary;
   completed: boolean;
   aclass: {
     id: string;
@@ -31,6 +31,23 @@ export type AssignmentItem = {
       id: string;
       name: string;
     };
+    teacher: [UserSummary & { gender: GenderType }];
+    classSessions: [
+      {
+        id: string;
+        day: string;
+        session: {
+          id: string;
+          name: string;
+          startTime: string;
+          endTime: string;
+        };
+        room: {
+          id: string;
+          name: string;
+        };
+      },
+    ];
   };
 };
 

@@ -166,6 +166,11 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
     path: "/teacher/questions",
     icon: <FaRegCircleQuestion size={20} />,
   },
+  {
+    title: "Quản lý bài tập",
+    path: "/teacher/assignments",
+    icon: <MdOutlineAssignment size={20} />,
+  },
 ];
 
 export const SIDENAV_ITEMS_STUDENT: SideNavItem[] = [

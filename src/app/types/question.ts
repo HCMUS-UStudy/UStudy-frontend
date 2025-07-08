@@ -12,6 +12,8 @@ export type Question = {
   };
   questionType: "MULTIPLE_CHOICE" | "ESSAY";
   lastModified: string;
+  createdAt?: string;
+  score?: number;
   options?: {
     id: string;
     description: string;

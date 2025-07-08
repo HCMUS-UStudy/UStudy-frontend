@@ -1,7 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getQuestionDetail, editQuestion } from "@/app/lib/services/question";
+import {
+  getQuestionDetail,
+  editQuestion,
+  handleDownloadFile,
+} from "@/app/lib/services/question";
 import { Question } from "@/app/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { IoReturnUpBack } from "react-icons/io5";
@@ -11,7 +15,7 @@ import Checkbox from "@/app/ui/components/_common/Checkbox";
 import FileUpload from "@/app/ui/components/_common/FileUpload";
 import isEqual from "lodash/isEqual";
 import Loading from "@/app/ui/components/_common/loading/Loading";
-import { toast } from "react-toastify";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type QuestionEdit = Question & {
   isManyAnswers?: boolean;
@@ -57,13 +61,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
       );
     },
     onSuccess: () => {
-      toast.success("Cập nhật câu hỏi thành công!", {
-        position: "top-right",
-        autoClose: 2000,
-        closeOnClick: true,
-        pauseOnHover: false,
-        pauseOnFocusLoss: false,
-      });
+      addToast.success("Cập nhật câu hỏi thành công!");
       setIsEdit(false);
       refetch();
       queryClient.invalidateQueries({
@@ -81,6 +79,8 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
   const [newFile, setNewFile] = useState<File | null>(null);
   const [customBaseName, setCustomBaseName] = useState("");
   const [isEditingFileName, setIsEditingFileName] = useState(false);
+
+  const { addToast } = useCustomToast();
 
   useEffect(() => {
     if (question) {
@@ -157,6 +157,22 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
     if (newFile) return true;
     return false;
   })();
+
+  const handleDownload = async () => {
+    try {
+      const blob = await handleDownloadFile(question.id);
+      const url = window.URL.createObjectURL(blob.data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = question.fileName || `question-${question.id}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch {
+      addToast.error("Tải xuống thất bại");
+    }
+  };
 
   return (
     <div className="p-4 w-full">
@@ -450,7 +466,10 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             {question.fileName && (
               <div className="mb-3">
                 <span className="font-semibold">File đính kèm:</span>{" "}
-                <span className="text-primary-darker underline cursor-pointer">
+                <span
+                  className="text-primary-darker underline cursor-pointer"
+                  onClick={handleDownload}
+                >
                   {question.fileName}
                 </span>
               </div>

@@ -177,6 +177,9 @@ const QuestionModal = ({
       await createQuestion(body);
       addToast.success("Tạo câu hỏi thành công");
       onClose(false);
+      queryClient.invalidateQueries({
+        queryKey: ["Questions", courseId, gradeId],
+      });
     } catch (error) {
       console.error("Failed to create question:", error);
       addToast.error("Tạo câu hỏi thất bại");
@@ -384,7 +387,6 @@ const QuestionModal = ({
                   required
                   isError={!!scoringCriteriaError}
                   errorMsg={scoringCriteriaError}
-                  placeholder="Nhập tiêu chí chấm điểm cho câu hỏi tự luận"
                 />
               </div>
               <div className="text-[14px] mt-4 mb-1 text-primary-darkest">

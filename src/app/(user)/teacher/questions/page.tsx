@@ -11,6 +11,7 @@ import { UserData, Question } from "@/app/types";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { toast } from "react-toastify";
 import QuestionModal from "@/app/ui/components/user/teacher/QuestionModal";
+import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
@@ -18,6 +19,8 @@ const QuestionList = () => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const [user, setUser] = useState<UserData | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [sortField, setSortField] = useState<string>("lastModified");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc" | "none">("desc");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,6 +94,51 @@ const QuestionList = () => {
       setSelectedCourseId("");
     }
   }, [coursesData]);
+
+  const handleSort = (field: string) => {
+    if (sortField !== field) {
+      setSortField(field);
+      setSortOrder("desc");
+    } else {
+      setSortOrder((prev) =>
+        prev === "desc" ? "asc" : prev === "asc" ? "none" : "desc",
+      );
+    }
+  };
+
+  const sortedData = React.useMemo(() => {
+    if (sortOrder === "none") return filteredData;
+    return [...filteredData].sort((a, b) => {
+      let aValue: string | number = "",
+        bValue: string | number = "";
+      switch (sortField) {
+        case "description":
+          aValue = a.description;
+          bValue = b.description;
+          break;
+        case "grade":
+          aValue = a.grade.name;
+          bValue = b.grade.name;
+          break;
+        case "course":
+          aValue = a.course.name;
+          bValue = b.course.name;
+          break;
+        case "questionType":
+          aValue = a.questionType;
+          bValue = b.questionType;
+          break;
+        case "lastModified":
+        default:
+          aValue = new Date(a.lastModified).getTime();
+          bValue = new Date(b.lastModified).getTime();
+          break;
+      }
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortField, sortOrder]);
 
   return (
     <div className="p-2 sm:p-4 max-w-7xl mx-auto">
@@ -181,25 +229,100 @@ const QuestionList = () => {
               <th className="px-2 sm:px-3 py-2 sm:py-3 rounded-tl-xl font-semibold text-gray-700">
                 #
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-left">
+              <th
+                className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-left cursor-pointer select-none"
+                onClick={() => handleSort("description")}
+              >
                 Mô tả
+                {sortField === "description" && sortOrder === "desc" && (
+                  <FaSortDown className="inline ml-1" />
+                )}
+                {sortField === "description" && sortOrder === "asc" && (
+                  <FaSortUp className="inline ml-1" />
+                )}
+                {sortField === "description" && sortOrder === "none" && (
+                  <FaSort className="inline ml-1" />
+                )}
+                {sortField !== "description" && (
+                  <FaSort className="inline ml-1 text-gray-400" />
+                )}
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center">
+              <th
+                className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center cursor-pointer select-none"
+                onClick={() => handleSort("grade")}
+              >
                 Khối
+                {sortField === "grade" && sortOrder === "desc" && (
+                  <FaSortDown className="inline ml-1" />
+                )}
+                {sortField === "grade" && sortOrder === "asc" && (
+                  <FaSortUp className="inline ml-1" />
+                )}
+                {sortField === "grade" && sortOrder === "none" && (
+                  <FaSort className="inline ml-1" />
+                )}
+                {sortField !== "grade" && (
+                  <FaSort className="inline ml-1 text-gray-400" />
+                )}
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center">
+              <th
+                className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center cursor-pointer select-none"
+                onClick={() => handleSort("course")}
+              >
                 Môn
+                {sortField === "course" && sortOrder === "desc" && (
+                  <FaSortDown className="inline ml-1" />
+                )}
+                {sortField === "course" && sortOrder === "asc" && (
+                  <FaSortUp className="inline ml-1" />
+                )}
+                {sortField === "course" && sortOrder === "none" && (
+                  <FaSort className="inline ml-1" />
+                )}
+                {sortField !== "course" && (
+                  <FaSort className="inline ml-1 text-gray-400" />
+                )}
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center">
+              <th
+                className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center cursor-pointer select-none"
+                onClick={() => handleSort("questionType")}
+              >
                 Loại
+                {sortField === "questionType" && sortOrder === "desc" && (
+                  <FaSortDown className="inline ml-1" />
+                )}
+                {sortField === "questionType" && sortOrder === "asc" && (
+                  <FaSortUp className="inline ml-1" />
+                )}
+                {sortField === "questionType" && sortOrder === "none" && (
+                  <FaSort className="inline ml-1" />
+                )}
+                {sortField !== "questionType" && (
+                  <FaSort className="inline ml-1 text-gray-400" />
+                )}
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 rounded-tr-xl font-semibold text-gray-700 text-center">
+              <th
+                className="px-2 sm:px-4 py-2 sm:py-3 rounded-tr-xl font-semibold text-gray-700 text-center cursor-pointer select-none"
+                onClick={() => handleSort("lastModified")}
+              >
                 Cập nhật lần cuối
+                {sortField === "lastModified" && sortOrder === "desc" && (
+                  <FaSortDown className="inline ml-1" />
+                )}
+                {sortField === "lastModified" && sortOrder === "asc" && (
+                  <FaSortUp className="inline ml-1" />
+                )}
+                {sortField === "lastModified" && sortOrder === "none" && (
+                  <FaSort className="inline ml-1" />
+                )}
+                {sortField !== "lastModified" && (
+                  <FaSort className="inline ml-1 text-gray-400" />
+                )}
               </th>
             </tr>
           </thead>
           <tbody className="rounded-b-xl">
-            {filteredData.map((q, idx) => (
+            {sortedData.map((q, idx) => (
               <tr
                 key={q.id}
                 className="bg-white hover:bg-primary-lighter transition-all cursor-pointer"

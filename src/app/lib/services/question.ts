@@ -52,14 +52,13 @@ export const getQuestionList = async (
       createdBy: createdBy,
     },
   });
-  console.log("response", response.data);
   return response.data.data.content;
 };
 
 export const getQnAListByAssignmentId = async (
-  currentPage: number,
-  limit: number,
   assignmentId: string,
+  currentPage: number = 0,
+  limit: number = 100,
 ) => {
   const response = await axiosInstance.get(`/question/list/${assignmentId}`, {
     params: {
@@ -72,7 +71,7 @@ export const getQnAListByAssignmentId = async (
 
 export const handleDownloadFile = async (questionId: string) => {
   const response = await axiosInstance.get(`/question/download/${questionId}`, {
-    responseType: "blob", // Quan trọng để xử lý file
+    responseType: "blob",
   });
   return response;
 };
