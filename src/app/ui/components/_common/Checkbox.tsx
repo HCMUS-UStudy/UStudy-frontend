@@ -9,6 +9,7 @@ interface CheckboxProps {
   disabled?: boolean;
   className?: string;
   tickClassName?: string;
+  labelClassName?: string;
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -18,6 +19,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   disabled = false,
   className = "",
   tickClassName = "",
+  labelClassName = "",
 }) => {
   const handleToggle = () => {
     if (!disabled) {
@@ -31,7 +33,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         "flex w-fit gap-2 items-center cursor-pointer select-none",
         {
           "cursor-not-allowed text-gray-200": disabled,
-          "text-primary": !disabled,
+          "text-primary-darkest": !disabled,
         },
       )}
       onClick={handleToggle}
@@ -61,7 +63,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           />
         )}
       </div>
-      {label && <span>{label}</span>}
+      {label && <span className={labelClassName}>{label}</span>}
     </label>
   );
 };
