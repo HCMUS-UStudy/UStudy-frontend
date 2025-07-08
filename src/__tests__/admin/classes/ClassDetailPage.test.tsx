@@ -24,6 +24,12 @@ jest.mock("@/app/lib/services/classSchedule", () => ({
   getClassSchedule: jest.fn(),
 }));
 
+// Mock useQueries
+jest.mock("@tanstack/react-query", () => ({
+  ...jest.requireActual("@tanstack/react-query"),
+  useQueries: jest.fn(),
+}));
+
 // Mock the Button component
 jest.mock("@/app/ui/components/_common/Button", () => ({
   Button: ({
@@ -146,14 +152,48 @@ describe("Class Detail Page", () => {
   const mockGetClassSchedule =
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     require("@/app/lib/services/classSchedule").getClassSchedule;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockUseQueries = require("@tanstack/react-query").useQueries;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Mock useQueries to return proper query objects
+    mockUseQueries.mockReturnValue([
+      {
+        data: mockClassDetail,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+      {
+        data: mockClassSchedule,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+    ]);
   });
 
   it("shows loading state initially", () => {
     mockGetClassById.mockResolvedValue(mockClassDetail);
     mockGetClassSchedule.mockResolvedValue(mockClassSchedule);
+
+    // Mock loading state
+    mockUseQueries.mockReturnValue([
+      {
+        data: undefined,
+        isLoading: true,
+        isError: false,
+        error: null,
+      },
+      {
+        data: undefined,
+        isLoading: true,
+        isError: false,
+        error: null,
+      },
+    ]);
 
     renderWithQueryClient(<ClassDetailPage />);
 
@@ -225,6 +265,22 @@ describe("Class Detail Page", () => {
     mockGetClassById.mockResolvedValue(mockClassDetail);
     mockGetClassSchedule.mockResolvedValue(longSchedule);
 
+    // Mock useQueries with long schedule
+    mockUseQueries.mockReturnValue([
+      {
+        data: mockClassDetail,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+      {
+        data: longSchedule,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+    ]);
+
     renderWithQueryClient(<ClassDetailPage />);
 
     await waitFor(() => {
@@ -241,6 +297,22 @@ describe("Class Detail Page", () => {
 
     mockGetClassById.mockResolvedValue(mockClassDetail);
     mockGetClassSchedule.mockResolvedValue(longSchedule);
+
+    // Mock useQueries with long schedule
+    mockUseQueries.mockReturnValue([
+      {
+        data: mockClassDetail,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+      {
+        data: longSchedule,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+    ]);
 
     renderWithQueryClient(<ClassDetailPage />);
 
@@ -263,13 +335,44 @@ describe("Class Detail Page", () => {
     mockGetClassById.mockResolvedValue(openClass);
     mockGetClassSchedule.mockResolvedValue(mockClassSchedule);
 
+    // Mock useQueries with open class
+    mockUseQueries.mockReturnValue([
+      {
+        data: openClass,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+      {
+        data: mockClassSchedule,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+    ]);
+
     const { rerender } = renderWithQueryClient(<ClassDetailPage />);
 
     await waitFor(() => {
       expect(screen.getByText("Chưa bắt đầu")).toBeInTheDocument();
     });
 
-    mockGetClassById.mockResolvedValue(completedClass);
+    // Mock useQueries with completed class
+    mockUseQueries.mockReturnValue([
+      {
+        data: completedClass,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+      {
+        data: mockClassSchedule,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+    ]);
+
     rerender(
       <QueryClientProvider client={new QueryClient()}>
         <ClassDetailPage />
@@ -277,13 +380,33 @@ describe("Class Detail Page", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Đã hoàn thành")).toBeInTheDocument();
+      // Look for the status badge specifically
+      const statusBadge = screen.getByText("Đã hoàn thành", {
+        selector: "div",
+      });
+      expect(statusBadge).toBeInTheDocument();
     });
   });
 
   it("shows empty state when no schedule exists", async () => {
     mockGetClassById.mockResolvedValue(mockClassDetail);
     mockGetClassSchedule.mockResolvedValue(null);
+
+    // Mock useQueries with null schedule
+    mockUseQueries.mockReturnValue([
+      {
+        data: mockClassDetail,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+      {
+        data: null,
+        isLoading: false,
+        isError: false,
+        error: null,
+      },
+    ]);
 
     renderWithQueryClient(<ClassDetailPage />);
 

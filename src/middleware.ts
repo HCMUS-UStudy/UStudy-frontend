@@ -116,12 +116,13 @@ export async function middleware(request: NextRequest) {
       if (defaultRoute !== "ADMIN") {
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
-      if (
-        pathname.startsWith("/admin/schedule") ||
-        pathname.startsWith("/admin/manage-scores")
-      ) {
-        return NextResponse.next();
-      }
+      // if (
+      //   pathname.startsWith("/admin/schedule") ||
+      //   pathname.startsWith("/admin/manage-scores") ||
+      //   pathname.startsWith("/admin/rooms")
+      // ) {
+      //   return NextResponse.next();
+      // }
       if (!permissions.some((path) => pathname.startsWith(path))) {
         return NextResponse.redirect(new URL("/admin/dashboard", request.url));
       }
@@ -135,6 +136,10 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(
           new URL(`${pathname}/overview`, request.url),
         );
+      }
+      // Allow access to attendance without permission check
+      if (pathname.startsWith("/member/attendance")) {
+        return NextResponse.next();
       }
       if (!permissions.some((path) => pathname.startsWith(path))) {
         if (defaultRoute === "STUDENT") {

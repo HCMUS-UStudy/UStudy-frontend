@@ -273,10 +273,12 @@ export default function ClassMaterial() {
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -291,10 +293,12 @@ export default function ClassMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsidePopUp);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsidePopUp);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsidePopUp);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutsidePopUp);
+      };
+    }
   }, [openOptionsId]);
 
   useEffect(() => {
@@ -309,10 +313,15 @@ export default function ClassMaterial() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutsideCreateFolder);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideCreateFolder);
-    };
+    if (typeof document !== "undefined") {
+      document.addEventListener("mousedown", handleClickOutsideCreateFolder);
+      return () => {
+        document.removeEventListener(
+          "mousedown",
+          handleClickOutsideCreateFolder,
+        );
+      };
+    }
   }, [creatingFolder]);
 
   const [popUpLeft, setPopUpLeft] = useState(false);

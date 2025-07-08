@@ -1,5 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
-import { ClassSchedule, ClassScheduleItem } from "@/app/types";
+import { ClassSchedule, ClassScheduleItem, BranchSchedule } from "@/app/types";
 
 export const getAllClassSchedule = async (
   classId: string,
@@ -114,4 +114,19 @@ export const countPastLessons = (classId: string) => {
     statusCode: string;
     data: { totalLessons: number; pastLessons: number };
   }>(`/class-schedule/count-past-lessons/${classId}`);
+};
+
+// GET: Branch schedule - Get schedule of all classes of a branch in a month of year
+export const getBranchSchedule = (
+  branchId: string,
+  month: number,
+  year: number,
+) => {
+  return axiosInstance.get<{
+    message: string;
+    statusCode: string;
+    data: BranchSchedule[];
+  }>(`/class-schedule/list/branch/${branchId}`, {
+    params: { month, year },
+  });
 };

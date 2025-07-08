@@ -93,15 +93,17 @@ const Notification = () => {
   };
 
   useEffect(() => {
-    if (popupId) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+    if (typeof document !== "undefined") {
+      if (popupId) {
+        document.addEventListener("mousedown", handleClickOutside);
+      } else {
+        document.removeEventListener("mousedown", handleClickOutside);
+      }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
   }, [popupId]);
 
   if (isLoading) {

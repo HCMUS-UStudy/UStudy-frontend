@@ -123,6 +123,8 @@ const Contacts: React.FC<ContactsProps> = ({
           {sampleRoomChats.map((room) => (
             <div
               key={room.roomChatId}
+              role="button"
+              tabIndex={0}
               className={`relative flex items-center p-3 border rounded cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
                 selectedRoom?.roomChatId === room.roomChatId
                   ? "border-primary-dark bg-primary-lighter"
@@ -149,10 +151,17 @@ const Contacts: React.FC<ContactsProps> = ({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <BsPerson size={24} className="text-primary-dark" />
+                    <BsPerson
+                      size={24}
+                      className="text-primary-dark"
+                      data-testid="person-icon"
+                    />
                   )}
                 </div>
-                <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white shadow-md"></span>
+                <span
+                  data-testid="online-indicator"
+                  className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white shadow-md"
+                ></span>
               </div>
               <div className="text-sm">
                 <p className="font-semibold text-primary-dark">
