@@ -14,20 +14,23 @@ import { getAllRooms } from "@/app/lib/services/chat";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setRoom } from "@/app/store/ChatSlice";
 import { ContactsLoading } from "../_common/loading";
-import PlayAnimation from "../../lotties/animation";
+import { SearchField } from "../_common/text-field";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
-  searchQuery: string;
   closeList?: () => void;
 }
 
-export const ContactList = ({ searchQuery, closeList }: Props) => {
+export const ContactList = ({ closeList }: Props) => {
   const dispatch = useAppDispatch();
   const selectedRoom = useAppSelector((state) => state.chat.room);
 
+  const params = useSearchParams();
+  const name = params?.get("name") as string;
+
   const { data: rooms, status } = useQuery({
-    queryKey: ["RoomChats", 0, searchQuery],
-    queryFn: () => getAllRooms(0, 100, searchQuery, ""),
+    queryKey: ["RoomChats", 0, name],
+    queryFn: () => getAllRooms(0, 100, name, ""),
   });
 
   return (
@@ -40,23 +43,27 @@ export const ContactList = ({ searchQuery, closeList }: Props) => {
         <CardDescription className="text-gray-500 text-xs lg:text-sm">
           Chọn giáo vụ để nhắn tin
         </CardDescription>
+        <SearchField placeholder="Tìm theo tên..." queryKey={["name"]} />
       </CardHeader>
-      <CardContent className="space-y-2 py-2 flex-1 max-h-[75vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
+      <CardContent className="space-y-2 py-2 flex-1 max-h-[75vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mt-5">
         {status === "pending" ? (
           <ContactsLoading />
         ) : (
           <>
             {rooms?.totalElements === 0 ? (
-              <div className="w-full h-40 flex justify-center items-center border-2 border-primary-darkest">
-                <PlayAnimation animationKey="contacts" />
+              <div className="w-full h-full flex justify-center items-center  rounded-lg  bg-primary-lighter">
+                {/* <PlayAnimation animationKey="contacts" loop={false} /> */}
+                <div className="text-primary-darkest text-base text-center">
+                  Vui lòng tìm giáo vụ trên thanh tìm kiếm
+                </div>
               </div>
             ) : (
               <>
                 {rooms?.content.map((room) => (
                   <div
-                    key={room.roomChatId}
+                    key={room.user.id}
                     className={`relative flex items-center p-3 border rounded cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
-                      selectedRoom?.roomChatId === room.roomChatId
+                      selectedRoom?.user.id === room.user.id
                         ? "border-primary-dark bg-primary-lighter"
                         : "hover:bg-gray-50"
                     }`}

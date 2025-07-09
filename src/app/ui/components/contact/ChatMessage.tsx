@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { FaRegCommentDots } from "react-icons/fa";
 import { BsEmojiSmile, BsPerson } from "react-icons/bs";
 import { CardHeader, CardTitle, CardDescription } from "../_common/Card";
 import Image from "next/image";
@@ -8,7 +7,7 @@ import EmojiPicker from "emoji-picker-react";
 import { Button } from "../_common/Button";
 import { FaListUl, FaPaperPlane } from "react-icons/fa6";
 import { useAppSelector } from "@/app/store/store";
-import Loading from "../_common/loading/Loading";
+import PlayAnimation from "../../lotties/animation";
 
 type ChatMessageProps = {
   messageInput: string;
@@ -36,7 +35,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   const ref = useRef<HTMLDivElement | null>(null);
 
-  // console.log(messages);
+  console.log(messages);
 
   useEffect(() => {
     if (ref.current) {
@@ -108,7 +107,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       <div className="relative min-h-[65vh] max-h-[65vh] overflow-auto">
         <div className="space-y-4 py-4 px-4   bg-white  scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
           {status === "pending" ? (
-            <Loading />
+            <div className="w-1/3 mx-auto bg-primary-lighter rounded-full p-10 mt-5">
+              <PlayAnimation animationKey="chatLoading" />
+              <div className="text-center font-semibold text-primary-darkest">
+                Đang tải tin nhắn...
+              </div>
+            </div>
           ) : (
             <>
               {selectedRoom && messages && (messages.length ?? 0) > 0 ? (
@@ -146,18 +150,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 ))
               ) : selectedRoom ? (
                 <div className="flex items-center justify-center flex-1 h-64">
-                  <div className="text-center text-primary-darkest">
-                    <FaRegCommentDots className="size-10 lg:size-16 mx-auto mb-2" />
-                    <p className="font-semibold">
+                  <div className="flex flex-col w-1/3 pt-20">
+                    <PlayAnimation animationKey={"chat"} loop={true} />
+                    <p className="font-semibold text-primary-darkest text-center text-nowrap">
                       Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="flex items-center justify-center flex-1 h-64">
-                  <div className="text-center text-primary-darkest">
-                    <FaRegCommentDots className="size-10 lg:size-16 mx-auto mb-2" />
-                    <p className="font-semibold">
+                  <div className="flex flex-col w-1/3 pt-20">
+                    <PlayAnimation animationKey={"chat"} loop={true} />
+                    <p className="font-semibold text-primary-darkest text-center text-nowrap">
                       Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
                     </p>
                   </div>

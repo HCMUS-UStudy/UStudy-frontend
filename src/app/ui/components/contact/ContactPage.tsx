@@ -92,7 +92,7 @@ const ContactPage = () => {
         <div
           className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}
         >
-          <ContactList searchQuery="" />
+          <ContactList />
         </div>
 
         <ChatMessage
@@ -107,7 +107,7 @@ const ContactPage = () => {
         />
       </div>
       <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
-        <ContactList searchQuery="" closeList={() => setDisplayList(false)} />
+        <ContactList closeList={() => setDisplayList(false)} />
       </Dialog>
     </>
   );

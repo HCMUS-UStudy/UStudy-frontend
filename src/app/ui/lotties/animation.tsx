@@ -10,6 +10,8 @@ import resetPassword from "./resetPassword.json";
 import success from "./success.json";
 import verifyToken from "./verifyToken.json";
 import xIcon from "./xIcon.json";
+import chat from "./chat.json";
+import chatLoading from "./chatLoading.json";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -18,7 +20,6 @@ interface Props {
   animationKey: string;
 }
 
-// Animation data mapping
 const animationDataMap = {
   books,
   contacts,
@@ -29,6 +30,8 @@ const animationDataMap = {
   success,
   verifyToken,
   xIcon,
+  chat,
+  chatLoading,
 } as const;
 
 function PlayAnimation({ loop = true, animationKey }: Props) {

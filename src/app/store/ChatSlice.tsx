@@ -66,12 +66,18 @@ const chatSlice = createSlice({
       fetchChatHistory.fulfilled,
       (state, action: PayloadAction<MessageItem[]>) => {
         state.status = "success";
-        const updateMessages = [...action.payload].map((item) => ({
-          id: uuidv4(),
-          isSender: item.isSender,
-          content: item.content,
-          sendTime: item.sendTime,
-        }));
+        const updateMessages = [...action.payload]
+          .map((item) => ({
+            id: uuidv4(),
+            isSender: item.isSender,
+            content: item.content,
+            sendTime: item.sendTime,
+          }))
+          .sort((a, b) => {
+            return (
+              new Date(a.sendTime).getTime() - new Date(b.sendTime).getTime()
+            );
+          });
         state.chatHistory = updateMessages;
       },
     );
