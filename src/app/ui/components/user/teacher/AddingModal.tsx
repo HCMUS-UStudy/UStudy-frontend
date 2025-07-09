@@ -133,7 +133,8 @@ const AddingModal = ({
         {/* {addingQuestion && <QuestionModal setQuestionModal={setAddingQuestion} />} */}
         {activeModal === "question" && (
           <QuestionModal
-            classDetail={classDetail}
+            gradeId={classDetail.grade.id}
+            courseId={classDetail.course.id}
             onGoBack={handleGoBack}
             onClose={setAddingModal}
           />

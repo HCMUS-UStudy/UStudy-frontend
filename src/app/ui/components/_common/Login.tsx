@@ -267,12 +267,12 @@ export default function Login() {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bg-foreground py-10 lg:py-10 xl:py-16 px-10 lg:px-14 xl:px-16 rounded-3xl shadow-lg z-[100]"
+            className="bg-foreground p-10 lg:px-14 xl:p-16 rounded-3xl shadow-lg z-[100]"
           >
             <div className="text-[#F48C06] text-2xl md:text-3xl font-bold flex justify-center">
               Đăng nhập
             </div>
-            <div className="mt-6 mb-4 w-[250px] md:w-[350px]">
+            <div className="mt-8 mb-4 w-[250px] md:w-[350px]">
               <Input
                 type="text"
                 placeholder="Nhập tên tài khoản"

@@ -88,9 +88,9 @@ export default function ManageScoresClientPage() {
       </div>
 
       {/* Class Selection */}
-      <div className="mt-6 p-6 bg-primary-lighter rounded-xl shadow-sm border border-blue-100">
+      <div className="mt-6 p-6 bg-primary-lighter rounded-xl shadow-sm border border-primary-light">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-500 rounded-lg">
+          <div className="p-2 bg-primary-dark rounded-lg">
             <svg
               className="w-5 h-5 text-white"
               fill="none"
@@ -119,7 +119,7 @@ export default function ManageScoresClientPage() {
           <div className="flex-1">
             {loading ? (
               <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-primary-dark border-t-transparent rounded-full animate-spin"></div>
                 <span className="text-sm text-gray-600">
                   Đang tải danh sách lớp...
                 </span>
@@ -199,10 +199,10 @@ export default function ManageScoresClientPage() {
       {/* No Class Selected Message */}
       {!selectedClassId && !loading && classes.length > 0 && (
         <div className="mt-8 text-center">
-          <div className="p-12 bg-primary-light rounded-2xl border border-blue-100 shadow-sm">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="p-12 bg-primary-light rounded-2xl border border-primary-light shadow-sm">
+            <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-8 h-8 text-blue-600"
+                className="w-8 h-8 text-primary-darker"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

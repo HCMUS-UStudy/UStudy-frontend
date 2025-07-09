@@ -72,7 +72,7 @@ export default function DropdownLocal({
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="flex items-center justify-between w-full px-4 py-3 text-left bg-white border border-gray-300 rounded-lg shadow-sm hover:border-primary-light hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+        className="flex items-center justify-between w-full px-4 py-3 text-left bg-white border border-gray-300 rounded-lg shadow-sm hover:border-primary-light hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-darker focus:border-transparent transition-all duration-200"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span
