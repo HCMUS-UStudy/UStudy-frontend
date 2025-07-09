@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import { IoReturnUpBack } from "react-icons/io5";
@@ -82,6 +83,7 @@ const AssignmentPage = () => {
   });
 
   // Mock submissions data
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [submissions, setSubmissions] = useState([
     {
       id: "sub1",

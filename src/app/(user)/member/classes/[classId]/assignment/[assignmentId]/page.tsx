@@ -74,9 +74,9 @@ const AssignmentPage = () => {
     const fetchQuestions = async () => {
       try {
         const response = await getQnAListByAssignmentId(
+          assignmentId as string,
           0,
           100,
-          assignmentId as string,
         );
         setQuestions(response.content || []);
         setFileNames(
