@@ -29,7 +29,6 @@ export const recordAttendances = async (
     note: string;
   }[],
 ): Promise<void> => {
-  console.log("recordAttendances", studentStatusList);
   try {
     const response = await axiosInstance.post("/attendance/record", {
       classId,
