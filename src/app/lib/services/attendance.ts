@@ -1,5 +1,9 @@
 import axiosInstance from "@/app/lib/axios";
-import { AttendaceData } from "@/app/types";
+import {
+  AttendaceData,
+  AttendanceListByStudentResponse,
+  AttendanceListByStudentParams,
+} from "@/app/types";
 
 export const getAttendances = async (
   currentPage: number,
@@ -39,4 +43,18 @@ export const recordAttendances = async (
   } catch (error) {
     throw error;
   }
+};
+
+export const getAttendanceListByStudent = async (
+  params: AttendanceListByStudentParams,
+): Promise<AttendanceListByStudentResponse> => {
+  const response = await axiosInstance.get("/attendance/list-by-student", {
+    params: {
+      classId: params.classId,
+      month: params.month,
+      year: params.year,
+      ...(params.studentId && { studentId: params.studentId }),
+    },
+  });
+  return response.data;
 };
