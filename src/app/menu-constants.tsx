@@ -26,6 +26,7 @@ import {
   MdOutlineAssignment,
   MdOutlineNotificationsActive,
 } from "react-icons/md";
+import { IoIosTimer } from "react-icons/io";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
@@ -169,6 +170,11 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
     title: "Quản lý bài tập",
     path: "/teacher/assignments",
     icon: <MdOutlineAssignment size={20} />,
+  },
+  {
+    title: "Lịch trống",
+    path: "/teacher/available-time",
+    icon: <IoIosTimer size={20} />,
   },
 ];
 
