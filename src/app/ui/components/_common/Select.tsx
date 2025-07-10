@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, {
@@ -30,6 +31,7 @@ interface SelectProps {
   customStyle?: {
     labelBg?: string;
   };
+  value?: string | number; // Add value prop for controlled mode
 }
 
 interface SelectContextProps {
@@ -88,13 +90,37 @@ const Select: React.FC<SelectProps> = ({
   customStyle,
   isLoading = false,
   showClearButton = true,
+  value,
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string | number>(
+  const isControlled = value !== undefined;
+  const [uncontrolledValue, setUncontrolledValue] = useState<string | number>(
     defaultValue,
   );
   const [selectedLabel, setSelectedLabel] = useState<string>(defaultLabel);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const selectRef = useRef<HTMLDivElement>(null);
+  const optionsRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  // Add this line to fix selectedValue errors
+  const selectedValue = isControlled ? value : uncontrolledValue;
+
+  // Flatten children to array for easier handling
+  const options = React.Children.toArray(children).filter(Boolean);
+
+  // Sync label with value (controlled or uncontrolled)
+  useEffect(() => {
+    const found = options.find(
+      (child) =>
+        React.isValidElement(child) &&
+        (child as React.ReactElement<any>).props.value === selectedValue,
+    );
+    if (found && React.isValidElement(found)) {
+      setSelectedLabel((found as React.ReactElement<any>).props.children);
+    } else {
+      setSelectedLabel(defaultLabel);
+    }
+  }, [selectedValue, children]);
 
   useEffect(() => {
     if (onValueChange) {
@@ -109,6 +135,7 @@ const Select: React.FC<SelectProps> = ({
         !selectRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        setFocusedIndex(-1);
       }
     };
 
@@ -120,20 +147,83 @@ const Select: React.FC<SelectProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    // Reset focus index when dropdown opens
+    if (isOpen) {
+      const idx = options.findIndex(
+        (child: any) => child.props && child.props.value === selectedValue,
+      );
+      setFocusedIndex(idx >= 0 ? idx : 0);
+    } else {
+      setFocusedIndex(-1);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    // Scroll to focused option
+    if (isOpen && focusedIndex >= 0 && optionsRefs.current[focusedIndex]) {
+      optionsRefs.current[focusedIndex]?.scrollIntoView({ block: "nearest" });
+    }
+  }, [focusedIndex, isOpen]);
+
   const toggleOpen = () => {
     if (!disabled) {
       setIsOpen(!isOpen);
     }
   };
 
-  const handleSetSelectedValue = (value: string | number, label: string) => {
-    setSelectedValue(value);
+  const handleSetSelectedValue = (val: string | number, label: string) => {
+    if (!isControlled) setUncontrolledValue(val);
     setSelectedLabel(label);
+    setIsOpen(false);
+    setFocusedIndex(-1);
+    if (onValueChange) {
+      onValueChange(val);
+    }
   };
 
   const clearSelection = () => {
-    setSelectedValue("");
+    setUncontrolledValue("");
     setSelectedLabel(defaultLabel);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!isOpen) {
+      if (
+        [
+          "ArrowDown",
+          "ArrowUp",
+          "ArrowLeft",
+          "ArrowRight",
+          " ",
+          "Enter",
+        ].includes(e.key)
+      ) {
+        e.preventDefault();
+        setIsOpen(true);
+        return;
+      }
+      return;
+    }
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev + 1) % options.length);
+    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev - 1 + options.length) % options.length);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (focusedIndex >= 0 && options[focusedIndex]) {
+        const child: any = options[focusedIndex];
+        if (child.props && child.props.value !== undefined) {
+          handleSetSelectedValue(child.props.value, child.props.children);
+        }
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setIsOpen(false);
+      setFocusedIndex(-1);
+    }
   };
 
   return (
@@ -179,7 +269,11 @@ const Select: React.FC<SelectProps> = ({
               e.preventDefault();
               toggleOpen();
             }}
+            onKeyDown={handleKeyDown}
             disabled={disabled}
+            tabIndex={0}
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
           >
             <span className={cn("truncate", { "text-slate-500": disabled })}>
               {selectedLabel}
@@ -221,12 +315,18 @@ const Select: React.FC<SelectProps> = ({
           )}
           {isOpen ? (
             <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
-              {React.Children.count(children) === 0 ? (
+              {options.length === 0 ? (
                 <div className="px-3 py-2 text-xs md:text-sm text-slate-500 text-center">
                   Không có dữ liệu
                 </div>
               ) : (
-                children
+                options.map((child, idx) =>
+                  React.cloneElement(child as React.ReactElement<any>, {
+                    ref: (el: HTMLDivElement) =>
+                      (optionsRefs.current[idx] = el),
+                    isFocused: focusedIndex === idx,
+                  }),
+                )
               )}
             </div>
           ) : null}
@@ -248,6 +348,8 @@ interface SelectItemProps {
   value: string | number;
   children: React.ReactNode;
   className?: string;
+  isFocused?: boolean;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -261,31 +363,36 @@ interface SelectItemProps {
  * <SelectItem value="1">Option 1</SelectItem>
  * ```
  */
-const SelectItem: React.FC<SelectItemProps> = ({
-  value,
-  children,
-  className,
-}) => {
-  const { handleSetSelectedValue, toggleOpen, selectedValue } =
-    useSelectContext();
+const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
+  ({ value, children, className }, ref) => {
+    const { handleSetSelectedValue, toggleOpen, selectedValue } =
+      useSelectContext();
 
-  return (
-    <div
-      className={cn(
-        "px-3 py-2 cursor-pointer text-xs md:text-sm hover:bg-primary truncate transition-all",
-        {
-          "bg-primary": selectedValue === value,
-        },
-        className,
-      )}
-      onClick={() => {
-        handleSetSelectedValue(value, children as string);
-        toggleOpen();
-      }}
-    >
-      {children}
-    </div>
-  );
-};
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "px-3 py-2 cursor-pointer text-xs md:text-sm hover:bg-primary truncate transition-all",
+          {
+            "bg-primary": Number(selectedValue) === Number(value),
+            // Remove focus ring
+            // "ring-2 ring-primary-darkest": isFocused,
+          },
+          className,
+        )}
+        onClick={() => {
+          handleSetSelectedValue(value, children as string);
+          toggleOpen();
+        }}
+        tabIndex={-1}
+        role="option"
+        aria-selected={selectedValue === value}
+      >
+        {children}
+      </div>
+    );
+  },
+);
+SelectItem.displayName = "SelectItem";
 
 export { Select, SelectItem };
