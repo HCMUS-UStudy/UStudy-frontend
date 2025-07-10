@@ -8,6 +8,7 @@ import Logo from "@/app/ui/components/_common/Logo";
 
 import Hero from "./ui/components/_common/landingPage/Hero";
 import WhyUs from "./ui/components/_common/landingPage/WhyUs";
+import { Button } from "./ui/components/_common/Button";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -113,11 +114,10 @@ export default async function Home() {
               Đăng nhập
             </Link>
           </button> */}
-          <div className="text-base md:text-xl text-nowrap bg-transparent rounded-xl items-center justify-center flex border-2 border-primary-darkest  hover:bg-primary-darker text-primary-darkest font-bold hover:text-white transition-all cursor-pointer active:scale-[0.98]">
-            <button className="px-5 py-2 md:px-10 md:py-3">
-              <Link href="/login">Đăng nhập</Link>
-            </button>
-          </div>
+
+          <Button className="text-base md:text-xl px-5 py-2 md:px-10 md:py-3 bg-transparent border-2 border-primary-darkest text-primary-darkest">
+            <Link href="/login">Đăng nhập</Link>
+          </Button>
 
           {/* <Button
             className="px-10 py-3 rounded-lg text-[17px] min-[320px]:hidden md:flex hover:scale-105 transition-all duration-300"

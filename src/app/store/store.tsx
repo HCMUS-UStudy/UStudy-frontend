@@ -4,6 +4,7 @@ import permissionReducer from "./PermissionScreenSlice";
 import childrenReducer from "./ChildrenSlice";
 import encryptedIdReducer from "./EncryptedIdSlice";
 import chatReducer from "./ChatSlice";
+import gradeReducer from "./GradeSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,6 +15,7 @@ const store = configureStore({
     children: childrenReducer,
     encryptedId: encryptedIdReducer,
     chat: chatReducer,
+    grades: gradeReducer,
   },
 });
 

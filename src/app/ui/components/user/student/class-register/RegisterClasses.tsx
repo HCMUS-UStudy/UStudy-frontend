@@ -76,8 +76,6 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     placeholderData: keepPreviousData,
   });
 
-  // console.log(classes?.content);
-
   const registerClassMutation = useMutation({
     mutationFn: (classId: string) =>
       studentRegisterClass({
@@ -89,6 +87,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
       setRegistrationSuccess(res);
       setConfirmRegsiter(true);
       // setRegisteringClassId(null);
@@ -101,6 +100,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
       // Mở link thanh toán trong tab mới
       window.open(response, "_blank");
       queryClient.invalidateQueries({ queryKey: ["Classes"] });
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
       setPaymentPendingId(null);
     },
     onError: (error) => {

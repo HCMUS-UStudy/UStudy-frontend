@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { getPermissions } from "../lib/services";
 import { useAppDispatch } from "../store/store";
 import { setPermissions, setStatus } from "../store/PermissionScreenSlice";
+import { fetchAllGrades } from "../store/GradeSlice";
 
 export default function InitDataProvider({
   children,
@@ -32,5 +33,9 @@ export default function InitDataProvider({
       dispatch(setStatus("error"));
     }
   }, [permissions]);
+
+  useEffect(() => {
+    dispatch(fetchAllGrades({ page: 0, limit: 100, filter: "" }));
+  }, []);
   return <>{children}</>;
 }
