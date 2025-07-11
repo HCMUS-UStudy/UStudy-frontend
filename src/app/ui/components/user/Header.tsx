@@ -31,8 +31,11 @@ const Header = ({
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
   const [SIDENAV_ITEMS, setSIDENAV_ITEMS] = useState<SideNavItem[]>([]);
-
-  const { children, selectedChild } = useAppSelector((state) => state.children);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { children, selectedChild } = useAppSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (state: any) => state.children,
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -150,33 +153,36 @@ const Header = ({
                     }
                   }}
                 >
-                  {children.map((child) => {
-                    const content = (
-                      <span className="flex items-center gap-2">
-                        {child.avatar ? (
-                          <Image
-                            src={child.avatar}
-                            alt="avatar"
-                            width={24}
-                            height={24}
-                            className="w-6 h-6 rounded-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-xl">👦</span>
-                        )}
-                        <span className="font-medium">{child.name}</span>
-                      </span>
-                    );
-                    return (
-                      <SelectItem
-                        key={child.id}
-                        value={JSON.stringify(child)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-light/30 focus:bg-primary-light/50 transition-all text-sm"
-                      >
-                        {content}
-                      </SelectItem>
-                    );
-                  })}
+                  {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    children.map((child: any) => {
+                      const content = (
+                        <span className="flex items-center gap-2">
+                          {child.avatar ? (
+                            <Image
+                              src={child.avatar}
+                              alt="avatar"
+                              width={24}
+                              height={24}
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-xl">👦</span>
+                          )}
+                          <span className="font-medium">{child.name}</span>
+                        </span>
+                      );
+                      return (
+                        <SelectItem
+                          key={child.id}
+                          value={JSON.stringify(child)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-light/30 focus:bg-primary-light/50 transition-all text-sm"
+                        >
+                          {content}
+                        </SelectItem>
+                      );
+                    })
+                  }
                 </Select>
               </div>
             ))}

@@ -50,7 +50,10 @@ export default function ParentAcademicResultsView() {
   const [activeTab, setActiveTab] = useState("charts");
 
   // Get selected child from Redux store
-  const selectedChild = useAppSelector((state) => state.children.selectedChild);
+  const selectedChild = useAppSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (state: any) => state.children.selectedChild,
+  );
 
   // Fetch child scores for charts
   const {

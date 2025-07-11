@@ -43,7 +43,10 @@ interface TileProps {
 }
 
 export default function ParentSchedule() {
-  const selectedChild = useAppSelector((state) => state.children.selectedChild);
+  const selectedChild = useAppSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (state: any) => state.children.selectedChild,
+  );
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [scheduleData, setScheduleData] = useState<ScheduleData>({ dates: {} });
   const [activeStartDate, setActiveStartDate] = useState<Date>(new Date());
