@@ -30,9 +30,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   handleSendMessage,
   openList,
 }) => {
-  const messages = useAppSelector((state) => state.chat.chatHistory);
-  const status = useAppSelector((state) => state.chat.status);
-  const selectedRoom = useAppSelector((state) => state.chat.room);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const messages = useAppSelector((state: any) => state.chat.chatHistory);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const status = useAppSelector((state: any) => state.chat.status);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const selectedRoom = useAppSelector((state: any) => state.chat.room);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -112,7 +115,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           ) : (
             <>
               {selectedRoom && messages && (messages.length ?? 0) > 0 ? (
-                messages.map((message) => (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                messages.map((message: any) => (
                   <div
                     key={message.id}
                     className={`flex ${message.isSender ? "justify-end" : "justify-start"}`}

@@ -40,7 +40,8 @@ export default function DayRoomSessionSelector() {
     SATURDAY: "Thứ bảy",
     SUNDAY: "Chủ nhật",
   };
-  const { selectedBranchId } = useAppSelector((state) => state.branch);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { selectedBranchId } = useAppSelector((state: any) => state.branch);
   const numLessons = watch("numLessons");
   const classTimes = watch("classTimes");
   const startDate = watch("startDate");

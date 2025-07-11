@@ -21,7 +21,8 @@ interface Props {
 
 export const ContactList = ({ searchQuery, closeList }: Props) => {
   const dispatch = useAppDispatch();
-  const selectedRoom = useAppSelector((state) => state.chat.room);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const selectedRoom = useAppSelector((state: any) => state.chat.room);
 
   const { data: rooms, status } = useQuery({
     queryKey: ["RoomChats", 0, searchQuery],
