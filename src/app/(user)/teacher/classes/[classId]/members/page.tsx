@@ -104,6 +104,7 @@ const MemberPage = () => {
             "Giới tính",
             "Vai trò",
           ]}
+          className="bg-primary-light"
         />
         <TableBody noDataMessage={false}>
           {filteredStudents?.map((member) => (
