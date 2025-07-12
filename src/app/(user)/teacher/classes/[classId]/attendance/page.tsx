@@ -336,6 +336,7 @@ const AttendancePage = () => {
                 "Có phép",
                 "Ghi chú",
               ]}
+              className="bg-primary-light"
               classNameTH={[
                 "",
                 "",
