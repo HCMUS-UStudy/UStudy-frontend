@@ -30,6 +30,21 @@ export const getAssignmentByClassId = async (
   return response.data.data;
 };
 
+export const getAllAssignments = async (
+  currentPage: number,
+  limit: number,
+  status: "all" | "progress" | "expired" = "all",
+) => {
+  const response = await axiosInstance.get(`/assignment/list/teachers`, {
+    params: {
+      page: currentPage,
+      limit: limit,
+      status: status,
+    },
+  });
+  return response.data.data;
+};
+
 export const getDetailAssignment = async (assignmentId: string) => {
   const response = await axiosInstance.get(
     `/assignment/details/${assignmentId}`,
@@ -54,7 +69,8 @@ export const createAssignment = async (body: {
   endTime: string;
   duration: number;
   numAttempts: number;
-  existingQuestions: string[];
+  mode: string;
+  existingQuestions: { id: string; score: number }[];
 }) => {
   const formData = new FormData();
   formData.append("classId", body.classId);
@@ -63,8 +79,10 @@ export const createAssignment = async (body: {
   formData.append("endTime", body.endTime);
   formData.append("duration", body.duration.toString());
   formData.append("numAttempts", body.numAttempts.toString());
-  body.existingQuestions.forEach((questionId) => {
-    formData.append("existingQuestions", questionId);
+  formData.append("mode", body.mode);
+  body.existingQuestions.forEach((q, idx) => {
+    formData.append(`existingQuestions[${idx}].id`, q.id);
+    formData.append(`existingQuestions[${idx}].score`, q.score.toString());
   });
 
   const response = await axiosInstance.post("/assignment/create", formData, {

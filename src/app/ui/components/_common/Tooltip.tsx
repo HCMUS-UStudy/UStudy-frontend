@@ -35,8 +35,11 @@ const Tooltip: React.FC<TooltipProps> = ({
     <div className="relative inline-block group select-none">
       {children}
       <span
-        className={`absolute hidden group-hover:block bg-gray-700 text-white text-[12px] rounded py-1 px-2 
-          z-[999] whitespace-nowrap ${positionClasses[position]}`}
+        className={`absolute hidden group-hover:block bg-gray-700 text-white text-[12px] rounded py-1 px-2 z-[999] ${
+          text.length > 20
+            ? "max-w-xs break-words whitespace-pre-line"
+            : "whitespace-nowrap"
+        } ${positionClasses[position]}`}
       >
         {text}
         {/* <span

@@ -30,9 +30,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   handleSendMessage,
   openList,
 }) => {
-  const messages = useAppSelector((state) => state.chat.chatHistory);
-  const status = useAppSelector((state) => state.chat.status);
-  const selectedRoom = useAppSelector((state) => state.chat.room);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const messages = useAppSelector((state: any) => state.chat.chatHistory);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const status = useAppSelector((state: any) => state.chat.status);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const selectedRoom = useAppSelector((state: any) => state.chat.room);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -52,6 +55,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             <FaListUl
               onClick={openList}
               className="flex lg:hidden mr-3 size-5 text-primary-darker hover:text-primary-darkest transition-all cursor-pointer"
+              title="Open List"
             />
             <div className="relative size-9 lg:size-11 mr-3">
               <div className="size-9 lg:size-11 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100 flex items-center justify-center">
@@ -64,10 +68,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <BsPerson size={24} className="text-primary-dark" />
+                  <BsPerson
+                    size={24}
+                    className="text-primary-dark"
+                    data-testid="person-icon"
+                  />
                 )}
               </div>
-              <span className="absolute md:bottom-1 md:right-1 lg:-bottom-1 lg:-right-1 md:size-3 lg:w-3.5 lg:h-3.5 bg-green-500 rounded-full border-2 border-white shadow-md"></span>
+              <span
+                className="absolute md:bottom-1 md:right-1 lg:-bottom-1 lg:-right-1 md:size-3 lg:w-3.5 lg:h-3.5 bg-green-500 rounded-full border-2 border-white shadow-md"
+                data-testid="online-indicator"
+              ></span>
             </div>
 
             <div>
@@ -87,6 +98,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               <FaListUl
                 onClick={openList}
                 className="flex lg:hidden mr-3 size-5 text-primary-darker hover:text-primary-darkest transition-all cursor-pointer"
+                title="Open List"
               />
               Tin nhắn
             </CardTitle>
@@ -103,7 +115,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           ) : (
             <>
               {selectedRoom && messages && (messages.length ?? 0) > 0 ? (
-                messages.map((message) => (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                messages.map((message: any) => (
                   <div
                     key={message.id}
                     className={`flex ${message.isSender ? "justify-end" : "justify-start"}`}
@@ -115,7 +128,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                           : "bg-gray-100 text-gray-800 rounded-bl-none"
                       }`}
                     >
-                      <p>{message.content}</p>
+                      <p>
+                        {message.content === "" ? "\u00A0" : message.content}
+                      </p>
                       <p
                         className={`text-xs mt-1 ${message.isSender ? "text-primary-lighter" : "text-gray-500"}`}
                       >

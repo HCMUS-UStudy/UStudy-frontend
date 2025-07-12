@@ -24,7 +24,7 @@ const mockAssignment: AssignmentItem = {
     email: "teacher@example.com",
     name: "Nguyễn Văn A",
     avatar: "https://i.pravatar.cc/150?img=1",
-    gender: "MALE",
+    //gender: "MALE",
   },
   completed: false,
   aclass: {
@@ -39,6 +39,32 @@ const mockAssignment: AssignmentItem = {
       id: "course1",
       name: "Toán học",
     },
+    teacher: [
+      {
+        id: "u1",
+        genId: "gen123",
+        email: "teacher@example.com",
+        name: "Nguyễn Văn A",
+        avatar: "https://i.pravatar.cc/150?img=1",
+        gender: "MALE",
+      },
+    ],
+    classSessions: [
+      {
+        id: "session1",
+        day: "Monday",
+        session: {
+          id: "s1",
+          name: "Tiết 1",
+          startTime: "07:00",
+          endTime: "07:45",
+        },
+        room: {
+          id: "r1",
+          name: "Phòng 101",
+        },
+      },
+    ],
   },
 };
 

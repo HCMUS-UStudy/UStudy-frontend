@@ -1,7 +1,7 @@
 export type Question = {
   id: string;
   description: string;
-  fileName: string;
+  fileName: string | null;
   grade: {
     id: string;
     name: string;
@@ -11,10 +11,13 @@ export type Question = {
     name: string;
   };
   questionType: "MULTIPLE_CHOICE" | "ESSAY";
-  createdAt: string;
-  options: {
+  lastModified: string;
+  createdAt?: string;
+  score?: number;
+  options?: {
     id: string;
     description: string;
     isCorrect: boolean;
   }[];
+  scoringCriteria: string | null;
 };

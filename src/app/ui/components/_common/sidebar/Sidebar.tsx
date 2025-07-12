@@ -23,7 +23,8 @@ const Sidebar = ({
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { status, screens: permissions } = useAppSelector(
-    (state) => state.permission,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (state: any) => state.permission,
   );
 
   useEffect(() => {

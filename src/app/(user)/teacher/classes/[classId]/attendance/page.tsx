@@ -203,7 +203,7 @@ const AttendancePage = () => {
         queryKey: ["Attendance", date],
       });
       setIsEditing(false);
-      if (date.startsWith("custom-")) {
+      if (date && date.startsWith("custom-")) {
         setDate(classSchedule[0]?.id || "custom-");
       }
     },
@@ -265,7 +265,7 @@ const AttendancePage = () => {
                 </option>
               ))}
             </select>
-            {date.startsWith("custom-") && (
+            {date && date.startsWith("custom-") && (
               <input
                 type="date"
                 className="ml-2 border border-primary-darker rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark"
