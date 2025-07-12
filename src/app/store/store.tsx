@@ -6,7 +6,7 @@ import encryptedIdReducer from "./EncryptedIdSlice";
 import chatReducer from "./ChatSlice";
 import gradeReducer from "./GradeSlice";
 
-import { useDispatch, useSelector } from "react-redux";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 const store = configureStore({
   reducer: {
@@ -23,6 +23,7 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const _useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useAppSelector = useSelector.withTypes<RootState>();
 
 export { store };
