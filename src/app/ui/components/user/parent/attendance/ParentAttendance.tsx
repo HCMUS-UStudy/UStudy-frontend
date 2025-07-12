@@ -7,7 +7,7 @@ import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import AttendanceCalendar from "@/app/ui/components/user/parent/attendance/AttendanceCalendar";
 import AttendanceList from "@/app/ui/components/user/parent/attendance/AttendanceList";
 import AttendanceSummary from "@/app/ui/components/user/parent/attendance/AttendanceSummary";
-import { getAllStudentClasses } from "@/app/lib/services/class";
+import { getListUserClass } from "@/app/lib/services/class";
 import { getAttendanceListByStudent } from "@/app/lib/services/attendance";
 import { ClassUserItem, AttendanceListByStudentResponse } from "@/app/types";
 import { useQuery } from "@tanstack/react-query";
@@ -73,7 +73,7 @@ export default function ParentAttendance() {
   // Fetch student classes for selected child
   const { data: classes, isLoading: isLoadingClasses } = useQuery({
     queryKey: ["studentClasses", selectedChild?.id],
-    queryFn: () => getAllStudentClasses(0, 100),
+    queryFn: () => getListUserClass(selectedChild?.id || "", "", 0, 100),
     enabled: !!selectedChild?.id,
   });
 
@@ -304,13 +304,13 @@ export default function ParentAttendance() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm">
+                    {/* <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Lớp:</span>
                       <span className="font-medium text-gray-800">
-                        {classes?.content?.find((c) => c.id === selectedClassId)
+                        {classes?.content?.find((c: ClassUserItem) => c.id === selectedClassId)
                           ?.name || "Đang tải..."}
                       </span>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Thời gian:</span>
