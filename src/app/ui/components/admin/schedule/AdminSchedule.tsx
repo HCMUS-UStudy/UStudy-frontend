@@ -11,7 +11,6 @@ import {
   FaRegCalendarAlt,
 } from "react-icons/fa";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -21,7 +20,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import { getBranchSchedule } from "@/app/lib/services/classSchedule";
 import { BranchSchedule } from "@/app/types";
-import BranchSelector from "../BranchSelector";
+import Image from "next/image";
 
 interface AdminScheduleRecord {
   classId: string;
@@ -182,14 +181,11 @@ export default function AdminSchedule() {
         <span className="relative inline-block">
           {/* Số lượng lớp nếu >= 2 */}
           {records.length > 1 && (
-            <span
-              className="absolute -top-2 -right-2 bg-red-500 text-white font-semibold text-xs min-w-[18px] h-5 flex items-center justify-center rounded-full shadow-md border-2 border-white z-10"
-              style={{ fontSize: 12 }}
-            >
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white font-semibold text-[10px] min-w-[18px] h-5 flex items-center justify-center rounded-full shadow-md z-10">
               {records.length}
             </span>
           )}
-          <span className="text-white bg-gradient-to-r from-blue-500 to-green-400 rounded-full px-2 py-1 text-[18px] shadow-lg border-2 border-white flex items-center justify-center">
+          <span className="text-white bg-primary-dark rounded-full px-2 py-1 size-8 shadow-lg flex items-center justify-center">
             <FaRegCalendarAlt />
           </span>
         </span>
@@ -198,17 +194,9 @@ export default function AdminSchedule() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 p-2 md:p-6">
-      {/* Branch Selector */}
-      <div className="w-full lg:hidden mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm font-medium text-gray-700">Chi nhánh:</span>
-          <BranchSelector />
-        </div>
-      </div>
-
+    <div className="flex flex-col lg:flex-row">
       {/* Calendar Section */}
-      <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
+      <div className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white overflow-hidden">
         <CardHeader className="p-6">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-primary-darkest">
@@ -247,17 +235,17 @@ export default function AdminSchedule() {
           </div>
           <div className="text-sm text-gray-700 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-center mt-4">
             <div className="flex items-center gap-1">
-              <span className="text-white bg-gradient-to-r from-blue-500 to-green-400 rounded-full px-2 py-1 text-[18px] shadow-lg border-2 border-white flex items-center justify-center">
+              <span className="text-white bg-primary-dark rounded-full px-2 py-1 size-8  flex items-center justify-center">
                 <FaRegCalendarAlt />
               </span>
               <span>Có lớp học</span>
             </div>
           </div>
         </CardContent>
-      </Card>
+      </div>
 
       {/* Schedule Detail Section */}
-      <Card className="w-full lg:flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
+      <div className="w-full lg:flex-[1] bg-white  overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
         <CardHeader className="p-6">
           <CardTitle className="text-2xl font-bold text-primary-darkest">
             📖 Chi tiết lớp học
@@ -331,9 +319,9 @@ export default function AdminSchedule() {
                           className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-full text-sm font-medium shadow-sm"
                         >
                           {/* Avatar nếu có */}
-                          <span className="inline-block w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-darkest flex items-center justify-center text-white font-bold">
+                          <span className=" w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-darkest flex items-center justify-center text-white font-bold">
                             {t.avatar ? (
-                              <img
+                              <Image
                                 src={t.avatar}
                                 alt={t.name}
                                 className="w-6 h-6 rounded-full object-cover"
@@ -364,7 +352,7 @@ export default function AdminSchedule() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </div>
 
       {/* Global calendar style overrides */}
       <style jsx global>{`
@@ -373,22 +361,26 @@ export default function AdminSchedule() {
           border: none;
           font-family: inherit;
         }
+
         .react-calendar__navigation {
           margin-bottom: 1rem;
           display: flex;
           justify-content: center;
           gap: 0.5rem;
         }
+
         .react-calendar__navigation button {
           min-width: 44px;
           background: none;
           font-size: 16px;
           color: #3aa97a;
         }
+
         .react-calendar__navigation button:enabled:hover,
         .react-calendar__navigation button:enabled:focus {
           background-color: #f0f0f0;
         }
+
         .react-calendar__month-view__weekdays {
           display: flex;
           justify-content: center;
@@ -396,24 +388,42 @@ export default function AdminSchedule() {
           color: #1f845a;
           margin-bottom: 0.5rem;
         }
+
         .react-calendar__month-view__weekdays__weekday {
           flex: 1;
           text-align: center;
         }
+
+        .react-calendar__month-view__days {
+          display: grid !important;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 8px;
+        }
+
         .react-calendar__tile {
           aspect-ratio: 1/1;
           max-width: 100%;
+          background: white;
           padding: 8px 0;
-          background: none;
           text-align: center;
           line-height: 16px;
           border-radius: 8px;
+          transition: all 0.2s ease;
+          border: 1px solid transparent;
         }
+
+        .react-calendar__tile:enabled:hover {
+          background-color: #e0f7f1;
+        }
+
+        .react-calendar__tile:enabled:focus {
+          background-color: #e0f7f1;
+          border: 2px solid #0f766e;
+          outline: none;
+        }
+
         .tile-admin-has-class {
-          background: #e8f5e8 !important;
-          border-radius: 8px;
-          border: 2px solid #4ade80;
-          box-shadow: 0 2px 8px 0 #22c55e22;
+          background: #f6fdfb !important;
           transition: all 0.2s ease-in-out;
         }
 
@@ -423,22 +433,22 @@ export default function AdminSchedule() {
           box-shadow: 0 4px 12px 0 #22c55e33;
           transform: translateY(-1px);
         }
+
         .tile-outside-month {
           color: #9ca3af;
           opacity: 0.4;
           pointer-events: none;
         }
-        .react-calendar__tile:enabled:hover,
-        .react-calendar__tile:enabled:focus {
-          background-color: #ebf8f4;
-        }
+
         .react-calendar__tile--now {
           background: #bee5d1;
         }
+
         .react-calendar__tile--now:enabled:hover,
         .react-calendar__tile--now:enabled:focus {
           background: #add7c1;
         }
+
         .react-calendar__tile--active {
           background: #22c55e !important;
           color: white !important;
@@ -446,6 +456,7 @@ export default function AdminSchedule() {
           box-shadow: 0 4px 12px 0 #22c55e44 !important;
           font-weight: bold;
         }
+
         .react-calendar__tile--active:enabled:hover,
         .react-calendar__tile--active:enabled:focus {
           background: #16a34a !important;

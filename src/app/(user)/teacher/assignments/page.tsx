@@ -11,8 +11,8 @@ import {
   getAllAssignments,
 } from "@/app/lib/services/assignment";
 import { AssignmentItem, ClassDetail } from "@/app/types";
-import { toast } from "react-toastify";
 import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type TeacherClass = { id: string; name: string };
 
@@ -25,6 +25,7 @@ const AssignmentList = () => {
   >("endTime");
   const [sortOrder, setSortOrder] = useState("desc");
   const router = useRouter();
+  const { addToast } = useCustomToast();
 
   // Lấy danh sách lớp từ API
   const { data: classData, isLoading: classLoading } = useQuery({
@@ -133,12 +134,7 @@ const AssignmentList = () => {
           <Button
             onClick={() => {
               if (!selectedClassId) {
-                toast.warning("Vui lòng chọn lớp trước khi tạo câu hỏi!", {
-                  position: "top-right",
-                  autoClose: 2500,
-                  pauseOnHover: false,
-                  closeOnClick: true,
-                });
+                addToast.warning("Vui lòng chọn lớp trước khi tạo câu hỏi!");
                 return;
               }
               setShowModal(true);

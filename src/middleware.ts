@@ -49,6 +49,8 @@ export async function middleware(request: NextRequest) {
     //   // cập nhật userData
     // }
     const isValidToken = await verifyToken();
+    // const isValidToken = true;
+
     if (!isValidToken) {
       switch (userData?.role.defaultRoute) {
         case "ADMIN":

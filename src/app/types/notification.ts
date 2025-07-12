@@ -7,14 +7,13 @@ export type NotificationItem = {
   sendDate: string;
   read: boolean;
   sender: UserSummary;
-  // type:
-  //   | "ANNOUNCEMENT"
-  //   | "ASSIGNMENT"
-  //   | "QUIZ"
-  //   | "GRADE"
-  //   | "SYSTEM_ALERT"
-  //   | "MESSAGE";
-  type: string;
-  className?: string; // Optional, only for CLASS type notifications
-  receiverType: string; // "CLASS" | "SYSTEM" | "USER";
+  type:
+    | "ANNOUNCEMENT"
+    | "ASSIGNMENT"
+    | "QUIZ"
+    | "GRADE"
+    | "SYSTEM_ALERT"
+    | "MESSAGE";
+  className?: string;
+  receiverType: "CLASS" | "SYSTEM" | "USER";
 };
