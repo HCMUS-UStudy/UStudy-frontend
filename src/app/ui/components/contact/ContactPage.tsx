@@ -11,14 +11,15 @@ import { MessageItem } from "@/app/types";
 import { addMessage } from "@/app/store/ChatSlice";
 
 const ContactPage = () => {
-  const room = useAppSelector((state) => state.chat.room);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const room = useAppSelector((state: any) => state.chat.room);
   const dispatch = useAppDispatch();
   const [messageInput, setMessageInput] = useState("");
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiRef = useRef<HTMLDivElement | null>(null);
-
-  const userId = useAppSelector((state) => state.chat.userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userId = useAppSelector((state: any) => state.chat.userId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -233,11 +233,6 @@ export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
     icon: <FaClipboardList size={20} />,
   },
   {
-    title: "Bài tập",
-    path: "/member/assignments",
-    icon: <MdOutlineAssignment size={20} />,
-  },
-  {
     title: "Học phí",
     path: "/member/tuition",
     icon: <BsCreditCard size={20} />,
