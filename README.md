@@ -12,7 +12,7 @@ UStudy là một nền tảng học tập trực tuyến với giao diện ngư�
 
 ### 1. Clone dự án
 ```bash
-git clone <repository_url>
+git clone https://github.com/HCMUS-UStudy/UStudy-frontend.git
 cd UStudy-frontend
 ```
 
