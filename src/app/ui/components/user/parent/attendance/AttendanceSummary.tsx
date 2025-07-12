@@ -1,10 +1,20 @@
 import {
+  FaChartPie,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaClock,
+  FaCalendarAlt,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
 } from "../../../_common/Card";
+import { Select, SelectItem } from "../../../_common/Select";
 
 interface AttendanceData {
   dates: Record<string, AttendanceRecord>;
@@ -42,210 +52,317 @@ type AttendanceStatus = "present" | "absent" | "late";
 interface Props {
   mockAttendanceData: AttendanceData;
   selectedYear: number;
+  selectedMonth: number;
+  setSelectedMonth: (month: number) => void;
+  setSelectedYear: (year: number) => void;
 }
+
+// Month names in Vietnamese
+const monthNames = [
+  "Tháng 1",
+  "Tháng 2",
+  "Tháng 3",
+  "Tháng 4",
+  "Tháng 5",
+  "Tháng 6",
+  "Tháng 7",
+  "Tháng 8",
+  "Tháng 9",
+  "Tháng 10",
+  "Tháng 11",
+  "Tháng 12",
+];
 
 export default function AttendanceSummary({
   mockAttendanceData,
   selectedYear,
+  selectedMonth,
+  setSelectedMonth,
+  setSelectedYear,
 }: Props) {
+  // Generate year options (current year - 2 to current year + 2)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
+
+  const handleMonthChange = (month: number) => {
+    setSelectedMonth(month);
+  };
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+  };
+
+  const handlePreviousMonth = () => {
+    if (selectedMonth === 1) {
+      setSelectedMonth(12);
+      setSelectedYear(selectedYear - 1);
+    } else {
+      setSelectedMonth(selectedMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+      setSelectedYear(selectedYear + 1);
+    } else {
+      setSelectedMonth(selectedMonth + 1);
+    }
+  };
+
+  const minYear = yearOptions[0];
+  const maxYear = yearOptions[yearOptions.length - 1];
+
+  const handlePreviousYear = () => {
+    if (selectedYear > minYear) {
+      setSelectedYear(selectedYear - 1);
+    }
+  };
+
+  const handleNextYear = () => {
+    if (selectedYear < maxYear) {
+      setSelectedYear(selectedYear + 1);
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <Card className="lg:col-span-2 bg-white border border-primary-light shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl text-primary-darkest">
-            Thống kê điểm danh
-          </CardTitle>
-          <CardDescription className="text-primary-dark">
-            Tỷ lệ điểm danh năm học {selectedYear - 1}-{selectedYear}
-          </CardDescription>
+    <div>
+      {/* Main Statistics Card */}
+      <Card className="lg:col-span-2 bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden">
+        <CardHeader className="bg-primary-light border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary-lighter rounded-lg">
+                <FaChartPie className="text-primary-dark text-xl" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-gray-800 font-semibold">
+                  Thống kê điểm danh
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  Tỷ lệ điểm danh năm học {selectedYear - 1}-{selectedYear}
+                </CardDescription>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-6 mb-6">
-            <div className="flex flex-col items-center p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="text-3xl font-bold text-green-600 mb-2">
+
+        <CardContent className="p-6">
+          {/* Month/Year Selection */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <FaCalendarAlt className="text-green-500" />
+                  Chọn thời gian:
+                </label>
+
+                {/* Month Selection */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePreviousMonth}
+                    className="p-2 hover:bg-green-100 rounded-lg transition-colors"
+                    title="Tháng trước"
+                    disabled={selectedMonth === 1 && selectedYear === minYear}
+                  >
+                    <FaChevronLeft className="text-primary-dark" />
+                  </button>
+                  <Select
+                    value={selectedMonth}
+                    defaultLabel={monthNames[selectedMonth - 1]}
+                    onValueChange={(value) => handleMonthChange(Number(value))}
+                    className="min-w-[120px]"
+                  >
+                    {monthNames.map((month, index) => (
+                      <SelectItem key={index + 1} value={index + 1}>
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  <button
+                    onClick={handleNextMonth}
+                    className="p-2 hover:bg-green-100 rounded-lg transition-colors"
+                    title="Tháng sau"
+                    disabled={selectedMonth === 12 && selectedYear === maxYear}
+                  >
+                    <FaChevronRight className="text-primary-dark" />
+                  </button>
+                </div>
+
+                {/* Year Selection */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePreviousYear}
+                    className="p-2 hover:bg-green-100 rounded-lg transition-colors"
+                    title="Năm trước"
+                    disabled={selectedYear === minYear}
+                  >
+                    <FaChevronLeft className="text-primary-dark" />
+                  </button>
+                  <Select
+                    value={selectedYear}
+                    defaultLabel={selectedYear.toString()}
+                    onValueChange={(value) => handleYearChange(Number(value))}
+                    className="min-w-[100px]"
+                  >
+                    {yearOptions.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  <button
+                    onClick={handleNextYear}
+                    className="p-2 hover:bg-green-100 rounded-lg transition-colors"
+                    title="Năm sau"
+                    disabled={selectedYear === maxYear}
+                  >
+                    <FaChevronRight className="text-primary-dark" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Current Selection Display */}
+              <div className="text-right">
+                <div className="text-sm text-gray-600">Đang xem:</div>
+                <div className="text-lg font-bold text-primary-dark">
+                  {monthNames[selectedMonth - 1]} {selectedYear}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="flex flex-col items-center p-6 bg-green-50 rounded-xl border border-green-200 shadow-sm">
+              <div className="text-4xl font-bold text-primary-dark mb-3">
                 {mockAttendanceData.summary.presentPercentage}%
               </div>
-              <div className="text-green-800 text-center">Có mặt</div>
-              <div className="text-green-600 text-center mt-1">
+              <div className="flex items-center gap-2 mb-2">
+                <FaCheckCircle className="text-primary-dark text-lg" />
+                <span className="text-green-800 font-semibold">Có mặt</span>
+              </div>
+              <div className="text-primary-dark text-center text-sm">
                 {mockAttendanceData.summary.present}/
                 {mockAttendanceData.summary.totalClasses} buổi
               </div>
             </div>
-            <div className="flex flex-col items-center p-4 bg-red-50 rounded-lg border border-red-200">
-              <div className="text-3xl font-bold text-red-600 mb-2">
+
+            <div className="flex flex-col items-center p-6 bg-red-50 rounded-xl border border-red-200 shadow-sm">
+              <div className="text-4xl font-bold text-red-600 mb-3">
                 {mockAttendanceData.summary.absentPercentage}%
               </div>
-              <div className="text-red-800 text-center">Vắng mặt</div>
-              <div className="text-red-600 text-center mt-1">
+              <div className="flex items-center gap-2 mb-2">
+                <FaTimesCircle className="text-red-600 text-lg" />
+                <span className="text-red-800 font-semibold">Vắng mặt</span>
+              </div>
+              <div className="text-red-600 text-center text-sm">
                 {mockAttendanceData.summary.absent}/
                 {mockAttendanceData.summary.totalClasses} buổi
               </div>
             </div>
-            <div className="flex flex-col items-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <div className="text-3xl font-bold text-yellow-600 mb-2">
+
+            <div className="flex flex-col items-center p-6 bg-yellow-50 rounded-xl border border-yellow-200 shadow-sm">
+              <div className="text-4xl font-bold text-yellow-600 mb-3">
                 {mockAttendanceData.summary.latePercentage}%
               </div>
-              <div className="text-yellow-800 text-center">Đi muộn</div>
-              <div className="text-yellow-600 text-center mt-1">
+              <div className="flex items-center gap-2 mb-2">
+                <FaClock className="text-yellow-600 text-lg" />
+                <span className="text-yellow-800 font-semibold">Đi muộn</span>
+              </div>
+              <div className="text-yellow-600 text-center text-sm">
                 {mockAttendanceData.summary.late}/
                 {mockAttendanceData.summary.totalClasses} buổi
               </div>
             </div>
           </div>
 
-          <div className="w-full bg-gray-200 rounded-full h-4 mb-6">
-            <div className="flex h-4 rounded-full overflow-hidden">
-              <div
-                className="bg-green-500 h-4 transition-all duration-300"
-                style={{
-                  width: `${mockAttendanceData.summary.presentPercentage}%`,
-                }}
-              ></div>
-              <div
-                className="bg-yellow-500 h-4 transition-all duration-300"
-                style={{
-                  width: `${mockAttendanceData.summary.latePercentage}%`,
-                }}
-              ></div>
-              <div
-                className="bg-red-500 h-4 transition-all duration-300"
-                style={{
-                  width: `${mockAttendanceData.summary.absentPercentage}%`,
-                }}
-              ></div>
-            </div>
-          </div>
-
-          <h3 className="text-lg font-semibold text-primary-darkest mb-4">
-            Theo môn học
-          </h3>
-          <div className="max-h-96 overflow-y-auto pr-2 space-y-4">
-            {Object.entries(mockAttendanceData.subjects).map(
-              ([subject, data]) => (
+          {/* Overall Progress Bar */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Tổng quan điểm danh
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-4 shadow-inner">
+              <div className="flex h-4 rounded-full overflow-hidden">
                 <div
-                  key={subject}
-                  className="border border-primary-light rounded-lg p-4"
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="font-semibold">{subject}</div>
-                    <div className="text-sm text-gray-600">
-                      {data.total} buổi học
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div className="flex h-2.5 rounded-full overflow-hidden">
-                      <div
-                        className="bg-green-500 h-2.5"
-                        style={{
-                          width: `${(data.present / data.total) * 100}%`,
-                        }}
-                      ></div>
-                      <div
-                        className="bg-yellow-500 h-2.5"
-                        style={{
-                          width: `${(data.late / data.total) * 100}%`,
-                        }}
-                      ></div>
-                      <div
-                        className="bg-red-500 h-2.5"
-                        style={{
-                          width: `${(data.absent / data.total) * 100}%`,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="flex justify-between text-xs mt-2">
-                    <span className="text-green-600">
-                      Có mặt: {data.present}
-                    </span>
-                    <span className="text-yellow-600">
-                      Đi muộn: {data.late}
-                    </span>
-                    <span className="text-red-600">
-                      Vắng mặt: {data.absent}
-                    </span>
-                  </div>
-                </div>
-              ),
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-white border border-primary-light shadow-lg rounded-2xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-bold text-primary-darkest">
-            Tư vấn & Nhận xét
-          </CardTitle>
-          <CardDescription className="text-sm text-gray-600">
-            Đánh giá từ giáo viên chủ nhiệm
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6 text-sm text-gray-700">
-            {/* Nhận xét */}
-            <div className="bg-primary-lighter/60 border border-primary-light rounded-lg p-4 shadow-sm">
-              <p className="italic leading-relaxed">
-                &quot;Học sinh có tần suất tham gia lớp học tốt, tuy nhiên cần
-                cải thiện việc đi học đúng giờ ở môn Tiếng Anh và Hóa học.&quot;
-              </p>
-              <div className="mt-2 text-right text-xs text-gray-500">
-                - Giáo viên chủ nhiệm, 15/11/2024
+                  className="bg-green-500 h-4 transition-all duration-300"
+                  style={{
+                    width: `${mockAttendanceData.summary.presentPercentage}%`,
+                  }}
+                ></div>
+                <div
+                  className="bg-yellow-500 h-4 transition-all duration-300"
+                  style={{
+                    width: `${mockAttendanceData.summary.latePercentage}%`,
+                  }}
+                ></div>
+                <div
+                  className="bg-red-500 h-4 transition-all duration-300"
+                  style={{
+                    width: `${mockAttendanceData.summary.absentPercentage}%`,
+                  }}
+                ></div>
               </div>
             </div>
+          </div>
 
-            {/* Gợi ý cải thiện */}
-            <section>
-              <h3 className="font-semibold text-primary-darkest mb-2">
-                Gợi ý cải thiện
-              </h3>
-              <ul className="space-y-2 list-disc list-inside">
-                <li>
-                  Cần chú ý đến việc đi học đúng giờ, đặc biệt là các buổi học
-                  sáng sớm.
-                </li>
-                <li>
-                  Nên thông báo trước với giáo viên khi có việc đột xuất không
-                  thể tham gia lớp học.
-                </li>
-                <li>
-                  Chuẩn bị sẵn sàng đồ dùng học tập từ tối hôm trước để tránh
-                  quên và đi trễ.
-                </li>
-              </ul>
-            </section>
-
-            {/* Môn học cần chú ý */}
-            <section>
-              <h3 className="font-semibold text-primary-darkest mb-2">
-                Môn học cần chú ý
-              </h3>
-              <ul className="space-y-1 list-disc list-inside text-red-600 font-medium">
-                <li>Tiếng Anh - Đi trễ 15%</li>
-                <li>Hóa học - Vắng 20%</li>
-              </ul>
-            </section>
-
-            {/* Thành tích điểm danh */}
-            <section>
-              <h3 className="font-semibold text-primary-darkest mb-2">
-                Thành tích điểm danh
-              </h3>
-              <p className="text-green-700 font-medium">
-                🎉 10 buổi học liên tiếp có mặt đầy đủ!
-              </p>
-            </section>
-
-            {/* Nhắc nhở sắp tới */}
-            <section>
-              <h3 className="font-semibold text-primary-darkest mb-2">
-                Nhắc nhở sắp tới
-              </h3>
-              <ul className="space-y-1 text-gray-700">
-                <li>📅 17/04 - Sinh học lúc 7:00</li>
-                <li>📅 18/04 - Toán học lúc 6:45</li>
-              </ul>
-            </section>
+          {/* Subject-wise Statistics */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Theo môn học
+            </h3>
+            <div className="max-h-96 overflow-y-auto pr-2 space-y-4">
+              {Object.entries(mockAttendanceData.subjects).map(
+                ([subject, data]) => (
+                  <div
+                    key={subject}
+                    className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:bg-blue-50 transition-colors"
+                  >
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="font-semibold text-gray-800">
+                        {subject}
+                      </div>
+                      <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full">
+                        {data.total} buổi học
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                      <div className="flex h-3 rounded-full overflow-hidden">
+                        <div
+                          className="bg-green-500 h-3"
+                          style={{
+                            width: `${(data.present / data.total) * 100}%`,
+                          }}
+                        ></div>
+                        <div
+                          className="bg-yellow-500 h-3"
+                          style={{
+                            width: `${(data.late / data.total) * 100}%`,
+                          }}
+                        ></div>
+                        <div
+                          className="bg-red-500 h-3"
+                          style={{
+                            width: `${(data.absent / data.total) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs mt-3">
+                      <span className="text-primary-dark font-medium">
+                        Có mặt: {data.present}
+                      </span>
+                      <span className="text-yellow-600 font-medium">
+                        Đi muộn: {data.late}
+                      </span>
+                      <span className="text-red-600 font-medium">
+                        Vắng mặt: {data.absent}
+                      </span>
+                    </div>
+                  </div>
+                ),
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

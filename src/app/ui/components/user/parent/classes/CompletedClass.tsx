@@ -13,22 +13,24 @@ import { Card } from "../../../_common/Card";
 import { ChildClass } from "@/app/types";
 import { getListChildClasses } from "@/app/lib/services/childClasses";
 import { useQuery } from "@tanstack/react-query";
+import { useAppSelector } from "@/app/store/store";
 import CompletedSkeleton from "./CompletedSkeleton ";
 
 export default function CompletedClass() {
+  const selectedChild = useAppSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (state: any) => state.children.selectedChild,
+  );
+
   const {
     data: classes = [],
     isLoading,
     error,
   } = useQuery<ChildClass[]>({
-    queryKey: ["endedChildClasses", "6619a4e4-b268-4b86-9b5f-929cbb69c871"],
+    queryKey: ["endedChildClasses", selectedChild?.id],
     queryFn: async () => {
-      const data = await getListChildClasses(
-        "6619a4e4-b268-4b86-9b5f-929cbb69c871",
-        0,
-        10,
-        "",
-      );
+      if (!selectedChild?.id) return [];
+      const data = await getListChildClasses(selectedChild.id, 0, 10, "");
 
       const now = new Date(); // phải đặt trong queryFn
       return data.content.filter((classItem: ChildClass) => {
@@ -36,6 +38,7 @@ export default function CompletedClass() {
         return endDate < now;
       });
     },
+    enabled: !!selectedChild?.id,
     placeholderData: (prev) => prev,
   });
 
@@ -83,6 +86,24 @@ export default function CompletedClass() {
 
     const progress = (daysPassed / totalDays) * 100;
     return progress;
+  }
+
+  // Show loading state if no child is selected
+  if (!selectedChild?.id) {
+    return (
+      <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+        <div className="mb-4">
+          <SiGoogleclassroom className="text-gray-300 text-6xl mx-auto" />
+        </div>
+        <h3 className="text-xl font-semibold text-gray-600 mb-2">
+          Chưa chọn học sinh
+        </h3>
+        <p className="text-gray-500 max-w-md mx-auto">
+          Vui lòng chọn học sinh từ danh sách để xem thông tin lớp học đã hoàn
+          thành
+        </p>
+      </div>
+    );
   }
 
   if (isLoading) return <CompletedSkeleton />;

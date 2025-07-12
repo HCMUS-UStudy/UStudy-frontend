@@ -11,18 +11,15 @@ import { MessageItem } from "@/app/types";
 import { addMessage } from "@/app/store/ChatSlice";
 
 const ContactPage = () => {
-  const room = useAppSelector((state) => state.chat.room);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const room = useAppSelector((state: any) => state.chat.room);
   const dispatch = useAppDispatch();
-  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem>(
-  //   teacherParam ?? "",
-  // );
-  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem | null>(null);
   const [messageInput, setMessageInput] = useState("");
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiRef = useRef<HTMLDivElement | null>(null);
-
-  const userId = useAppSelector((state) => state.chat.userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userId = useAppSelector((state: any) => state.chat.userId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -96,7 +93,7 @@ const ContactPage = () => {
         <div
           className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}
         >
-          <ContactList searchQuery="" />
+          <ContactList />
         </div>
 
         <ChatMessage
@@ -111,7 +108,7 @@ const ContactPage = () => {
         />
       </div>
       <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
-        <ContactList searchQuery="" closeList={() => setDisplayList(false)} />
+        <ContactList closeList={() => setDisplayList(false)} />
       </Dialog>
     </>
   );

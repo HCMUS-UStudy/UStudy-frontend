@@ -32,5 +32,9 @@ export default function InitDataProvider({
       dispatch(setStatus("error"));
     }
   }, [permissions]);
+
+  // useEffect(() => {
+  //   dispatch(fetchAllGrades({ page: 0, limit: 100, filter: "" }));
+  // }, []);
   return <>{children}</>;
 }
