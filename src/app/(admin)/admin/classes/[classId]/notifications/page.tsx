@@ -17,7 +17,6 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { RxCross1 } from "react-icons/rx";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Loading from "@/app/ui/components/_common/loading/Loading";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const Notification = () => {
@@ -27,9 +26,7 @@ const Notification = () => {
   // const classId = params?.classId as string;
 
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
-
+  const classId = params?.classId as string;
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);

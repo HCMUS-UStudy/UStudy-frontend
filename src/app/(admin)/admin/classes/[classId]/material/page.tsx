@@ -32,7 +32,6 @@ import { GrView } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
 import { LuTrash2 } from "react-icons/lu";
 import { getUserDataFromCookies } from "@/app/lib/action";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { useParams } from "next/navigation";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 
@@ -97,8 +96,7 @@ export default function ClassMaterial() {
   const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
 
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
 
   const [user, setUser] = useState<UserData | null>(null);
   const { addToast } = useCustomToast();
