@@ -57,7 +57,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getAllClasses("", currentPageCl - 1, 5);
+      const response = await getAllClasses("", currentPageCl - 1, 5, "");
 
       // Set total pages for students based on API response
       console.log(totalPagesCl);

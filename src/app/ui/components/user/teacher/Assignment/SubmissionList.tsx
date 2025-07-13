@@ -20,9 +20,11 @@ const formatDateTime = (dateString: string) => {
 const SubmissionList = ({
   assignmentId,
   setGradingItem,
+  isAdmin,
 }: {
   assignmentId: string;
   setGradingItem: (submissionItem: SubmissionItem) => void;
+  isAdmin?: boolean;
 }) => {
   const { data: submissionsData, isLoading } = useQuery({
     queryKey: ["submissions", assignmentId],
@@ -61,7 +63,7 @@ const SubmissionList = ({
                 <th className="px-3 py-2">Điểm</th>
                 <th className="px-3 py-2">Nhận xét</th>
                 <th className="px-3 py-2">Trạng thái</th>
-                <th className="px-3 py-2">Hành động</th>
+                {!isAdmin && <th className="px-3 py-2">Hành động</th>}
               </tr>
             </thead>
             <tbody>
@@ -87,27 +89,29 @@ const SubmissionList = ({
                       <span className="text-yellow-700">Chưa chấm</span>
                     )}
                   </td>
-                  <td className="px-2 py-2">
-                    {sub.gradedBy ? (
-                      <button
-                        className="px-2 py-1 bg-primary-lighter hover:bg-primary-light rounded"
-                        onClick={() => {
-                          setGradingItem(sub);
-                        }}
-                      >
-                        Xem chi tiết
-                      </button>
-                    ) : (
-                      <button
-                        className="px-2 py-1 bg-primary-lighter hover:bg-primary-light rounded"
-                        onClick={() => {
-                          setGradingItem(sub);
-                        }}
-                      >
-                        Chấm điểm
-                      </button>
-                    )}
-                  </td>
+                  {!isAdmin && (
+                    <td className="px-2 py-2">
+                      {sub.gradedBy ? (
+                        <button
+                          className="px-2 py-1 bg-primary-lighter hover:bg-primary-light rounded"
+                          onClick={() => {
+                            setGradingItem(sub);
+                          }}
+                        >
+                          Xem chi tiết
+                        </button>
+                      ) : (
+                        <button
+                          className="px-2 py-1 bg-primary-lighter hover:bg-primary-light rounded"
+                          onClick={() => {
+                            setGradingItem(sub);
+                          }}
+                        >
+                          Chấm điểm
+                        </button>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

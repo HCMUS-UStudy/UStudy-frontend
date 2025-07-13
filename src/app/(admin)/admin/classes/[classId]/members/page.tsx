@@ -16,7 +16,6 @@ import {
   TableCell,
 } from "@/app/ui/components/_common/Table";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
@@ -24,8 +23,7 @@ import DeletePopup from "@/app/ui/components/_common/DeletePopup";
 const MemberPage = () => {
   const searchParams = useSearchParams();
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId || "");
+  const classId = params?.classId;
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);

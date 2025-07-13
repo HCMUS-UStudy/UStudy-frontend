@@ -51,7 +51,7 @@ const SingleNotification = () => {
               <div className="flex gap-1 text-gray-500">
                 đăng bởi
                 <div className="text-primary-darker">
-                  {notification?.sender.name}
+                  {notification?.sender?.name || "Unknown"}
                 </div>
               </div>
               {"-"}

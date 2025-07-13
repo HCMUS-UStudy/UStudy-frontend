@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUser, FaEye, FaDownload, FaInfoCircle } from "react-icons/fa";
+import { FaUser, FaEye, FaInfoCircle } from "react-icons/fa";
 import {
   Table,
   TableBody,
@@ -48,9 +48,16 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
           {payments.map((payment) => {
             const student = payment.student;
             const classDto = payment.classDto;
-            const dueDate = payment.paymentDate;
+            const dueDate = payment.expiredDate || payment.paymentDate;
+            const today = new Date();
+            const dueDateObj = new Date(dueDate);
+
+            // Reset time to start of day for accurate comparison
+            today.setHours(0, 0, 0, 0);
+            dueDateObj.setHours(0, 0, 0, 0);
+
             const isOverdue =
-              payment.status === "PENDING" && new Date(dueDate) < new Date();
+              payment.status === "PENDING" && dueDateObj < today;
 
             return (
               <TableRow key={payment.invoiceId}>
@@ -74,12 +81,23 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-left">
-                    {formatDate(payment.paymentDate)}
-                    {isOverdue && (
-                      <FaInfoCircle
-                        className="ml-2 text-red-500"
-                        title="Quá hạn"
-                      />
+                    {payment.status === "PENDING" ? (
+                      <div>
+                        <div className="text-sm text-gray-600">
+                          Hạn thanh toán:{" "}
+                          {formatDate(
+                            payment.expiredDate || payment.paymentDate,
+                          )}
+                        </div>
+                        {isOverdue && (
+                          <div className="text-xs text-red-500 flex items-center mt-1">
+                            <FaInfoCircle className="mr-1" />
+                            Quá hạn
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      formatDate(payment.paymentDate)
                     )}
                   </div>
                 </TableCell>
@@ -101,20 +119,13 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
                     >
                       <FaEye className="size-4" />
                     </Button>
-                    {payment.status === "PENDING" ? (
+                    {payment.status === "PENDING" && !isOverdue && (
                       <Button
                         onClick={() => onPayNow?.(payment)}
                         variant="primary"
                         className="rounded-full px-3 py-1 text-sm"
                       >
                         Thanh toán
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outlined"
-                        className="rounded-full p-0 min-w-0 flex"
-                      >
-                        <FaDownload className="size-4" title="Tải biên lai" />
                       </Button>
                     )}
                   </div>

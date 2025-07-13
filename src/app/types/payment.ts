@@ -23,6 +23,7 @@ export type PaymentItem = {
     };
   };
   status: "PENDING" | "OVERDUE" | "COMPLETED";
+  expiredDate: string;
 };
 
 export type PaymentSchema = {

@@ -1,6 +1,6 @@
 "use client";
 import React, {
-  memo,
+  useState,
   // useState
 } from "react";
 import { getAllClasses } from "@/app/lib/services/class";
@@ -16,22 +16,20 @@ import {
   Eye,
 } from "lucide-react";
 import { ClassData } from "@/app/types";
-import ClassPagination from "./ClassPagination";
 // import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
 import Tooltip from "../../_common/Tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { useEncodedRoute } from "@/app/lib/hooks";
+import { useAppSelector } from "@/app/store/store";
+import Pagination from "../../_common/Pagination";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const MemoizedClassPagination = memo(ClassPagination);
-
-export default function ClassesTable({
-  query,
-  currentPage,
-}: {
-  query: string;
-  currentPage: number;
-}) {
+export default function ClassesTable() {
   const [mounted, setMounted] = React.useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const params = useSearchParams();
+  const query = params?.get("query") || "";
+  const branchId =
+    useAppSelector((state) => state.branch.selectedBranchId) || "";
 
   React.useEffect(() => {
     setMounted(true);
@@ -42,13 +40,13 @@ export default function ClassesTable({
     status,
     error,
   } = useQuery<ClassData>({
-    queryKey: ["Classes", query, currentPage],
-    queryFn: () => getAllClasses(query, currentPage - 1, 5),
+    queryKey: ["Classes", query, currentPage, branchId],
+    queryFn: () => getAllClasses(query, currentPage - 1, 5, branchId, "", ""),
     placeholderData: (prevData) => prevData,
     enabled: mounted, // Only run query after component is mounted
   });
-
-  const { handleNavigate } = useEncodedRoute();
+  const totalPages = fetchClasses?.totalPages || 0;
+  const router = useRouter();
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedId, setSelectedId] = useState<string>("");
@@ -111,8 +109,8 @@ export default function ClassesTable({
                 {/* Nút xem lớp */}
                 <div
                   onClick={() => {
-                    handleNavigate(c.id, "/admin/classes");
-                    // router.push(`/admin/classes/${c.id}`);
+                    // handleNavigate(c.id, "/admin/classes");
+                    router.push(`/admin/classes/${c.id}`);
                   }}
                 >
                   <Tooltip text="Xem lớp học">
@@ -135,12 +133,24 @@ export default function ClassesTable({
           ))}
         </TableBody>
       </Table>
-      {status === "success" && (
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageClick={(page) => setCurrentPage(page)}
+        handlePreviousPage={() =>
+          setCurrentPage((prev) => Math.max(prev - 1, 1))
+        }
+        handleNextPage={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+        }
+      />
+      {/* {status === "success" && (
         <MemoizedClassPagination
           currentPage={currentPage}
           totalPages={fetchClasses?.totalPages || 1}
         />
-      )}
+      )} */}
       {/* {isOpen && (
         <ClassEnrollmentModal
           classId={selectedId}

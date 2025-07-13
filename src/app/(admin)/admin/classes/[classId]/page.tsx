@@ -1,21 +1,16 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { ClassDetail, ClassScheduleItem } from "@/app/types";
+import { ClassScheduleItem } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getClassById } from "@/app/lib/services/class";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { getClassSchedule } from "@/app/lib/services/classSchedule";
-import { Button } from "@/app/ui/components/_common/Button";
-import AddingModal from "@/app/ui/components/user/teacher/AddingModal";
-import { useEncodedRoute } from "@/app/lib/hooks";
 
 const ClassDetailPage = () => {
-  const [addingModal, setAddingModal] = useState<boolean>(false);
   const [showAll, setShowAll] = useState<boolean>(false);
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
 
   const [classQuery, classScheduleQuery] = useQueries({
     queries: [
@@ -91,14 +86,6 @@ const ClassDetailPage = () => {
   return (
     <>
       <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-center w-full mt-3">
-          <Button
-            className="w-full md:w-auto"
-            onClick={() => setAddingModal(true)}
-          >
-            + Nội dung mới
-          </Button>
-        </div>
         <div className="shadow-md rounded-2xl p-4 md:p-6 my-4 border border-gray-100">
           <h2 className="text-lg md:text-2xl font-bold text-primary-darker mb-2">
             {classDetail?.name}
@@ -215,12 +202,6 @@ const ClassDetailPage = () => {
           )}
         </div>
       </div>
-      {addingModal && (
-        <AddingModal
-          classDetail={classDetail as ClassDetail}
-          setAddingModal={setAddingModal}
-        />
-      )}
     </>
   );
 };

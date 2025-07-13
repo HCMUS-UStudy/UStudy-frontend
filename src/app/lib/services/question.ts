@@ -49,7 +49,7 @@ export const getQuestionList = async (
       limit: 100,
       courseId: courseId,
       gradeId: gradeId,
-      createdBy: createdBy,
+      createdBy: createdBy || "",
     },
   });
   return response.data.data.content;

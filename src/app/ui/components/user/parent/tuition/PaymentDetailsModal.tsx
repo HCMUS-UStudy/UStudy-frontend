@@ -159,7 +159,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                   <p className="font-medium">
                     {payment.status === "COMPLETED" && payment.paymentDate
                       ? formatDate(payment.paymentDate)
-                      : ""}
+                      : formatDate(payment.expiredDate)}
                   </p>
                 </div>
               </div>

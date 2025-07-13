@@ -1,14 +1,10 @@
-import Link from "next/link";
-// import { Button } from "@/app/ui/components/_common/Button";
 import Image from "next/image";
 import Footer from "@/app/ui/components/_common/landingPage/Footer";
-// import LandingPageSideBar from "@/app/ui/components/_common/sidebar/LandingPageSideBar";
-// import { IoLogInOutline } from "react-icons/io5";
 import Logo from "@/app/ui/components/_common/Logo";
 
 import Hero from "./ui/components/_common/landingPage/Hero";
 import WhyUs from "./ui/components/_common/landingPage/WhyUs";
-import { Button } from "./ui/components/_common/Button";
+import LoginButton from "./ui/components/user/LoginButton";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -105,32 +101,7 @@ export default async function Home() {
         </div>
         <div className="flex justify-between items-center">
           <Logo />
-          {/* <LandingPageSideBar /> */}
-          {/* <button className="cursor-pointer transition-all bg-primary text-black text-base text-nowrap md:text-[17px] px-5 py-2 sm:px-10 sm:py-3 rounded-lg border-primary-darker border-b-[4px] font-bold hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
-            <Link
-              href="/login"
-              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300"
-            >
-              Đăng nhập
-            </Link>
-          </button> */}
-
-          <Button className="text-base md:text-xl px-5 py-2 md:px-10 md:py-3 bg-transparent border-2 border-primary-darkest text-primary-darkest">
-            <Link href="/login">Đăng nhập</Link>
-          </Button>
-
-          {/* <Button
-            className="px-10 py-3 rounded-lg text-[17px] min-[320px]:hidden md:flex hover:scale-105 transition-all duration-300"
-            type="submit"
-          >
-            <Link
-              href="/login"
-              className="translate-x-0 group-hover:-translate-x-3.5 transition-transform duration-300"
-            >
-              Đăng nhập
-            </Link>
-            <IoLogInOutline className="absolute size-8 opacity-0 group-hover:translate-x-12 group-hover:opacity-100 transition-all duration-300" />
-          </Button> */}
+          <LoginButton />
         </div>
         <Hero />
       </div>
