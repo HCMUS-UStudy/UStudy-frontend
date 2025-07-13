@@ -27,7 +27,6 @@ import { Button } from "@/app/ui/components/_common/Button";
 import { MdEdit } from "react-icons/md";
 import { AttendanceItem } from "@/app/types";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
-import { useEncodedRoute } from "@/app/lib/hooks";
 
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 
@@ -43,8 +42,7 @@ const AttendancePage = () => {
   const [date, setDate] = useState<string>("");
 
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId || "");
+  const classId = params?.classId as string;
 
   const [currentPage, setCurrentPage] = useState(0);
   // const [totalPages, setTotalPages] = useState<number>(0);

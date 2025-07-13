@@ -10,7 +10,6 @@ import {
 } from "@tanstack/react-query";
 
 import ClassSettingLoading from "@/app/ui/components/_common/loading/ClassSettingLoading";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { useParams } from "next/navigation";
 import {
   getAllCourses,
@@ -31,8 +30,7 @@ export type UpdateClassType = Pick<
 
 export default function ClassSetting() {
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
 
   const queryClient = new QueryClient();
 

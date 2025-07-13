@@ -7,7 +7,6 @@ import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
 import { AssignmentItem, ClassDetail } from "@/app/types";
 import { getClassById } from "@/app/lib/services/class";
 import { getAssignmentByClassId } from "@/app/lib/services/assignment";
-import { useEncodedRoute } from "@/app/lib/hooks";
 
 // const mockExercises = [
 //   {
@@ -141,8 +140,7 @@ export default function Assignment() {
   // const classId = params?.classId;
 
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
 
   const handleExerciseClick = (assignmentId: string) => {
     router.push(`/teacher/classes/${classId}/assignment/${assignmentId}`);

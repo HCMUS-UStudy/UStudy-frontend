@@ -26,9 +26,9 @@ export const getAllClasses = async (
   nameQuery: string,
   currentPage: number,
   limit: number,
+  branchId: string,
   courseQuery?: string,
   gradeQuery?: string,
-  branchId?: string,
 ): Promise<ClassData> => {
   try {
     const response = await axiosInstance.get("/class/list", {

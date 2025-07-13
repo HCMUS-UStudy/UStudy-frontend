@@ -32,7 +32,7 @@ export default function ManageScoresClientPage() {
           "",
           0,
           100,
-          undefined,
+          "",
           undefined,
           selectedBranchId || undefined,
         );

@@ -5,7 +5,6 @@ import Image from "next/image";
 import React from "react";
 import { BsFillBookFill } from "react-icons/bs";
 import ClassLayoutWrapper from "@/app/ui/components/admin/classes/ClassLayoutWrapper";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -18,8 +17,7 @@ export default function ClassLayout({
   // const classDetail = await getClassById(classId);
 
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
 
   const { data: classDetail } = useQuery({
     queryKey: ["ClassDetails"],
