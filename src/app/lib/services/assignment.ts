@@ -56,7 +56,7 @@ export const handleDownloadFile = async (assignmentId: string) => {
   const response = await axiosInstance.get(
     `/assignment/download/${assignmentId}`,
     {
-      responseType: "blob", // Quan trọng để xử lý file
+      responseType: "blob",
     },
   );
   return response;

@@ -22,19 +22,6 @@ import { useCustomToast } from "@/app/lib/hooks/useToast";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
 
 const MemberPage = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
   const searchParams = useSearchParams();
   const params = useParams<{ classId: string }>();
   const { decodeId } = useEncodedRoute();
@@ -132,7 +119,7 @@ const MemberPage = () => {
               columns={[
                 "GenId",
                 "Tên",
-                ...(!isMobile ? ["Email"] : []),
+                "Email",
                 "Ngày sinh",
                 "Giới tính",
                 "Vai trò",
@@ -154,19 +141,18 @@ const MemberPage = () => {
                       member.name
                     )}
                   </TableCell>
-                  {!isMobile && (
-                    <TableCell>
-                      {member.email?.length > 25 ? (
-                        <button>
-                          <Tooltip text={member.email}>
-                            {member.email.slice(0, 25)}...
-                          </Tooltip>
-                        </button>
-                      ) : (
-                        member.email
-                      )}
-                    </TableCell>
-                  )}
+                  {/* Email column: hidden on mobile, shown on md+ */}
+                  <TableCell className="hidden md:table-cell">
+                    {member.email?.length > 25 ? (
+                      <button>
+                        <Tooltip text={member.email}>
+                          {member.email.slice(0, 25)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      member.email
+                    )}
+                  </TableCell>
                   <TableCell>
                     {new Date(member.birthday).toLocaleDateString("vi-VN")}
                   </TableCell>

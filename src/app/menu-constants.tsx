@@ -109,7 +109,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <GrMapLocation size={20} />,
   },
   {
-    title: "Quản lý lịch trình lớp học",
+    title: "Lịch dạy và học",
     path: "/admin/schedule",
     icon: <BsCalendar size={20} />,
   },
