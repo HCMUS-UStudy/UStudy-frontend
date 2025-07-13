@@ -3,10 +3,11 @@ import { Button } from "@/app/ui/components/_common/Button";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { useState, useEffect } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { registAvailableTime } from "@/app/lib/services/available-time";
-import { getUserDataFromCookies } from "@/app/lib/action";
-import { UserData } from "@/app/types";
-import { useMutation } from "@tanstack/react-query";
+import {
+  getAvailableTime,
+  registAvailableTime,
+} from "@/app/lib/services/available-time";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const WEEK_DAYS = [
@@ -20,23 +21,37 @@ const WEEK_DAYS = [
 ];
 
 export default function AvailableTimePage() {
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const data = await getUserDataFromCookies();
-        setUserData(data);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-    fetchUserData();
-  }, []);
-
   const [dayTimes, setDayTimes] = useState([
     { day: "MONDAY", startTime: "07:00", endTime: "17:00" },
   ]);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const { data, refetch } = useQuery({
+    queryKey: ["available-time"],
+    queryFn: async () => {
+      return getAvailableTime();
+    },
+  });
+
+  useEffect(() => {
+    if (data && data.timeList) {
+      const dayOrder = [
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY",
+      ];
+      const sorted = [...data.timeList].sort((a, b) => {
+        const dayDiff = dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day);
+        if (dayDiff !== 0) return dayDiff;
+        return a.startTime.localeCompare(b.startTime);
+      });
+      setDayTimes(sorted);
+    }
+  }, [data]);
 
   const handleChange = (idx: number, field: string, value: string) => {
     setDayTimes((prev) =>
@@ -76,13 +91,11 @@ export default function AvailableTimePage() {
   const { addToast } = useCustomToast();
   const mutation = useMutation({
     mutationFn: async ({
-      userId,
       dayTimes,
     }: {
-      userId: string;
       dayTimes: { day: string; startTime: string; endTime: string }[];
     }) => {
-      return registAvailableTime(userId, dayTimes);
+      return registAvailableTime(dayTimes);
     },
     onSuccess: () => {
       addToast.success("Đăng ký thời gian rảnh thành công!");
@@ -94,35 +107,57 @@ export default function AvailableTimePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const days = dayTimes.map((d) => d.day);
-    const hasDuplicate = days.length !== new Set(days).size;
-    if (hasDuplicate) {
-      addToast.error("Không được chọn trùng ngày!");
+    // Check for duplicate day+time slots
+    const slotKeys = dayTimes.map(
+      (d) => `${d.day}-${d.startTime}-${d.endTime}`,
+    );
+    const hasDuplicateSlot = slotKeys.length !== new Set(slotKeys).size;
+    if (hasDuplicateSlot) {
+      addToast.error("Không được chọn trùng ngày và giờ!");
+      return;
+    }
+    // Check startTime < endTime for all slots
+    const hasInvalidTime = dayTimes.some(
+      (item) => item.startTime >= item.endTime,
+    );
+    if (hasInvalidTime) {
+      addToast.error("Giờ bắt đầu phải nhỏ hơn giờ kết thúc!");
       return;
     }
     const payload = {
-      userId: userData?.genId || "",
       dayTimes,
     };
-    mutation.mutate(payload);
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        setIsEditing(false);
+        refetch();
+      },
+    });
   };
 
   return (
     <div
       className="flex flex-col justify-center items-center max-w-lg
-        rounded-lg shadow-lg bg-white mx-auto mt-8 p-6"
+        rounded-lg shadow-lg bg-white mx-auto mt-6 p-6"
     >
-      <h1 className="text-xl font-bold mb-4 text-primary-dark">
-        Đăng ký thời gian rảnh
+      <h1 className="text-xl font-bold mb-1 text-primary-dark">
+        Thời gian rảnh
       </h1>
+      {/* Show lastModified if available */}
+      {data?.lastModified && (
+        <div className="text-sm text-gray-500 mb-5">
+          <span>Cập nhật lần cuối: </span>
+          {new Date(data.lastModified).toLocaleString("vi-VN")}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         {dayTimes.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2">
             <select
-              className="border border-primary-darker rounded px-2 py-1
-                focus:outline-none focus:ring-1 focus:ring-primary-darker"
+              className="border border-primary-darker rounded px-2 py-[5px] mr-1 focus:outline-none focus:ring-1 focus:ring-primary-darker"
               value={item.day}
               onChange={(e) => handleChange(idx, "day", e.target.value)}
+              disabled={!isEditing}
             >
               {WEEK_DAYS.map((d) => (
                 <option key={d.value} value={d.value}>
@@ -132,55 +167,80 @@ export default function AvailableTimePage() {
             </select>
             <input
               type="time"
-              className="border border-primary-darker rounded px-2 py-1
-                focus:outline-none focus:ring-1 focus:ring-primary-darker"
+              className="border border-primary-darker rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-darker"
               value={item.startTime}
               onChange={(e) => handleChange(idx, "startTime", e.target.value)}
+              disabled={!isEditing}
             />
             <span>-</span>
             <input
               type="time"
-              className="border border-primary-darker rounded px-2 py-1
-                focus:outline-none focus:ring-1 focus:ring-primary-darker"
+              className="border border-primary-darker rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-darker"
               value={item.endTime}
               onChange={(e) => handleChange(idx, "endTime", e.target.value)}
+              disabled={!isEditing}
             />
-            {dayTimes.length > 1 && (
+            {dayTimes.length > 1 && isEditing && (
               <Tooltip text="Xóa">
-                <button
-                  type="button"
-                  className="text-red-500 hover:text-red-700 cursor-pointer
-                    disable-opacity-50"
+                <RiDeleteBinLine
+                  className="text-red-500 hover:text-red-700 cursor-pointer"
+                  size={20}
                   onClick={() => handleRemove(idx)}
-                  title="Xóa dòng này"
-                >
-                  <RiDeleteBinLine size={20} />
-                </button>
+                />
               </Tooltip>
             )}
           </div>
         ))}
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center mx-5">
-            <button
-              type="button"
-              className="text-primary-dark hover:text-primary-darkest"
-              onClick={handleAdd}
-            >
-              + Thêm
-            </button>
-
-            <button
-              type="button"
-              className="text-primary-dark hover:text-primary-darkest"
-              onClick={handleSort}
-            >
-              Sắp xếp
-            </button>
+            {isEditing ? (
+              <>
+                <button
+                  type="button"
+                  className="text-primary-dark hover:text-primary-darkest"
+                  onClick={handleAdd}
+                >
+                  + Thêm
+                </button>
+                <button
+                  type="button"
+                  className="text-primary-dark hover:text-primary-darkest"
+                  onClick={handleSort}
+                >
+                  Sắp xếp
+                </button>
+              </>
+            ) : null}
           </div>
-          <Button type="submit">Lưu</Button>
         </div>
       </form>
+      <div className="flex w-full mt-2 select-none">
+        {isEditing ? (
+          <div className="w-full flex justify-between items-center gap-3 mx-7">
+            <Button
+              className="w-full mt-1"
+              type="button"
+              onClick={() => {
+                setIsEditing(false);
+                setDayTimes(data?.timeList || []);
+              }}
+            >
+              Hủy
+            </Button>
+            <Button className="w-full" type="submit" onClick={handleSubmit}>
+              Lưu
+            </Button>
+          </div>
+        ) : (
+          <Button
+            className="w-full mx-9"
+            type="button"
+            onClick={() => setIsEditing(true)}
+          >
+            Chỉnh sửa
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

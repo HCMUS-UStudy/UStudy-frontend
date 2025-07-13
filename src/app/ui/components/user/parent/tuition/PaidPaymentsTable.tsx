@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "../../../_common/Table";
 import { Button } from "../../../_common/Button";
-import { FaUser, FaEye, FaDownload } from "react-icons/fa";
+import { FaUser, FaEye } from "react-icons/fa";
 import { PaymentItem } from "@/app/types";
 
 interface PaidPaymentsTableProps {
@@ -88,12 +88,12 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                       >
                         <FaEye className="size-4" />
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="outlined"
                         className="rounded-full p-0 min-w-0 flex"
                       >
                         <FaDownload className="size-4" title="Tải biên lai" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>

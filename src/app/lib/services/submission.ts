@@ -168,3 +168,31 @@ export const deleteSubmission = async (submissionId: string) => {
 
   return response.data;
 };
+
+export const gradeSubmission = async (
+  submissionId: string,
+  feedback: string,
+  questions: {
+    questionId: string;
+    feedback: string;
+    score: number;
+  }[],
+) => {
+  const response = await axiosInstance.patch(
+    `/submission/grade/${submissionId}`,
+    {
+      feedback: feedback,
+      questions: questions,
+    },
+  );
+
+  return response.data.data;
+};
+
+export const AIGradeSubmission = async (submissionId: string) => {
+  const response = await axiosInstance.post(
+    `/submission/ai/grade/${submissionId}`,
+  );
+
+  return response.data.data;
+};
