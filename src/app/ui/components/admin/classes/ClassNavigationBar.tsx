@@ -1,16 +1,15 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { memo } from "react";
 import { Select, SelectItem } from "../../_common/Select";
 
-export default function ClassNavigationBar() {
+const ClassNavigationBar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const tabs = [
     { id: "overview", label: "Tổng quan" },
     { id: "participant", label: "Thành viên" },
     { id: "material", label: "Tài liệu" },
-    // { id: "quiz", label: "Trắc nghiệm" },
     { id: "assignment", label: "Bài tập & Kiểm tra" },
   ];
 
@@ -25,7 +24,6 @@ export default function ClassNavigationBar() {
 
   return (
     <>
-      {/* Show tabs on md and larger screens */}
       <div className="hidden md:flex gap-5 text-primary-dark text-base md:text-lg font-medium">
         {tabs.map((tab) => (
           <label
@@ -47,7 +45,6 @@ export default function ClassNavigationBar() {
         ))}
       </div>
 
-      {/* Show Select on small screens */}
       <div className="md:hidden">
         <Select
           defaultLabel={currentTabLabel}
@@ -64,4 +61,6 @@ export default function ClassNavigationBar() {
       </div>
     </>
   );
-}
+};
+
+export default memo(ClassNavigationBar);

@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { getPermissions } from "../lib/services";
 import { useAppDispatch } from "../store/store";
 import { setPermissions, setStatus } from "../store/PermissionScreenSlice";
+import { usePathname } from "next/navigation";
 
 export default function InitDataProvider({
   children,
@@ -12,11 +13,13 @@ export default function InitDataProvider({
   children: React.ReactNode;
 }) {
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
   const results = useQueries({
     queries: [
       {
         queryKey: ["Permissions"],
         queryFn: () => getPermissions(),
+        enabled: !pathname?.includes("/login"),
       },
     ],
   });
