@@ -1,14 +1,10 @@
 "use client";
 import { getClassById } from "@/app/lib/services/class";
-import ClassNavigationBar from "@/app/ui/components/admin/classes/ClassNavigationBar";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { BsFillBookFill } from "react-icons/bs";
-import ClassLayoutWrapper from "@/app/ui/components/admin/classes/ClassLayoutWrapper";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { ClassDetail } from "@/app/types";
-import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 export default function ClassLayout({
   children,
@@ -37,7 +33,7 @@ export default function ClassLayout({
   ];
   const displayedMembers = classMembers.slice(0, 2);
   const remainingCount = classMembers.length - displayedMembers.length;
-  const [currentTab, setCurrentTab] = useState<keyof typeof tabs>("overview");
+  // const [currentTab, setCurrentTab] = useState<keyof typeof tabs>("overview");
   const pathname = usePathname();
 
   useEffect(() => {}, [pathname]);
@@ -55,7 +51,7 @@ export default function ClassLayout({
 
   const handleTabChange = (id: string) => {
     const classId = pathname?.split("/")[3];
-    setCurrentTab(id as keyof typeof tabs);
+    // setCurrentTab(id as keyof typeof tabs);
     router.push(`/member/classes/${classId}/${id}`);
   };
 
