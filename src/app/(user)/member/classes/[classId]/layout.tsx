@@ -2,11 +2,13 @@
 import { getClassById } from "@/app/lib/services/class";
 import ClassNavigationBar from "@/app/ui/components/admin/classes/ClassNavigationBar";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsFillBookFill } from "react-icons/bs";
 import ClassLayoutWrapper from "@/app/ui/components/admin/classes/ClassLayoutWrapper";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { ClassDetail } from "@/app/types";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 export default function ClassLayout({
   children,
@@ -19,11 +21,12 @@ export default function ClassLayout({
   const params = useParams<{ classId: string }>();
   const classId = params?.classId as string;
 
+  const router = useRouter();
+
   const { data: classDetail } = useQuery({
     queryKey: ["ClassDetails"],
     queryFn: () => getClassById(classId),
   });
-
   // dummy data
   const classMembers = [
     { id: 1, name: "Nguyễn Văn A", avatar: "/student.png" },
@@ -34,6 +37,31 @@ export default function ClassLayout({
   ];
   const displayedMembers = classMembers.slice(0, 2);
   const remainingCount = classMembers.length - displayedMembers.length;
+  const [currentTab, setCurrentTab] = useState<keyof typeof tabs>("overview");
+  const pathname = usePathname();
+
+  useEffect(() => {}, [pathname]);
+
+  if (pathname?.includes("/forum") || pathname?.includes("/assignment/")) {
+    return <>{children}</>;
+  }
+
+  const tabs = {
+    overview: "Tổng quan",
+    participant: "Thành viên",
+    material: "Tài liệu",
+    assignment: "Bài tập & Kiểm tra",
+  };
+
+  const handleTabChange = (id: string) => {
+    const classId = pathname?.split("/")[3];
+    setCurrentTab(id as keyof typeof tabs);
+    router.push(`/member/classes/${classId}/${id}`);
+  };
+
+  // const currentTab = pathname?.split("/")[4] || "overview";
+  // const currentTabLabel =
+  //   tabs.find((tab) => tab.id === currentTab)?.label || "Tổng quan";
 
   const layout = (
     <>
@@ -67,11 +95,49 @@ export default function ClassLayout({
             </div>
           </div>
         </div>
-        <ClassNavigationBar />
+        {/* <ClassNavigationBar /> */}
+
+        <>
+          <div className="flex gap-5 text-primary-dark text-sm sm:text-base md:text-lg font-medium">
+            {Object.entries(tabs).map(([id, label]) => (
+              <label
+                key={id}
+                htmlFor={id}
+                className="relative group cursor-pointer hover:text-highlight-text has-[:checked]:hover:text-primary-dark transition-all duration-300 py-1.5 px-4 has-[:checked]:text-primary-darkest has-[:checked]:font-bold"
+              >
+                <input
+                  id={id}
+                  type="radio"
+                  name="ClassTabs"
+                  className="hidden peer"
+                  onChange={() => handleTabChange(id)}
+                  checked={pathname?.split("/")[4] === id}
+                />
+                {label}
+                <span className="absolute inset-0 border-b-2 border-primary scale-x-0 group-hover:scale-x-100 transition-all duration-300 peer-checked:border-primary-darkest peer-checked:scale-x-100"></span>
+              </label>
+            ))}
+          </div>
+
+          {/* <div className="md:hidden">
+            <Select
+              defaultLabel={tabs[currentTab]}
+              className="bg-primary-lighter"
+              onValueChange={(value) => handleTabChange(value as string)}
+              showClearButton={false}
+            >
+              {Object.entries(tabs).map(([id, label]) => (
+                <SelectItem key={id} value={id}>
+                  {label}
+                </SelectItem>
+              ))}
+            </Select>
+          </div> */}
+        </>
       </div>
       <div className="mt-3">{children}</div>
     </>
   );
 
-  return <ClassLayoutWrapper layout={layout}>{children}</ClassLayoutWrapper>;
+  return layout;
 }
