@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
-import { FaCheck, FaWallet } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
 import { submitOrderPayment } from "@/app/lib/services/payment";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
@@ -61,12 +61,6 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       name: "VNPay",
       description: "Thanh toán an toàn qua cổng thanh toán VNPay",
       icon: <MdPayment className="h-6 w-6" />,
-    },
-    {
-      id: "momo",
-      name: "Ví MoMo",
-      description: "Thanh toán nhanh chóng qua ví điện tử MoMo",
-      icon: <FaWallet className="h-6 w-6" />,
     },
   ];
 
@@ -217,7 +211,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           <Button
             variant="primary"
             onClick={handlePay}
-            disabled
+            disabled={!selectedMethod}
             className="px-4 min-w-[120px]"
             isPending={isLoading}
           >
