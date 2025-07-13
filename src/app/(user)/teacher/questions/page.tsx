@@ -9,9 +9,9 @@ import { getQuestionList } from "@/app/lib/services/question";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { UserData, Question } from "@/app/types";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
-import { toast } from "react-toastify";
 import QuestionModal from "@/app/ui/components/user/teacher/QuestionModal";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
@@ -139,6 +139,7 @@ const QuestionList = () => {
       return 0;
     });
   }, [filteredData, sortField, sortOrder]);
+  const { addToast } = useCustomToast();
 
   return (
     <div className="p-2 sm:p-4 max-w-7xl mx-auto">
@@ -149,14 +150,8 @@ const QuestionList = () => {
         <Button
           onClick={() => {
             if (!selectedGradeId || !selectedCourseId) {
-              toast.warning(
+              addToast.warning(
                 "Vui lòng chọn khối và môn trước khi tạo câu hỏi!",
-                {
-                  position: "top-right",
-                  autoClose: 2500,
-                  pauseOnHover: false,
-                  closeOnClick: true,
-                },
               );
               return;
             }

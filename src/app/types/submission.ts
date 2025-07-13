@@ -47,6 +47,8 @@ export type SubmissionDetail = {
     description: string;
     fileName: string | null;
     score: number;
+    maxScore: number;
+    feedback: string | null;
 
     // MULTIPLE_CHOICE fields
     isCorrect?: boolean;

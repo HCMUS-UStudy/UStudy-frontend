@@ -1,6 +1,5 @@
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import { SearchParamsRadioGroup } from "@/app/ui/components/_common/text-field/SearchParamsRadioGroup";
-import ClassFilter from "@/app/ui/components/user/student/class-register/ClassFilter";
 import RegisterClasses from "@/app/ui/components/user/student/class-register/RegisterClasses";
 import React from "react";
 
@@ -47,9 +46,7 @@ export default async function ClassRegister(props: {
             options={options}
             queryKey="statusQuery"
           />
-          <div className="w-full sm:w-auto">
-            <ClassFilter />
-          </div>
+          <div className="w-full sm:w-auto">{/* <ClassFilter /> */}</div>
         </div>
       </div>
 

@@ -11,45 +11,41 @@ import {
   getAllAssignments,
 } from "@/app/lib/services/assignment";
 import { AssignmentItem, ClassDetail } from "@/app/types";
+import { toast } from "react-toastify";
 import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
-import { useCustomToast } from "@/app/lib/hooks/useToast";
-
-type TeacherClass = { id: string; name: string };
+import { useParams } from "next/navigation";
 
 const AssignmentList = () => {
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId as string;
+
   const [search, setSearch] = useState("");
-  const [selectedClassId, setSelectedClassId] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [sortField, setSortField] = useState<
     "title" | "class" | "format" | "mode" | "endTime" | "startTime"
   >("endTime");
   const [sortOrder, setSortOrder] = useState("desc");
   const router = useRouter();
-  const { addToast } = useCustomToast();
 
   // Lấy danh sách lớp từ API
-  const { data: classData, isLoading: classLoading } = useQuery({
+  const { data: classData } = useQuery({
     queryKey: ["teacher-classes"],
     queryFn: getClassesForTeacher,
   });
-  const classes = React.useMemo(() => {
-    if (!classData) return [];
-    return classData.map((c: TeacherClass) => ({ id: c.id, name: c.name }));
-  }, [classData]);
 
   // Lấy danh sách bài tập từ API
   const { data: assignmentData } = useQuery({
-    queryKey: ["assignments", selectedClassId],
+    queryKey: ["assignments", classId],
     queryFn: () =>
-      selectedClassId
-        ? getAssignmentByClassId(0, 100, selectedClassId)
+      classId
+        ? getAssignmentByClassId(0, 100, classId)
         : getAllAssignments(0, 100),
   });
 
   // Lấy dữ liệu assignment từ API (không còn dùng mock)
   const assignmentList: AssignmentItem[] = React.useMemo(() => {
     if (!assignmentData) return [];
-    if (selectedClassId) {
+    if (classId) {
       // assignmentData là object có content là mảng
       return Array.isArray(assignmentData.content)
         ? assignmentData.content
@@ -60,7 +56,7 @@ const AssignmentList = () => {
         ? assignmentData.content
         : [];
     }
-  }, [assignmentData, selectedClassId]);
+  }, [assignmentData, classId]);
 
   const filteredData = React.useMemo(() => {
     let data: AssignmentItem[] = assignmentList;
@@ -96,10 +92,6 @@ const AssignmentList = () => {
           aValue = a.title;
           bValue = b.title;
           break;
-        case "class":
-          aValue = a.aclass.name;
-          bValue = b.aclass.name;
-          break;
         case "format":
           aValue = a.format;
           bValue = b.format;
@@ -133,8 +125,13 @@ const AssignmentList = () => {
           </h1>
           <Button
             onClick={() => {
-              if (!selectedClassId) {
-                addToast.warning("Vui lòng chọn lớp trước khi tạo câu hỏi!");
+              if (!classId) {
+                toast.warning("Vui lòng chọn lớp trước khi tạo câu hỏi!", {
+                  position: "top-right",
+                  autoClose: 2500,
+                  pauseOnHover: false,
+                  closeOnClick: true,
+                });
                 return;
               }
               setShowModal(true);
@@ -147,26 +144,10 @@ const AssignmentList = () => {
           <input
             type="text"
             className="w-full sm:w-80 px-3 py-2 border-2 border-primary-light rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light text-sm"
-            placeholder="Tìm kiếm theo tiêu đề, lớp..."
+            placeholder="Tìm kiếm theo tiêu đề"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <select
-              className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
-             focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
-              value={selectedClassId}
-              onChange={(e) => setSelectedClassId(e.target.value)}
-              disabled={classLoading}
-            >
-              <option value="">Tất cả lớp</option>
-              {classes.map((item: TeacherClass) => (
-                <option className="text-gray-800" key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
         <div className="hidden md:block shadow-lg bg-white rounded-b-xl">
           <table className="min-w-[700px] w-full rounded-b-xl text-sm">
@@ -190,24 +171,6 @@ const AssignmentList = () => {
                     <FaSort className="inline ml-1" />
                   )}
                   {sortField !== "title" && (
-                    <FaSort className="inline ml-1 text-gray-400" />
-                  )}
-                </th>
-                <th
-                  className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center cursor-pointer select-none"
-                  onClick={() => handleSort("class")}
-                >
-                  Lớp
-                  {sortField === "class" && sortOrder === "desc" && (
-                    <FaSortDown className="inline ml-1" />
-                  )}
-                  {sortField === "class" && sortOrder === "asc" && (
-                    <FaSortUp className="inline ml-1" />
-                  )}
-                  {sortField === "class" && sortOrder === "none" && (
-                    <FaSort className="inline ml-1" />
-                  )}
-                  {sortField !== "class" && (
                     <FaSort className="inline ml-1 text-gray-400" />
                   )}
                 </th>
@@ -296,7 +259,11 @@ const AssignmentList = () => {
                 <tr
                   key={a.id}
                   className="bg-white hover:bg-primary-lighter transition-all cursor-pointer text-sm"
-                  onClick={() => router.push(`/teacher/assignments/${a.id}`)}
+                  onClick={() =>
+                    router.push(
+                      `/teacher/classes/${classId}/assignments/${a.id}`,
+                    )
+                  }
                 >
                   <td
                     className={`px-2 sm:px-3 py-2 sm:py-4 align-top text-center text-md text-gray-700 ${idx === sortedData.length - 1 ? "rounded-bl-xl" : ""}`}
@@ -313,9 +280,6 @@ const AssignmentList = () => {
                     ) : (
                       a.title
                     )}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 sm:py-4 align-top text-center text-blue-900 font-medium">
-                    {a.aclass.name}
                   </td>
                   <td className="px-2 sm:px-4 py-2 sm:py-4 align-top text-center font-medium">
                     {a.format === "MULTIPLE_CHOICE"
@@ -410,14 +374,12 @@ const AssignmentList = () => {
       {showModal && (
         <AssignmentModal
           onClose={() => setShowModal(false)}
-          classId={selectedClassId}
+          classId={classId}
           courseId={
-            classData?.find((c: ClassDetail) => c.id === selectedClassId)
-              ?.course.id
+            classData?.find((c: ClassDetail) => c.id === classId)?.course.id
           }
           gradeId={
-            classData?.find((c: ClassDetail) => c.id === selectedClassId)?.grade
-              .id
+            classData?.find((c: ClassDetail) => c.id === classId)?.grade.id
           }
         />
       )}
