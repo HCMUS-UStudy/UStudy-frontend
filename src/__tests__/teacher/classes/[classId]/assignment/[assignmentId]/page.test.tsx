@@ -2,7 +2,7 @@
 import "@testing-library/jest-dom";
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import AssignmentDetailPage from "@/app/(user)/teacher/classes/[classId]/assignment/[assignmentId]/page";
+import AssignmentDetailPage from "@/app/(user)/teacher/classes/[classId]/assignments/[assignmentId]/page";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock next/navigation

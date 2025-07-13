@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useParams, useRouter } from "next/navigation";
-import Assignment from "@/app/(user)/teacher/classes/[classId]/assignment/page";
+import Assignment from "@/app/(user)/teacher/classes/[classId]/assignments/page";
 
 // Mock next/navigation
 jest.mock("next/navigation", () => ({
