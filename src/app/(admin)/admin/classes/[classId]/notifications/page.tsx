@@ -18,6 +18,7 @@ import { RxCross1 } from "react-icons/rx";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { Button } from "@/app/ui/components/_common/Button";
 
 const Notification = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -114,7 +115,10 @@ const Notification = () => {
   return (
     <div className="flex flex-col px-3">
       <div className="flex items-center justify-between my-4 mx-1">
-        <div
+        <Button onClick={() => setIsOpen(true)}>
+          <IoIosAdd className="hidden sm:flex text-[19px]" /> Thêm thông báo
+        </Button>
+        {/* <div
           className="gap-1 cursor-pointer hover:bg-primary-lighter
         flex items-center border border-gray-300 w-fit rounded-xl p-2"
           onClick={() => {
@@ -125,7 +129,7 @@ const Notification = () => {
           <span className="text-[13px] sm:text-[15px] text-gray-700">
             Thêm thông báo
           </span>
-        </div>
+        </div> */}
         <div className="flex items-center px-2 w-fit text-[14px] sm:text-[15px] gap-3">
           {selectedIds.length > 0 && (
             <div className="flex items-center gap-4">

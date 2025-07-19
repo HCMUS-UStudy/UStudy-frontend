@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ClassDetail, ClassScheduleItem } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getClassById } from "@/app/lib/services/class";
-import Loading from "@/app/ui/components/_common/loading/Loading";
 import { getClassSchedule } from "@/app/lib/services/classSchedule";
 import { Button } from "@/app/ui/components/_common/Button";
 import AddingModal from "@/app/ui/components/user/teacher/AddingModal";
@@ -81,7 +80,23 @@ const ClassDetailPage = () => {
   if (isLoading) {
     return (
       <div className="mt-5">
-        <Loading />
+        <ul className="space-y-3 animate-pulse">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <li
+              key={`skeleton-${idx}`}
+              className="border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex justify-between items-center">
+                <div className="space-y-2">
+                  <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                  <div className="w-36 h-3 bg-gray-200 rounded"></div>
+                  <div className="w-28 h-3 bg-gray-200 rounded"></div>
+                </div>
+                <div className="w-20 h-6 bg-gray-200 rounded-full"></div>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
@@ -168,7 +183,9 @@ const ClassDetailPage = () => {
                           Ngày: {formatDate(schedule.date)}
                         </div>
                         <div className="text-xs md:text-sm text-gray-500">
-                          Phòng: {schedule.classSession.room.name}
+                          Phòng:{" "}
+                          {schedule.classSession.room?.name ||
+                            "Chưa có phòng học"}
                         </div>
                       </div>
                       {schedule.isPassed ? (

@@ -39,7 +39,7 @@ export default function MemberList({
   const scrollRef = useRef<HTMLDivElement>(null);
   const { addToast } = useCustomToast();
 
-  const { data: memberList } = useQuery({
+  const { data: memberList, isLoading } = useQuery({
     queryKey: [
       "ListMembersToAdd",
       role,
@@ -101,12 +101,22 @@ export default function MemberList({
   );
 
   const useAddMembersMutation = useMutation({
-    mutationFn: (ids: string[]) => addMembers(ids, classId, "STUDENT"),
-    onSuccess: () => {
-      addToast.success("Thêm thành công");
-      onClose();
-      queryClient.invalidateQueries({ queryKey: ["ListMembers", currentPage] });
+    mutationFn: (ids: string[]) =>
+      addMembers(
+        ids,
+        classId,
+        role as "STUDENT" | "PARENT" | "ADMIN" | "TEACHER",
+      ),
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.data.failedCount > 0) {
+        addToast.warning(res.message);
+      } else {
+        addToast.success(res.message);
+      }
+      queryClient.invalidateQueries({ queryKey: ["ListMembers"] });
       queryClient.invalidateQueries({ queryKey: ["ListMembersToAdd"] });
+      onClose();
     },
     onError: () => {
       addToast.error("Thêm thất bại");
@@ -133,6 +143,7 @@ export default function MemberList({
           <Button
             variant="primary"
             className="w-fit py-1"
+            isPending={useAddMembersMutation.status === "pending"}
             onClick={handleAddMembers}
           >
             Thêm
@@ -158,7 +169,7 @@ export default function MemberList({
               "Chọn",
             ]}
           />
-          <TableBody noDataMessage={false}>
+          <TableBody isLoading={isLoading}>
             {[...selectedMembers, ...filteredUnselectedMembers].map(
               (member) => (
                 <TableRow key={member.id}>

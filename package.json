@@ -23,6 +23,7 @@
     "@tanstack/react-query-devtools": "^5.74.6",
     "@types/js-cookie": "^3.0.6",
     "@types/sockjs-client": "^1.5.4",
+    "antd": "^5.26.5",
     "apexcharts": "^4.0.0",
     "axios": "^1.8.2",
     "chart.js": "^4.4.6",
