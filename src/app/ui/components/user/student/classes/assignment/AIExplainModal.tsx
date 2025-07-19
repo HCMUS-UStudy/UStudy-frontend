@@ -69,11 +69,25 @@ const AIExplainModal: React.FC<AIExplainModalProps> = ({
             </div>
           ) : (
             <div className="prose max-w-none text-gray-800 text-base leading-loose">
-              {explanation?.split("\n").map((line, index) => (
-                <p key={index} className="mb-3">
-                  {line}
-                </p>
-              ))}
+              {explanation?.split("\n").map((line, index) => {
+                let displayLine = line;
+                // Nếu dòng bắt đầu bằng 1 dấu * (và không phải **)
+                if (/^\*[^*]/.test(displayLine)) {
+                  displayLine = "•" + displayLine.slice(1);
+                }
+                // Chuyển các đoạn **text** thành <strong>text</strong>
+                const parts = displayLine.split(/(\*\*[^*]+\*\*)/g);
+                return (
+                  <p key={index} className="mb-3">
+                    {parts.map((part, i) => {
+                      if (/^\*\*[^*]+\*\*$/.test(part)) {
+                        return <strong key={i}>{part.slice(2, -2)}</strong>;
+                      }
+                      return part;
+                    })}
+                  </p>
+                );
+              })}
             </div>
           )}
         </div>
