@@ -87,6 +87,7 @@ export const getAllStudentClasses = async (
 
 export const createNewClass = async (data: CreateClassInputs) => {
   try {
+    console.log(data);
     const response = await axiosInstance.post("/class/create", data);
     return response;
   } catch (error) {

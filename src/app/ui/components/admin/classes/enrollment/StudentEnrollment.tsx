@@ -113,8 +113,8 @@ export default function StudentEnrollment({ classId }: { classId: string }) {
       return addMembers(ids, classId, "STUDENT");
     },
     onSuccess: (response) => {
-      if (response.failedCount > 0) {
-        const failedMembers = response.failedMembers
+      if (response.data.failedCount > 0) {
+        const failedMembers = response.data.failedMembers
           .map((member) => `ID: ${member.genId} - ${member.name}`)
           .join("\n");
         addToast.error(`Duyệt không thành công: \n${failedMembers}`);

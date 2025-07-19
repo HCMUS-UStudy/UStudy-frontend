@@ -1,12 +1,16 @@
 "use client";
-import React, { useState } from "react";
-import DatePicker, { DatePickerProps } from "react-datepicker";
+import React from "react";
+import {
+  DatePicker as AntdDatepicker,
+  DatePickerProps as AntdDatePickerProps,
+  ConfigProvider,
+} from "antd";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
 import clsx from "clsx";
-import { FaCalendar } from "react-icons/fa6";
+import viVN from "antd/locale/vi_VN";
 
-type CustomDatePickerProps<T extends FieldValues> = DatePickerProps & {
+type CustomDatePickerProps<T extends FieldValues> = AntdDatePickerProps & {
   name: Path<T>;
   control: Control<T>;
   label: string;
@@ -70,10 +74,9 @@ export const CustomDatePicker = <T extends FieldValues>({
   label,
   isError = false,
   errorMsg = "",
-  placeholder = "dd/mm/yyyy",
+  placeholder = "DD/MM/YYYY",
   ...datePickerProps
 }: CustomDatePickerProps<T>) => {
-  const [date, setDate] = useState<Date | null>(null);
   return (
     <div className="w-full text-sm">
       <label
@@ -94,31 +97,34 @@ export const CustomDatePicker = <T extends FieldValues>({
               name={name}
               render={({ field }) => {
                 return (
-                  <DatePicker
-                    {...datePickerProps}
-                    placeholderText={placeholder}
-                    id={name}
-                    dateFormat="dd/MM/yyyy"
-                    className="w-full px-2  rounded outline-none cursor-pointer text-sm bg-transparent"
-                    selected={date}
-                    icon={<FaCalendar className="text-gray-500" />}
-                    showIcon
-                    onChange={(dateValue) => {
-                      setDate(dateValue);
-                      const isoDate = dateValue
-                        ? new Date(
-                            Date.UTC(
-                              dateValue.getFullYear(),
-                              dateValue.getMonth(),
-                              dateValue.getDate(),
-                            ),
-                          )
-                            .toISOString()
-                            .split("T")[0]
-                        : "";
-                      field.onChange(isoDate);
-                    }}
-                  />
+                  <ConfigProvider locale={viVN}>
+                    <AntdDatepicker
+                      {...datePickerProps}
+                      placeholder={placeholder}
+                      id={name}
+                      format="DD/MM/YYYY"
+                      className="w-full px-2 rounded outline-none border-none text-[14px] focus:outline-green-500  cursor-pointer text-sm bg-transparent"
+                      onChange={(dateValue) => {
+                        // setDate(dateValue);
+                        // const isoDate = dateValue
+                        //   ? new Date(
+                        //       Date.UTC(
+                        //         dateValue.getFullYear(),
+                        //         dateValue.getMonth(),
+                        //         dateValue.getDate(),
+                        //       ),
+                        //     )
+                        //       .toISOString()
+                        //       .split("T")[0]
+                        //   : "";
+                        const isoDate = dateValue
+                          ? dateValue.format("YYYY-MM-DD")
+                          : "";
+                        console.log(isoDate);
+                        field.onChange(isoDate);
+                      }}
+                    />
+                  </ConfigProvider>
                 );
               }}
             />

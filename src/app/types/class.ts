@@ -5,6 +5,7 @@ import {
   BaseGradeInfo,
   BaseCourseInfo,
   BasePaginationResponse,
+  BaseResponse,
 } from "./common";
 import { Course, CourseDto, CourseInfo } from "./course";
 import { GradeItem } from "./grade";
@@ -108,7 +109,7 @@ export type ClassScheduleItem = {
     room: {
       id: string;
       name: string;
-    };
+    } | null;
   };
   isPassed: boolean;
 };
@@ -151,12 +152,14 @@ export type RegisterClassItem = UserSummary & {
   gender: GenderType;
 };
 
-export type ApproveResponse = {
-  failedCount: number;
-  failedMembers: {
-    genId: string;
-    name: string;
-  }[];
+export type ApproveResponse = BaseResponse & {
+  data: {
+    failedCount: number;
+    failedMembers: {
+      genId: string;
+      name: string;
+    }[];
+  };
 };
 
 export type ClassRegisterResponseItem = BaseClassInfo & {

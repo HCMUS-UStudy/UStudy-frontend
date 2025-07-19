@@ -158,7 +158,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
 
       let failedCount = 0;
       responses.forEach((response, index: number) => {
-        if (response.failedCount > 0) {
+        if (response.data.failedCount > 0) {
           failedCount++;
           addToast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`);
         }
@@ -194,7 +194,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     try {
       const response = await addMembers([userId], classId, "STUDENT");
 
-      if (response.failedCount > 0) {
+      if (response.data.failedCount > 0) {
         addToast.error(`Thêm không thành công vào lớp ${classId}`);
       } else {
         addToast.success(`Thêm học viên vào lớp ${classId} thành công!`);
