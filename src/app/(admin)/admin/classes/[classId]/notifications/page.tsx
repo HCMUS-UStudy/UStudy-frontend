@@ -19,6 +19,7 @@ import { getUserDataFromCookies } from "@/app/lib/action";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { Button } from "@/app/ui/components/_common/Button";
+import EmptyListOrTable from "@/app/ui/components/_common/EmptyListOrTable";
 
 const Notification = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -344,9 +345,9 @@ const Notification = () => {
           </tbody>
         </table>
       ) : (
-        <div className="flex items-center justify-center mt-4">
-          <p className="text-gray-500">Không có thông báo nào</p>
-        </div>
+        <>
+          <EmptyListOrTable />
+        </>
       )}
       {isOpen && (
         <NotificationModal

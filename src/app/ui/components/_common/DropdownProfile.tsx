@@ -46,7 +46,7 @@ const DropdownProfile = ({
       >
         {userInfo?.avatar ? (
           <Image
-            src={userInfo.avatar}
+            src={`/userAvatars/${userInfo.avatar}.png`}
             alt="User Avatar"
             width={40}
             height={60}

@@ -120,7 +120,6 @@ export const CustomDatePicker = <T extends FieldValues>({
                         const isoDate = dateValue
                           ? dateValue.format("YYYY-MM-DD")
                           : "";
-                        console.log(isoDate);
                         field.onChange(isoDate);
                       }}
                     />
