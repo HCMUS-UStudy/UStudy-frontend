@@ -1,6 +1,5 @@
 "use client";
 import { getClassById } from "@/app/lib/services/class";
-import Image from "next/image";
 import React, { useEffect } from "react";
 import { BsFillBookFill } from "react-icons/bs";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -23,16 +22,6 @@ export default function ClassLayout({
     queryKey: ["ClassDetails"],
     queryFn: () => getClassById(classId),
   });
-  // dummy data
-  const classMembers = [
-    { id: 1, name: "Nguyễn Văn A", avatar: "/student.png" },
-    { id: 2, name: "Trần Thị B", avatar: "/teacher.png" },
-    { id: 3, name: "Lê Văn C", avatar: "/avatar3.jpg" },
-    { id: 4, name: "Phạm Thị D", avatar: "/avatar4.jpg" },
-    { id: 5, name: "Hoàng Văn E", avatar: "/avatar5.jpg" },
-  ];
-  const displayedMembers = classMembers.slice(0, 2);
-  const remainingCount = classMembers.length - displayedMembers.length;
   // const [currentTab, setCurrentTab] = useState<keyof typeof tabs>("overview");
   const pathname = usePathname();
 
@@ -72,7 +61,7 @@ export default function ClassLayout({
                 ? `Lớp ${classDetail?.name} - ${classDetail?.course.name} ${classDetail?.grade.name}`
                 : classDetail?.name}
             </h1>
-            <div className="md:flex hidden items-center space-x-1">
+            {/* <div className="md:flex hidden items-center space-x-1">
               {displayedMembers.map((member) => (
                 <Image
                   width={32}
@@ -88,7 +77,7 @@ export default function ClassLayout({
                   +{remainingCount}
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
         {/* <ClassNavigationBar /> */}

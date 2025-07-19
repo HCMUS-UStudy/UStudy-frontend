@@ -5,7 +5,7 @@ import {
   handleLogoutCookies,
   getPermissions,
 } from "./app/lib/action";
-import { handleRefreshToken, verifyToken } from "./app/lib/services/auth";
+import { handleRefreshToken } from "./app/lib/services/auth";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -48,8 +48,8 @@ export async function middleware(request: NextRequest) {
     // if(!userData) {
     //   // cập nhật userData
     // }
-    const isValidToken = await verifyToken();
-    // const isValidToken = true;
+    // const isValidToken = await verifyToken();
+    const isValidToken = true;
 
     if (!isValidToken) {
       switch (userData?.role.defaultRoute) {

@@ -82,10 +82,6 @@ export default function StudentBasicInformation() {
             label="Ngày sinh"
             control={control}
             name="birthday"
-            locale="vi_VN"
-            showMonthDropdown
-            showYearDropdown
-            onCalendarClose={() => {}}
             isError={errors.birthday !== undefined}
             errorMsg={errors.birthday?.message}
           />

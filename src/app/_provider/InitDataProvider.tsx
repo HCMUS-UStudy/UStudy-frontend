@@ -19,6 +19,7 @@ export default function InitDataProvider({
       {
         queryKey: ["Permissions"],
         queryFn: () => getPermissions(),
+        refetchOnWindowFocus: false,
         enabled: !pathname?.includes("/login"),
       },
     ],

@@ -157,7 +157,9 @@ const ClassDetailPage = () => {
                           Ngày: {formatDate(schedule.date)}
                         </div>
                         <div className="text-xs md:text-sm text-gray-500">
-                          Phòng: {schedule.classSession.room.name}
+                          Phòng:{" "}
+                          {schedule.classSession.room?.name ||
+                            "Chưa có phòng học"}
                         </div>
                       </div>
                       {schedule.isPassed ? (
