@@ -1,5 +1,4 @@
 "use client";
-import { getReviewQuiz } from "@/app/lib/services/quiz";
 import React, { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import ReviewQuiz from "./ReviewQuiz";
@@ -13,25 +12,30 @@ interface ScoreModalProps {
   onReview?: () => void;
 }
 
-const ScoreModal: React.FC<ScoreModalProps> = ({
-  assignmentId,
-  isOpen,
-  onClose,
-}) => {
-  const [reviewQuiz, setReviewQuiz] = useState<QuizReviewData>();
+const ScoreModal: React.FC<ScoreModalProps> = ({ isOpen, onClose }) => {
+  const [reviewQuiz] = useState<QuizReviewData>();
   const [isReviewing, setIsReviewing] = useState(false);
   if (!isOpen) return null;
 
-  const handleReviewQuiz = async () => {
-    try {
-      const reviewData = await getReviewQuiz(assignmentId);
+  // const handleReviewQuiz = async () => {
+  //   try {
+  //     // getSubmissionDetails(submissionId, false)
+  //     //     .then((data) => {
+  //     //       setSubmissionDetail(data);
+  //     //       setLoading(false);
+  //     //     })
+  //     //     .catch((error) => {
+  //     //       console.error("Failed to fetch submission details:", error);
+  //     //       setLoading(false);
+  //     //     });
+  //     const reviewData = await getReviewQuiz(assignmentId);
 
-      setReviewQuiz(reviewData);
-      setIsReviewing(true);
-    } catch (error) {
-      console.error("Error fetching review quiz:", error);
-    }
-  };
+  //     setReviewQuiz(reviewData);
+  //     setIsReviewing(true);
+  //   } catch (error) {
+  //     console.error("Error fetching review quiz:", error);
+  //   }
+  // };
 
   return (
     <>
@@ -64,12 +68,12 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               >
                 Đóng
               </Button>
-              <Button
+              {/* <Button
                 onClick={() => handleReviewQuiz()}
                 className="bg-gradient-to-r from-primary-darker to-primary-darkest text-white px-6 py-2 rounded-full hover:from-primary-dark hover:to-primary-darker transition-colors shadow-md"
               >
                 Xem lại
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
