@@ -84,7 +84,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <SiGoogleclassroom size={20} />,
   },
   {
-    title: "Quản lý phòng học",
+    title: "Quản lý phòng",
     path: "/admin/rooms",
     icon: <BsDoorOpen size={20} />,
   },

@@ -3,12 +3,10 @@ import { useRouter, useParams } from "next/navigation";
 import { IoReturnUpBack } from "react-icons/io5";
 import { useState } from "react";
 import { getDetailAssignment } from "@/app/lib/services/assignment";
-import { AssignmentItem, Question, SubmissionItem } from "@/app/types";
+import { AssignmentItem, Question } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getQnAListByAssignmentId } from "@/app/lib/services/question";
 import Loading from "@/app/ui/components/_common/loading/Loading";
-import SubmissionList from "@/app/ui/components/user/teacher/Assignment/SubmissionList";
-import GradingModal from "@/app/ui/components/user/teacher/Assignment/GradingModal";
 
 const formatDateTime = (dateString: string) => {
   const date = new Date(dateString);
@@ -69,10 +67,6 @@ const AssignmentPage = () => {
   const params = useParams();
   const assignmentId = params?.assignmentId as string;
 
-  const [submissionItem, setGradingItem] = useState<SubmissionItem | null>(
-    null,
-  );
-
   const [openIdxs, setOpenIdxs] = useState<number[]>([]);
 
   const results = useQueries({
@@ -80,11 +74,14 @@ const AssignmentPage = () => {
       {
         queryKey: ["assignment-detail", assignmentId],
         queryFn: () => getDetailAssignment(assignmentId),
+        enabled: !!assignmentId,
+        refetchOnWindowFocus: false,
       },
       {
         queryKey: ["assignment-questions", assignmentId],
         queryFn: () => getQnAListByAssignmentId(assignmentId),
         enabled: !!assignmentId,
+        refetchOnWindowFocus: false,
       },
     ],
   });
@@ -257,20 +254,6 @@ const AssignmentPage = () => {
           )}
         </div>
       </div>
-
-      {/* SUBMISSION GRADING SECTION */}
-      <SubmissionList
-        assignmentId={assignmentId}
-        setGradingItem={setGradingItem}
-      />
-
-      {submissionItem && (
-        <GradingModal
-          assignmentId={assignmentId}
-          submissionItem={submissionItem as SubmissionItem}
-          setGradingItem={setGradingItem}
-        />
-      )}
     </div>
   );
 };

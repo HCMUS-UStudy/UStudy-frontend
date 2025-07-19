@@ -29,6 +29,7 @@ const SubmissionList = ({
   const { data: submissionsData, isLoading } = useQuery({
     queryKey: ["submissions", assignmentId],
     queryFn: () => getSubmissionByAssignmentId(assignmentId, 0, 10),
+    refetchOnWindowFocus: false,
   });
 
   const submissions = (submissionsData?.content || []).sort(
