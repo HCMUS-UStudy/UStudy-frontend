@@ -3,6 +3,7 @@ import {
   AccountItem,
   DeleteAccountResponse,
   UpdateProfilePayload,
+  UserProfile,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 
@@ -116,10 +117,10 @@ export const getFreeUsers = async (
   }
 };
 
-export const getProfle = async () => {
+export const getProfile = async (): Promise<UserProfile> => {
   try {
     const response = await axiosInstance.get("/user/profile");
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw error;
   }
@@ -145,6 +146,17 @@ export const updateAvatar = async (file: File) => {
       },
     });
 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updatePathAvatar = async (pathFile: string) => {
+  try {
+    const response = await axiosInstance.put(
+      `/user/update-path-avatar?pathFile=${pathFile}`,
+    );
     return response.data;
   } catch (error) {
     throw error;

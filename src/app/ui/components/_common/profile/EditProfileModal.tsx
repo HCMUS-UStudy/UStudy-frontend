@@ -9,11 +9,15 @@ import { Select, SelectItem } from "../Select";
 import { FiEdit2, FiLock } from "react-icons/fi";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { changePassword } from "@/app/lib/services/auth";
+import { ConfigProvider, DatePicker } from "antd";
+import viVN from "antd/locale/vi_VN";
+import dayjs from "dayjs";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: UserProfile | null;
+  user: UserProfile | undefined;
   onSave: (data: Partial<UserProfile>) => void;
 }
 
@@ -45,6 +49,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     confirmNewPassword: "",
   });
 
+  const queryClient = useQueryClient();
   const { addToast } = useCustomToast();
 
   useEffect(() => {
@@ -114,7 +119,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     <>
       <Dialog
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          queryClient.refetchQueries({ queryKey: ["UserProfile"] });
+        }}
         className="w-2/3 md:w-full max-w-md rounded-2xl overflow-y-auto bg-white shadow-xl"
         displayCloseButton
       >
@@ -131,30 +139,40 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary-light"
             />
             <Input
               label="Số điện thoại"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary-light"
             />
             <Input
               label="Địa chỉ"
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary-light"
             />
-            <Input
-              label="Ngày sinh"
-              name="birthday"
-              type="date"
-              value={formData.birthday}
-              onChange={handleChange}
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary-light"
-            />
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg border border-control-border">
+              <div className="text-sm text-nowrap">Ngày sinh</div>
+              <ConfigProvider locale={viVN}>
+                <DatePicker
+                  defaultValue={dayjs(formData.birthday)}
+                  onChange={(date) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      birthday: dayjs(date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+                    }));
+                  }}
+                  placeholder="Ngày sinh"
+                  format="DD/MM/YYYY"
+                  style={{
+                    width: "100%",
+                    border: "solid 0 #9ca3af",
+                    fontWeight: "normal",
+                  }}
+                />
+              </ConfigProvider>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Giới tính
@@ -190,11 +208,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     </div>
                   </div>
                 </div>
-                <Button
-                  onClick={() => setShowPasswordModal(true)}
-                  className="px-4 py-2.5 text-sm text-white bg-primary-dark rounded-lg hover:bg-primary-darker transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap"
-                >
-                  <FiEdit2 className="w-4 h-4" />
+                <Button onClick={() => setShowPasswordModal(true)}>
+                  <FiEdit2 className="w-4 h-4 mr-2" />
                   Đổi mật khẩu
                 </Button>
               </div>
@@ -209,12 +224,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           >
             Hủy
           </Button>
-          <Button
-            onClick={handleSubmit}
-            className="px-4 py-2 text-sm text-white bg-primary-dark rounded-lg hover:bg-primary-darker transition-all duration-200 shadow-sm hover:shadow-md"
-          >
-            Lưu thay đổi
-          </Button>
+          <Button onClick={handleSubmit}>Lưu thay đổi</Button>
         </DialogFooter>
       </Dialog>
 

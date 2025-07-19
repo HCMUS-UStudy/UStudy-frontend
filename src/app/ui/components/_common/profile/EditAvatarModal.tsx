@@ -1,51 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "../Button";
 import Image from "next/image";
 import { IoIosArrowForward } from "react-icons/io";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updatePathAvatar } from "@/app/lib/services";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from "../Dialog";
 
 interface EditAvatarModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentAvatar?: string;
-  onSave: (file: File) => Promise<void>;
 }
+
+const avatars = [
+  "bear.png",
+  "cat.png",
+  "duck.png",
+  "panda.png",
+  "puffer-fish.png",
+];
 
 const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
   isOpen,
   onClose,
   currentAvatar,
-  onSave,
 }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<string>(currentAvatar || "cat");
+  const { addToast } = useCustomToast();
 
-  useEffect(() => {
-    if (!selectedFile) {
-      setPreview(null);
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(selectedFile);
-    setPreview(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [selectedFile]);
-
-  if (!isOpen) return null;
-
-  const handleClose = () => {
-    setSelectedFile(null);
-    setPreview(null);
-    onClose();
-  };
-
-  const handleSave = async () => {
-    if (selectedFile) {
-      await onSave(selectedFile);
-      handleClose();
-    }
+  const queryClient = useQueryClient();
+  const updatePathAvatarMutation = useMutation({
+    mutationFn: (file: string) => updatePathAvatar(file),
+    onError: (error) => {
+      addToast.error(error.message);
+    },
+    onSuccess: () => {
+      addToast.success("Cập nhật avatar thành công");
+      queryClient.invalidateQueries({ queryKey: ["UserProfile"] });
+      onClose();
+    },
+  });
+  const handleSave = (file: string) => {
+    updatePathAvatarMutation.mutate(file);
   };
 
   const fallbackAvatar = "/bg-login.jpg";
@@ -53,20 +52,15 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
     currentAvatar && currentAvatar.trim() !== ""
       ? currentAvatar
       : fallbackAvatar;
-  const newAvatarSrc = preview;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
-        <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
-          Thay đổi ảnh đại diện
-        </h2>
-
-        {/* Avatar Preview */}
+    <Dialog isOpen={isOpen} onClose={() => onClose()}>
+      <DialogHeader>Thay đổi ảnh đại diện</DialogHeader>
+      <DialogContent>
         <div className="flex items-center justify-center gap-5 mb-6">
           <div className="relative w-24 h-24 rounded-full border-4 border-gray-300 shadow overflow-hidden">
             <Image
-              src={oldAvatarSrc}
+              src={`/userAvatars/${oldAvatarSrc}.png`}
               alt="Ảnh cũ"
               fill
               className="object-cover"
@@ -78,16 +72,16 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
           </div>
 
           <div className="relative w-24 h-24 rounded-full border-4 border-green-500 shadow overflow-hidden">
-            {newAvatarSrc ? (
+            {oldAvatarSrc !== avatar ? (
               <Image
-                src={newAvatarSrc}
+                src={`/userAvatars/${avatar}.png`}
                 alt="Ảnh mới"
                 fill
                 className="object-cover"
               />
             ) : (
               <Image
-                src={oldAvatarSrc}
+                src={`/userAvatars/${oldAvatarSrc}.png`}
                 alt="Ảnh hiện tại"
                 fill
                 className="object-cover opacity-30"
@@ -96,56 +90,56 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
           </div>
         </div>
 
-        {/* File Input (Styled) */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Chọn ảnh mới:
           </label>
-
-          <div className="flex items-center gap-4">
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer inline-block bg-primary-lighter text-primary-dark font-semibold py-2 px-4 rounded-lg hover:bg-primary-light transition-all"
-            >
-              Chọn ảnh
-            </label>
-            <span className="text-sm text-gray-600 truncate max-w-[200px]">
-              {selectedFile?.name || "Chưa có tệp nào được chọn"}
-            </span>
+          <div className="flex flex-wrap gap-3">
+            {avatars.map((item) => (
+              <div
+                key={item}
+                onClick={() => {
+                  setAvatar(item.split(".")[0]);
+                }}
+                className="cursor-pointer p-1 border-2 rounded-full hover:border-primary-dark transition-all"
+              >
+                <Image
+                  src={`/userAvatars/${item}`}
+                  width={50}
+                  height={50}
+                  alt="avatar"
+                />
+              </div>
+            ))}
           </div>
-
-          <input
-            id="file-upload"
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) setSelectedFile(file);
-            }}
-            className="hidden"
-          />
         </div>
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-4 mt-6">
+      </DialogContent>
+      <DialogFooter>
+        <div className="flex justify-end gap-2">
           <Button
-            onClick={handleClose}
+            onClick={() => onClose()}
             className="bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg px-4 py-2 transition-all"
           >
             Hủy
           </Button>
           <Button
-            onClick={handleSave}
-            disabled={!selectedFile}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              selectedFile
-                ? "bg-primary-dark text-white hover:bg-primary-darker"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+            onClick={() => handleSave(avatar)}
+            disabled={avatar === oldAvatarSrc}
+            isPending={updatePathAvatarMutation.status === "pending"}
           >
             Lưu
           </Button>
         </div>
+      </DialogFooter>
+    </Dialog>
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+        <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
+          Thay đổi ảnh đại diện
+        </h2>
       </div>
     </div>
   );

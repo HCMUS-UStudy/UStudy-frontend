@@ -33,6 +33,7 @@ import { LuTrash2 } from "react-icons/lu";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { useParams } from "next/navigation";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import EmptyListOrTable from "@/app/ui/components/_common/EmptyListOrTable";
 
 const fileTypeIcons = [
   {
@@ -528,8 +529,8 @@ export default function ClassMaterial() {
                     </div>
                   ))
                 : !creatingFolder && (
-                    <div className="col-span-5 flex h-64 items-center justify-center text-gray-700 select-none">
-                      Không có tài liệu nào.
+                    <div className="w-full col-span-5">
+                      <EmptyListOrTable message="Không có tài liệu nào" />
                     </div>
                   )}
             </div>

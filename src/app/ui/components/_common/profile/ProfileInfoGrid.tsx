@@ -9,7 +9,7 @@ const formatDate = (dateStr: string) => {
     : date.toLocaleDateString("en-GB");
 };
 
-const ProfileInfoGrid = ({ user }: { user: UserProfile | null }) => {
+const ProfileInfoGrid = ({ user }: { user: UserProfile | undefined }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 px-6 sm:px-10 py-6 bg-white">
       <ProfileItem
