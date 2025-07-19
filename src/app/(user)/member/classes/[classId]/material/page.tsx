@@ -97,6 +97,10 @@ export default function PersonalMaterial() {
   const [user, setUser] = useState<UserData | null>(null);
   const { addToast } = useCustomToast();
 
+  // Hiệu ứng double click
+  const [doubleClickedId, setDoubleClickedId] = useState<string | null>(null);
+  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserDataFromCookies();
@@ -182,7 +186,7 @@ export default function PersonalMaterial() {
         addToast.error("Tải xuống thất bại");
       }
     },
-    [material],
+    [material, addToast],
   );
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -411,12 +415,30 @@ export default function PersonalMaterial() {
                       }}
                       key={item.id}
                       className={`flex items-center py-3 pl-4 pr-3 border rounded-xl cursor-pointer border-gray-200 
-                      ${
-                        activeFile?.id === item.id
-                          ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`
-                          : `${openOptionsId === item.id ? "shadow-md" : "shadow-sm hover:shadow-md"}`
-                      }`}
+                        ${
+                          doubleClickedId === item.id
+                            ? "bg-primary-light scale-[1.03] shadow-xl transition-all duration-300"
+                            : activeFile?.id === item.id
+                              ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`
+                              : `${openOptionsId === item.id ? "shadow-md" : "shadow-sm hover:shadow-md"}`
+                        }`}
+                      onClick={() => {
+                        // Debounce single/double click
+                        if (clickTimeout.current) {
+                          clearTimeout(clickTimeout.current);
+                          clickTimeout.current = null;
+                        }
+                        clickTimeout.current = setTimeout(() => {
+                          setActiveFile(item);
+                        }, 220);
+                      }}
                       onDoubleClick={() => {
+                        if (clickTimeout.current) {
+                          clearTimeout(clickTimeout.current);
+                          clickTimeout.current = null;
+                        }
+                        setDoubleClickedId(item.id);
+                        setTimeout(() => setDoubleClickedId(null), 400);
                         setActiveFile(null);
                         if (item.material.type === "FOLDER") {
                           handleClickFolder(item.id, item.material.name);
@@ -427,7 +449,6 @@ export default function PersonalMaterial() {
                           );
                         }
                       }}
-                      onClick={() => setActiveFile(item)}
                     >
                       {item.material.type === "FOLDER" ? (
                         <TbFolders className="text-[25px] text-primary-darker mr-2" />
@@ -490,7 +511,7 @@ export default function PersonalMaterial() {
                     </div>
                   ))
                 : !creatingFolder && (
-                    <div className="col-span-5 flex h-64 items-center justify-center text-gray-700">
+                    <div className="col-span-5 flex h-64 items-center justify-center text-gray-700 select-none">
                       Không có tài liệu nào.
                     </div>
                   )}
