@@ -18,21 +18,9 @@ import Pagination from "@/app/ui/components/_common/Pagination";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
+import { Loading } from "@/app/ui/components/_common/loading";
 
 const MemberPage = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
   const searchParams = useSearchParams();
   const name = searchParams?.get("AccountName") || "";
   const params = useParams<{ classId: string }>();
@@ -113,35 +101,28 @@ const MemberPage = () => {
         <AddMember buttonLabel="Thêm thành viên" />
       </div>
 
-      <>
-        <Table>
-          <TableHeader
-            columns={[
-              "GenId",
-              "Tên",
-              ...(!isMobile ? ["Email"] : []),
-              "Ngày sinh",
-              "Giới tính",
-              "Vai trò",
-              "",
-            ]}
-          />
-          <TableBody isLoading={isLoading}>
-            {memberListWithRole?.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>{member.genId}</TableCell>
-                <TableCell>
-                  {member.name.length > 18 ? (
-                    <button>
-                      <Tooltip text={member.name}>
-                        {member.name.slice(0, 18)}...
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    member.name
-                  )}
-                </TableCell>
-                {!isMobile && (
+      {isLoading ? (
+        <div className="mt-5">
+          <Loading />
+        </div>
+      ) : (
+        <>
+          <Table>
+            <TableHeader
+              columns={[
+                "GenId",
+                "Tên",
+                "Email",
+                "Ngày sinh",
+                "Giới tính",
+                "Vai trò",
+                "",
+              ]}
+            />
+            <TableBody noDataMessage={false}>
+              {memberListWithRole?.map((member) => (
+                <TableRow key={member.id}>
+                  <TableCell>{member.genId}</TableCell>
                   <TableCell>
                     {member.email?.length > 25 ? (
                       <button>
@@ -153,49 +134,63 @@ const MemberPage = () => {
                       member.email
                     )}
                   </TableCell>
-                )}
-                <TableCell>
-                  {new Date(member.birthday).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell>{member.gender === "MALE" ? "Nam" : "Nữ"}</TableCell>
-                <TableCell>{member.role}</TableCell>
-                <TableCell className="flex items-center">
-                  {member.role !== "Giáo vụ" && (
-                    <Tooltip text="Xóa thành viên">
-                      <RiDeleteBin6Line
-                        size={18}
-                        className="text-red-600 hover:text-red-800 cursor-pointer"
-                        onClick={() => {
-                          setSelectedMember({
-                            role: member.role,
-                            memberId: member.id,
-                          });
-                          setDeletePopup(true);
-                        }}
-                      />
-                    </Tooltip>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div className="flex justify-end mt-2">
-          {totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage + 1}
-              totalPages={totalPages}
-              handlePageClick={(page) => setCurrentPage(page - 1)}
-              handlePreviousPage={() =>
-                setCurrentPage((prev) => Math.max(prev - 1, 0))
-              }
-              handleNextPage={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
-              }
-            />
-          )}
-        </div>
-      </>
+                  {/* Email column: hidden on mobile, shown on md+ */}
+                  <TableCell className="hidden md:table-cell">
+                    {member.email?.length > 25 ? (
+                      <button>
+                        <Tooltip text={member.email}>
+                          {member.email.slice(0, 25)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      member.email
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(member.birthday).toLocaleDateString("vi-VN")}
+                  </TableCell>
+                  <TableCell>
+                    {member.gender === "MALE" ? "Nam" : "Nữ"}
+                  </TableCell>
+                  <TableCell>{member.role}</TableCell>
+                  <TableCell className="flex items-center">
+                    {member.role !== "Giáo vụ" && (
+                      <Tooltip text="Xóa thành viên">
+                        <RiDeleteBin6Line
+                          size={18}
+                          className="text-red-600 hover:text-red-800 cursor-pointer"
+                          onClick={() => {
+                            setSelectedMember({
+                              role: member.role,
+                              memberId: member.id,
+                            });
+                            setDeletePopup(true);
+                          }}
+                        />
+                      </Tooltip>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="flex justify-end mt-2">
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage + 1}
+                totalPages={totalPages}
+                handlePageClick={(page) => setCurrentPage(page - 1)}
+                handlePreviousPage={() =>
+                  setCurrentPage((prev) => Math.max(prev - 1, 0))
+                }
+                handleNextPage={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
+                }
+              />
+            )}
+          </div>
+        </>
+      )}
       {deletePopup && selectedMember && (
         <DeletePopup
           onDelete={() => {

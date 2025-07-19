@@ -25,7 +25,6 @@ import {
   TbFileTypePng,
   TbFileTypeJpg,
 } from "react-icons/tb";
-import { FiEdit3 } from "react-icons/fi";
 
 import {
   MdOutlineFileDownload,
@@ -104,7 +103,9 @@ export default function PersonalMaterial() {
   const buttonRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [deleteItem, setShowDeleteModal] = useState<string | null>(null);
   const { addToast } = useCustomToast();
-
+  // Hiệu ứng double click
+  const [doubleClickedId, setDoubleClickedId] = useState<string | null>(null);
+  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     const checkScreen = () => {
       setIsMobile(window.innerWidth < 768);
@@ -420,11 +421,6 @@ export default function PersonalMaterial() {
                         </div>
                       </Tooltip>
                     )}
-                    <Tooltip text="Đổi tên">
-                      <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
-                        <FiEdit3 className="text-[20px] text-gray-700" />
-                      </div>
-                    </Tooltip>
                     <Tooltip text="Xóa">
                       <div className="cursor-pointer p-1 rounded-full hover:bg-gray-200">
                         <LuTrash2 className="text-[20px] text-gray-700" />
@@ -547,12 +543,30 @@ export default function PersonalMaterial() {
                       }}
                       key={item.id}
                       className={`flex items-center py-3 pl-4 pr-3 border select-none rounded-xl cursor-pointer border-gray-200 
-                      ${
-                        activeFile?.id === item.id
-                          ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`
-                          : `${openOptionsId === item.id ? "shadow-md" : "shadow-sm hover:shadow-md"}`
-                      }`}
+                        ${
+                          doubleClickedId === item.id
+                            ? "bg-primary-light scale-[1.03] shadow-xl transition-all duration-300"
+                            : activeFile?.id === item.id
+                              ? `bg-primary-lighter shadow-md ${openOptionsId === item.id ? "" : "hover:shadow-lg"}`
+                              : `${openOptionsId === item.id ? "shadow-md" : "shadow-sm hover:shadow-md"}`
+                        }`}
+                      onClick={() => {
+                        // Debounce single/double click
+                        if (clickTimeout.current) {
+                          clearTimeout(clickTimeout.current);
+                          clickTimeout.current = null;
+                        }
+                        clickTimeout.current = setTimeout(() => {
+                          setActiveFile(item);
+                        }, 220);
+                      }}
                       onDoubleClick={() => {
+                        if (clickTimeout.current) {
+                          clearTimeout(clickTimeout.current);
+                          clickTimeout.current = null;
+                        }
+                        setDoubleClickedId(item.id);
+                        setTimeout(() => setDoubleClickedId(null), 400);
                         setActiveFile(null);
                         if (item.material.type === "FOLDER") {
                           handleClickFolder(item.id, item.material.name);
@@ -564,7 +578,6 @@ export default function PersonalMaterial() {
                           );
                         }
                       }}
-                      onClick={() => setActiveFile(item)}
                     >
                       {item.material.type === "FOLDER" ? (
                         <TbFolders className="text-[25px] text-primary-darker mr-2" />
@@ -624,18 +637,6 @@ export default function PersonalMaterial() {
                             <button
                               className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                               onClick={() => {
-                                addToast.info(
-                                  "Chức năng đổi tên chưa được cài đặt",
-                                );
-                                setOpenOptionsId(null);
-                              }}
-                            >
-                              <FiEdit3 className="w-4 h-4 text-gray-700" />
-                              Đổi tên
-                            </button>
-                            <button
-                              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
-                              onClick={() => {
                                 setShowDeleteModal(item.id);
                                 setOpenOptionsId(null);
                               }}
@@ -649,7 +650,7 @@ export default function PersonalMaterial() {
                     </div>
                   ))
                 : !creatingFolder && (
-                    <div className="col-span-5 flex h-64 items-center justify-center text-gray-700">
+                    <div className="col-span-5 flex h-64 items-center justify-center text-gray-700 select-none">
                       Không có tài liệu nào.
                     </div>
                   )}

@@ -104,9 +104,7 @@ const GradingModal = ({
       return AIGradeSubmission(submissionItem.id);
     },
     onSuccess: async () => {
-      addToast.success(
-        "Chấm điểm tự động thành công! Hãy xác nhận để lưu kết quả.",
-      );
+      addToast.success("Hãy xác nhận hoặc chỉnh sửa.");
       // Refetch grading data and wait for completion
       queryClient.invalidateQueries({
         queryKey: ["gradingModal", submissionItem.id],
@@ -153,7 +151,7 @@ const GradingModal = ({
             <div className="flex flex-col items-center">
               <Loading />
               <span className="mt-4 text-primary-dark font-semibold text-lg">
-                Đang chấm bài bằng AI, vui lòng đợi...
+                Đang chấm bài, vui lòng đợi...
               </span>
             </div>
           </div>
@@ -198,7 +196,7 @@ const GradingModal = ({
                 <textarea
                   value={overallFeedback}
                   onChange={(e) => setOverallFeedback(e.target.value)}
-                  className={`border rounded w-full px-1 ${gradingModal?.feedback ? "h-min" : "h-[30px]"} min-h-[30px] max-h-[80px] 
+                  className={`border rounded w-full px-1 ${gradingModal?.feedback ? "h-fit" : "h-[30px]"} min-h-[30px] max-h-[80px] 
                     focus:outline-none focus:ring-1 focus:ring-primary-darkest`}
                 />
               ) : (
@@ -209,17 +207,17 @@ const GradingModal = ({
             </div>
           )}
 
-          <div className="mb-3 flex flex-col overflow-y-auto max-h-[50vh] py-1">
+          <div className="mb-2 flex flex-col overflow-y-auto max-h-[50vh] py-3">
             {gradingModal?.questions.map((q, idx) => (
               <div key={q.questionId} className="mb-4 border rounded p-3">
-                <div className="mb-1">
-                  <span className="text-primary-darkest">Câu {idx + 1}:</span>{" "}
+                <div className="mb-1 border-b pb-2 border-gray-100">
+                  <span className="font-semibold">Câu {idx + 1}:</span>{" "}
                   {q.description}
                 </div>
                 {q.questionType === "MULTIPLE_CHOICE" && (
                   <div>
                     <div className="mb-1">
-                      <ul className="list-disc ml-3">
+                      <ul className="list-disc ml-2">
                         {q.allOptions?.map((opt) => (
                           <li
                             key={opt.optionId}
@@ -228,7 +226,7 @@ const GradingModal = ({
                                 ? "font-semibold text-primary-darker"
                                 : opt.optionId === q.selectedOption?.optionId &&
                                     !opt.isCorrect
-                                  ? "text-red-600"
+                                  ? "font-semibold text-red-600"
                                   : ""
                             }
                             style={{ listStyleType: "none" }}
@@ -248,9 +246,10 @@ const GradingModal = ({
                   </div>
                 )}
                 {q.questionType === "ESSAY" && (
-                  <div>
-                    <div className="mb-1">
-                      Bài làm: <span>{q.content}</span>
+                  <div className="pt-1 pb-2">
+                    <div className="flex gap-[6px]">
+                      <span className="text-gray-800 italic">Trả lời:</span>
+                      <span>{q.content}</span>
                     </div>
                     {q.files && q.files.length > 0 && (
                       <div className="mb-1">
@@ -274,8 +273,8 @@ const GradingModal = ({
                   </div>
                 )}
                 {(isGraded || isEditing) && (
-                  <>
-                    <div className="mt-2 italic text-gray-700">
+                  <div className="border-t border-gray-100 pt-2">
+                    <div className="italic text-gray-700">
                       Điểm:{" "}
                       {isEditing && q.questionType === "ESSAY" ? (
                         <input
@@ -314,7 +313,7 @@ const GradingModal = ({
                                 ),
                               );
                             }}
-                            className={`border rounded w-full px-1 ${q.feedback ? "h-min" : "h-[30px]"} min-h-[30px] max-h-[80px] 
+                            className={`border rounded w-full px-1 ${q.feedback ? "h-fit" : "h-[30px]"} min-h-[30px] max-h-[80px] 
                           focus:outline-none focus:ring-1 focus:ring-primary-darkest`}
                           />
                         ) : (
@@ -324,7 +323,7 @@ const GradingModal = ({
                         )}
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
               </div>
             ))}
@@ -357,7 +356,7 @@ const GradingModal = ({
                     }}
                     disabled={mutation.isPending}
                   >
-                    Chấm bài bằng AI
+                    Chấm bài tự động
                   </Button>
                 )}
               </>

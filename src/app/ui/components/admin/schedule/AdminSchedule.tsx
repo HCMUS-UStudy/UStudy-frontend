@@ -3,13 +3,7 @@
 import Calendar, { CalendarProps } from "react-calendar";
 
 import { useState, useEffect } from "react";
-import {
-  FaChalkboardTeacher,
-  FaBook,
-  FaUserTie,
-  FaSpinner,
-  FaRegCalendarAlt,
-} from "react-icons/fa";
+import { FaSpinner, FaRegCalendarAlt } from "react-icons/fa";
 import {
   CardHeader,
   CardTitle,
@@ -58,77 +52,77 @@ export default function AdminSchedule() {
     }
   };
 
-  const fetchSchedule = async (month: number, year: number) => {
-    if (!selectedBranchId) {
-      console.log("No branch selected");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await getBranchSchedule(selectedBranchId, month, year);
-      const branchSchedules: BranchSchedule[] = response.data.data;
-
-      console.log("Branch schedule response:", response.data);
-      console.log("Branch schedules:", branchSchedules);
-
-      // Transform API data to our format
-      const transformedData: AdminScheduleData = {
-        dates: {},
-      };
-
-      branchSchedules.forEach((schedule) => {
-        if (schedule.classSession && schedule.classSession.clazz) {
-          const dateStr = schedule.date;
-          const classSession = schedule.classSession;
-          const clazz = classSession.clazz;
-
-          const record: AdminScheduleRecord = {
-            classId: clazz.id || "",
-            class: clazz.name || "",
-            subject: clazz.course?.name || "",
-            grade: clazz.grade?.name || "",
-            teachers: Array.isArray(classSession.clazz.teacher)
-              ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                classSession.clazz.teacher.map((teacher: any) => ({
-                  id: teacher.id,
-                  name: teacher.name,
-                  avatar: undefined, // API không trả về avatar
-                }))
-              : classSession.clazz.teacher
-                ? [
-                    {
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      id: (classSession.clazz.teacher as any).id,
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      name: (classSession.clazz.teacher as any).name,
-                      avatar: undefined,
-                    },
-                  ]
-                : [],
-            time: `${classSession.session?.startTime || ""} - ${classSession.session?.endTime || ""}`,
-            room: classSession.room?.name || "Chưa có phòng",
-          };
-
-          if (!transformedData.dates[dateStr]) {
-            transformedData.dates[dateStr] = [];
-          }
-          transformedData.dates[dateStr].push(record);
-        }
-      });
-
-      console.log(transformedData);
-      setScheduleData(transformedData);
-    } catch (error) {
-      console.error("Failed to fetch branch schedule:", error);
-      // Fallback to empty data
-      setScheduleData({ dates: {} });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchSchedule = async (month: number, year: number) => {
+      if (!selectedBranchId) {
+        console.log("No branch selected");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await getBranchSchedule(selectedBranchId, month, year);
+        const branchSchedules: BranchSchedule[] = response.data.data;
+
+        console.log("Branch schedule response:", response.data);
+        console.log("Branch schedules:", branchSchedules);
+
+        // Transform API data to our format
+        const transformedData: AdminScheduleData = {
+          dates: {},
+        };
+
+        branchSchedules.forEach((schedule) => {
+          if (schedule.classSession && schedule.classSession.clazz) {
+            const dateStr = schedule.date;
+            const classSession = schedule.classSession;
+            const clazz = classSession.clazz;
+
+            const record: AdminScheduleRecord = {
+              classId: clazz.id || "",
+              class: clazz.name || "",
+              subject: clazz.course?.name || "",
+              grade: clazz.grade?.name || "",
+              teachers: Array.isArray(classSession.clazz.teacher)
+                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  classSession.clazz.teacher.map((teacher: any) => ({
+                    id: teacher.id,
+                    name: teacher.name,
+                    avatar: undefined, // API không trả về avatar
+                  }))
+                : classSession.clazz.teacher
+                  ? [
+                      {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        id: (classSession.clazz.teacher as any).id,
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        name: (classSession.clazz.teacher as any).name,
+                        avatar: undefined,
+                      },
+                    ]
+                  : [],
+              time: `${classSession.session?.startTime || ""} - ${classSession.session?.endTime || ""}`,
+              room: classSession.room?.name || "Chưa có phòng",
+            };
+
+            if (!transformedData.dates[dateStr]) {
+              transformedData.dates[dateStr] = [];
+            }
+            transformedData.dates[dateStr].push(record);
+          }
+        });
+
+        console.log(transformedData);
+        setScheduleData(transformedData);
+      } catch (error) {
+        console.error("Failed to fetch branch schedule:", error);
+        // Fallback to empty data
+        setScheduleData({ dates: {} });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (selectedBranchId) {
       const month = activeStartDate.getMonth() + 1;
       const year = activeStartDate.getFullYear();
@@ -200,7 +194,7 @@ export default function AdminSchedule() {
         <CardHeader className="p-6">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-primary-darkest">
-              🗓️ Quản lý lịch dạy
+              Lịch dạy và học
             </CardTitle>
             <div className="hidden lg:block">
               <div className="flex items-center gap-2">
@@ -248,7 +242,7 @@ export default function AdminSchedule() {
       <div className="w-full lg:flex-[1] bg-white  overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
         <CardHeader className="p-6">
           <CardTitle className="text-2xl font-bold text-primary-darkest">
-            📖 Chi tiết lớp học
+            Chi tiết lớp học
           </CardTitle>
           <CardDescription className="text-gray-600 text-lg font-medium">
             {selectedDate.toLocaleDateString("vi-VN", {
@@ -279,36 +273,33 @@ export default function AdminSchedule() {
                   className="space-y-4 border-b pb-6 last:border-none bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl p-5 shadow-md hover:shadow-xl transition-shadow duration-200"
                 >
                   {/* Tên lớp */}
-                  <div className="flex items-center gap-2 text-lg font-semibold">
-                    <FaChalkboardTeacher className="text-purple-500" />
+                  <div className="flex items-center gap-1 text-lg font-semibold">
                     <span>Lớp học:</span>
                     <span className="text-primary-darkest">{record.class}</span>
                   </div>
                   {/* Môn học */}
-                  <div className="flex items-center gap-2">
-                    <FaBook className="text-blue-500" />
+                  <div className="flex items-center gap-1">
                     <span className="font-medium">Môn học:</span>
-                    <span className="inline-block bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-2 py-0.5 rounded-full text-sm font-semibold">
                       {record.subject}
                     </span>
                   </div>
                   {/* Khối */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <span className="font-medium">Khối:</span>
-                    <span className="inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-2 py-0.5 rounded-full text-sm font-semibold">
                       {record.grade}
                     </span>
                   </div>
                   {/* Phòng học */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <span className="font-medium">Phòng học:</span>
-                    <span className="inline-block bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-2 py-0.5 rounded-full text-sm font-semibold">
                       {record.room}
                     </span>
                   </div>
                   {/* Giáo viên */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <FaUserTie className="text-green-500" />
+                  <div className="flex items-center gap-1 flex-wrap">
                     <span className="font-medium whitespace-nowrap">
                       Giáo viên:
                     </span>
@@ -316,7 +307,7 @@ export default function AdminSchedule() {
                       {record.teachers.map((t) => (
                         <span
                           key={t.id}
-                          className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-full text-sm font-medium shadow-sm"
+                          className="flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium shadow-sm"
                         >
                           {/* Avatar nếu có */}
                           <span className=" w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-darkest flex items-center justify-center text-white font-bold">
@@ -336,9 +327,9 @@ export default function AdminSchedule() {
                     </div>
                   </div>
                   {/* Thời gian */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <span className="font-medium">Thời gian:</span>
-                    <span className="inline-block bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-2 py-0.5 rounded-full text-sm font-semibold">
                       {record.time}
                     </span>
                   </div>
@@ -428,7 +419,7 @@ export default function AdminSchedule() {
         }
 
         .tile-admin-has-class:hover {
-          background: #d1f2d1 !important;
+          background: #5e9172 !important;
           border-color: #22c55e;
           box-shadow: 0 4px 12px 0 #22c55e33;
           transform: translateY(-1px);
@@ -450,7 +441,7 @@ export default function AdminSchedule() {
         }
 
         .react-calendar__tile--active {
-          background: #22c55e !important;
+          background: #4f9c6d !important;
           color: white !important;
           border: 2px solid #16a34a !important;
           box-shadow: 0 4px 12px 0 #22c55e44 !important;
@@ -459,7 +450,7 @@ export default function AdminSchedule() {
 
         .react-calendar__tile--active:enabled:hover,
         .react-calendar__tile--active:enabled:focus {
-          background: #16a34a !important;
+          background: #5e9172 !important;
           border-color: #15803d !important;
           box-shadow: 0 6px 16px 0 #22c55e55 !important;
         }
