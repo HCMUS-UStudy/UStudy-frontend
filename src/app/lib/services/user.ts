@@ -6,6 +6,7 @@ import {
   UserProfile,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
+import { getUserDataFromCookies, setUserDataCookies } from "../action";
 
 export const createNewAccount = async (
   data: Pick<
@@ -157,6 +158,9 @@ export const updatePathAvatar = async (pathFile: string) => {
     const response = await axiosInstance.put(
       `/user/update-path-avatar?pathFile=${pathFile}`,
     );
+    const userData = await getUserDataFromCookies();
+    const updatedUserData = { ...userData, avatar: response.data.data.avatar };
+    setUserDataCookies(JSON.stringify(updatedUserData));
     return response.data;
   } catch (error) {
     throw error;

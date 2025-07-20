@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaEdit, FaPaperclip } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import Pagination from "@/app/ui/components/_common/Pagination"; // Import Pagination
 import { getAllCourses } from "@/app/lib/services/course";
 import {
@@ -44,7 +44,12 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
         ) : (
           <Table>
             <TableHeader
-              columns={["Môn học", "Tài liệu", "Người tạo", "Hành động"]}
+              columns={[
+                "Môn học",
+                "Số khối tương ứng",
+                "Người tạo",
+                "Hành động",
+              ]}
             />
             <TableBody isLoading={status === "pending"}>
               {courses?.content.map((course) => (
@@ -53,7 +58,6 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
                   <TableCell>
                     <div className="flex items-center mx-auto">
                       {course.totalGrades}
-                      <FaPaperclip className="ml-2 mt-1 text-green-500" />
                     </div>
                   </TableCell>
                   <TableCell>
