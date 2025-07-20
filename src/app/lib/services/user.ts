@@ -1,6 +1,7 @@
 import {
   AccountData,
   AccountItem,
+  BasePaginationResponse,
   DeleteAccountResponse,
   UpdateProfilePayload,
   UserProfile,
@@ -35,7 +36,7 @@ export const getAllAccount = async (
   limit: number,
   roleQuery: string,
   currentPage: number,
-): Promise<AccountData> => {
+): Promise<BasePaginationResponse<AccountItem>> => {
   try {
     const response = await axiosInstance.get("/user/list", {
       params: {
@@ -103,7 +104,7 @@ export const getFreeUsers = async (
   limit: number,
   route: string,
   currentPage: number,
-): Promise<AccountData> => {
+): Promise<BasePaginationResponse<AccountData>> => {
   try {
     const response = await axiosInstance.get(`/user/free-users/${classId}`, {
       params: {
