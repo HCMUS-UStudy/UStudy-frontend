@@ -17,6 +17,7 @@ import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import Loading from "./loading/Loading";
 import Cookies from "js-cookie";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import Link from "next/link";
 
 const LogInSchema = z.object({
   username: z
@@ -332,6 +333,7 @@ export default function Login() {
                 </button>
               </div>
             </div>
+
             <Button
               isPending={useLoginMutation.status === "pending"}
               className="mt-6 w-full"
@@ -339,6 +341,9 @@ export default function Login() {
             >
               Đăng nhập
             </Button>
+            <div className="text-sm text-center text-gray-600 underline mt-4 hover:text-primary-darkest cursor-pointer transition-colors">
+              <Link href={"/register"}>Đăng ký tài khoản</Link>
+            </div>
           </form>
         </div>
       </div>

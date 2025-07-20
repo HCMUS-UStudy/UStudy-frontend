@@ -75,7 +75,7 @@ export default function CreateClass() {
     defaultValues: {
       classTimes: [],
       gradeId: "",
-      fee: 50000,
+      fee: 200000,
       startDate: "",
       numLessons: 0,
       branchId: selectedBranchId ?? undefined,

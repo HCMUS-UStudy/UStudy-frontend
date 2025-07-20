@@ -1,6 +1,6 @@
 "use client";
 import React, {
-  memo,
+  useState,
   // useState
 } from "react";
 import { getAllClasses } from "@/app/lib/services/class";
@@ -16,69 +16,61 @@ import {
   Eye,
 } from "lucide-react";
 import { ClassData } from "@/app/types";
-import ClassPagination from "./ClassPagination";
 // import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
 import Tooltip from "../../_common/Tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { useEncodedRoute } from "@/app/lib/hooks";
+import { useAppSelector } from "@/app/store/store";
+import Pagination from "../../_common/Pagination";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const MemoizedClassPagination = memo(ClassPagination);
-
-export default function ClassesTable({
-  query,
-  currentPage,
-}: {
-  query: string;
-  currentPage: number;
-}) {
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+export default function ClassesTable() {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const params = useSearchParams();
+  const query = params?.get("query") || "";
+  const branchId =
+    useAppSelector((state) => state.branch.selectedBranchId) || "";
 
   const {
     data: fetchClasses,
     status,
     error,
   } = useQuery<ClassData>({
-    queryKey: ["Classes", query, currentPage],
-    queryFn: () => getAllClasses(query, currentPage - 1, 5),
-    placeholderData: (prevData) => prevData,
-    enabled: mounted, // Only run query after component is mounted
+    queryKey: ["Classes", query, currentPage, branchId],
+    queryFn: () => getAllClasses(query, currentPage - 1, 5, branchId, "", ""),
+    // enabled: mounted, // Only run query after component is mounted
   });
-
-  const { handleNavigate } = useEncodedRoute();
+  const totalPages = fetchClasses?.totalPages || 0;
+  const router = useRouter();
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedId, setSelectedId] = useState<string>("");
 
-  if (!mounted) {
-    return (
-      <div>
-        <Table>
-          <TableHeader
-            columns={[
-              "Tên lớp",
-              "Môn học",
-              "Khối",
-              "Học phí",
-              "Ngày bắt đầu",
-              "Ngày kết thúc",
-              "",
-            ]}
-          />
-          <TableBody isLoading={true}>
-            <TableRow>
-              <TableCell colSpan={7}>
-                <div className="bg-slate-200 h-3 my-1 rounded"></div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    );
-  }
+  // if (!mounted) {
+  //   return (
+  //     <div>
+  //       <Table>
+  //         <TableHeader
+  //           columns={[
+  //             "Tên lớp",
+  //             "Môn học",
+  //             "Khối",
+  //             "Học phí",
+  //             "Ngày bắt đầu",
+  //             "Ngày kết thúc",
+  //             "",
+  //           ]}
+  //         />
+  //         <TableBody isLoading={true}>
+  //           <TableRow>
+  //             <TableCell colSpan={7}>
+  //               <div className="bg-slate-200 h-3 my-1 rounded"></div>
+  //             </TableCell>
+  //           </TableRow>
+  //         </TableBody>
+  //       </Table>
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return <div>{error.message}</div>;
@@ -108,46 +100,31 @@ export default function ClassesTable({
               <TableCell>{c.startDate}</TableCell>
               <TableCell>{c.endDate}</TableCell>
               <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
-                {/* Nút xem lớp */}
                 <div
                   onClick={() => {
-                    handleNavigate(c.id, "/admin/classes");
-                    // router.push(`/admin/classes/${c.id}`);
+                    router.push(`/admin/classes/${c.id}`);
                   }}
                 >
                   <Tooltip text="Xem lớp học">
                     <Eye className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
                   </Tooltip>
                 </div>
-                {/* <ClassEnrollment classId={c.id} /> */}
-                {/* <Tooltip text="Duyệt tài khoản">
-                  <div
-                    onClick={() => {
-                      setIsOpen(true);
-                      setSelectedId(c.id);
-                    }}
-                  >
-                    <ArrowRight className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
-                  </div>
-                </Tooltip> */}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {status === "success" && (
-        <MemoizedClassPagination
-          currentPage={currentPage}
-          totalPages={fetchClasses?.totalPages || 1}
-        />
-      )}
-      {/* {isOpen && (
-        <ClassEnrollmentModal
-          classId={selectedId}
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-        />
-      )} */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageClick={(page) => setCurrentPage(page)}
+        handlePreviousPage={() =>
+          setCurrentPage((prev) => Math.max(prev - 1, 1))
+        }
+        handleNextPage={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+        }
+      />
     </div>
   );
 }

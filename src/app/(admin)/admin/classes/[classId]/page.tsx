@@ -1,21 +1,15 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { ClassDetail, ClassScheduleItem } from "@/app/types";
+import { ClassScheduleItem } from "@/app/types";
 import { useQueries } from "@tanstack/react-query";
 import { getClassById } from "@/app/lib/services/class";
-import Loading from "@/app/ui/components/_common/loading/Loading";
 import { getClassSchedule } from "@/app/lib/services/classSchedule";
-import { Button } from "@/app/ui/components/_common/Button";
-import AddingModal from "@/app/ui/components/user/teacher/AddingModal";
-import { useEncodedRoute } from "@/app/lib/hooks";
 
 const ClassDetailPage = () => {
-  const [addingModal, setAddingModal] = useState<boolean>(false);
   const [showAll, setShowAll] = useState<boolean>(false);
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
 
   const [classQuery, classScheduleQuery] = useQueries({
     queries: [
@@ -83,7 +77,23 @@ const ClassDetailPage = () => {
   if (isLoading) {
     return (
       <div className="mt-5">
-        <Loading />
+        <ul className="space-y-3 animate-pulse">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <li
+              key={`skeleton-${idx}`}
+              className="border border-gray-200 rounded-lg p-4"
+            >
+              <div className="flex justify-between items-center">
+                <div className="space-y-2">
+                  <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                  <div className="w-36 h-3 bg-gray-200 rounded"></div>
+                  <div className="w-28 h-3 bg-gray-200 rounded"></div>
+                </div>
+                <div className="w-20 h-6 bg-gray-200 rounded-full"></div>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
@@ -91,14 +101,6 @@ const ClassDetailPage = () => {
   return (
     <>
       <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-center w-full mt-3">
-          <Button
-            className="w-full md:w-auto"
-            onClick={() => setAddingModal(true)}
-          >
-            + Nội dung mới
-          </Button>
-        </div>
         <div className="shadow-md rounded-2xl p-4 md:p-6 my-4 border border-gray-100">
           <h2 className="text-lg md:text-2xl font-bold text-primary-darker mb-2">
             {classDetail?.name}
@@ -170,7 +172,9 @@ const ClassDetailPage = () => {
                           Ngày: {formatDate(schedule.date)}
                         </div>
                         <div className="text-xs md:text-sm text-gray-500">
-                          Phòng: {schedule.classSession.room.name}
+                          Phòng:{" "}
+                          {schedule.classSession.room?.name ||
+                            "Chưa có phòng học"}
                         </div>
                       </div>
                       {schedule.isPassed ? (
@@ -215,12 +219,6 @@ const ClassDetailPage = () => {
           )}
         </div>
       </div>
-      {addingModal && (
-        <AddingModal
-          classDetail={classDetail as ClassDetail}
-          setAddingModal={setAddingModal}
-        />
-      )}
     </>
   );
 };

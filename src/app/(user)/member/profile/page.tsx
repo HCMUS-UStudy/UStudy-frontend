@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { UserProfile } from "@/app/types";
-import { getProfle } from "@/app/lib/services/user";
 import ProfileHeader from "@/app/ui/components/_common/profile/ProfileHeader";
 import ProfileInfoGrid from "@/app/ui/components/_common/profile/ProfileInfoGrid";
 import ProfileLoadingSkeleton from "@/app/ui/components/_common/profile/ProfileLoadingSkeleton";
@@ -11,25 +9,25 @@ import { Child } from "@/app/store/ChildrenSlice";
 import { FiUsers, FiMail, FiPhone } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
+import { getProfile } from "@/app/lib/services";
+import { useQuery } from "@tanstack/react-query";
 
 const MemberProfilePage: React.FC = () => {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [defaultRoute, setDefaultRoute] = useState<string>("");
   const { children } = useSelector((state: RootState) => state.children);
 
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["UserProfile"],
+    queryFn: () => getProfile(),
+  });
+
   const fetchData = async () => {
-    setIsLoading(true);
     try {
-      const userInfo = await getProfle();
-      setUser(userInfo.data);
       const userData = await getUserDataFromCookies();
       console.log("User data from cookies:", userData); // Debug log
       setDefaultRoute(userData?.role.defaultRoute || "");
     } catch (error) {
       console.error("Failed to fetch profile:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -45,7 +43,7 @@ const MemberProfilePage: React.FC = () => {
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white rounded-3xl shadow-lg">
-          <ProfileHeader user={user} onSuccess={fetchData} />
+          <ProfileHeader user={user} />
           <ProfileInfoGrid user={user} />
         </div>
       </div>
@@ -57,7 +55,7 @@ const MemberProfilePage: React.FC = () => {
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white rounded-3xl shadow-lg">
-          <ProfileHeader user={user} onSuccess={fetchData} />
+          <ProfileHeader user={user} />
           <ProfileInfoGrid user={user} />
 
           {/* Children List Section */}

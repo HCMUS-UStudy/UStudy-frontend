@@ -57,7 +57,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     setLoading(true);
 
     try {
-      const response = await getAllClasses("", currentPageCl - 1, 5);
+      const response = await getAllClasses("", currentPageCl - 1, 5, "");
 
       // Set total pages for students based on API response
       console.log(totalPagesCl);
@@ -158,7 +158,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
 
       let failedCount = 0;
       responses.forEach((response, index: number) => {
-        if (response.failedCount > 0) {
+        if (response.data.failedCount > 0) {
           failedCount++;
           addToast.error(`Không thể thêm vào lớp ${selectedClasses[index]}`);
         }
@@ -194,7 +194,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
     try {
       const response = await addMembers([userId], classId, "STUDENT");
 
-      if (response.failedCount > 0) {
+      if (response.data.failedCount > 0) {
         addToast.error(`Thêm không thành công vào lớp ${classId}`);
       } else {
         addToast.success(`Thêm học viên vào lớp ${classId} thành công!`);

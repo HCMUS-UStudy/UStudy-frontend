@@ -9,7 +9,6 @@ import {
 } from "@/app/ui/components/_common/Dialog";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
 import MemberList from "./MemberList";
-import { usePathname, useRouter } from "next/navigation";
 
 interface AddMemberProps {
   buttonLabel: string;
@@ -18,13 +17,32 @@ interface AddMemberProps {
 const AddMember: React.FC<AddMemberProps> = ({ buttonLabel }) => {
   const [showModalRe, setShowModalRe] = useState<boolean>(false);
   const handleOpenModal = () => setShowModalRe(true);
-  const router = useRouter();
-  const pathname = usePathname();
+
+  // const { data: memberList } = useQuery({
+  //   queryKey: [
+  //     "ListMembersToAdd",
+  //     role,
+  //     currentPage,
+  //     searchParams?.get("AccountName") ?? "",
+  //   ],
+  //   refetchOnWindowFocus: false,
+  //   queryFn: () => getFreeUsers(classId as string, 10, role, currentPage),
+  // });
 
   const onTabChange = () => {
-    if (pathname) {
-      router.replace(pathname);
-    }
+    // if (pathname) {
+    //   router.replace(pathname);
+    // }
+    // switch (tab) {
+    //   case "students":
+    //     setRole("STUDENT");
+    //   case "teachers":
+    //     setRole("TEACHER");
+    //   case "admins":
+    //     setRole("ADMIN");
+    //   default:
+    //     setRole("STUDENT");
+    // }
   };
 
   return (

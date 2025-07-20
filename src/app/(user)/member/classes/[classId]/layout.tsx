@@ -1,12 +1,8 @@
 "use client";
 import { getClassById } from "@/app/lib/services/class";
-import ClassNavigationBar from "@/app/ui/components/admin/classes/ClassNavigationBar";
-import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { BsFillBookFill } from "react-icons/bs";
-import ClassLayoutWrapper from "@/app/ui/components/admin/classes/ClassLayoutWrapper";
-import { useEncodedRoute } from "@/app/lib/hooks";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 export default function ClassLayout({
@@ -18,24 +14,39 @@ export default function ClassLayout({
   // const classDetail = await getClassById(classId);
 
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId as string);
+  const classId = params?.classId as string;
+
+  const router = useRouter();
 
   const { data: classDetail } = useQuery({
     queryKey: ["ClassDetails"],
     queryFn: () => getClassById(classId),
   });
+  // const [currentTab, setCurrentTab] = useState<keyof typeof tabs>("overview");
+  const pathname = usePathname();
 
-  // dummy data
-  const classMembers = [
-    { id: 1, name: "Nguyễn Văn A", avatar: "/student.png" },
-    { id: 2, name: "Trần Thị B", avatar: "/teacher.png" },
-    { id: 3, name: "Lê Văn C", avatar: "/avatar3.jpg" },
-    { id: 4, name: "Phạm Thị D", avatar: "/avatar4.jpg" },
-    { id: 5, name: "Hoàng Văn E", avatar: "/avatar5.jpg" },
-  ];
-  const displayedMembers = classMembers.slice(0, 2);
-  const remainingCount = classMembers.length - displayedMembers.length;
+  useEffect(() => {}, [pathname]);
+
+  if (pathname?.includes("/forum") || pathname?.includes("/assignment/")) {
+    return <>{children}</>;
+  }
+
+  const tabs = {
+    overview: "Tổng quan",
+    participant: "Thành viên",
+    material: "Tài liệu",
+    assignment: "Bài tập & Kiểm tra",
+  };
+
+  const handleTabChange = (id: string) => {
+    const classId = pathname?.split("/")[3];
+    // setCurrentTab(id as keyof typeof tabs);
+    router.push(`/member/classes/${classId}/${id}`);
+  };
+
+  // const currentTab = pathname?.split("/")[4] || "overview";
+  // const currentTabLabel =
+  //   tabs.find((tab) => tab.id === currentTab)?.label || "Tổng quan";
 
   const layout = (
     <>
@@ -50,7 +61,7 @@ export default function ClassLayout({
                 ? `Lớp ${classDetail?.name} - ${classDetail?.course.name} ${classDetail?.grade.name}`
                 : classDetail?.name}
             </h1>
-            <div className="md:flex hidden items-center space-x-1">
+            {/* <div className="md:flex hidden items-center space-x-1">
               {displayedMembers.map((member) => (
                 <Image
                   width={32}
@@ -66,14 +77,52 @@ export default function ClassLayout({
                   +{remainingCount}
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
-        <ClassNavigationBar />
+        {/* <ClassNavigationBar /> */}
+
+        <>
+          <div className="flex gap-5 text-primary-dark text-sm sm:text-base md:text-lg font-medium">
+            {Object.entries(tabs).map(([id, label]) => (
+              <label
+                key={id}
+                htmlFor={id}
+                className="relative group cursor-pointer hover:text-highlight-text has-[:checked]:hover:text-primary-dark transition-all duration-300 py-1.5 px-4 has-[:checked]:text-primary-darkest has-[:checked]:font-bold"
+              >
+                <input
+                  id={id}
+                  type="radio"
+                  name="ClassTabs"
+                  className="hidden peer"
+                  onChange={() => handleTabChange(id)}
+                  checked={pathname?.split("/")[4] === id}
+                />
+                {label}
+                <span className="absolute inset-0 border-b-2 border-primary scale-x-0 group-hover:scale-x-100 transition-all duration-300 peer-checked:border-primary-darkest peer-checked:scale-x-100"></span>
+              </label>
+            ))}
+          </div>
+
+          {/* <div className="md:hidden">
+            <Select
+              defaultLabel={tabs[currentTab]}
+              className="bg-primary-lighter"
+              onValueChange={(value) => handleTabChange(value as string)}
+              showClearButton={false}
+            >
+              {Object.entries(tabs).map(([id, label]) => (
+                <SelectItem key={id} value={id}>
+                  {label}
+                </SelectItem>
+              ))}
+            </Select>
+          </div> */}
+        </>
       </div>
       <div className="mt-3">{children}</div>
     </>
   );
 
-  return <ClassLayoutWrapper layout={layout}>{children}</ClassLayoutWrapper>;
+  return layout;
 }

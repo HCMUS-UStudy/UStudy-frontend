@@ -26,9 +26,9 @@ export const getAllClasses = async (
   nameQuery: string,
   currentPage: number,
   limit: number,
+  branchId: string,
   courseQuery?: string,
   gradeQuery?: string,
-  branchId?: string,
 ): Promise<ClassData> => {
   try {
     const response = await axiosInstance.get("/class/list", {
@@ -87,6 +87,7 @@ export const getAllStudentClasses = async (
 
 export const createNewClass = async (data: CreateClassInputs) => {
   try {
+    console.log(data);
     const response = await axiosInstance.post("/class/create", data);
     return response;
   } catch (error) {

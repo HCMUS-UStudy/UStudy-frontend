@@ -14,10 +14,6 @@ const ContactPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const room = useAppSelector((state: any) => state.chat.room);
   const dispatch = useAppDispatch();
-  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem>(
-  //   teacherParam ?? "",
-  // );
-  // const [selectedRoom, setSelectedRoom] = useState<RoomChatItem | null>(null);
   const [messageInput, setMessageInput] = useState("");
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -97,7 +93,7 @@ const ContactPage = () => {
         <div
           className={`w-[270px] min-w-[270px] hidden lg:flex flex-col h-full`}
         >
-          <ContactList searchQuery="" />
+          <ContactList />
         </div>
 
         <ChatMessage
@@ -112,7 +108,7 @@ const ContactPage = () => {
         />
       </div>
       <Dialog isOpen={displayList} onClose={() => setDisplayList(false)}>
-        <ContactList searchQuery="" closeList={() => setDisplayList(false)} />
+        <ContactList closeList={() => setDisplayList(false)} />
       </Dialog>
     </>
   );

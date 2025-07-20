@@ -6,7 +6,6 @@ import { useState, useEffect, useCallback } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "next/navigation";
-import Loading from "@/app/ui/components/_common/loading/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import {
   Table,
@@ -16,43 +15,24 @@ import {
   TableCell,
 } from "@/app/ui/components/_common/Table";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
+import { Loading } from "@/app/ui/components/_common/loading";
 
 const MemberPage = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
   const searchParams = useSearchParams();
+  const name = searchParams?.get("AccountName") || "";
   const params = useParams<{ classId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const classId = decodeId(params?.classId || "");
+  const classId = params?.classId || "";
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState<number>(0);
 
   const memberQuery = useQuery({
-    queryKey: ["ListMembers", currentPage],
+    queryKey: ["ListMembers", classId, name, currentPage],
     refetchOnWindowFocus: false,
-    queryFn: () =>
-      getListMembers(
-        classId,
-        searchParams?.get("AccountName") ?? "",
-        currentPage,
-        12,
-      ),
+    queryFn: () => getListMembers(classId, name, currentPage, 10),
   });
 
   const members = memberQuery.data;
@@ -132,7 +112,7 @@ const MemberPage = () => {
               columns={[
                 "GenId",
                 "Tên",
-                ...(!isMobile ? ["Email"] : []),
+                "Email",
                 "Ngày sinh",
                 "Giới tính",
                 "Vai trò",
@@ -144,29 +124,28 @@ const MemberPage = () => {
                 <TableRow key={member.id}>
                   <TableCell>{member.genId}</TableCell>
                   <TableCell>
-                    {member.name.length > 18 ? (
+                    {member.email?.length > 25 ? (
                       <button>
-                        <Tooltip text={member.name}>
-                          {member.name.slice(0, 18)}...
+                        <Tooltip text={member.email}>
+                          {member.email.slice(0, 25)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      member.name
+                      member.email
                     )}
                   </TableCell>
-                  {!isMobile && (
-                    <TableCell>
-                      {member.email?.length > 25 ? (
-                        <button>
-                          <Tooltip text={member.email}>
-                            {member.email.slice(0, 25)}...
-                          </Tooltip>
-                        </button>
-                      ) : (
-                        member.email
-                      )}
-                    </TableCell>
-                  )}
+                  {/* Email column: hidden on mobile, shown on md+ */}
+                  <TableCell className="hidden md:table-cell">
+                    {member.email?.length > 25 ? (
+                      <button>
+                        <Tooltip text={member.email}>
+                          {member.email.slice(0, 25)}...
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      member.email
+                    )}
+                  </TableCell>
                   <TableCell>
                     {new Date(member.birthday).toLocaleDateString("vi-VN")}
                   </TableCell>

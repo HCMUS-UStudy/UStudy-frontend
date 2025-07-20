@@ -84,7 +84,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <SiGoogleclassroom size={20} />,
   },
   {
-    title: "Quản lý phòng học",
+    title: "Quản lý phòng",
     path: "/admin/rooms",
     icon: <BsDoorOpen size={20} />,
   },
@@ -109,7 +109,7 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     icon: <GrMapLocation size={20} />,
   },
   {
-    title: "Quản lý lịch trình lớp học",
+    title: "Lịch dạy và học",
     path: "/admin/schedule",
     icon: <BsCalendar size={20} />,
   },
@@ -231,11 +231,6 @@ export const SIDENAV_ITEMS_PARENT: SideNavItem[] = [
     title: "Điểm danh",
     path: "/member/attendance",
     icon: <FaClipboardList size={20} />,
-  },
-  {
-    title: "Bài tập",
-    path: "/member/assignments",
-    icon: <MdOutlineAssignment size={20} />,
   },
   {
     title: "Học phí",

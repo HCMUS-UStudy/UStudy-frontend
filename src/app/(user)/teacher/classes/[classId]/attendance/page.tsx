@@ -96,6 +96,10 @@ const AttendancePage = () => {
     if (classSchedule.length && date === "") {
       setDate(classSchedule[0].id);
     }
+    // Nếu không có lịch, set về custom-ngày hiện tại
+    if (classSchedule.length === 0 && date === "") {
+      setDate(`custom-${new Date().toISOString()}`);
+    }
     if (!attendanceMap[date] && members?.content) {
       setAttendanceMap((prev) => ({
         ...prev,
@@ -194,17 +198,33 @@ const AttendancePage = () => {
     }) => {
       return recordAttendances(classId, recordDate, studentStatusList);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       addToast.success("Lưu điểm danh thành công");
-      queryClient.invalidateQueries({
-        queryKey: ["ClassSchedule", classId],
-      });
       queryClient.invalidateQueries({
         queryKey: ["Attendance", date],
       });
+      await queryClient.refetchQueries({
+        queryKey: ["ClassSchedule", classId],
+      });
       setIsEditing(false);
       if (date && date.startsWith("custom-")) {
-        setDate(classSchedule[0]?.id || "custom-");
+        const savedDate = formatDate(new Date(date.replace("custom-", "")));
+        const updatedSchedule =
+          (queryClient.getQueryData([
+            "ClassSchedule",
+            classId,
+          ]) as ClassScheduleItem[]) ?? [];
+        const found = updatedSchedule.find(
+          (session: ClassScheduleItem) =>
+            formatDate(new Date(session.date)) === savedDate,
+        );
+        if (found) {
+          setDate(found.id);
+        } else {
+          setDate(date);
+        }
+      } else {
+        setDate(date);
       }
     },
     onError: () => {
@@ -265,7 +285,7 @@ const AttendancePage = () => {
                 </option>
               ))}
             </select>
-            {date && date.startsWith("custom-") && (
+            {date.startsWith("custom-") && (
               <input
                 type="date"
                 className="ml-2 border border-primary-darker rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark"
@@ -336,6 +356,7 @@ const AttendancePage = () => {
                 "Có phép",
                 "Ghi chú",
               ]}
+              className="bg-primary-light"
               classNameTH={[
                 "",
                 "",
@@ -349,8 +370,8 @@ const AttendancePage = () => {
               ]}
             />
             <TableBody noDataMessage={false}>
-              {filteredStudents?.map((student) => (
-                <TableRow key={student.id}>
+              {filteredStudents?.map((student, idx) => (
+                <TableRow key={student.id || idx}>
                   <TableCell>{student.genId}</TableCell>
                   <TableCell>
                     {student.name.length > 18 ? (
@@ -377,7 +398,14 @@ const AttendancePage = () => {
                       "EXCUSED",
                     ] as AttendanceStatus[]
                   ).map((status) => (
-                    <TableCell key={status}>
+                    <TableCell
+                      key={
+                        student.id
+                          ? `${student.id}-${status}`
+                          : `${idx}-${status}`
+                      }
+                    >
+                      {" "}
                       <div className="flex items-center justify-center">
                         <Checkbox
                           checked={attendanceMap[date]?.some(

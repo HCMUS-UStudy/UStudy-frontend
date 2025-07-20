@@ -15,6 +15,7 @@ import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
 import { IoMenuOutline } from "react-icons/io5";
 import Image from "next/image";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Header = ({
   role,
@@ -84,6 +85,11 @@ const Header = ({
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const queryClient = useQueryClient();
+  const handleLogout = () => {
+    queryClient.invalidateQueries({ queryKey: ["payments"] });
+    handleLogoutCookies();
+  };
 
   return (
     <div
@@ -205,7 +211,7 @@ const Header = ({
           <DropdownProfile
             userInfo={userInfo}
             handleProfileClick={handleProfileClick}
-            handleLogout={handleLogoutCookies}
+            handleLogout={handleLogout}
           />
         </div>
       </div>

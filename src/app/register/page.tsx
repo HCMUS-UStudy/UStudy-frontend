@@ -76,8 +76,8 @@ export default function StudentRegister() {
       gender: "MALE",
     },
   });
-  const queryClient = useQueryClient();
   const { addToast } = useCustomToast();
+  const queryClient = useQueryClient();
   const useRegisterMutation = useMutation({
     mutationFn: (data: StudentRegisterInputs) => studentRegister(data),
     onSuccess: () => {

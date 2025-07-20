@@ -89,7 +89,7 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
                 {classItem.classDto.grade?.name ?? ""}
               </h1>
               <p className="text-sm text-zinc-500 leading-6 truncate">
-                Lớp học thuộc khóa {classItem.classDto.course?.name}.{" "}
+                Lớp {classItem.classDto.course?.name}.{" "}
                 {classItem.classDto.description}
               </p>
               {/* <p className="text-sm text-zinc-500 leading-6">

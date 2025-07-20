@@ -19,5 +19,12 @@ export type Question = {
     description: string;
     isCorrect: boolean;
   }[];
+  createdBy: {
+    id: string;
+    genId: string;
+    email: string;
+    name: string;
+    avatar: string | null;
+  };
   scoringCriteria: string | null;
 };
