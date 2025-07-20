@@ -163,7 +163,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Image
-                  src={notification.sender.avatar}
+                  src={`/userAvatars/${notification.sender.avatar}.png`}
                   alt={notification.sender.name}
                   width={40}
                   height={40}

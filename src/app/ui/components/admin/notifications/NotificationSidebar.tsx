@@ -257,7 +257,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-2">
                         <Image
-                          src={item.sender.avatar}
+                          src={`/userAvatars/${item.sender.avatar}.png`}
                           alt={item.sender.name}
                           width={20}
                           height={20}

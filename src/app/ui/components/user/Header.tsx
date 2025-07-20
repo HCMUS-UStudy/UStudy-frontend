@@ -129,7 +129,7 @@ const Header = ({
                 <div className="flex items-center gap-1 border border-gray-200 rounded-md bg-white px-1.5 py-0.5 text-sm max-w-[140px]">
                   {children[0].avatar ? (
                     <Image
-                      src={children[0].avatar}
+                      src={`/userAvatars/${children[0].avatar}.png`}
                       alt="avatar"
                       width={20}
                       height={20}

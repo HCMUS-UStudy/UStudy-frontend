@@ -87,7 +87,7 @@ export const ContactList = ({ closeList }: Props) => {
                           <Image
                             width={36}
                             height={36}
-                            src={room.user.avatar}
+                            src={`/userAvatars/${room.user.avatar || "cat"}.png`}
                             alt={room.user.name}
                             className="w-full h-full object-cover"
                           />
