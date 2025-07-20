@@ -40,6 +40,7 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
     onSuccess: () => {
       addToast.success("Cập nhật avatar thành công");
       queryClient.invalidateQueries({ queryKey: ["UserProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["UserData"] });
       onClose();
     },
   });
@@ -132,16 +133,6 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
         </div>
       </DialogFooter>
     </Dialog>
-  );
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
-        <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
-          Thay đổi ảnh đại diện
-        </h2>
-      </div>
-    </div>
   );
 };
 

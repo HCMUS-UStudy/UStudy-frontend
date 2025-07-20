@@ -18,6 +18,7 @@ import Loading from "./loading/Loading";
 import Cookies from "js-cookie";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import Link from "next/link";
+import { setUserData } from "@/app/store/userSlice";
 
 const LogInSchema = z.object({
   username: z
@@ -124,6 +125,7 @@ export default function Login() {
         JSON.stringify(response.data.screens),
       );
       dispatch(setPermissions(response.data.screens));
+      dispatch(setUserData(userDataToSave));
       if (defaultRoute === "PARENT") {
         dispatch(setChildren(response.data.children ?? []));
         dispatch(
