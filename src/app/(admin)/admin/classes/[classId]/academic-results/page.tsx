@@ -8,7 +8,8 @@ import { getDetailAcademicResult } from "@/app/lib/services";
 import { useParams } from "next/navigation";
 
 export default function AcademicResultsPage() {
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId || "";
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
   const detailQuery = useQuery({
