@@ -16,6 +16,7 @@ export default function TeacherNavigation({
     { title: "Bài tập", urlPush: "assignments" },
     { title: "Thành viên", urlPush: "members" },
     { title: "Điểm danh", urlPush: "attendance" },
+    { title: "Kết quả học tập", urlPush: "academic-results" },
   ];
 
   const router = useRouter();
