@@ -4,11 +4,11 @@ import { AcademicResultManage } from "@/app/types";
 import { Loading } from "../../_common/loading";
 
 const DetailScoreModal = ({
-  setSelectedIdx,
+  setSelectedId,
   data,
   isLoading,
 }: {
-  setSelectedIdx: (idx: number | null) => void;
+  setSelectedId: (id: string | null) => void;
   data: AcademicResultManage;
   isLoading: boolean;
 }) => {
@@ -21,12 +21,12 @@ const DetailScoreModal = ({
       <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative animate-fadeIn">
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-primary-dark text-2xl font-bold"
-          onClick={() => setSelectedIdx(null)}
+          onClick={() => setSelectedId(null)}
           aria-label="Đóng"
         >
           ×
         </button>
-        <div className="flex mb-2 gap-3 text-[17px]">
+        <div className="flex mb-2 gap-3">
           <span className="font-semibold text-primary-dark">
             Chi tiết điểm:
           </span>
@@ -34,7 +34,7 @@ const DetailScoreModal = ({
             {data.student.genId} - {data.student.name}
           </span>
         </div>
-        <table className="min-w-full border border-gray-200 rounded-lg">
+        <table className="min-w-full border border-gray-200 rounded-lg text-sm">
           <thead className="bg-primary-light">
             <tr>
               <th className="px-4 py-2 text-left">Bài tập</th>
@@ -48,10 +48,14 @@ const DetailScoreModal = ({
               <tr key={idx2} className="border-b">
                 <td className="px-4 py-2">{item.title}</td>
                 <td className="px-4 py-2 text-center">
-                  {Number(item.studentScore).toFixed(2)}
+                  {Number(item.studentScore) % 1 === 0
+                    ? Number(item.studentScore)
+                    : Number(item.studentScore).toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {Number(item.classAverageScore).toFixed(2)}
+                  {Number(item.classAverageScore) % 1 === 0
+                    ? Number(item.classAverageScore)
+                    : Number(item.classAverageScore).toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
                   {item.submissionDate
@@ -62,10 +66,12 @@ const DetailScoreModal = ({
             ))}
           </tbody>
         </table>
-        <div className="mt-4 text-right font-bold">
+        <div className="mt-4 text-right font-bold text-sm">
           Điểm trung bình:{" "}
           <span className="text-primary-dark">
-            {Number(data.averageScore).toFixed(2)}
+            {Number(data.averageScore) % 1 === 0
+              ? Number(data.averageScore)
+              : Number(data.averageScore).toFixed(2)}
           </span>
         </div>
       </div>

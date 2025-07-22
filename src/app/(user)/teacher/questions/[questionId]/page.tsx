@@ -111,7 +111,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
     if (!editData) return;
     mutation.mutate({
       description: editData.description,
-      file: isDeleteFile ? newFile : undefined,
+      file: newFile,
       gradeId: editData.grade?.id,
       courseId: editData.course?.id,
       questionType: editData.questionType,

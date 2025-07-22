@@ -107,7 +107,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
   }, [columns, setColumns]);
 
   return (
-    <thead className={cn("bg-slate-100", className)}>
+    <thead className={cn("bg-primary-light", className)}>
       <tr className="border-b-2 border-slate-200">
         {columns.map((col, index) => (
           <th
