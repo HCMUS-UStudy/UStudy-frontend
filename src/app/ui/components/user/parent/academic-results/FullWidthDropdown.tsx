@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiFilter } from "react-icons/fi";
 
-interface DropdownProps {
+interface FullWidthDropdownProps {
   label: string;
   items: { key: string; label: string }[];
   selected?: string;
@@ -13,25 +12,18 @@ interface DropdownProps {
 }
 
 /**
- * Dropdown component with query preservation and FiFilter icon
- *
- * @param label - Button text
- * @param items - Array of dropdown options
- * @param selected - Currently selected key
- * @returns {React.JSX.Element}
+ * Full-width dropdown component specifically for AcademicResultsView
+ * The dropdown menu width matches the button width
  */
-export default function Dropdown({
+export default function FullWidthDropdown({
   label,
   items,
   selected,
   position,
   onChange,
-}: DropdownProps) {
+}: FullWidthDropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
 
   // Chọn mặc định "All" nếu không có giá trị
   const defaultSelected = selected || items[0]?.key;
@@ -51,13 +43,6 @@ export default function Dropdown({
   }, []);
 
   const handleSelect = (key: string) => {
-    const params = new URLSearchParams(searchParams ?? "");
-    if (key) {
-      params.set("role", key);
-    } else {
-      params.delete("role");
-    }
-    replace(`${pathname}?${params.toString()}`);
     setIsOpen(false);
     if (typeof onChange === "function") {
       onChange(key);
@@ -75,18 +60,33 @@ export default function Dropdown({
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="flex items-center space-x-2 px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-primary-lighter transition-colors"
+        className="flex items-center justify-between w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm bg-white hover:bg-primary-lighter transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <FiFilter className="size-4 md:size-5 text-gray-600" />
-        <span className="text-nowrap text-xs md:text-base">
-          {items.find((item) => item.key === selected)?.label || label}
-        </span>
+        <div className="flex items-center space-x-2">
+          <FiFilter className="size-4 md:size-5 text-gray-600" />
+          <span className="text-nowrap text-xs md:text-base">
+            {items.find((item) => item.key === selected)?.label || label}
+          </span>
+        </div>
+        <svg
+          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
       </button>
 
       {isOpen && (
         <div
-          className={`absolute ${positionClasses} bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10`}
+          className={`absolute ${positionClasses} bg-white border border-gray-300 shadow-lg rounded-md w-full min-w-40 z-10`}
         >
           {items.map(({ key, label }) => (
             <button

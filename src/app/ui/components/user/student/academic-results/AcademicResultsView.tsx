@@ -28,6 +28,7 @@ import { SkillChart } from "./SkillChart";
 import DetailedScoresTable from "./DetailedScoresTable";
 import { AcademicResultsSkeleton } from "./AcademicResultsSkeleton";
 import { MessageCard } from "./MessageCard";
+import FullWidthDropdown from "./FullWidthDropdown";
 
 ChartJS.register(
   CategoryScale,
@@ -111,42 +112,48 @@ export default function AcademicResultsView() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-6 items-center bg-white p-6 rounded-lg border border-primary-light shadow-md">
-        <div className="flex-1 min-w-[200px]">
+        <div
+          className={
+            selectedClassId === "all" ? "w-full" : "flex-1 min-w-[200px]"
+          }
+        >
           <label
             htmlFor="class"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
             Lớp học
           </label>
-          <select
-            id="class"
-            value={selectedClassId}
-            onChange={(e) => handleClassChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
-          >
-            <option value="all">Tất cả</option>
-            {classList.map((cls) => (
-              <option key={cls.classId} value={cls.classId}>
-                {cls.className} - {cls.course.name} ({cls.grade.name})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex-1 min-w-[200px]">
-          <label
-            htmlFor="academicYear"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Năm học
-          </label>
-          <input
-            id="academicYear"
-            type="text"
-            value={academicYear}
-            readOnly
-            className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-50"
+          <FullWidthDropdown
+            label="Lớp học"
+            items={[
+              { key: "all", label: "Tất cả" },
+              ...classList.map((cls) => ({
+                key: cls.classId,
+                label: `${cls.className} - ${cls.course.name} (${cls.grade.name})`,
+              })),
+            ]}
+            selected={selectedClassId}
+            position="bottom-left"
+            onChange={handleClassChange}
           />
         </div>
+        {selectedClassId !== "all" && (
+          <div className="flex-1 min-w-[200px]">
+            <label
+              htmlFor="academicYear"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Năm học
+            </label>
+            <input
+              id="academicYear"
+              type="text"
+              value={academicYear}
+              readOnly
+              className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-50"
+            />
+          </div>
+        )}
       </div>
 
       {selectedClassId !== "all" && classDetails && (

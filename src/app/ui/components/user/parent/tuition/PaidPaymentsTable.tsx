@@ -35,11 +35,11 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
           <Table>
             <TableHeader
               columns={[
-                "Mã thanh toán",
+                "Mã hóa đơn",
                 "Học sinh",
                 "Lớp học",
                 "Số tiền",
-                "Ngày thanh toán",
+                "Thời gian",
                 "Trạng thái",
                 "Thao tác",
               ]}
@@ -51,9 +51,7 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                   <TableCell>{payment.invoiceId}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
-                        <FaUser className="h-4 w-4" />
-                      </div>
+                      <FaUser className="h-4 w-4" />
                       <span>{payment.student.name}</span>
                     </div>
                   </TableCell>
@@ -70,7 +68,9 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                     {formatCurrency(payment.amount)}
                   </TableCell>
                   <TableCell>
-                    {payment.paymentDate && formatDate(payment.paymentDate)}
+                    <div className="flex items-center justify-left">
+                      {payment.paymentDate && formatDate(payment.paymentDate)}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <span
@@ -88,12 +88,6 @@ const PaidPaymentsTable: React.FC<PaidPaymentsTableProps> = ({
                       >
                         <FaEye className="size-4" />
                       </Button>
-                      {/* <Button
-                        variant="outlined"
-                        className="rounded-full p-0 min-w-0 flex"
-                      >
-                        <FaDownload className="size-4" title="Tải biên lai" />
-                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>

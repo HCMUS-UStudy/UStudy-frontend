@@ -343,8 +343,14 @@ export default function Login() {
             >
               Đăng nhập
             </Button>
-            <div className="text-sm text-center text-gray-600 underline mt-4 hover:text-primary-darkest cursor-pointer transition-colors">
-              <Link href={"/register"}>Đăng ký tài khoản</Link>
+            <div className="mt-6 text-center">
+              <span className="text-sm text-gray-600">Chưa có tài khoản? </span>
+              <Link
+                href={"/register"}
+                className="text-sm font-semibold text-primary-dark hover:text-primary-darkest underline-offset-4 hover:underline transition-colors duration-200"
+              >
+                Đăng ký ngay
+              </Link>
             </div>
           </form>
         </div>
