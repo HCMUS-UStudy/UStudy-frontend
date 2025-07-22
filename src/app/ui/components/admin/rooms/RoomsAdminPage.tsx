@@ -147,10 +147,7 @@ const RoomsAdminPage: React.FC<RoomsAdminPageProps> = ({
     <div>
       <div className="overflow-x-auto mt-6 max-h-[400px]">
         <Table>
-          <TableHeader
-            columns={["Tên phòng", "Sức chứa", "Hành động"]}
-            className="bg-gray-100"
-          />
+          <TableHeader columns={["Tên phòng", "Sức chứa", "Hành động"]} />
           <TableBody isLoading={status === "pending"}>
             {error ? (
               <TableRow>

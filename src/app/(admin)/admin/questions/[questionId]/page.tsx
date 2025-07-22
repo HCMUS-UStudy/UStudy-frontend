@@ -16,12 +16,23 @@ import FileUpload from "@/app/ui/components/_common/FileUpload";
 import isEqual from "lodash/isEqual";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { getUserDataFromCookies } from "@/app/lib/action";
+import { UserData } from "@/app/types";
 
 type QuestionEdit = Question & {
   isManyAnswers?: boolean;
 };
 
 const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const data = await getUserDataFromCookies();
+      setUserData(data);
+    };
+    fetchUserData();
+  }, []);
+
   const router = useRouter();
   const { questionId } = React.use(props.params);
   const queryClient = useQueryClient();
@@ -184,7 +195,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
           <IoReturnUpBack className="inline-block mr-2" />
           Trở về
         </button>
-        {!isEdit && (
+        {!isEdit && question.createdBy.genId === userData?.genId && (
           <button
             className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
             onClick={() => setIsEdit(true)}

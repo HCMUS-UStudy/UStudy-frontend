@@ -147,7 +147,7 @@ const Sidebar = ({
           ) : (
             <>
               <div
-                className="flex flex-col gap-[6px] px-3 overflow-y-auto max-h-[calc(100vh-100px)] no-scrollbar"
+                className="flex flex-col gap-[8px] px-3 overflow-y-auto max-h-[calc(100vh-100px)]"
                 style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
               >
                 {(sortedPermissions || []).map((item: string) => {
@@ -156,7 +156,7 @@ const Sidebar = ({
                   return (
                     <div
                       key={item}
-                      className={`flex items-center px-[14px] py-[10px] rounded-2xl cursor-pointer transition-colors duration-200 ${
+                      className={`flex items-center px-[14px] py-[9px] rounded-2xl cursor-pointer transition-colors duration-200 ${
                         pathname?.includes(item)
                           ? "bg-primary hover:bg-hover-primary"
                           : "hover:bg-primary-light"

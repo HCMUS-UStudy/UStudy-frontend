@@ -6,10 +6,11 @@ import DetailScoreModal from "@/app/ui/components/admin/academic-results/DetailS
 import { useQuery } from "@tanstack/react-query";
 import { getDetailAcademicResult } from "@/app/lib/services";
 import { useParams } from "next/navigation";
+import { AcademicResultManage } from "@/app/types/academicResult";
 
 export default function AcademicResultsPage() {
   const { classId } = useParams<{ classId: string }>();
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const detailQuery = useQuery({
     queryKey: ["detailAcademicResult", classId],
@@ -31,14 +32,16 @@ export default function AcademicResultsPage() {
 
       <AcademicResults
         data={academicResultsData}
-        selectedIdx={selectedIdx}
-        setSelectedIdx={setSelectedIdx}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
       />
 
-      {selectedIdx !== null && academicResultsData[selectedIdx] && (
+      {selectedId !== null && (
         <DetailScoreModal
-          setSelectedIdx={setSelectedIdx}
-          data={academicResultsData[selectedIdx]}
+          setSelectedId={setSelectedId}
+          data={academicResultsData.find(
+            (item: AcademicResultManage) => item.student.id === selectedId,
+          )}
           isLoading={detailQuery.isLoading}
         />
       )}

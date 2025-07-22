@@ -142,7 +142,7 @@ const QuestionList = () => {
   const { addToast } = useCustomToast();
 
   return (
-    <div className="p-2 sm:p-4 max-w-7xl mx-auto">
+    <div className="p-2 sm:p-4 mx-auto">
       <div className="mb-2 sm:mb-4 flex items-center justify-between">
         <h1 className="text-[20px] sm:text-[22px] font-extrabold text-primary-darker tracking-wide drop-shadow">
           Danh sách câu hỏi

@@ -8,7 +8,7 @@ import {
 } from "@/app/lib/services/attendance";
 import { useState, useEffect, useMemo } from "react";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
-import { useQueries, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
@@ -47,43 +47,31 @@ const AttendancePage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   // const [totalPages, setTotalPages] = useState<number>(0);
 
-  const [memberQuery, classScheduleQuery, attendanceQuery] = useQueries({
-    queries: [
-      {
-        queryKey: ["ListStudents", currentPage],
-        refetchOnWindowFocus: false,
-        queryFn: () =>
-          getListMembers(
-            classId,
-            searchParams?.get("AccountName") ?? "",
-            currentPage,
-            100,
-            "STUDENT",
-          ),
-      },
-      {
-        queryKey: ["ClassSchedule", classId],
-        refetchOnWindowFocus: false,
-        queryFn: () => getPastSchedule(classId as string, 0, 100),
-        enabled: !!classId,
-      },
-      {
-        queryKey: ["Attendance", date],
-        refetchOnWindowFocus: false,
-        queryFn: () => getAttendances(currentPage, 100, date),
-        enabled: !!date && !date.startsWith("custom-"),
-      },
-    ],
+  // Gọi tuần tự từng query
+  const memberQuery = useQuery({
+    queryKey: ["ListStudents", currentPage],
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      getListMembers(
+        classId,
+        searchParams?.get("AccountName") ?? "",
+        currentPage,
+        100,
+        "STUDENT",
+      ),
+    enabled: !!classId,
   });
 
-  const members = memberQuery.data;
-  const totalPages = memberQuery.data?.totalPages ?? 0;
+  const classScheduleQuery = useQuery({
+    queryKey: ["ClassSchedule", classId],
+    refetchOnWindowFocus: false,
+    queryFn: () => getPastSchedule(classId as string, 0, 100),
+    enabled: !!classId,
+  });
 
-  const isLoading = memberQuery.isLoading;
-
-  const classSchedule = useMemo(
+  const classScheduleMemo = useMemo(
     () =>
-      (classScheduleQuery.data ?? [])
+      ((classScheduleQuery.data ?? []) as ClassScheduleItem[])
         .slice()
         .sort(
           (a: ClassScheduleItem, b: ClassScheduleItem) =>
@@ -92,13 +80,30 @@ const AttendancePage = () => {
     [classScheduleQuery.data],
   );
 
+  const classSchedule = classScheduleMemo;
+  const attendanceQuery = useQuery({
+    queryKey: ["Attendance", date],
+    refetchOnWindowFocus: false,
+    queryFn: () => getAttendances(currentPage, 100, date),
+    enabled:
+      !!date &&
+      typeof date === "string" &&
+      !date.startsWith("custom-") &&
+      classScheduleQuery.isSuccess,
+  });
+
+  const members = memberQuery.data;
+  const totalPages = memberQuery.data?.totalPages ?? 0;
+
+  const isLoading = memberQuery.isLoading;
+
   useEffect(() => {
-    if (classSchedule.length && date === "") {
-      setDate(classSchedule[0].id);
-    }
-    // Nếu không có lịch, set về custom-ngày hiện tại
-    if (classSchedule.length === 0 && date === "") {
-      setDate(`custom-${new Date().toISOString()}`);
+    if (date === "") {
+      if (classSchedule.length > 0) {
+        setDate(classSchedule[0].id);
+      } else {
+        setDate("custom-");
+      }
     }
     if (!attendanceMap[date] && members?.content) {
       setAttendanceMap((prev) => ({
@@ -237,7 +242,7 @@ const AttendancePage = () => {
 
   const onSaveAttendances = () => {
     let recordDate = "";
-    if (date.startsWith("custom-")) {
+    if (typeof date === "string" && date.startsWith("custom-")) {
       recordDate = formatDate(new Date(date.replace("custom-", "")));
     } else {
       const session = classSchedule.find(
@@ -271,21 +276,22 @@ const AttendancePage = () => {
             <span className="font-semibold">Buổi học:</span>
             <select
               className="border rounded-lg border-primary-dark px-1 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark z-auto"
-              value={date}
+              value={date ?? ""}
               onChange={(e) => {
                 setDate(e.target.value);
                 setIsEditing(false);
               }}
             >
-              {/* Always show the custom date option on top */}
               <option value="custom-">Chọn ngày khác...</option>
-              {classSchedule?.map((session: ClassScheduleItem) => (
-                <option key={session.id} value={session.id}>
-                  {new Date(session.date).toLocaleDateString("vi-VN")}
-                </option>
-              ))}
+              {classSchedule
+                ?.filter((session: ClassScheduleItem) => !!session.id)
+                .map((session: ClassScheduleItem) => (
+                  <option key={session.id} value={session.id}>
+                    {new Date(session.date).toLocaleDateString("vi-VN")}
+                  </option>
+                ))}
             </select>
-            {date.startsWith("custom-") && (
+            {typeof date === "string" && date.startsWith("custom-") && (
               <input
                 type="date"
                 className="ml-2 border border-primary-darker rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark"
@@ -405,7 +411,6 @@ const AttendancePage = () => {
                           : `${idx}-${status}`
                       }
                     >
-                      {" "}
                       <div className="flex items-center justify-center">
                         <Checkbox
                           checked={attendanceMap[date]?.some(
@@ -426,7 +431,8 @@ const AttendancePage = () => {
                                 attendanceData?.attendances.totalElements ===
                                   0) ||
                               isEditing ||
-                              date.startsWith("custom-")
+                              (typeof date === "string" &&
+                                date.startsWith("custom-"))
                             ) {
                               handleStatusChange(student.id, status);
                             }
@@ -461,8 +467,7 @@ const AttendancePage = () => {
                           onChange={(e) =>
                             handleNoteChange(student.id, e.target.value)
                           }
-                          className="w-full h-8 px-2 text-gray-700 border bg-transparent border-primary-dark rounded-lg
-                        focus:outline-none focus:ring-1 focus:ring-primary-dark"
+                          className="w-full h-8 px-2 text-gray-700 border bg-transparent border-primary-dark rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-dark"
                           placeholder="Nhập ghi chú..."
                         />
                       )}
@@ -474,7 +479,6 @@ const AttendancePage = () => {
           </Table>
         )
       )}
-
       <div className="flex justify-end mt-2">
         {totalPages > 1 && (
           <Pagination

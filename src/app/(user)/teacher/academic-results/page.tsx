@@ -6,11 +6,12 @@ import DetailScoreModal from "@/app/ui/components/admin/academic-results/DetailS
 import { useQuery } from "@tanstack/react-query";
 import { getDetailAcademicResult } from "@/app/lib/services";
 import { getClassesForTeacher } from "@/app/lib/services";
+import { AcademicResultManage } from "@/app/types";
 
 type TeacherClass = { id: string; name: string };
 
 export default function AcademicResultsPage() {
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedClassId, setSelectedClassId] = useState<string>("");
 
   const { data: classData, isLoading: classLoading } = useQuery({
@@ -45,7 +46,7 @@ export default function AcademicResultsPage() {
           Kết quả học tập lớp
         </h2>
         <select
-          className="border-2 rounded-lg border-primary-dark px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark z-auto text-[16px] pr-8"
+          className="border-2 rounded-lg border-primary-dark px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark z-auto text-[15px] pr-8"
           value={selectedClassId}
           onChange={(e) => setSelectedClassId(e.target.value)}
           disabled={classLoading}
@@ -60,14 +61,16 @@ export default function AcademicResultsPage() {
 
       <AcademicResults
         data={academicResultsData}
-        selectedIdx={selectedIdx}
-        setSelectedIdx={setSelectedIdx}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
       />
 
-      {selectedIdx !== null && academicResultsData[selectedIdx] && (
+      {selectedId !== null && (
         <DetailScoreModal
-          setSelectedIdx={setSelectedIdx}
-          data={academicResultsData[selectedIdx]}
+          setSelectedId={setSelectedId}
+          data={academicResultsData.find(
+            (item: AcademicResultManage) => item.student?.id === selectedId,
+          )}
           isLoading={detailQuery.isLoading}
         />
       )}
