@@ -12,6 +12,7 @@ export default function AdminNavigation({ activeTab }: { activeTab: string }) {
     { title: "Bài tập", urlPush: "assignments" },
     { title: "Thành viên", urlPush: "members" },
     { title: "Điểm danh", urlPush: "attendance" },
+    { title: "Kết quả học tập", urlPush: "academic-results" },
     { title: "Cài đặt", urlPush: "setting" },
   ];
 

@@ -146,7 +146,10 @@ const Sidebar = ({
             </div>
           ) : (
             <>
-              <div className="flex flex-col gap-[6px] px-3">
+              <div
+                className="flex flex-col gap-[6px] px-3 overflow-y-auto max-h-[calc(100vh-100px)] no-scrollbar"
+                style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
+              >
                 {(sortedPermissions || []).map((item: string) => {
                   const route = routeMap[item];
                   if (!route) return null;
