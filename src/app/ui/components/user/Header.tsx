@@ -15,7 +15,7 @@ import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
 import { IoMenuOutline } from "react-icons/io5";
 import Image from "next/image";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Header = ({
   role,
@@ -39,10 +39,16 @@ const Header = ({
   );
   const dispatch = useAppDispatch();
 
+  const { data: userData, isSuccess } = useQuery({
+    queryKey: ["UserData"],
+    queryFn: () => getUserDataFromCookies(),
+    staleTime: 0,
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      const userInfo = await getUserDataFromCookies();
-      setUserInfo(userInfo);
+    console.log("here");
+    if (isSuccess && userData) {
+      setUserInfo(userData);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userInfoWithChildren = userInfo as UserData & { children?: any[] };
       if (
@@ -54,10 +60,27 @@ const Header = ({
         dispatch(setChildren(userInfoWithChildren.children));
         dispatch(setSelectedChild(userInfoWithChildren.children[0]));
       }
-    };
-    console.log(children.at(0));
-    fetchData();
-  }, []);
+    }
+  }, [isSuccess, userData]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const userInfo = await getUserDataFromCookies();
+  //     setUserInfo(userInfo);
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     const userInfoWithChildren = userInfo as UserData & { children?: any[] };
+  //     if (
+  //       userInfoWithChildren?.role.defaultRoute === "PARENT" &&
+  //       userInfoWithChildren.children &&
+  //       userInfoWithChildren.children.length > 0 &&
+  //       children.length === 0
+  //     ) {
+  //       dispatch(setChildren(userInfoWithChildren.children));
+  //       dispatch(setSelectedChild(userInfoWithChildren.children[0]));
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
     if (role === "student") {
@@ -129,7 +152,7 @@ const Header = ({
                 <div className="flex items-center gap-1 border border-gray-200 rounded-md bg-white px-1.5 py-0.5 text-sm max-w-[140px]">
                   {children[0].avatar ? (
                     <Image
-                      src={children[0].avatar}
+                      src={`/userAvatars/${children[0].avatar}.png`}
                       alt="avatar"
                       width={20}
                       height={20}

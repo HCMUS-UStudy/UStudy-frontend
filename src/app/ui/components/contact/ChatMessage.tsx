@@ -62,7 +62,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   <Image
                     width={36}
                     height={36}
-                    src={selectedRoom.user.avatar}
+                    src={`/userAvatars/${selectedRoom.user.avatar}.png`}
                     alt={selectedRoom.user.name}
                     className="w-full h-full object-cover"
                   />

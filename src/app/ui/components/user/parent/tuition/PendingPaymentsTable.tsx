@@ -8,7 +8,6 @@ import {
   TableRow,
 } from "../../../_common/Table";
 import { Button } from "../../../_common/Button";
-import Tooltip from "../../../_common/Tooltip";
 
 interface Props {
   filteredPendingPayments: PaymentItem[];
@@ -44,10 +43,11 @@ export default function PendingPaymentsTable({
       <Table>
         <TableHeader
           columns={[
+            "Mã hóa đơn",
             "Học sinh",
             "Lớp học",
             "Số tiền",
-            "Hạn thanh toán",
+            "Thời gian",
             "Trạng thái",
             "Thao tác",
           ]}
@@ -67,11 +67,10 @@ export default function PendingPaymentsTable({
 
             return (
               <TableRow key={payment.invoiceId}>
+                <TableCell>{payment.invoiceId}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center mr-2">
-                      <FaUser className="h-4 w-4" />
-                    </div>
+                    <FaUser className="h-4 w-4" />
                     <span>{payment.student.name}</span>
                   </div>
                 </TableCell>
@@ -88,7 +87,7 @@ export default function PendingPaymentsTable({
                   {formatCurrency(payment.amount)}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-left justify-left">
+                  <div className="flex items-center justify-left">
                     <div>
                       <div className="text-sm text-gray-600">
                         Hạn thanh toán: {formatDate(dueDate)}
@@ -113,22 +112,22 @@ export default function PendingPaymentsTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-left justify-left space-x-2">
-                    <Tooltip text="Xem chi tiết">
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleViewDetails(payment)}
-                      >
-                        <FaEye className="size-4" />
-                      </Button>
-                    </Tooltip>
-
                     <Button
-                      onClick={() => handlePayNow(payment)}
-                      variant="primary"
-                      className=""
+                      onClick={() => handleViewDetails(payment)}
+                      variant="outlined"
+                      className="rounded-full p-0 min-w-0 flex"
                     >
-                      Thanh toán
+                      <FaEye className="size-4" />
                     </Button>
+                    {!isOverdue && (
+                      <Button
+                        onClick={() => handlePayNow(payment)}
+                        variant="primary"
+                        className="rounded-full px-3 py-1 text-sm"
+                      >
+                        Thanh toán
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

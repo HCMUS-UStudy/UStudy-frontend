@@ -5,6 +5,7 @@ import childrenReducer from "./ChildrenSlice";
 import encryptedIdReducer from "./EncryptedIdSlice";
 import chatReducer from "./ChatSlice";
 import gradeReducer from "./GradeSlice";
+import userReducer from "./userSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -16,6 +17,7 @@ const store = configureStore({
     encryptedId: encryptedIdReducer,
     chat: chatReducer,
     grades: gradeReducer,
+    user: userReducer,
   },
 });
 
@@ -24,9 +26,5 @@ export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();
-
-// // Sử dụng useDispatch và useSelector bình thường
-// export const useAppDispatch = useDispatch;
-// export const useAppSelector = useSelector;
 
 export { store };

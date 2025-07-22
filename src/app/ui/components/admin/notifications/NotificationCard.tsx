@@ -197,7 +197,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           {/* Sender info */}
           <div className="flex items-center gap-2 p-1.5 sm:p-2 bg-primary-lighter rounded-lg">
             <Image
-              src={notification.sender.avatar}
+              src={`/userAvatars/${notification.sender.avatar}.png`}
               alt={notification.sender.name}
               width={24}
               height={24}

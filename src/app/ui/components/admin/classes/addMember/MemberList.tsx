@@ -13,8 +13,8 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { Button } from "@/app/ui/components/_common/Button";
-import { getFreeUsers } from "@/app/lib/services/user";
-import { AccountItem } from "@/app/types";
+import { getFreeUsers } from "@/app/lib/services";
+import { AccountData } from "@/app/types";
 import { addMembers } from "@/app/lib/services/class";
 import { useParams } from "next/navigation";
 import Loading from "@/app/ui/components/_common/loading/Loading";
@@ -29,7 +29,7 @@ export default function MemberList({
 }) {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [members, setMembers] = useState<AccountItem[]>([]);
+  const [members, setMembers] = useState<AccountData[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const searchParams = useSearchParams();
@@ -52,6 +52,7 @@ export default function MemberList({
 
   useEffect(() => {
     if (memberList) {
+      console.log(memberList);
       if (currentPage === 0) {
         setMembers(memberList.content); // Nếu là trang đầu tiên, thay thế danh sách
       } else {
@@ -87,17 +88,17 @@ export default function MemberList({
   }, [memberList, currentPage, isLoadingMore]);
 
   const selectedMembers = members.filter((member) =>
-    selectedIds.includes(member.id),
+    selectedIds.includes(member.user.id),
   );
 
   const unselectedMembers = members.filter(
-    (member) => !selectedIds.includes(member.id),
+    (member) => !selectedIds.includes(member.user.id),
   );
 
   const filteredUnselectedMembers = unselectedMembers.filter(
     (member) =>
-      member.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      member.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
+      member.user.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      member.user.name.toLowerCase().includes(searchKeyword.toLowerCase()),
   );
 
   const useAddMembersMutation = useMutation({
@@ -158,68 +159,53 @@ export default function MemberList({
       >
         <Table>
           <TableHeader
-            columns={[
-              "GenId",
-              "Tên",
-              "Email",
-              "Địa chỉ",
-              "Ngày sinh",
-              "Số điện thoại",
-              "Giới tính",
-              "Chọn",
-            ]}
+            columns={["GenId", "Tên", "Email", "Trạng thái", "Chọn"]}
           />
           <TableBody isLoading={isLoading}>
             {[...selectedMembers, ...filteredUnselectedMembers].map(
               (member) => (
-                <TableRow key={member.id}>
-                  <TableCell>{member.genId}</TableCell>
+                <TableRow key={member.user.id}>
+                  <TableCell>{member.user.genId}</TableCell>
                   <TableCell>
-                    {member.name.length > 18 ? (
+                    {member.user.name.length > 18 ? (
                       <button>
-                        <Tooltip text={member.name}>
-                          {member.name.slice(0, 18)}...
+                        <Tooltip text={member.user.name}>
+                          {member.user.name.slice(0, 18)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      member.name
+                      member.user.name
                     )}
                   </TableCell>
                   <TableCell>
-                    {member.email.length > 25 ? (
+                    {member.user.email.length > 25 ? (
                       <button>
-                        <Tooltip text={member.email}>
-                          {member.email.slice(0, 25)}...
+                        <Tooltip text={member.user.email}>
+                          {member.user.email.slice(0, 25)}...
                         </Tooltip>
                       </button>
                     ) : (
-                      member.email
+                      member.user.email
                     )}
                   </TableCell>
                   <TableCell>
-                    {member.address.length > 30 ? (
-                      <button>
-                        <Tooltip text={member.address}>
-                          {member.address.slice(0, 30)}...
-                        </Tooltip>
-                      </button>
+                    {member.isAvailable ? (
+                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
+                        Chờ phân công
+                      </span>
                     ) : (
-                      member.address
+                      <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-red-600/10 ring-inset">
+                        Đã được phân công
+                      </span>
                     )}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(member.birthday).toLocaleDateString("vi-VN")}
-                  </TableCell>
-                  <TableCell>{member.phone}</TableCell>
-                  <TableCell>
-                    {member.gender === "MALE" ? "Nam" : "Nữ"}
                   </TableCell>
                   <TableCell className="pl-7">
                     <Checkbox
                       className="w-5 h-5"
+                      disabled={member.isAvailable === false}
                       tickClassName="w-3 h-3"
-                      checked={selectedIds.includes(member.id)}
-                      onChange={() => handleSelection(member.id)}
+                      checked={selectedIds.includes(member.user.id)}
+                      onChange={() => handleSelection(member.user.id)}
                     />
                   </TableCell>
                 </TableRow>

@@ -1,4 +1,4 @@
-import { AccountStatus, GenderType } from "./common";
+import { AccountStatus, GenderType, UserSummary } from "./common";
 import { RoleItem } from "./role";
 
 export type AccountItem = {
@@ -32,8 +32,8 @@ export type AccountDetailItem = {
 };
 
 export type AccountData = {
-  content: AccountItem[];
-  totalPages: number;
+  user: UserSummary;
+  isAvailable: boolean;
 };
 
 export type RegisterAccountData = {

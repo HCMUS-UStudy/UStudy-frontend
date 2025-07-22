@@ -17,6 +17,7 @@ import { FaChartBar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getStudentClassesWithGrades } from "@/app/lib/services/class";
 import { StudentClassWithGrades } from "@/app/types/class";
+import { useRouter } from "next/navigation";
 
 // Đăng ký các thành phần cần thiết của Chart.js
 ChartJS.register(
@@ -34,6 +35,7 @@ export default function ResultStudy() {
   const [classesData, setClassesData] = useState<StudentClassWithGrades[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -346,7 +348,10 @@ export default function ResultStudy() {
             <p className="text-xs text-gray-500">Theo dõi điểm số các môn</p>
           </div>
         </div>
-        <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm">
+        <button
+          className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm"
+          onClick={() => router.push("/member/academic-results")}
+        >
           <span>Xem tất cả</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"

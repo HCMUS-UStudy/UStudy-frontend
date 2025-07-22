@@ -63,11 +63,23 @@ export async function decrypt(
 
 export async function setUserDataCookies(userData: string) {
   const cookieStore = await cookies();
-  cookieStore.set("userData", userData, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  });
+  const encryptionKey = process.env.COOKIES_SECRET_KEY || "";
+  try {
+    const { encryptedData, iv } = await encrypt(userData, encryptionKey);
+    cookieStore.set("userData", encryptedData, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "strict",
+    });
+    cookieStore.set("userData_iv", iv, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function setTokensAndUserDataCookies(
