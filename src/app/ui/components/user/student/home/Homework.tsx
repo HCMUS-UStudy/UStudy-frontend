@@ -10,8 +10,10 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Homework() {
+  const router = useRouter();
   const [homeworkList, setHomeworkList] = useState<StudentClassWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +96,10 @@ export default function Homework() {
             <p className="text-xs text-gray-500">Theo dõi tiến độ học tập</p>
           </div>
         </div>
-        <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm">
+        <button
+          className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm"
+          onClick={() => router.push("/member/classes")}
+        >
           <span>Xem tất cả</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
