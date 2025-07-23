@@ -14,7 +14,6 @@ export default async function Members(props: {
   const currentPage = params.currentPage || 1;
   return (
     <div>
-      <div className="font-bold">Thành viên lớp học</div>
       <div className="mt-2">
         <ClassMembers
           classId={params.classId}

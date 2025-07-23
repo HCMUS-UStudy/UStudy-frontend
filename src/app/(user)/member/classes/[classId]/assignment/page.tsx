@@ -12,6 +12,7 @@ import { FaList, FaSort } from "react-icons/fa6";
 import QuestionOverviewModal from "@/app/ui/components/user/student/classes/assignment/QuestionOverviewModal";
 import SubmissionHistoryModal from "@/app/ui/components/user/student/classes/assignment/SubmissionHistoryModal";
 import AssignmentCard from "@/app/ui/components/user/student/classes/assignment/AssignmentCard";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 export default function ClassAssignment() {
   const params = useParams<{ classId: string }>();
@@ -152,9 +153,9 @@ export default function ClassAssignment() {
                 onClick={() =>
                   setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
                 }
-                className="flex items-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-200 transition"
+                className="flex items-center px-3 py-2 text-[14px] border border-control-border rounded-lg hover:bg-gray-200 transition"
               >
-                <span className="mr-2 text-primary-dark">
+                <span className="mr-2 ">
                   {sortOrder === "asc" ? "Cũ nhất" : "Mới nhất"}
                 </span>
                 <FaSort size={15} />
@@ -166,7 +167,23 @@ export default function ClassAssignment() {
               <span className="text-primary-darkest font-medium">
                 Loại bài:
               </span>
-              <select
+              <Select
+                defaultValue={filterFormat}
+                defaultLabel="Tất cả"
+                className="w-32"
+                showClearButton={false}
+                onValueChange={(value) => {
+                  setFilterFormat(
+                    value as "ALL" | "MULTIPLE_CHOICE" | "ESSAY" | "MIXED",
+                  );
+                }}
+              >
+                <SelectItem value="ALL">Tất cả</SelectItem>
+                <SelectItem value="MULTIPLE_CHOICE">Trắc nghiệm</SelectItem>
+                <SelectItem value="ESSAY">Tự luận</SelectItem>
+                <SelectItem value="MIXED">Kết hợp</SelectItem>
+              </Select>
+              {/* <select
                 value={filterFormat}
                 onChange={(e) =>
                   setFilterFormat(
@@ -183,7 +200,7 @@ export default function ClassAssignment() {
                 <option value="MULTIPLE_CHOICE">Trắc nghiệm</option>
                 <option value="ESSAY">Tự luận</option>
                 <option value="MIXED">Kết hợp</option>
-              </select>
+              </select> */}
             </div>
           </div>
 

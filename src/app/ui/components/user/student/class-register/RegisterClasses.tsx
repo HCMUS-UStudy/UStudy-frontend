@@ -4,12 +4,7 @@ import React, { useState } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { getListClassToRegister } from "@/app/lib/services/class";
 import { useSearchParams } from "next/navigation";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import RegisterClassesGrid from "../classes/RegisterClassesGrid";
 import { Button } from "../../../_common/Button";
 import StudentConfirmRegisterClass from "./StudentConfirmRegisterClass";
@@ -26,6 +21,12 @@ import {
   DialogFooter,
 } from "../../../_common/Dialog";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import {
+  getUserDataFromCookies,
+  setPermissionsCookies,
+  setUserDataCookies,
+} from "@/app/lib/action";
+import { getPermissions } from "@/app/lib/services";
 
 interface ClassRegisterProps {
   searchQuery: string;
@@ -73,7 +74,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         gradeQuery,
         statusQuery,
       ),
-    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 
   const registerClassMutation = useMutation({
@@ -90,9 +91,28 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
       queryClient.invalidateQueries({ queryKey: ["payments"] });
       setRegistrationSuccess(res);
       setConfirmRegsiter(true);
+      updateUserData(true);
       // setRegisteringClassId(null);
     },
   });
+
+  const updateUserData = async (hadClass: boolean) => {
+    try {
+      const [userData, permissions] = await Promise.all([
+        getUserDataFromCookies(),
+        getPermissions(),
+      ]);
+      console.log("hereeee");
+      console.log(permissions);
+      await setPermissionsCookies(permissions);
+      if (userData) {
+        const updatedUserData = { ...userData, hadClass };
+        await setUserDataCookies(JSON.stringify(updatedUserData));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const paymentMutation = useMutation({
     mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
