@@ -8,7 +8,6 @@ import {
   downloadMaterial,
 } from "@/app/lib/services/class-material";
 import { ClassMaterialItem, UserData } from "@/app/types";
-import Loading from "@/app/ui/components/_common/loading/Loading";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import {
   TbFolders,
@@ -403,7 +402,19 @@ export default function PersonalMaterial() {
           </div>
         )}
         {loading ? (
-          <Loading />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded-lg border border-gray-200 p-4 animate-pulse bg-white"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-gray-300 rounded"></div>
+                  <div className="h-4 bg-gray-300 rounded w-20"></div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">

@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogFooter,
 } from "@/app/ui/components/_common/Dialog";
+import { Input } from "../../_common/text-field";
 
 interface AddRoomModalProps {
   buttonLabel: string;
@@ -84,7 +85,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
     <>
       <Button
         variant="primary"
-        className="bg-primary-dark hover:bg-primary-darker text-white px-4 py-2 rounded-lg font-semibold transition-colors"
         onClick={() => setShowModal(true)}
         disabled={!selectedBranchId}
       >
@@ -98,21 +98,21 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
       >
         <DialogHeader>Thêm phòng học</DialogHeader>
         <DialogContent>
-          {error && (
+          {/* {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
               {error}
             </div>
-          )}
+          )} */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block mb-1 font-medium">Tên phòng</label>
-              <input
+              <Input
                 type="text"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 placeholder="Nhập tên phòng học..."
-                required
+                isError={!!error}
+                errorMsg={error}
                 disabled={loading}
               />
             </div>
@@ -120,14 +120,14 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
               <label className="block mb-1 font-medium">
                 Sức chứa (học sinh)
               </label>
-              <input
+              <Input
                 type="number"
                 min="1"
                 max="100"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={roomCapacity}
                 onChange={(e) => setRoomCapacity(Number(e.target.value))}
-                required
+                isError={!!error}
+                errorMsg={error}
                 disabled={loading}
               />
             </div>
@@ -148,7 +148,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
             <Button
               type="submit"
               variant="primary"
-              className="px-4 py-2 rounded-lg bg-primary-dark text-white hover:bg-primary-darker font-semibold transition-colors"
               disabled={loading}
               isPending={loading}
               form={undefined} // prevent warning, handled by form submit

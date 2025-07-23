@@ -9,7 +9,8 @@ import { useParams } from "next/navigation";
 import { AcademicResultManage } from "@/app/types/academicResult";
 
 export default function AcademicResultsPage() {
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId || "";
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const detailQuery = useQuery({

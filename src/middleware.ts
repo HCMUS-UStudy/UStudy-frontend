@@ -3,15 +3,17 @@ import {
   getTokensFromCookies,
   getUserDataFromCookies,
   handleLogoutCookies,
-  getPermissions,
+  // getPermissions,
 } from "./app/lib/action";
 import { handleRefreshToken } from "./app/lib/services/auth";
+import { getPermissions } from "./app/lib/services";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const { accessToken, refreshToken } = await getTokensFromCookies();
   const userData = await getUserDataFromCookies();
-  const permissions = await getPermissions();
+  console.log(userData?.hadClass);
+  let permissions: string[] = [];
   let response: NextResponse;
 
   const referer = request.headers.get("referer");
@@ -49,6 +51,8 @@ export async function middleware(request: NextRequest) {
     //   // cập nhật userData
     // }
     // const isValidToken = await verifyToken();
+    // permissions = await getPermissions();
+    permissions = await getPermissions();
     const isValidToken = true;
 
     if (!isValidToken) {
@@ -108,23 +112,10 @@ export async function middleware(request: NextRequest) {
         }
       }
     }
-    // if (
-    //   pathname.startsWith("/member") &&
-    //   !(defaultRoute === "PARENT" || defaultRoute === "STUDENT")
-    // ) {
-    //   return NextResponse.redirect(new URL("/login", request.url));
-    // }
     if (pathname.startsWith("/admin")) {
       if (defaultRoute !== "ADMIN") {
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
-      // if (
-      //   pathname.startsWith("/admin/schedule") ||
-      //   pathname.startsWith("/admin/manage-scores") ||
-      //   pathname.startsWith("/admin/rooms")
-      // ) {
-      //   return NextResponse.next();
-      // }
       if (!permissions.some((path) => pathname.startsWith(path))) {
         return NextResponse.redirect(new URL("/admin/dashboard", request.url));
       }

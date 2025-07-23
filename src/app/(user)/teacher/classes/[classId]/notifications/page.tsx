@@ -113,7 +113,7 @@ const Notification = () => {
       <div className="flex items-center justify-between my-4 mx-1">
         <div
           className="gap-1 cursor-pointer hover:bg-primary-lighter
-        flex items-center border border-gray-300 w-fit rounded-xl p-2 transition-all"
+        flex items-center border border-control-border w-fit rounded-xl px-3 py-2 transition-all"
           onClick={() => {
             setIsOpen(true);
           }}
@@ -201,7 +201,7 @@ const Notification = () => {
           {notifications.map((notification) => (
             <tr
               key={notification.id}
-              className={`cursor-pointer border border-primary-light ${
+              className={`cursor-pointer border border-primary-light transition-all ${
                 popupId === notification.id
                   ? !notification.read
                     ? "bg-primary-lighter"
@@ -256,7 +256,7 @@ const Notification = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Image
-                      src={notification.sender.avatar}
+                      src={`/userAvatars/${notification.sender.avatar}.png`}
                       alt="notification"
                       width={35}
                       height={35}
@@ -285,7 +285,7 @@ const Notification = () => {
                     <div className="relative ml-auto">
                       <div
                         className="flex items-center text-gray-600 text-[17px]
-                      sm:text-[19px] cursor-pointer hover:bg-gray-300 rounded-full"
+                      sm:text-[19px] cursor-pointer hover:bg-gray-300 rounded-full transition-all"
                       >
                         <Tooltip text="Tùy chọn">
                           <IoMdMore

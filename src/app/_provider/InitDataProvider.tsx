@@ -20,7 +20,11 @@ export default function InitDataProvider({
         queryKey: ["Permissions"],
         queryFn: () => getPermissions(),
         refetchOnWindowFocus: false,
-        enabled: !pathname?.includes("/login"),
+        enabled: !(
+          pathname?.includes("/login") ||
+          pathname === "/" ||
+          pathname === "/register"
+        ),
       },
     ],
   });
@@ -30,6 +34,7 @@ export default function InitDataProvider({
     if (permissions.status === "success") {
       dispatch(setPermissions(permissions.data));
       dispatch(setStatus("success"));
+      // updatePermissionsCookies(permissions.data);
     } else if (permissions.status === "pending") {
       dispatch(setStatus("pending"));
     } else {

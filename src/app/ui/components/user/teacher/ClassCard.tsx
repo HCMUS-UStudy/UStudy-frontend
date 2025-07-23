@@ -20,7 +20,7 @@ export default function ClassCard({
 
   return (
     <div
-      className={`border border-slate-200 rounded-2xl shadow-sm p-5 cursor-pointer 
+      className={`border border-slate-200 rounded-2xl shadow-sm p-5 cursor-pointer transition-all 
       ${!completed ? "bg-white hover:shadow-md hover:shadow-primary-light" : "bg-slate-100 hover:bg-slate-200"}`}
       onClick={handleClick}
     >
