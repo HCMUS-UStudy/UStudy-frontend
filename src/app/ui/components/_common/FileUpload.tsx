@@ -105,7 +105,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   return (
-    <div>
+    <div className="flex flex-col max-w-[600px] mt-[6px]">
       {!value ? (
         <div
           {...getRootProps()}
@@ -141,7 +141,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           )}
         </div>
       ) : (
-        <div className="flex flex-col gap-3 bg-gray-50 border p-5 rounded-xl">
+        <div className="flex flex-col gap-3 bg-gray-50 border p-4 rounded-xl max-w-[600px] mb-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center w-fit">
               <div>
@@ -155,7 +155,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
               {isEditing ? (
                 <input
                   type="text"
-                  className="border border-gray-300 rounded mr-1 pl-2 py-1 text-sm focus:outline-1 focus:outline-primary-dark min-w-[70px] max-w-[200px] sm:max-w-[310px] lg:max-w-[400px]"
+                  className="border border-gray-300 rounded mr-1 pl-2 py-1 text-sm focus:outline-1
+                   focus:outline-primary-dark min-w-[70px] max-w-[250px]"
                   placeholder="Tên tệp"
                   value={customBaseName}
                   onChange={(e) => setCustomBaseName(e.target.value)}
@@ -166,7 +167,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   style={{ width: `${customBaseName.length}ch` }}
                 />
               ) : (
-                <span className="text-gray-800 text-sm font-medium ml-2 truncate max-w-[200px] sm:max-w-[310px] lg:max-w-[400px]">
+                <span className="text-gray-800 text-sm font-medium ml-2 truncate max-w-[280px]">
                   {customBaseName}
                 </span>
               )}
@@ -174,7 +175,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 .{value?.name.split(".").pop() || ""}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-3">
               <button type="button" onClick={() => setIsEditing(!isEditing)}>
                 {isEditing ? (
                   <Tooltip text="Lưu tên tệp">
@@ -212,7 +213,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           <div className="flex-row items-start justify-between mb-2 text-[13px] text-gray-600 sm:flex sm:gap-2 sm:items-center">
             <p>Hỗ trợ tệp: PDF, DOC, DOCX, PPT, TXT, ZIP, JPG, PNG</p>
             <p>
-              Dung lượng tối đa: <span className="font-medium">10MB</span>
+              Kích thước tối đa: <span className="font-medium">10MB</span>
             </p>
           </div>
         </div>
