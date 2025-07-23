@@ -57,6 +57,7 @@ const QuestionModal = ({
   });
 
   const queryClient = useQueryClient();
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const isMultipleChoice = watch("isMultipleChoice");
   const handleMultipleChoiceToggle = (value: boolean) => {
@@ -111,6 +112,7 @@ const QuestionModal = ({
     };
 
     try {
+      setLoading(true);
       await createQuestion(body);
       addToast.success("Tạo câu hỏi thành công");
       onClose(false);
@@ -120,6 +122,8 @@ const QuestionModal = ({
     } catch (error) {
       console.error("Failed to create question:", error);
       addToast.error("Tạo câu hỏi thất bại");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -356,7 +360,11 @@ const QuestionModal = ({
                 </Button>
               </div>
               <div className="flex justify-end mt-4 border-t pt-3">
-                <Button className="px-4 py-2 rounded-lg" type="submit">
+                <Button
+                  className="px-4 py-2 rounded-lg"
+                  type="submit"
+                  isPending={isLoading}
+                >
                   Lưu
                 </Button>
               </div>
@@ -407,6 +415,7 @@ const QuestionModal = ({
                 <Button
                   className="px-4 py-2 rounded-lg"
                   onClick={handleSubmitEssay}
+                  isPending={isLoading}
                 >
                   Lưu
                 </Button>

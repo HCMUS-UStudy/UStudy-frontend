@@ -92,16 +92,35 @@ export default function AttendanceCalendar({
 
   // Use controlled date if month/year are provided, otherwise use current date
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const today = new Date();
     if (selectedMonth && selectedYear) {
+      // If selected month/year is current month/year, use today's date
+      if (
+        selectedMonth === today.getMonth() + 1 &&
+        selectedYear === today.getFullYear()
+      ) {
+        return today;
+      }
+      // Otherwise use the 1st of the selected month
       return new Date(selectedYear, selectedMonth - 1, 1);
     }
-    return new Date();
+    return today;
   });
 
   // Update selectedDate when selectedMonth/selectedYear change
   React.useEffect(() => {
     if (selectedMonth && selectedYear) {
-      setSelectedDate(new Date(selectedYear, selectedMonth - 1, 1));
+      const today = new Date();
+      // If selected month/year is current month/year, use today's date
+      if (
+        selectedMonth === today.getMonth() + 1 &&
+        selectedYear === today.getFullYear()
+      ) {
+        setSelectedDate(today);
+      } else {
+        // Otherwise use the 1st of the selected month
+        setSelectedDate(new Date(selectedYear, selectedMonth - 1, 1));
+      }
     }
   }, [selectedMonth, selectedYear]);
 

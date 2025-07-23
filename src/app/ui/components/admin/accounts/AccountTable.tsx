@@ -113,7 +113,6 @@ const AccountTable: React.FC<AccountTableProps> = ({
             "Ngày tạo",
             "Hành động",
           ]}
-          className="bg-gray-100"
         />
         <TableBody isLoading={status === "pending"}>
           {error ? (

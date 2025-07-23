@@ -152,7 +152,7 @@ export const SIDENAV_ITEMS_TEACHER: SideNavItem[] = [
     icon: <MdOutlineFileCopy size={20} />,
   },
   {
-    title: "Kết quả học tập",
+    title: "Điểm số",
     path: "/teacher/academic-results",
     icon: <BsPersonWorkspace size={20} />,
   },

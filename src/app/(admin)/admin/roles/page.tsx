@@ -1,8 +1,6 @@
 import React, { Suspense } from "react";
 
-import AddCourseModal from "@/app/ui/components/admin/courses/AddCourseModal";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
-import { HiAdjustments } from "react-icons/hi";
 import RoleDisplay from "@/app/ui/components/admin/roles/RoleDisplay";
 
 // props: {
@@ -24,7 +22,7 @@ export default async function RolePage() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Tổng số chức vụ ({4})</h2>
           <div className="flex items-center space-x-2">
-            <AddCourseModal buttonLabel="Tạo chức vụ" />
+            {/* <AddCourseModal buttonLabel="Tạo chức vụ" /> */}
           </div>
         </div>
 
@@ -35,14 +33,6 @@ export default async function RolePage() {
               placeholder="Tìm kiếm theo vai trò..."
             />
           </Suspense>
-          <div className="flex items-center gap-6 px-4">
-            <div className="flex items-center">
-              {/* <DropdownCourse label="Lọc" /> */}
-            </div>
-            <div className="flex items-center">
-              <HiAdjustments className="w-6 h-6 text-gray-500 rotate-90" />
-            </div>
-          </div>
         </div>
 
         <div className="overflow-x-auto mt-6 max-h-[400px]">

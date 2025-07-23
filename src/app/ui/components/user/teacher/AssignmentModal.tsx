@@ -11,6 +11,7 @@ import { createAssignment } from "@/app/lib/services/assignment";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
+import { Select, SelectItem } from "../../_common/Select";
 
 const AssignmentModal = ({
   returnButton = false,
@@ -452,8 +453,23 @@ const AssignmentModal = ({
             </div>
 
             <div className="mt-3">
-              <label className="font-medium">Chế độ bài tập</label>
-              <select
+              <Select
+                label="Chế độ bài tập"
+                defaultValue={"PRATICE"}
+                defaultLabel="Luyện tập"
+                onValueChange={(value) => {
+                  setNewAssignment((prev) => ({
+                    ...prev,
+                    mode: value as "PRACTICE" | "TEST",
+                  }));
+                }}
+                showClearButton={false}
+              >
+                <SelectItem value="PRACTICE">Luyện tập</SelectItem>
+                <SelectItem value="TEST">Kiểm tra</SelectItem>
+              </Select>
+              {/* <label className="font-medium">Chế độ bài tập</label> */}
+              {/* <select
                 className="w-full border border-primary-dark focus:outline-none focus:ring-1 focus:ring-primary rounded-lg p-2 mt-1"
                 value={newAssignment.mode}
                 onChange={(e) =>
@@ -465,7 +481,7 @@ const AssignmentModal = ({
               >
                 <option value="PRACTICE">Luyện tập</option>
                 <option value="TEST">Kiểm tra</option>
-              </select>
+              </select> */}
             </div>
 
             <div className="flex justify-between mt-4 border-t pt-3">

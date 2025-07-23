@@ -63,6 +63,10 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
     onSuccess: () => {
       addToast.success("Cập nhật câu hỏi thành công!");
       setIsEdit(false);
+      setNewFile(null);
+      setCustomBaseName("");
+      setIsDeleteFile(false);
+      setIsEditingFileName(false);
       refetch();
       queryClient.invalidateQueries({
         queryKey: ["question-detail", questionId],
@@ -109,9 +113,19 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
 
   const handleSave = () => {
     if (!editData) return;
+    let fileToUpload = newFile;
+    if (editData.questionType === "ESSAY" && newFile) {
+      if (newFile && customBaseName) {
+        const ext = newFile.name.substring(newFile.name.lastIndexOf("."));
+        const newName = customBaseName.endsWith(ext)
+          ? customBaseName
+          : customBaseName + ext;
+        fileToUpload = new File([newFile], newName, { type: newFile.type });
+      }
+    }
     mutation.mutate({
       description: editData.description,
-      file: isDeleteFile ? newFile : undefined,
+      file: fileToUpload,
       gradeId: editData.grade?.id,
       courseId: editData.course?.id,
       questionType: editData.questionType,
@@ -274,7 +288,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             )}
             {editData?.questionType === "ESSAY" &&
               (isDeleteFile || !editData?.fileName) && (
-                <div className="mb-3 w-1/3 items-center">
+                <div className="mb-3 w-fit items-center">
                   <span className="font-semibold">Tải lên file mới:</span>
                   <FileUpload
                     value={newFile}
@@ -291,10 +305,12 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                 </div>
               )}
             {editData?.questionType === "ESSAY" && (
-              <div className="mb-3">
-                <span className="font-semibold">Tiêu chí chấm điểm:</span>
-                <input
-                  className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-2/3"
+              <div className="mb-3 flex">
+                <span className="font-semibold mt-1">Tiêu chí chấm điểm:</span>
+                <textarea
+                  // className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-2/3"
+                  className="ml-2 border focus:outline-primary-darker rounded px-2 py-1 w-1/2
+                    min-h-[40px] max-h-[180px] resize-y"
                   value={editData?.scoringCriteria || ""}
                   onChange={(e) =>
                     handleChange("scoringCriteria", e.target.value)
