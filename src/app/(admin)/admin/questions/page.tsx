@@ -155,7 +155,7 @@ const QuestionList = () => {
       <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-stretch sm:items-center justify-between">
         <input
           type="text"
-          className="w-full sm:w-80 px-3 py-2 border-2 border-primary-light rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light text-base"
+          className="w-full sm:w-80 px-3 py-2 border-2 border-primary-light rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light text-sm"
           placeholder="Tìm kiếm theo mô tả, người tạo..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
