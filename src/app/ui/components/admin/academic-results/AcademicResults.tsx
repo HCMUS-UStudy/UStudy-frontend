@@ -5,12 +5,12 @@ import { FaSortUp, FaSortDown } from "react-icons/fa6";
 
 export default function AcademicResultsTable({
   data,
-  selectedIdx,
-  setSelectedIdx,
+  selectedId,
+  setSelectedId,
 }: {
   data: AcademicResultManage[];
-  selectedIdx: number | null;
-  setSelectedIdx: (idx: number | null) => void;
+  selectedId: string | null;
+  setSelectedId: (id: string | null) => void;
 }) {
   const [sortAsc, setSortAsc] = useState(true);
 
@@ -45,7 +45,10 @@ export default function AcademicResultsTable({
   );
   return (
     <div className="overflow-x-auto mb-8">
-      <table className="min-w-full border border-gray-200 rounded-lg border-separate border-spacing-0">
+      <table
+        className="min-w-full border border-gray-200 rounded-lg
+        border-separate border-spacing-0 text-[14px]"
+      >
         <thead className="bg-primary-light">
           <tr>
             <th className="pl-6 pr-4 py-2 text-left rounded-tl-lg">
@@ -87,7 +90,8 @@ export default function AcademicResultsTable({
           {sortedData.map((student, idx) => (
             <tr
               key={student.student.genId}
-              className={`border-t border-gray-200${idx === data.length - 1 ? " last:rounded-b-lg" : ""}`}
+              className={`border-t border-gray-200${idx === data.length - 1 ? " last:rounded-b-lg" : ""}
+               hover:bg-primary-lighter`}
             >
               <td
                 className={`pl-6 pr-4 py-2${idx === data.length - 1 ? " rounded-bl-lg" : ""}`}
@@ -104,7 +108,11 @@ export default function AcademicResultsTable({
                     key={title}
                     className={`px-4 py-2 text-center${idx === data.length - 1 && i === assignmentTitles.length - 1 ? " rounded-br-lg" : ""}`}
                   >
-                    {found ? Number(found.studentScore).toFixed(2) : "-"}
+                    {found
+                      ? Number(found.studentScore) % 1 === 0
+                        ? Number(found.studentScore)
+                        : Number(found.studentScore).toFixed(2)
+                      : "-"}
                   </td>
                 );
               })}
@@ -112,7 +120,9 @@ export default function AcademicResultsTable({
                 className={`px-4 py-2 text-center${idx === data.length - 1 ? "" : ""}`}
               >
                 {typeof student.averageScore === "number"
-                  ? student.averageScore.toFixed(2)
+                  ? Number(student.averageScore) % 1 === 0
+                    ? Number(student.averageScore)
+                    : Number(student.averageScore).toFixed(2)
                   : student.averageScore}
               </td>
               <td
@@ -120,8 +130,8 @@ export default function AcademicResultsTable({
               >
                 <button
                   className={`px-3 py-1 rounded bg-primary-light hover:bg-primary-dark hover:text-white transition
-                         ${selectedIdx === idx ? "ring-2 ring-primary-dark" : ""}`}
-                  onClick={() => setSelectedIdx(idx)}
+                         ${selectedId === student.student.id ? "ring-2 ring-primary-dark" : ""}`}
+                  onClick={() => setSelectedId(student.student.id)}
                 >
                   Xem
                 </button>

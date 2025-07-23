@@ -24,36 +24,71 @@ const Tooltip: React.FC<TooltipProps> = ({
   position = "top",
   children,
 }) => {
-  const positionClasses = {
-    top: "bottom-full left-1/2 transform -translate-x-1/2 mb-2",
-    bottom: "top-full left-1/2 transform -translate-x-1/2 mt-2",
-    left: "right-full top-1/2 transform -translate-y-1/2 mr-2",
-    right: "left-full top-1/2 transform -translate-y-1/2 ml-2",
-  };
+  const [show, setShow] = React.useState(false);
+  const [coords, setCoords] = React.useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (show && wrapperRef.current) {
+      const rect = wrapperRef.current.getBoundingClientRect();
+      let top = rect.top;
+      let left = rect.left;
+      switch (position) {
+        case "top":
+          top = rect.top - 8;
+          left = rect.left + rect.width / 2;
+          break;
+        case "bottom":
+          top = rect.bottom + 6;
+          left = rect.left + rect.width / 2;
+          break;
+        case "left":
+          top = rect.top + rect.height / 2;
+          left = rect.left - 8;
+          break;
+        case "right":
+          top = rect.top + rect.height / 2;
+          left = rect.right + 8;
+          break;
+        default:
+          break;
+      }
+      setCoords({ top, left });
+    }
+  }, [show, position]);
 
   return (
-    <div className="relative inline-block group select-none">
+    <div
+      className="relative inline-block select-none"
+      ref={wrapperRef}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
       {children}
-      <span
-        className={`absolute hidden group-hover:block bg-gray-700 text-white text-[12px] rounded py-1 px-2 z-[999] ${
-          text.length > 20
-            ? "max-w-xs break-words whitespace-pre-line"
-            : "whitespace-nowrap"
-        } ${positionClasses[position]}`}
-      >
-        {text}
-        {/* <span
-          className={`absolute w-2 h-2 bg-gray-700 transform rotate-45 ${
-            position === "top"
-              ? "bottom-[-4px] left-1/2 transform -translate-x-1/2"
-              : position === "bottom"
-                ? "top-[-4px] left-1/2 transform -translate-x-1/2"
-                : position === "left"
-                  ? "right-[-4px] top-1/2 transform -translate-y-1/2"
-                  : "left-[-4px] top-1/2 transform -translate-y-1/2"
+      {show && coords && (
+        <span
+          className={`fixed bg-gray-700 text-white text-[12px] rounded py-1 px-2 z-[9999] ${
+            text.length > 20
+              ? "max-w-xs break-words whitespace-pre-line text-left"
+              : "whitespace-nowrap"
           }`}
-        /> */}
-      </span>
+          style={{
+            top: coords.top,
+            left: coords.left,
+            transform:
+              position === "top"
+                ? "translate(-50%, -100%)"
+                : position === "bottom"
+                  ? "translate(-50%, 0)"
+                  : "translateY(-50%)",
+          }}
+        >
+          {text}
+        </span>
+      )}
     </div>
   );
 };
