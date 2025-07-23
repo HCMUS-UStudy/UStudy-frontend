@@ -12,6 +12,7 @@ import { getUserDataFromCookies } from "@/app/lib/action";
 // import Tooltip from "../_common/Tooltip";
 import BranchSelector from "./BranchSelector";
 import { IoMenuOutline } from "react-icons/io5";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = ({
   handleMenuOpen,
@@ -26,13 +27,25 @@ const Header = ({
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserData | null>(null);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const userInfo = await getUserDataFromCookies();
+  //     setUserInfo(userInfo);
+  //   };
+  //   fetchData();
+  // }, []);
+
+  const { data: userData, isSuccess } = useQuery({
+    queryKey: ["UserData"],
+    queryFn: () => getUserDataFromCookies(),
+    staleTime: 0,
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      const userInfo = await getUserDataFromCookies();
-      setUserInfo(userInfo);
-    };
-    fetchData();
-  }, []);
+    if (userData) {
+      setUserInfo(userData);
+    }
+  }, [isSuccess, userData]);
 
   const handleProfileClick = () => {
     router.push("/admin/profile");

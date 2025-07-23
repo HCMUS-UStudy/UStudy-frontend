@@ -21,6 +21,7 @@ export default function ClassLayout({
   const { data: classDetail } = useQuery({
     queryKey: ["ClassDetails"],
     queryFn: () => getClassById(classId),
+    refetchOnWindowFocus: false,
   });
   // const [currentTab, setCurrentTab] = useState<keyof typeof tabs>("overview");
   const pathname = usePathname();

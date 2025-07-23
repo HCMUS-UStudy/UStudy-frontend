@@ -120,7 +120,7 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
           <Image
             width={32}
             height={32}
-            src={assignment.createdBy.avatar || "/student.png"}
+            src={`/userAvatars/${assignment.createdBy.avatar}.png`}
             alt={assignment.createdBy.name}
             className="w-8 h-8 rounded-full border border-gray-300 shadow-sm"
           />
