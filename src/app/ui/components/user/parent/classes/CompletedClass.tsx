@@ -30,13 +30,26 @@ export default function CompletedClass() {
     queryKey: ["endedChildClasses", selectedChild?.id],
     queryFn: async () => {
       if (!selectedChild?.id) return [];
-      const data = await getListChildClasses(selectedChild.id, 0, 10, "");
+      try {
+        const data = await getListChildClasses(selectedChild.id, 0, 10, "");
+        // Ensure data.content exists and is an array
+        if (!data || !Array.isArray(data.content)) {
+          console.warn(
+            "Invalid data structure from getListChildClasses:",
+            data,
+          );
+          return [];
+        }
 
-      const now = new Date(); // phải đặt trong queryFn
-      return data.content.filter((classItem: ChildClass) => {
-        const endDate = new Date(classItem.endDate);
-        return endDate < now;
-      });
+        const now = new Date(); // phải đặt trong queryFn
+        return data.content.filter((classItem: ChildClass) => {
+          const endDate = new Date(classItem.endDate);
+          return endDate < now;
+        });
+      } catch (error) {
+        console.error("Error fetching child classes:", error);
+        return [];
+      }
     },
     enabled: !!selectedChild?.id,
     placeholderData: (prev) => prev,
@@ -110,9 +123,38 @@ export default function CompletedClass() {
 
   if (error) return <div>Lỗi: {(error as Error).message}</div>;
 
+  // Show empty state when no completed classes are available
+  if (classes.length === 0) {
+    return (
+      <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border-2 border-dashed border-gray-200">
+        <div className="mb-6">
+          <SiGoogleclassroom className="text-gray-300 text-8xl mx-auto" />
+        </div>
+        <h3 className="text-2xl font-bold text-gray-700 mb-3">
+          Chưa có lớp học đã hoàn thành
+        </h3>
+        <p className="text-gray-600 max-w-md mx-auto mb-6 leading-relaxed">
+          {selectedChild?.name} chưa hoàn thành lớp học nào. Các lớp học đã kết
+          thúc sẽ xuất hiện ở đây.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <div className="flex items-center gap-2 text-gray-500">
+            <BsCalendar className="text-lg" />
+            <span className="text-sm font-medium">
+              Lịch sử học tập sẽ được lưu trữ tại đây
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure classes is always an array before mapping
+  const safeClasses = Array.isArray(classes) ? classes : [];
+
   return (
     <div className="grid grid-cols-1 gap-6">
-      {classes.map((classItem) => (
+      {safeClasses.map((classItem) => (
         <Card
           key={classItem.id}
           className="overflow-hidden rounded-2xl hover:shadow-md transition-shadow duration-300"
