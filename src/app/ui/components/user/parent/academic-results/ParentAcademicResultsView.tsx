@@ -17,6 +17,8 @@ import {
 } from "chart.js";
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "@/app/store/store";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import {
   getChildScores,
   getListChildClasses,
@@ -47,8 +49,22 @@ ChartJS.register(
 );
 
 export default function ParentAcademicResultsView() {
+  const searchParams = useSearchParams();
+  //const router = useRouter();
   const [selectedClassId, setSelectedClassId] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("charts");
+
+  // Read class ID from URL query params on component mount
+  useEffect(() => {
+    const classId = searchParams.get("class");
+    if (classId && classId !== "all") {
+      setSelectedClassId(classId);
+      // Update URL without triggering a page refresh
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("class", classId);
+      window.history.replaceState({}, "", newUrl.toString());
+    }
+  }, [searchParams]);
 
   // Get selected child from Redux store
   const selectedChild = useAppSelector(
@@ -108,7 +124,17 @@ export default function ParentAcademicResultsView() {
     ? formatAcademicYear(selectedClass.startDate, selectedClass.endDate)
     : "";
 
-  const handleClassChange = (classId: string) => setSelectedClassId(classId);
+  const handleClassChange = (classId: string) => {
+    setSelectedClassId(classId);
+    // Update URL with the new class ID
+    const newUrl = new URL(window.location.href);
+    if (classId === "all") {
+      newUrl.searchParams.delete("class");
+    } else {
+      newUrl.searchParams.set("class", classId);
+    }
+    window.history.pushState({}, "", newUrl.toString());
+  };
 
   if (isLoadingClasses) {
     return <AcademicResultsSkeleton />;

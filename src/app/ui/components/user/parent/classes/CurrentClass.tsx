@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
   BsPerson,
@@ -8,7 +8,6 @@ import {
   BsPersonWorkspace,
   BsBook,
 } from "react-icons/bs";
-import { MdOutlineAssignment } from "react-icons/md";
 import { FaRegCommentDots } from "react-icons/fa";
 import { Card } from "../../../_common/Card";
 import { ChildClass } from "@/app/types";
@@ -19,6 +18,7 @@ import { useAppSelector } from "@/app/store/store";
 import ClassCardSkeleton from "./ClassCardSkeleton";
 
 export default function CurrentClass() {
+  const router = useRouter();
   const now = new Date();
   const selectedChild = useAppSelector(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,11 +33,24 @@ export default function CurrentClass() {
     queryKey: ["childClasses", selectedChild?.id],
     queryFn: async () => {
       if (!selectedChild?.id) return [];
-      const data = await getListChildClasses(selectedChild.id, 0, 10, "");
-      return data.content.filter((classItem: ChildClass) => {
-        const endDate = new Date(classItem.endDate);
-        return endDate >= now;
-      });
+      try {
+        const data = await getListChildClasses(selectedChild.id, 0, 10, "");
+        // Ensure data.content exists and is an array
+        if (!data || !Array.isArray(data.content)) {
+          console.warn(
+            "Invalid data structure from getListChildClasses:",
+            data,
+          );
+          return [];
+        }
+        return data.content.filter((classItem: ChildClass) => {
+          const endDate = new Date(classItem.endDate);
+          return endDate >= now;
+        });
+      } catch (error) {
+        console.error("Error fetching child classes:", error);
+        return [];
+      }
     },
     enabled: !!selectedChild?.id,
     placeholderData: (prevData) => prevData,
@@ -110,9 +123,38 @@ export default function CurrentClass() {
 
   if (error) return <div>Lỗi: {(error as Error).message}</div>;
 
+  // Show empty state when no classes are available
+  if (classes.length === 0) {
+    return (
+      <div className="text-center py-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-dashed border-blue-200">
+        <div className="mb-6">
+          <SiGoogleclassroom className="text-blue-300 text-8xl mx-auto" />
+        </div>
+        <h3 className="text-2xl font-bold text-gray-700 mb-3">
+          Chưa có lớp học hiện tại
+        </h3>
+        <p className="text-gray-600 max-w-md mx-auto mb-6 leading-relaxed">
+          {selectedChild?.name} hiện tại chưa tham gia lớp học nào. Hãy đăng ký
+          lớp học phù hợp.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <div className="flex items-center gap-2 text-blue-600">
+            <AiOutlineCalendar className="text-lg" />
+            <span className="text-sm font-medium">
+              Sẵn sàng học tập mọi lúc
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure classes is always an array before mapping
+  const safeClasses = Array.isArray(classes) ? classes : [];
+
   return (
     <div className="grid grid-cols-1 gap-6">
-      {classes.map((classItem) => (
+      {safeClasses.map((classItem) => (
         <Card
           key={classItem.id}
           className="overflow-hidden rounded-2xl hover:shadow-md transition-shadow duration-300"
@@ -191,24 +233,30 @@ export default function CurrentClass() {
               </div>
 
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
-                <Link
+                {/* <Link
                   href={`/parent/assignments?class=${classItem.id}`}
                   className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
                   <MdOutlineAssignment className="mr-2" /> Bài tập
-                </Link>
-                <Link
-                  href={`/parent/results?class=${classItem.id}`}
+                </Link> */}
+                <button
+                  onClick={() =>
+                    router.push(`/member/academic-result?class=${classItem.id}`)
+                  }
                   className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
                   <BsPersonWorkspace className="mr-2" /> Kết quả học tập
-                </Link>
-                <Link
-                  href={`/parent/contact?teacher=${classItem.teacherName}`}
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/member/contact?teacher=${classItem.teacherName}`,
+                    )
+                  }
                   className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
                   <FaRegCommentDots className="mr-2" /> Liên hệ giáo viên
-                </Link>
+                </button>
               </div>
             </div>
           </div>
