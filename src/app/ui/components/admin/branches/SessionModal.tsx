@@ -74,8 +74,7 @@ const SessionModal = ({
   const queryClient = useQueryClient();
   const useCreateSessionMutation = useMutation({
     mutationFn: (data: CreateSessionInputs) => createSession(data),
-    onSuccess: (res) => {
-      console.log(res);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Sessions"] });
       addToast.success("Tạo ca học mới thành công");
       onClose();
@@ -86,8 +85,7 @@ const SessionModal = ({
   });
   const useUpdateSessionMutation = useMutation({
     mutationFn: (data: Session) => updateSession(data),
-    onSuccess: (res) => {
-      console.log(res);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Sessions"] });
       addToast.success("Chỉnh sửa ca học mới thành công");
       onClose();

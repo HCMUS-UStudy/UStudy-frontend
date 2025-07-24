@@ -25,7 +25,6 @@ export default function ManageScoresClientPage() {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        console.log("Fetching classes...");
 
         // Use page 0 like in ApproveClassStudentModal
         const response = await getAllClasses(
@@ -36,14 +35,9 @@ export default function ManageScoresClientPage() {
           undefined,
           selectedBranchId || undefined,
         );
-        console.log("API Response:", response);
-        console.log("Response content:", response.content);
-        console.log("Response type:", typeof response);
-
         if (response.content && response.content.length > 0) {
           setClasses(response.content);
         } else {
-          console.log("No classes found in response");
           setClasses([]);
         }
       } catch (error) {

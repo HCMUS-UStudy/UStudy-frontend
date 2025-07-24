@@ -14,7 +14,6 @@ export const fetchAllGrades = createAsyncThunk(
     filter: string;
   }) => {
     const response = await getAllGrades(filter, limit, page);
-    console.log(response);
     return response;
   },
 );

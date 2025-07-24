@@ -45,7 +45,6 @@ const Header = ({
   });
 
   useEffect(() => {
-    console.log("here");
     if (isSuccess && userData) {
       setUserInfo(userData);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

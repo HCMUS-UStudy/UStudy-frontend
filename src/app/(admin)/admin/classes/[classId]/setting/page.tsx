@@ -65,20 +65,17 @@ export default function ClassSetting() {
       classId: string;
       data: UpdateClassType;
     }) => updateClass(classId, data),
-    onSuccess: (response) => {
-      console.log(response);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ClassDetails"] });
       addToast.success("Chỉnh sửa lớp học thành công");
     },
     onError: (error) => {
-      console.log(error);
       addToast.error(error.message);
     },
   });
 
   const handleUpdate = useCallback(
     ({ classId, data }: { classId: string; data: UpdateClassType }) => {
-      console.log("here");
       updateClassMutation.mutate({ classId, data });
     },
     [],

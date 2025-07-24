@@ -102,8 +102,6 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         getUserDataFromCookies(),
         getPermissions(),
       ]);
-      console.log("hereeee");
-      console.log(permissions);
       await setPermissionsCookies(permissions);
       if (userData) {
         const updatedUserData = { ...userData, hadClass };
@@ -137,7 +135,6 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   };
 
   const handlePayment = (classItem: ClassToRegisterItem) => {
-    console.log(classItem);
     setPaymentPendingId(classItem.classDto.id);
     paymentMutation.mutate(classItem.payment.id);
   };

@@ -38,8 +38,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   const ref = useRef<HTMLDivElement | null>(null);
 
-  console.log(messages);
-
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "auto" });

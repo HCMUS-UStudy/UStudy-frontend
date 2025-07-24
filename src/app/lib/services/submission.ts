@@ -138,11 +138,6 @@ export const updateSubmission = async (
     });
   });
 
-  // Log the FormData content for debugging
-  for (const pair of formData.entries()) {
-    console.log(pair[0] + ": " + pair[1]);
-  }
-
   try {
     // Send the request with the FormData
     const response = await axiosInstance.patch(

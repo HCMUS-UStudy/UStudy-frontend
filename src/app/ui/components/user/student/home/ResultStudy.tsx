@@ -255,7 +255,6 @@ export default function ResultStudy() {
   ChartJS.register({
     id: "addDotsAndConnect",
     afterDraw(chart: any) {
-      console.log("Drawing dots and lines...", averageScores);
       const { ctx, scales } = chart;
       const xScale = scales.x; // Trục x
       const yScale = scales.y; // Trục y
@@ -265,13 +264,10 @@ export default function ResultStudy() {
 
       // Vẽ chấm vàng cho điểm trung bình lớp
       averageScores.forEach((avgScore, index) => {
-        console.log(`Drawing dot for index ${index}, score: ${avgScore}`);
         if (avgScore && avgScore > 0) {
           // Tính tọa độ của chấm tròn
           const starX = xScale.getPixelForValue(index); // Trung tâm cột
           const starY = yScale.getPixelForValue(avgScore); // Tọa độ theo điểm tb lớp
-
-          console.log(`Dot position: x=${starX}, y=${starY}`);
 
           // Vẽ chấm tròn
           ctx.save();
