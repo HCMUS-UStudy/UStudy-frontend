@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
 import { IoMenuOutline } from "react-icons/io5";
-import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Header = ({
@@ -150,17 +149,7 @@ const Header = ({
                   Chọn học sinh:
                 </label>
                 <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm">
-                  {(selectedChild || children[0]).avatar ? (
-                    <Image
-                      src={(selectedChild || children[0]).avatar}
-                      alt="avatar"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-xl">👦</span>
-                  )}
+                  <span className="text-xl">👦</span>
                   <span className="font-medium text-gray-800">
                     {(selectedChild || children[0]).name}
                   </span>
@@ -193,17 +182,7 @@ const Header = ({
                     children.map((child: any) => {
                       const content = (
                         <span className="flex items-center gap-2">
-                          {child.avatar ? (
-                            <Image
-                              src={child.avatar}
-                              alt="avatar"
-                              width={24}
-                              height={24}
-                              className="w-6 h-6 rounded-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-xl">👦</span>
-                          )}
+                          <span className="text-xl">👦</span>
                           <span className="font-medium">{child.name}</span>
                         </span>
                       );

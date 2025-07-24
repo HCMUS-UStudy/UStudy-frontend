@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
   BsPerson,
@@ -15,12 +16,29 @@ import { getListChildClasses } from "@/app/lib/services/childClasses";
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "@/app/store/store";
 import CompletedSkeleton from "./CompletedSkeleton ";
+import ContactAdminModal from "./ContactAdminModal";
 
 export default function CompletedClass() {
+  const router = useRouter();
+  const [selectedClass, setSelectedClass] = useState<ChildClass | null>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const selectedChild = useAppSelector(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.children.selectedChild,
   );
+
+  const handleContactClick = (classItem: ChildClass) => {
+    if (!classItem.admins || classItem.admins.length === 0) return;
+
+    if (classItem.admins.length === 1) {
+      // Direct chat with single admin
+      router.push(`/member/contact?teacher=${classItem.admins[0].name}`);
+    } else {
+      // Show modal for multiple admins
+      setSelectedClass(classItem);
+      setIsContactModalOpen(true);
+    }
+  };
 
   const {
     data: classes = [],
@@ -32,6 +50,7 @@ export default function CompletedClass() {
       if (!selectedChild?.id) return [];
       try {
         const data = await getListChildClasses(selectedChild.id, 0, 10, "");
+        console.log(data);
         // Ensure data.content exists and is an array
         if (!data || !Array.isArray(data.content)) {
           console.warn(
@@ -229,23 +248,32 @@ export default function CompletedClass() {
               </div>
 
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
-                <Link
-                  href={`/parent/results?class=${classItem.id}`}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center justify-center transition-colors"
+                <button
+                  onClick={() => router.push(`/member/academic-results`)}
+                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
-                  <BsPersonWorkspace className="mr-2" /> Xem kết quả chi tiết
-                </Link>
-                <Link
-                  href={`/parent/contact?teacher=${classItem.teacherName}`}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center justify-center transition-colors"
-                >
-                  <FaRegCommentDots className="mr-2" /> Liên hệ giáo viên
-                </Link>
+                  <BsPersonWorkspace className="mr-2" /> Kết quả học tập
+                </button>
+                {classItem.admins && classItem.admins.length > 0 && (
+                  <button
+                    onClick={() => handleContactClick(classItem)}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center justify-center transition-colors"
+                  >
+                    <FaRegCommentDots className="mr-2" /> Liên hệ giáo vụ
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </Card>
       ))}
+
+      {/* Contact Admin Modal */}
+      <ContactAdminModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        admins={selectedClass?.admins || []}
+      />
     </div>
   );
 }

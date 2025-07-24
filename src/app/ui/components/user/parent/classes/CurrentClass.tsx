@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
   BsPerson,
@@ -16,14 +17,30 @@ import { AiOutlineCalendar } from "react-icons/ai";
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "@/app/store/store";
 import ClassCardSkeleton from "./ClassCardSkeleton";
+import ContactAdminModal from "./ContactAdminModal";
 
 export default function CurrentClass() {
   const router = useRouter();
   const now = new Date();
+  const [selectedClass, setSelectedClass] = useState<ChildClass | null>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const selectedChild = useAppSelector(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.children.selectedChild,
   );
+
+  const handleContactClick = (classItem: ChildClass) => {
+    if (!classItem.admins || classItem.admins.length === 0) return;
+
+    if (classItem.admins.length === 1) {
+      // Direct chat with single admin
+      router.push(`/member/contact?teacher=${classItem.admins[0].name}`);
+    } else {
+      // Show modal for multiple admins
+      setSelectedClass(classItem);
+      setIsContactModalOpen(true);
+    }
+  };
 
   const {
     data: classes = [],
@@ -35,6 +52,7 @@ export default function CurrentClass() {
       if (!selectedChild?.id) return [];
       try {
         const data = await getListChildClasses(selectedChild.id, 0, 10, "");
+        console.log(data);
         // Ensure data.content exists and is an array
         if (!data || !Array.isArray(data.content)) {
           console.warn(
@@ -240,28 +258,31 @@ export default function CurrentClass() {
                   <MdOutlineAssignment className="mr-2" /> Bài tập
                 </Link> */}
                 <button
-                  onClick={() =>
-                    router.push(`/member/academic-result?class=${classItem.id}`)
-                  }
+                  onClick={() => router.push(`/member/academic-results`)}
                   className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
                   <BsPersonWorkspace className="mr-2" /> Kết quả học tập
                 </button>
-                <button
-                  onClick={() =>
-                    router.push(
-                      `/member/contact?teacher=${classItem.teacherName}`,
-                    )
-                  }
-                  className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
-                >
-                  <FaRegCommentDots className="mr-2" /> Liên hệ giáo viên
-                </button>
+                {classItem.admins && classItem.admins.length > 0 && (
+                  <button
+                    onClick={() => handleContactClick(classItem)}
+                    className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200"
+                  >
+                    <FaRegCommentDots className="mr-2" /> Liên hệ giáo vụ
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </Card>
       ))}
+
+      {/* Contact Admin Modal */}
+      <ContactAdminModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        admins={selectedClass?.admins || []}
+      />
     </div>
   );
 }

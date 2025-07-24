@@ -181,7 +181,7 @@ export default function ParentTuition() {
               <div className="mt-4 flex justify-end">
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={paymentData?.totalPages || 2}
+                  totalPages={paymentData?.totalPages || 1}
                   handlePageClick={(page) => setCurrentPage(page)}
                   handlePreviousPage={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
