@@ -11,6 +11,7 @@ import { getPersonalClassSchedule } from "@/app/lib/services/classSchedule";
 import { ClassSchedule } from "@/app/types";
 import { format, startOfWeek, addDays } from "date-fns";
 import { vi } from "date-fns/locale";
+import { useRouter } from "next/navigation";
 
 export default function Schedule() {
   const [schedules, setSchedules] = useState<ClassSchedule[]>([]);
@@ -25,6 +26,7 @@ export default function Schedule() {
       day: "numeric",
     }).format(currentDate),
   );
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -145,7 +147,10 @@ export default function Schedule() {
             </span>
             <span className="text-xs text-gray-600">lớp trong ngày</span>
           </div>
-          <button className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm">
+          <button
+            className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm"
+            onClick={() => router.push("/member/schedule")}
+          >
             <span>Xem tất cả</span>
             <FaArrowRight className="ml-1 h-3 w-3" />
           </button>

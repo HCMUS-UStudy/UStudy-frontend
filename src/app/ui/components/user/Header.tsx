@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setChildren, setSelectedChild } from "@/app/store/ChildrenSlice";
 import { Notification } from "../_common/Notification";
 import { IoMenuOutline } from "react-icons/io5";
-import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Header = ({
@@ -145,33 +144,27 @@ const Header = ({
               pathname?.includes("/member/attendance") ||
               pathname?.includes("/member/classes")) &&
             (children.length === 1 ? (
-              <div className="flex flex-col items-start gap-0.5">
-                <label className="block text-xs font-medium text-primary-darkest mb-0.5">
-                  Chọn học sinh
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-primary-darkest whitespace-nowrap">
+                  Chọn học sinh:
                 </label>
-                <div className="flex items-center gap-1 border border-gray-200 rounded-md bg-white px-1.5 py-0.5 text-sm max-w-[140px]">
-                  {children[0].avatar ? (
-                    <Image
-                      src={`/userAvatars/${children[0].avatar}.png`}
-                      alt="avatar"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-lg">👦</span>
-                  )}
-                  <span className="font-medium">{children[0].name}</span>
+                <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm">
+                  <span className="text-xl">👦</span>
+                  <span className="font-medium text-gray-800">
+                    {(selectedChild || children[0]).name}
+                  </span>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-start gap-1">
-                <label className="block text-xs font-medium text-primary-darkest">
-                  Chọn học sinh
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-primary-darkest whitespace-nowrap">
+                  Chọn học sinh:
                 </label>
                 <Select
-                  className="min-w-[160px] w-auto max-w-none rounded-lg border border-primary-light bg-white shadow text-sm px-2 py-1"
-                  defaultLabel={selectedChild?.name}
+                  className="min-w-[180px] w-auto max-w-none text-sm px-3 py-2"
+                  defaultLabel={
+                    (selectedChild || children[0])?.name || "Chọn học sinh"
+                  }
                   showClearButton={false}
                   onValueChange={(value) => {
                     if (typeof value === "string" && value.trim() !== "") {
@@ -189,17 +182,7 @@ const Header = ({
                     children.map((child: any) => {
                       const content = (
                         <span className="flex items-center gap-2">
-                          {child.avatar ? (
-                            <Image
-                              src={child.avatar}
-                              alt="avatar"
-                              width={24}
-                              height={24}
-                              className="w-6 h-6 rounded-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-xl">👦</span>
-                          )}
+                          <span className="text-xl">👦</span>
                           <span className="font-medium">{child.name}</span>
                         </span>
                       );

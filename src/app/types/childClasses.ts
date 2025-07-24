@@ -7,6 +7,9 @@ import {
 } from "./common";
 
 export type ChildClass = BaseClassInfo & {
+  admins: Array<
+    Pick<UserSummary, "id" | "genId" | "email" | "name" | "avatar">
+  >;
   teacherName: string;
   scheduleInfo: BaseScheduleInfo[];
   grade: BaseGradeInfo;
