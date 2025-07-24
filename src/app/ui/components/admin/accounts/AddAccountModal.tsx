@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import { createNewAccount } from "@/app/lib/services/user";
 // import { useRouter } from "next/navigation";
 import { getAllRoles } from "@/app/lib/services/role";
-import { GenderType } from "@/app/types";
+import { CustomError, GenderType } from "@/app/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { createNewAccount } from "@/app/lib/services";
@@ -86,8 +86,13 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
         roleId: data.roleId,
       });
     },
-    onError: () => {
-      addToast.error("Lỗi hệ thống");
+    onError: (error) => {
+      const customError = error as CustomError;
+      if (customError.status !== 500) {
+        addToast.error(customError.message || "Tạo tài khoản thất bại");
+      } else {
+        addToast.error("Lỗi hệ thống");
+      }
     },
     onSuccess: () => {
       addToast.success("Tạo tài khoản thành công");

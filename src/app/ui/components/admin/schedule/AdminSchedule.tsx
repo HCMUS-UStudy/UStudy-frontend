@@ -3,7 +3,7 @@
 import Calendar, { CalendarProps } from "react-calendar";
 
 import { useState, useEffect } from "react";
-import { FaSpinner, FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegCalendarAlt } from "react-icons/fa";
 import {
   CardHeader,
   CardTitle,
@@ -15,6 +15,7 @@ import { RootState } from "@/app/store/store";
 import { getBranchSchedule } from "@/app/lib/services/classSchedule";
 import { BranchSchedule } from "@/app/types";
 import Image from "next/image";
+import { Loading } from "../../_common/loading";
 
 interface AdminScheduleRecord {
   classId: string;
@@ -222,8 +223,9 @@ export default function AdminSchedule() {
             </div>
             {loading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/70 rounded-2xl">
-                <FaSpinner className="animate-spin text-5xl mb-2 text-primary" />
-                <p className="text-primary">Đang tải lịch lớp...</p>
+                <Loading className="size-32" />
+                {/* <FaSpinner className="animate-spin text-5xl mb-2 text-primary" /> */}
+                <p className="text-primary-darkest">Đang tải lịch lớp...</p>
               </div>
             )}
           </div>
@@ -261,8 +263,9 @@ export default function AdminSchedule() {
               <p>Vui lòng chọn chi nhánh để xem lịch học</p>
             </div>
           ) : loading ? (
-            <div className="flex flex-col items-center justify-center py-10 text-primary animate-pulse">
-              <FaSpinner className="animate-spin text-5xl mb-2" />
+            <div className="flex flex-col items-center justify-center py-10 text-primary-darkest animate-pulse">
+              <Loading className="size-32" />
+              {/* <FaSpinner className="animate-spin text-5xl mb-2" /> */}
               <p>Đang tải lịch lớp...</p>
             </div>
           ) : getScheduleForSelectedDate().length > 0 ? (

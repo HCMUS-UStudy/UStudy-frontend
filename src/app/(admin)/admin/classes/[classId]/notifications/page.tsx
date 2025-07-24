@@ -264,7 +264,7 @@ const Notification = () => {
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                       <Image
-                        src={notification.sender.avatar}
+                        src={`/userAvatars/${notification.sender.avatar}.png`}
                         alt="notification"
                         width={35}
                         height={35}
