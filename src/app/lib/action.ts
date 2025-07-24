@@ -212,6 +212,31 @@ export async function handleLogoutCookies() {
   }
 }
 
+export async function setPermissionsCookies(permissions: string[]) {
+  const cookieStore = await cookies();
+  const encryptionKey = process.env.COOKIES_SECRET_KEY || "";
+  try {
+    const { encryptedData, iv } = await encrypt(
+      JSON.stringify(permissions),
+      encryptionKey,
+    );
+    cookieStore.set("permissions", encryptedData, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    cookieStore.set("permissions_iv", iv, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  } catch (error) {
+    console.error("Error encrypting permissions:", error);
+  }
+}
+
 export async function getPermissions(): Promise<string[]> {
   const cookieStore = await cookies();
   const encryptedPermissions = cookieStore.get("permissions")?.value;
