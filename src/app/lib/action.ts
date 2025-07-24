@@ -56,9 +56,8 @@ export async function decrypt(
       Buffer.from(encryptedData, "base64"),
     );
     return new TextDecoder().decode(encodedData);
-  } catch (error) {
-    console.log(error);
-  }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {}
 }
 
 export async function setUserDataCookies(userData: string) {

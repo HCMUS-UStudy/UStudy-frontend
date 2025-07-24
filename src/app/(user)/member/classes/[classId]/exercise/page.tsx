@@ -62,8 +62,8 @@ export default function ClassExercise() {
         setLoading(true);
         const response = await getAssignmentByClassId(0, 10, classId ?? "");
         setAssignment(response.content);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.log(error);
       } finally {
         setLoading(false);
       }

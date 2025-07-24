@@ -27,11 +27,11 @@ export default function AccountsComponent() {
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Search query submitted:", searchQuery);
+    //console.log("Search query submitted:", searchQuery);
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("Selected filter:", event.target.value);
+  const handleFilterChange = () => {
+    //console.log("Selected filter:", event.target.value);
   };
 
   const handleInputChange = (
@@ -43,7 +43,7 @@ export default function AccountsComponent() {
 
   const handleSubmitModal = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("New user details:", newUser);
+    //console.log("New user details:", newUser);
     setShowModal(false); // Close modal after submission
   };
 

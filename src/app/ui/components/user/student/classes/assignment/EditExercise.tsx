@@ -92,7 +92,6 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
     }));
 
     setIsEditing(false);
-    console.log("Updated Answer:", updatedAnswer);
   };
 
   const handleSave = () => {
@@ -156,8 +155,6 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
         addedFiles: File[];
         deletedFiles: string[];
       }[]; // Filter out null values
-
-      console.log(answers);
 
       if (answers.length > 0) {
         await updateSubmission(submissionId, { answers });

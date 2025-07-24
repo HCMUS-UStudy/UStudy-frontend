@@ -113,7 +113,6 @@ export const useWebSocketService = (
       },
       onConnect: () => {
         isConnected.current = true;
-        console.log("WebSocket connected");
         onConnectCallback();
       },
       onStompError: (error) => {

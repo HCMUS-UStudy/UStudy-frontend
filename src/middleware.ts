@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const { accessToken, refreshToken } = await getTokensFromCookies();
   const userData = await getUserDataFromCookies();
-  console.log(userData?.hadClass);
   let permissions: string[] = [];
   let response: NextResponse;
 

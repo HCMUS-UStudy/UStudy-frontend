@@ -93,8 +93,8 @@ describe("Tuition Page", () => {
     try {
       PageComponent = await Tuition();
       render(PageComponent);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      console.log(e);
       // swallow error
     }
     expect(screen.queryByTestId("student-tuition")).not.toBeInTheDocument();

@@ -52,7 +52,6 @@ export default function CurrentClass() {
       if (!selectedChild?.id) return [];
       try {
         const data = await getListChildClasses(selectedChild.id, 0, 10, "");
-        console.log(data);
         // Ensure data.content exists and is an array
         if (!data || !Array.isArray(data.content)) {
           console.warn(

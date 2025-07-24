@@ -52,7 +52,6 @@ export default function MemberList({
 
   useEffect(() => {
     if (memberList) {
-      console.log(memberList);
       if (currentPage === 0) {
         setMembers(memberList.content); // Nếu là trang đầu tiên, thay thế danh sách
       } else {
@@ -109,7 +108,6 @@ export default function MemberList({
         role as "STUDENT" | "PARENT" | "ADMIN" | "TEACHER",
       ),
     onSuccess: (res) => {
-      console.log(res);
       if (res.data.failedCount > 0) {
         addToast.warning(res.message);
       } else {

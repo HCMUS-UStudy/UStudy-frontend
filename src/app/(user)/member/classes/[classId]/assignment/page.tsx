@@ -13,6 +13,7 @@ import QuestionOverviewModal from "@/app/ui/components/user/student/classes/assi
 import SubmissionHistoryModal from "@/app/ui/components/user/student/classes/assignment/SubmissionHistoryModal";
 import AssignmentCard from "@/app/ui/components/user/student/classes/assignment/AssignmentCard";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 export default function ClassAssignment() {
   const params = useParams<{ classId: string }>();
@@ -35,6 +36,7 @@ export default function ClassAssignment() {
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionItem | null>(null);
   const [showQuestionOverview, setShowQuestionOverview] = useState(false);
+  const { addToast } = useCustomToast();
 
   const handleStartExercise = (
     assignmentId: string,
@@ -68,16 +70,15 @@ export default function ClassAssignment() {
         if (isExpired(selectedAssignment.endTime)) {
           router.push(`/member/classes/${classId}/review/${submissionId}`);
         } else {
-          console.log("Assignment is not yet expired.");
+          addToast.error("Assignment is not yet expired.");
         }
       }
     } else {
-      console.log("Selected assignment is not available.");
+      addToast.error("Selected assignment is not available.");
     }
   };
 
   const handleEdit = (submissionId: string) => {
-    console.log("Edit submission with ID:", submissionId);
     router.push(`/member/classes/${classId}/editExercise/${submissionId}`);
   };
 
@@ -97,8 +98,9 @@ export default function ClassAssignment() {
         setLoading(true);
         const response = await getAssignmentByClassId(0, 10, classId ?? "");
         setAssignment(response.content);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.log(error);
+        addToast.error("Không thể tải bài tập. Vui lòng thử lại sau.");
       } finally {
         setLoading(false);
       }
@@ -118,7 +120,6 @@ export default function ClassAssignment() {
             0,
             10,
           );
-          console.log(response);
           setSubmissions(response.content); // Lưu dữ liệu trả về vào state
         } catch (error) {
           console.error("Error fetching submissions:", error);
