@@ -170,18 +170,7 @@ const AssignmentPage = () => {
   ) => {
     setAnswers((prev) => ({ ...prev, [questionId]: message.content }));
     setAttachments((prev) => ({ ...prev, [questionId]: message.files }));
-    setSubmittedAnswers((prev) => ({
-      ...prev,
-      [questionId]: {
-        content: message.content,
-        ...(message.files && message.files.length > 0
-          ? { files: message.files }
-          : {}),
-        ...(message.deletedFileIds
-          ? { deletedFileIds: message.deletedFileIds }
-          : {}),
-      },
-    }));
+    setSubmittedAnswers((prev) => ({ ...prev, [questionId]: message }));
   };
 
   const downloadFile = async (fileName: string, questionId: string) => {
