@@ -16,10 +16,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import { createNewAccount } from "@/app/lib/services/user";
 // import { useRouter } from "next/navigation";
 import { getAllRoles } from "@/app/lib/services/role";
-import { GenderType } from "@/app/types";
+import { CustomError, GenderType } from "@/app/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { createNewAccount } from "@/app/lib/services";
+import { CustomDatePicker } from "../../_common/text-field";
 
 interface AddAccountModalProps {
   buttonLabel: string;
@@ -59,6 +60,7 @@ type CreateUserInputs = z.infer<typeof CreateUserSchema>;
 const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   const {
     register,
+    control,
     formState: { errors },
     handleSubmit,
     setValue,
@@ -86,12 +88,20 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
         roleId: data.roleId,
       });
     },
-    onError: () => {
-      addToast.error("Lỗi hệ thống");
+    onError: (error) => {
+      const customError = error as CustomError;
+      if (customError.status !== 500) {
+        addToast.error(
+          (customError as { data?: string }).data || "Tạo tài khoản thất bại",
+        );
+      } else {
+        addToast.error("Lỗi hệ thống");
+      }
     },
     onSuccess: () => {
       addToast.success("Tạo tài khoản thành công");
       queryClient.invalidateQueries({ queryKey: ["Accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["ListMembersToAdd"] });
       setShowModal(false);
     },
   });
@@ -180,6 +190,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 onValueChange={(value) => {
                   setValue("gender", value as GenderType);
                 }}
+                showClearButton={false}
               >
                 <SelectItem value="MALE">Nam</SelectItem>
                 <SelectItem value="FEMALE">Nữ</SelectItem>
@@ -196,11 +207,13 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 id="role"
                 name="role"
                 label="Chức vụ"
+                defaultLabel="Chọn chức vụ cho tài khoản"
                 isLoading={rolesStatus === "pending"}
                 onValueChange={(value) => {
                   setValue("roleId", String(value));
                   clearErrors("roleId");
                 }}
+                showClearButton={false}
               >
                 {roles?.map((role) => (
                   <SelectItem key={role.id} value={role.id}>
@@ -216,13 +229,22 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
             </div>
 
             {/*birthday*/}
-            <div className="relative mb-4">
+            {/* <div className="relative mb-4">
               <Input
                 type="date"
                 label="Ngày sinh *"
                 isError={errors.birthday !== undefined}
                 errorMsg={errors.birthday?.message}
                 {...register("birthday")}
+              />
+            </div> */}
+            <div className="relative mb-4">
+              <CustomDatePicker
+                label="Ngày sinh"
+                control={control}
+                name="birthday"
+                isError={errors.birthday !== undefined}
+                errorMsg={errors.birthday?.message}
               />
             </div>
           </form>

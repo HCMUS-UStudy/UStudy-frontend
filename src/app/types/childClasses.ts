@@ -53,3 +53,7 @@ export type ChildClassDetails = {
   studentRank: number;
   totalStudents: number;
 };
+
+export type ChildrenOfParent = {
+  id: string;
+} & BaseClassInfo;

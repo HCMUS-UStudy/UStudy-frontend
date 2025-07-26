@@ -56,7 +56,7 @@ export default function ParentAcademicResultsView() {
 
   // Read class ID from URL query params on component mount
   useEffect(() => {
-    const classId = searchParams.get("class");
+    const classId = searchParams?.get("class");
     if (classId && classId !== "all") {
       setSelectedClassId(classId);
       // Update URL without triggering a page refresh

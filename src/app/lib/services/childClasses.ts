@@ -1,4 +1,5 @@
 import axiosInstance from "@/app/lib/axios";
+import { Child } from "@/app/store/ChildrenSlice";
 import { ChildClassScore } from "@/app/types/childClasses";
 
 export const getListChildClasses = async (
@@ -35,4 +36,13 @@ export const getChildClassDetails = async (
     },
   });
   return response.data.data;
+};
+
+export const getAllChildrenOfParent = async (): Promise<Child[]> => {
+  try {
+    const response = await axiosInstance.get("/parent/children");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
