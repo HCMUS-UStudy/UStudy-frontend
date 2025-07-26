@@ -76,7 +76,7 @@ export default function Schedule() {
             )}`
           : "Không có giờ học",
         teacher:
-          schedule.classSession?.clazz.teacher?.name || "Chưa có giáo viên",
+          schedule.classSession?.clazz.teacher[0]?.name || "Chưa có giáo viên",
         location: schedule.classSession?.room?.name || "Chưa có phòng học",
         status:
           new Date(schedule.date) < currentDate ? "completed" : "upcoming",

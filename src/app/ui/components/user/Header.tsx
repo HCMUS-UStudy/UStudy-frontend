@@ -141,6 +141,7 @@ const Header = ({
               pathname?.includes("/member/schedule") ||
               pathname?.includes("/member/academic-result") ||
               pathname?.includes("/member/attendance") ||
+              pathname?.includes("/member/contact") ||
               pathname?.includes("/member/classes")) &&
             (children.length === 1 ? (
               <div className="flex items-center gap-2">
