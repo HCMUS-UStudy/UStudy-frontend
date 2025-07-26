@@ -7,11 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const roleMap: Record<string, string> = {
-  Student: "Học sinh",
-  Teacher: "Giáo viên",
-  Parent: "Phụ huynh",
-  Admin: "Admin",
-  Clerk: "Giáo vụ",
+  STUDENT: "Học sinh",
+  TEACHER: "Giáo viên",
+  PARENT: "Phụ huynh",
+  ADMIN: "Admin",
 };
 
 export const convertToVietnameseText = (num: number): string => {

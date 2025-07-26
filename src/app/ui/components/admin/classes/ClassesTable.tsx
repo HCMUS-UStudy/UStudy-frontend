@@ -87,7 +87,7 @@ export default function ClassesTable() {
             "Học phí",
             "Ngày bắt đầu",
             "Ngày kết thúc",
-            "",
+            "Hành động",
           ]}
         />
         <TableBody isLoading={status === "pending"}>
@@ -99,7 +99,7 @@ export default function ClassesTable() {
               <TableCell>{c.fee} VNĐ</TableCell>
               <TableCell>{c.startDate}</TableCell>
               <TableCell>{c.endDate}</TableCell>
-              <TableCell className="p-0 w-10 flex items-center justify-center gap-2 px-2 py-3">
+              <TableCell className="p-0 w-full flex items-center justify-start gap-2 px-10 py-3">
                 <div
                   onClick={() => {
                     router.push(`/admin/classes/${c.id}`);

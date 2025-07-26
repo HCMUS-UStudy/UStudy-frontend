@@ -149,7 +149,6 @@ const Header = ({
                   Chọn học sinh:
                 </label>
                 <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm">
-                  <span className="text-xl">👦</span>
                   <span className="font-medium text-gray-800">
                     {(selectedChild || children[0]).name}
                   </span>
