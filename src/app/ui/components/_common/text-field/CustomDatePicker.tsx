@@ -74,7 +74,7 @@ export const CustomDatePicker = <T extends FieldValues>({
   label,
   isError = false,
   errorMsg = "",
-  placeholder = "DD/MM/YYYY",
+  placeholder = "dd/MM/yyyy",
   ...datePickerProps
 }: CustomDatePickerProps<T>) => {
   return (
@@ -100,9 +100,15 @@ export const CustomDatePicker = <T extends FieldValues>({
                   <ConfigProvider locale={viVN}>
                     <AntdDatepicker
                       {...datePickerProps}
+                      classNames={{
+                        popup: {
+                          root: "text-primary-darkest hover:!text-primary-darkest",
+                        },
+                      }}
                       placeholder={placeholder}
                       id={name}
                       format="DD/MM/YYYY"
+                      variant="borderless"
                       className="w-full px-2 rounded outline-none border-none text-[14px] focus:outline-green-500  cursor-pointer text-sm bg-transparent"
                       onChange={(dateValue) => {
                         // setDate(dateValue);

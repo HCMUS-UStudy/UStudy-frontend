@@ -90,12 +90,10 @@ export default function StudentRegister() {
       addToast.error(String(customError.data));
     },
   });
-  // const [loadingRegister, setLoadingRegister] = useState<boolean>(false);
   const [registerSuccessfully, setRegisterSuccessfully] =
     useState<boolean>(false);
 
   const onSubmit = async (data: StudentRegisterInputs) => {
-    // console.log(data);
     useRegisterMutation.mutate(data);
   };
   if (registerSuccessfully) {
@@ -120,11 +118,6 @@ export default function StudentRegister() {
               Ghi danh
             </div>
             <StudentBasicInformation />
-            {/* <div className="col-span-3 flex flex-col gap-4 lg:p l-10">
-                <StudentGradeSelector />
-                <StudentBranchSelector />
-                <StudentCoursesSelector />
-              </div> */}
             <Button
               isPending={useRegisterMutation.status === "pending"}
               className="mt-6 w-full text-md"

@@ -20,6 +20,7 @@ import { CustomError, GenderType } from "@/app/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { createNewAccount } from "@/app/lib/services";
+import { CustomDatePicker } from "../../_common/text-field";
 
 interface AddAccountModalProps {
   buttonLabel: string;
@@ -59,6 +60,7 @@ type CreateUserInputs = z.infer<typeof CreateUserSchema>;
 const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   const {
     register,
+    control,
     formState: { errors },
     handleSubmit,
     setValue,
@@ -89,7 +91,9 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
     onError: (error) => {
       const customError = error as CustomError;
       if (customError.status !== 500) {
-        addToast.error(customError.message || "Tạo tài khoản thất bại");
+        addToast.error(
+          (customError as { data?: string }).data || "Tạo tài khoản thất bại",
+        );
       } else {
         addToast.error("Lỗi hệ thống");
       }
@@ -225,13 +229,22 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
             </div>
 
             {/*birthday*/}
-            <div className="relative mb-4">
+            {/* <div className="relative mb-4">
               <Input
                 type="date"
                 label="Ngày sinh *"
                 isError={errors.birthday !== undefined}
                 errorMsg={errors.birthday?.message}
                 {...register("birthday")}
+              />
+            </div> */}
+            <div className="relative mb-4">
+              <CustomDatePicker
+                label="Ngày sinh"
+                control={control}
+                name="birthday"
+                isError={errors.birthday !== undefined}
+                errorMsg={errors.birthday?.message}
               />
             </div>
           </form>
