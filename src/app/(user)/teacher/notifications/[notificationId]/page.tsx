@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { NotificationItem } from "@/app/types";
 import {
   getNotificationDetails,
   getListNotification,
 } from "@/app/lib/services/notification";
-import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import NotificationDetailHeader from "@/app/ui/components/admin/notifications/NotificationDetailHeader";
@@ -22,12 +22,15 @@ const SingleNotification = () => {
   const [allNotifications, setAllNotifications] = useState<NotificationItem[]>(
     [],
   );
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [navigating, setNavigating] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const params = useParams();
-  const notificationId = params?.notificationId ?? "";
+  const notificationId = Array.isArray(params?.notificationId)
+    ? params.notificationId[0]
+    : (params?.notificationId ?? "");
   const router = useRouter();
 
   useEffect(() => {
@@ -72,15 +75,8 @@ const SingleNotification = () => {
     if (!mounted) return;
 
     const fetchData = async () => {
-      setLoading(true);
       try {
-        // Only fetch current notification details
-        const currentData = await getNotificationDetails(
-          notificationId as string,
-        );
-        setNotification(currentData);
-
-        // Try to get notifications from cache first, only fetch if not available
+        // Load all notifications if not already loaded
         const cachedNotifications = queryClient.getQueryData(["notifications"]);
         if (cachedNotifications) {
           setAllNotifications(
@@ -90,19 +86,21 @@ const SingleNotification = () => {
             ),
           );
         } else {
-          // Only fetch all notifications if not in cache
           const allData = await getListNotification();
-          setAllNotifications(
-            allData.sort(
-              (a: NotificationItem, b: NotificationItem) =>
-                new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
-            ),
+          const sortedData = allData.sort(
+            (a: NotificationItem, b: NotificationItem) =>
+              new Date(b.sendDate).getTime() - new Date(a.sendDate).getTime(),
           );
+          setAllNotifications(sortedData);
+          // Cache the notifications
+          queryClient.setQueryData(["notifications"], sortedData);
         }
 
-        // Mark current notification as read if it's not already read
-        if (currentData && !currentData.read) {
-          // Update the notification in cache to mark as read
+        // Load current notification
+        if (notificationId) {
+          const currentData = await getNotificationDetails(notificationId);
+          setNotification(currentData);
+          // Mark as read in the cache
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           queryClient.setQueryData(["notifications"], (oldData: any) => {
             if (!oldData) return oldData;
@@ -113,19 +111,43 @@ const SingleNotification = () => {
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();
   }, [notificationId, queryClient, mounted]);
 
-  const handleNotificationClick = (notificationId: string) => {
-    if (!mounted) return;
+  const handleNotificationClick = async (clickedNotificationId: string) => {
+    if (!mounted || isAnimating || clickedNotificationId === notificationId)
+      return;
 
-    setNavigating(true);
+    setIsAnimating(true);
     setSidebarOpen(false); // Close sidebar on mobile when selecting notification
-    router.push(`/teacher/notifications/${notificationId}`);
+    try {
+      // Update the URL and let Next.js handle the route change
+      await router.push(`/teacher/notifications/${clickedNotificationId}`);
+
+      // Update the notification state with the new data
+      const currentData = await getNotificationDetails(clickedNotificationId);
+
+      // Update the local state and cache
+      setAllNotifications((prev) => {
+        const updated = prev.map((item) =>
+          item.id === clickedNotificationId ? { ...item, read: true } : item,
+        );
+        queryClient.setQueryData(["notifications"], updated);
+        return updated;
+      });
+
+      // Update the current notification
+      setNotification(currentData);
+    } catch (error) {
+      console.error("Failed to fetch notification details:", error);
+    } finally {
+      // Reset animation state
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 300);
+    }
   };
 
   const handleBackToList = () => {
@@ -146,40 +168,40 @@ const SingleNotification = () => {
     }
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-pulse">
-            <Loading />
-          </div>
-          <p className="mt-4 text-primary-darkest font-medium animate-pulse">
-            Đang tải thông báo...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // if (!mounted) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="animate-pulse">
+  //           <Loading />
+  //         </div>
+  //         <p className="mt-4 text-primary-darkest font-medium animate-pulse">
+  //           Đang tải thông báo...
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-pulse">
-            <Loading />
-          </div>
-          <p className="mt-4 text-primary-darkest font-medium animate-pulse">
-            Đang tải thông báo...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="animate-pulse">
+  //           <Loading />
+  //         </div>
+  //         <p className="mt-4 text-primary-darkest font-medium animate-pulse">
+  //           Đang tải thông báo...
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
       {/* Navigation Loading Overlay */}
-      {navigating && (
+      {/* {navigating && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 shadow-2xl flex items-center gap-4">
             <div className="animate-spin">
@@ -202,7 +224,7 @@ const SingleNotification = () => {
             </span>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Header */}
       <NotificationDetailHeader
@@ -231,12 +253,56 @@ const SingleNotification = () => {
         )}
 
         {/* Right Side - Notification Detail */}
-        <div className="flex-1 bg-gradient-to-br from-white via-primary-lighter/20 to-primary-light/10 overflow-y-auto">
-          {notification ? (
-            <NotificationDetailContent notification={notification} />
-          ) : (
-            <NotificationNotFound onBackToList={handleBackToList} />
-          )}
+        <div className="flex-1 bg-gradient-to-br from-white via-primary-lighter/20 to-primary-light/10 overflow-y-auto relative">
+          <AnimatePresence mode="wait">
+            {notification ? (
+              <motion.div
+                key={notificationId}
+                initial={{ opacity: 0, x: 50, filter: "blur(5px)" }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                  filter: "blur(0)",
+                  transition: {
+                    duration: 0.3,
+                    ease: [0.22, 1, 0.36, 1],
+                    x: { duration: 0.3 },
+                    opacity: { duration: 0.25 },
+                    filter: { duration: 0.4 },
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  x: -50,
+                  filter: "blur(5px)",
+                  transition: {
+                    duration: 0.2,
+                    ease: [0.4, 0, 0.6, 1],
+                    x: { duration: 0.2 },
+                    opacity: { duration: 0.2 },
+                    filter: { duration: 0.2 },
+                  },
+                }}
+                className="h-full w-full absolute inset-0"
+              >
+                <div className="p-6 h-full overflow-y-auto">
+                  <NotificationDetailContent notification={notification} />
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="not-found"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { duration: 0.2 } }}
+                exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                className="h-full w-full absolute inset-0"
+              >
+                <div className="p-6 h-full overflow-y-auto">
+                  <NotificationNotFound onBackToList={handleBackToList} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

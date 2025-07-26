@@ -1,10 +1,4 @@
 import React from "react";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaXTwitter,
-} from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -20,12 +14,12 @@ export default function Footer() {
           nghiệm học tập hiệu quả và tiện lợi. Hãy bắt đầu hành trình chinh phục
           tri thức của bạn ngay hôm nay!
         </div>
-        <div className="flex w-full mt-5 gap-7 justify-items-start">
+        {/* <div className="flex w-full mt-5 gap-7 justify-items-start">
           <FaFacebook className="w-10 h-10" />
           <FaInstagram className="w-10 h-10" />
           <FaYoutube className="w-10 h-10" />
           <FaXTwitter className="w-10 h-10" />
-        </div>
+        </div> */}
       </div>
       <div>
         <p className="font-bold text-lg lg:text-2xl">Thông tin chung</p>
@@ -44,7 +38,7 @@ export default function Footer() {
           <p>227 Đ. Nguyễn Văn Cừ, Phường 4, Quận 5, Hồ Chí Minh</p>
           <p>+1 202-918-2132</p>
           <p>tploc@fit.hcmus.edu.vn</p>
-          <p>www.hcmus.edu.vn</p>
+          <p>https://ustudy.io.vn</p>
         </div>
       </div>
     </div>

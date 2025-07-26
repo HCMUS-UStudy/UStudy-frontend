@@ -1,3 +1,4 @@
+import { UserSummary } from "./common";
 import { Teacher } from "./teacher";
 
 export type ClassSchedule = {
@@ -33,7 +34,7 @@ export type ClassSession = {
       id: string;
       name: string;
     };
-    teacher: Teacher | null;
+    teacher: UserSummary[]; // Array of teachers
   };
   session: {
     id: string;

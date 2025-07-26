@@ -140,7 +140,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
   return (
     <div
-      className={`sidebar fixed lg:relative inset-y-0 left-0 z-40 w-80 lg:w-1/3 border-r border-primary-light bg-white overflow-y-auto transform transition-transform duration-300 ease-in-out ${
+      className={`sidebar fixed lg:relative inset-y-0 left-0 z-40 w-80 lg:w-1/3 border-r border-primary-light bg-white overflow-y-auto ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       }`}
     >
@@ -186,26 +186,24 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
           Danh sách thông báo
         </h2>
         <div className="space-y-3">
-          {allNotifications.map((item, index) => {
+          {allNotifications.map((item) => {
             const isUnread = !item.read;
             const isActive = item.id === currentNotificationId;
             return (
               <Card
                 key={item.id}
-                className={`cursor-pointer transition-all duration-300 hover:shadow-lg group ${
+                className={`cursor-pointer transition-all duration-300 group ${
                   isActive
-                    ? "border-2 border-primary-dark bg-primary-lighter shadow-lg scale-[1.02]"
+                    ? "border-2 border-primary bg-primary-lighter shadow-lg scale-[1.02] ring-2 ring-primary/50"
                     : isUnread
-                      ? "border-l-4 border-l-red-500 bg-gradient-to-r from-red-50 to-white"
-                      : "hover:border-primary-light bg-white"
+                      ? "border-l-4 border-l-red-500 bg-gradient-to-r from-red-50 to-white hover:shadow-md"
+                      : "hover:border-primary-light bg-white hover:shadow-md"
                 } ${navigating ? "pointer-events-none opacity-75" : ""}`}
-                style={{
-                  animationDelay: `${index * 30}ms`,
-                  animationName: "slideInLeft",
-                  animationDuration: "0.4s",
-                  animationTimingFunction: "ease-out",
-                  animationFillMode: "forwards",
-                }}
+                style={
+                  {
+                    // Removed animations for better performance
+                  }
+                }
                 onClick={() => {
                   if (!navigating) {
                     onNotificationClick(item.id);
