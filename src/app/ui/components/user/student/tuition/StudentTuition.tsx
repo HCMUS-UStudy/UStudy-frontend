@@ -46,14 +46,11 @@ export default function StudentTuition() {
       getPaymentByStuId(undefined, currentPage - 1, totalPages, statusParam),
     placeholderData: keepPreviousData,
   });
-  console.log(paymentData?.content);
   const payments = paymentData?.content || [];
 
   const pendingPayments = payments.filter((p) => p.status === "PENDING");
   const completedPayments = payments.filter((p) => p.status === "COMPLETED");
   const filteredAllPayments = [...pendingPayments, ...completedPayments];
-
-  console.log(filteredAllPayments);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {

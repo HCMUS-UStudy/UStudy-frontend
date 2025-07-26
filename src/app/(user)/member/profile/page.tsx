@@ -11,10 +11,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import { getProfile } from "@/app/lib/services";
 import { useQuery } from "@tanstack/react-query";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 const MemberProfilePage: React.FC = () => {
   const [defaultRoute, setDefaultRoute] = useState<string>("");
   const { children } = useSelector((state: RootState) => state.children);
+  const { addToast } = useCustomToast();
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["UserProfile"],
@@ -24,10 +26,10 @@ const MemberProfilePage: React.FC = () => {
   const fetchData = async () => {
     try {
       const userData = await getUserDataFromCookies();
-      console.log("User data from cookies:", userData); // Debug log
       setDefaultRoute(userData?.role.defaultRoute || "");
-    } catch (error) {
-      console.error("Failed to fetch profile:", error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      addToast.error(e || "Lỗi khi lấy dữ liệu người dùng");
     }
   };
 
@@ -51,7 +53,6 @@ const MemberProfilePage: React.FC = () => {
   }
 
   if (defaultRoute === "PARENT") {
-    console.log("Rendering parent view with children:", children); // Debug log
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white rounded-3xl shadow-lg">

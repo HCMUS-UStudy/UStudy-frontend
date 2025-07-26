@@ -56,7 +56,6 @@ export default function AdminSchedule() {
   useEffect(() => {
     const fetchSchedule = async (month: number, year: number) => {
       if (!selectedBranchId) {
-        console.log("No branch selected");
         return;
       }
 
@@ -64,9 +63,6 @@ export default function AdminSchedule() {
       try {
         const response = await getBranchSchedule(selectedBranchId, month, year);
         const branchSchedules: BranchSchedule[] = response.data.data;
-
-        console.log("Branch schedule response:", response.data);
-        console.log("Branch schedules:", branchSchedules);
 
         // Transform API data to our format
         const transformedData: AdminScheduleData = {
@@ -113,7 +109,6 @@ export default function AdminSchedule() {
           }
         });
 
-        console.log(transformedData);
         setScheduleData(transformedData);
       } catch (error) {
         console.error("Failed to fetch branch schedule:", error);

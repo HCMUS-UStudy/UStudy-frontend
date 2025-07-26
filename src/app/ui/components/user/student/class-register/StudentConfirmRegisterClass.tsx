@@ -25,7 +25,6 @@ export default function StudentConfirmRegisterClass({
   const handlePaymentMutation = useMutation({
     mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
     onSuccess: (response) => {
-      console.log(response);
       window.open(response, "_blank");
       // toast.success(response, {
       //   position: "bottom-right",

@@ -60,14 +60,6 @@ export default function CreateForumPostPage() {
     setIsSubmitting(true);
 
     try {
-      // In a real app, this would be an API call to create the post
-      console.log({
-        title,
-        content,
-        tags,
-        attachments: attachments.map((file) => file.name),
-      });
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 

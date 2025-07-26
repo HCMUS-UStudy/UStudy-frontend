@@ -93,9 +93,9 @@ describe("Schedule Page", () => {
     try {
       PageComponent = await Schedule();
       render(PageComponent);
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
       // swallow error
-      console.log(e);
     }
     expect(screen.queryByTestId("student-schedule")).not.toBeInTheDocument();
     expect(screen.queryByTestId("parent-schedule")).not.toBeInTheDocument();

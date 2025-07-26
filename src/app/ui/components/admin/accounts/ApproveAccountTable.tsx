@@ -78,7 +78,6 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
 
   // // Fetch dữ liệu khi searchQuery hoặc currentPage thay đổi
   useEffect(() => {
-    console.log(loading);
     const fetchClasses = async () => {
       setLoading(true);
       try {
@@ -87,7 +86,6 @@ const ApproveAccountTable: React.FC<ApproveAccountTableProps> = ({
           searchQuery,
           selectedCourse ?? "",
         );
-        console.log(content);
         setClasses(content);
         setTotalPages(totalPages || 1);
       } catch (error) {

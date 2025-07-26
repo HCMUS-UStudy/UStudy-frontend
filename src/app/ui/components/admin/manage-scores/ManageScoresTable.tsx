@@ -12,11 +12,8 @@ import {
   FileText,
 } from "lucide-react";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { getAcademicResult } from "@/app/lib/services/academicResult";
 import { AcademicResult, Content } from "@/app/types/academicResult";
 import Loading from "../../_common/loading/Loading";
-
-const PAGE_SIZE = 10;
 
 const sortKeys = {
   title: "title",
@@ -61,13 +58,6 @@ const ManageScoresTable: React.FC<ManageScoresTableProps> = ({
       setLoading(true);
       setError(null);
       try {
-        const response = await getAcademicResult(
-          classId,
-          currentPage,
-          PAGE_SIZE,
-        );
-        console.log("API Response:", response);
-
         // Check if response has data, if not use mock data
         // if (
         //   response &&

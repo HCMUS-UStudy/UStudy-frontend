@@ -58,7 +58,6 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
   // const handlePayment = () => {
   //   handlePaymentMutation.mutate(selectedClass: ClassToReg);
   // };
-  console.log(classes);
   if (status === "pending") {
     return <RegisterClassesLoading />;
   }

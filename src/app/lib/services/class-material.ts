@@ -44,7 +44,6 @@ export const createFolder = async (
       parentId: parentId,
     },
   );
-  console.log("response", response.data);
   return response.data;
 };
 
