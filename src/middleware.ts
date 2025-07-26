@@ -3,7 +3,6 @@ import {
   getTokensFromCookies,
   getUserDataFromCookies,
   handleLogoutCookies,
-  // getPermissions,
 } from "./app/lib/action";
 import { handleRefreshToken } from "./app/lib/services/auth";
 import { getPermissions } from "./app/lib/services";
@@ -12,7 +11,6 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const { accessToken, refreshToken } = await getTokensFromCookies();
   const userData = await getUserDataFromCookies();
-  console.log(userData?.hadClass);
   let permissions: string[] = [];
   let response: NextResponse;
 

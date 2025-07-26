@@ -97,6 +97,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
     onSuccess: () => {
       addToast.success("Tạo tài khoản thành công");
       queryClient.invalidateQueries({ queryKey: ["Accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["ListMembersToAdd"] });
       setShowModal(false);
     },
   });
@@ -185,6 +186,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 onValueChange={(value) => {
                   setValue("gender", value as GenderType);
                 }}
+                showClearButton={false}
               >
                 <SelectItem value="MALE">Nam</SelectItem>
                 <SelectItem value="FEMALE">Nữ</SelectItem>
@@ -201,11 +203,13 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
                 id="role"
                 name="role"
                 label="Chức vụ"
+                defaultLabel="Chọn chức vụ cho tài khoản"
                 isLoading={rolesStatus === "pending"}
                 onValueChange={(value) => {
                   setValue("roleId", String(value));
                   clearErrors("roleId");
                 }}
+                showClearButton={false}
               >
                 {roles?.map((role) => (
                   <SelectItem key={role.id} value={role.id}>

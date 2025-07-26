@@ -68,7 +68,7 @@ export default function StudentBasicInformation() {
           <Input
             className="text-[14px]"
             type="text"
-            placeholder="abc@gmail.com..."
+            placeholder="Nhập địa chỉ email..."
             label="Email"
             isError={errors.email !== undefined}
             errorMsg={errors.email?.message}
