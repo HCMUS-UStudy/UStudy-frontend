@@ -58,12 +58,9 @@ const CreateBranchModal = ({
     queryKey: ["Sessions"],
     queryFn: () => getSession(0, 100),
   });
-  console.log(sessions);
 
   const onSubmit = (data: CreateBranchInputs) => {
-    console.log("here");
     if (sessions?.content.length === 0) {
-      console.log("here");
       addToast.error("Chưa có ca học nào");
       return;
     }

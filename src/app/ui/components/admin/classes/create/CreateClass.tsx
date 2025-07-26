@@ -11,7 +11,7 @@ import NameSelector from "@/app/ui/components/admin/classes/create/NameSelector"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
@@ -99,13 +99,8 @@ export default function CreateClass() {
   });
 
   const onSubmit = (data: CreateClassInputs) => {
-    console.log(data);
     useCreateClassMutation.mutate(data);
   };
-
-  useEffect(() => {
-    console.log(methods.formState.errors);
-  }, [methods]);
 
   // const [loading, setLoading] = useState<boolean>(false);
 

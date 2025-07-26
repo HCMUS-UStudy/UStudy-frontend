@@ -1,7 +1,8 @@
-import { Metadata } from "next";
+"use client";
+
 import ParentAcademicResultsView from "@/app/ui/components/user/parent/academic-results/ParentAcademicResultsView";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Kết quả học tập của con | UStudy",
   description: "Xem kết quả học tập của con bạn",
 };

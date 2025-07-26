@@ -390,7 +390,6 @@ describe("ContactPage", () => {
       mockWebSocketService.connect = jest.fn((onSuccess, onError) => {
         if (onError) {
           const error = new Error("Connection failed");
-          console.log("WebSocket Error:", error);
           onError(error);
         }
         mockWebSocketService.subscribe(

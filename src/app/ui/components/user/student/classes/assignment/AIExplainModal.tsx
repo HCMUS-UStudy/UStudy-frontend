@@ -25,7 +25,6 @@ const AIExplainModal: React.FC<AIExplainModalProps> = ({
       const fetchExplanation = async () => {
         try {
           const response = await getAIAssignment(questionId);
-          console.log(response);
           setExplanation(
             response.generatedText || "Không có nội dung giải thích.",
           );

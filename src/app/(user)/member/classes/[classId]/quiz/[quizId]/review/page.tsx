@@ -21,8 +21,8 @@ export default function QuizReview() {
         setLoading(true);
         const reviewData = await getReviewQuiz(quizId ?? "");
         setReviewData(reviewData);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.log(error);
       } finally {
         setLoading(false);
       }

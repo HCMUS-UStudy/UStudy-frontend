@@ -53,7 +53,6 @@ export default function ClassMembers({
       try {
         setLoading(true);
         const response = await getListMembers(classId, query, 0, 10, "STUDENT");
-        console.log(response);
         setMembers(response.content);
         setTotalPages(response.totalPages);
       } catch (error) {

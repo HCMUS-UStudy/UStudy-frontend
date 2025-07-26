@@ -61,7 +61,6 @@ export default function CreateTeacher() {
   });
   const { addToast } = useCustomToast();
   const onSubmit = async (data: TeacherRegisterInputs) => {
-    console.log(data);
     // call api
     try {
       setLoadingRegister(true);

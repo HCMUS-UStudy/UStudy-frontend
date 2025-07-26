@@ -34,11 +34,6 @@ export const recordAttendances = async (
   }[],
 ): Promise<void> => {
   try {
-    console.log("Recording attendance:", {
-      classId,
-      recordDate,
-      studentStatusList,
-    });
     const response = await axiosInstance.post("/attendance/record", {
       classId,
       recordDate,

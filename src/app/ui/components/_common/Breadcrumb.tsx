@@ -78,15 +78,12 @@ export default function Breadcrumb() {
     );
     let dynamicIdx = 0;
     pathnames?.map((pathname, i) => {
-      console.log(pathname, i);
       const href = `/${pathnames.slice(0, i + 1).join("/")}`;
       let label = translate(pathname);
       if (label == null) {
-        console.log("skipping", pathname);
         return;
       }
       if (label === "") {
-        console.log(dynamicBreadcrumbs, dynamicIdx);
         label = dynamicBreadcrumbs[dynamicIdx];
         dynamicIdx++;
       }

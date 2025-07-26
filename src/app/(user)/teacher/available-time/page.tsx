@@ -31,6 +31,7 @@ export default function AvailableTimePage() {
     queryFn: async () => {
       return getAvailableTime();
     },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -137,19 +138,29 @@ export default function AvailableTimePage() {
 
   return (
     <div
-      className="flex flex-col justify-center items-center max-w-lg
+      className="flex flex-col justify-center items-center max-w-md sm:max-w-lg
         rounded-lg shadow-lg bg-white mx-auto mt-6 p-6"
     >
       <h1 className="text-xl font-bold mb-1 text-primary-dark">
         Thời gian rảnh
       </h1>
-      {/* Show lastModified if available */}
-      {data?.lastModified && (
-        <div className="text-sm text-gray-500 mb-5">
-          <span>Cập nhật lần cuối: </span>
-          {new Date(data.lastModified).toLocaleString("vi-VN")}
-        </div>
+      {data?.timeList.length === 0 && (
+        <span className="text-sm text-gray-500 mb-4 italic text-center">
+          Nếu không đăng ký thời gian rảnh, mặc định rảnh tất cả các ngày.
+        </span>
       )}
+      {/* Show lastModified if available */}
+      {data?.lastModified &&
+        (() => {
+          const lastModified = new Date(data.lastModified);
+          const isValid = !isNaN(lastModified.getTime());
+          return isValid ? (
+            <div className="text-sm text-gray-500 mb-5">
+              <span>Cập nhật lần cuối: </span>
+              {lastModified.toLocaleString("vi-VN")}
+            </div>
+          ) : null;
+        })()}
       <form onSubmit={handleSubmit} className="space-y-4">
         {dayTimes.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2">
@@ -192,7 +203,7 @@ export default function AvailableTimePage() {
           </div>
         ))}
         <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center mx-5">
+          <div className="flex justify-between items-center gap-5 mx-5">
             {isEditing ? (
               <>
                 <button
@@ -202,13 +213,15 @@ export default function AvailableTimePage() {
                 >
                   + Thêm
                 </button>
-                <button
-                  type="button"
-                  className="text-primary-dark hover:text-primary-darkest"
-                  onClick={handleSort}
-                >
-                  Sắp xếp
-                </button>
+                {data?.timeList && dayTimes.length > 1 && (
+                  <button
+                    type="button"
+                    className="text-primary-dark hover:text-primary-darkest"
+                    onClick={handleSort}
+                  >
+                    Sắp xếp
+                  </button>
+                )}
               </>
             ) : null}
           </div>
@@ -218,7 +231,7 @@ export default function AvailableTimePage() {
         {isEditing ? (
           <div className="w-full flex justify-between items-center gap-3 mx-7">
             <Button
-              className="w-full mt-1"
+              className="w-full bg-gray-200 hover:bg-gray-300"
               type="button"
               onClick={() => {
                 setIsEditing(false);
@@ -233,11 +246,11 @@ export default function AvailableTimePage() {
           </div>
         ) : (
           <Button
-            className="w-full mx-9"
+            className="w-full mx-2 sm:mx-9"
             type="button"
             onClick={() => setIsEditing(true)}
           >
-            Chỉnh sửa
+            {data?.timeList.length === 0 ? "Đăng ký" : "Chỉnh sửa"}
           </Button>
         )}
       </div>

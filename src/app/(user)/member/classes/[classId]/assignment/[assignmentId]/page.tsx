@@ -62,9 +62,6 @@ const AssignmentPage = () => {
   };
 
   const handleSubmitAssignment = useCallback(() => {
-    console.log(answers);
-    console.log(attachments);
-
     if (currentQuestionIndex === questions.length - 1) {
       setShowReview(true);
     }
@@ -136,15 +133,13 @@ const AssignmentPage = () => {
       })),
     };
 
-    console.log(JSON.stringify(body, null, 2));
-
     setIsLoading(true);
     try {
       // Call createNewSubmission with correctly formatted body
       const result = await createNewSubmission(assignmentId as string, body);
 
       if (result?.statusCode === "CREATED") {
-        console.log("Asssignment submitted successfully:", result);
+        addToast.success("Asssignment submitted successfully:", result);
         setModalOpen(true);
       } else {
         addToast.error("Failed to submit Asssignment!");

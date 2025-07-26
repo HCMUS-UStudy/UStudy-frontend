@@ -25,6 +25,7 @@ import MaterialLoader from "./MaterialsLoader";
 const MaterialsGrid: React.FC = () => {
   const [materialItem, setMaterialItem] = useState<MaterialItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>("");
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
@@ -67,7 +68,6 @@ const MaterialsGrid: React.FC = () => {
       console.error("Error fetching classes:", err);
       setError("Không thể tải thông tin tài liệu.");
     } finally {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -85,7 +85,6 @@ const MaterialsGrid: React.FC = () => {
 
   const handleDownloadFile = async (materialId: string, name: string) => {
     try {
-      console.log(materialId);
       const response = await downloadFile(materialId);
 
       const blob = new Blob([response.data], {

@@ -9,7 +9,6 @@ export default function CalendarWidget() {
 
   const handleDateChange: CalendarProps["onChange"] = (selectedDate) => {
     setDate(selectedDate as Date);
-    console.log("Selected Date:", selectedDate);
   };
 
   return (

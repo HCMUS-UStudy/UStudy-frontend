@@ -45,7 +45,6 @@ const BranchPage = () => {
 
   useEffect(() => {
     if (mounted && fetchBranches?.content) {
-      console.log(fetchBranches);
       dispatch(setBranches(fetchBranches.content));
     }
   }, [fetchBranches, dispatch, mounted]);

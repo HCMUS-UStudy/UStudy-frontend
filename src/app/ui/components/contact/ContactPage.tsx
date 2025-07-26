@@ -43,9 +43,6 @@ const ContactPage = () => {
   const handleSendMessage = () => {
     if (!messageInput.trim() || !room) return;
 
-    // Trong ứng dụng thực tế, bạn sẽ gửi tin nhắn tới API
-    console.log("Gửi tin nhắn:", messageInput, "tới:", room);
-
     send("/app/chat", {
       roomId: room.roomChatId,
       content: messageInput,
@@ -60,10 +57,7 @@ const ContactPage = () => {
     useWebSocketService(
       () => {
         // /user/{userId}/topic/messages
-        console.log(`/user/${userId}/topic/messages`);
         subscribe(`/user/${userId}/topic/messages`, (_message) => {
-          // setMessages((prevMessages) => [...prevMessages, message.text]);
-          console.log("New message received:", _message);
           const message = _message as MessageItem;
           dispatch(
             addMessage({

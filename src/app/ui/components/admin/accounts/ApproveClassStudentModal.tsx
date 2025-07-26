@@ -44,6 +44,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
   const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
   const [isSelectingClass, setIsSelectingClass] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
 
   const [currentPageCl] = useState(1);
@@ -60,7 +61,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
       const response = await getAllClasses("", currentPageCl - 1, 5, "");
 
       // Set total pages for students based on API response
-      console.log(totalPagesCl);
+      //console.log(totalPagesCl);
       setClasses(response.content);
       setTotalPagesCl(response.totalPages || 0);
     } catch (error) {
@@ -85,7 +86,7 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
         5,
       );
 
-      console.log(totalPagesStuCl);
+      //console.log(totalPagesStuCl);
       setStuClass(response.content);
       setTotalPagesStuCl(response.totalPages || 0);
     } catch (error) {
@@ -115,7 +116,6 @@ const ApproveClassStudentModal: React.FC<ApproveClassStudentModalProps> = ({
   };
 
   const toggleSelectMode = () => {
-    console.log(loading);
     setIsSelectingClass(!isSelectingClass);
     if (isSelectingClass) setSelectedClasses([]); // Reset khi tắt chọn nhiều
   };
