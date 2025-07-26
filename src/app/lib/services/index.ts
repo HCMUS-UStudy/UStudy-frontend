@@ -30,3 +30,4 @@ export * from "./session";
 export * from "./academicResult";
 export * from "./assignment";
 export * from "./chapter";
+export * from "./dashboard";

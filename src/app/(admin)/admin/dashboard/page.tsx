@@ -15,6 +15,9 @@ import {
 } from "chart.js";
 import { Card } from "@/app/ui/components/_common/Card";
 import Notifications from "../../../ui/components/admin/dashboard/notifications";
+import { useAppSelector } from "@/app/store/store";
+import { useQuery } from "@tanstack/react-query";
+import { getAdminDashboardData } from "@/app/lib/services";
 
 // Register ChartJS components
 ChartJS.register(
@@ -125,31 +128,39 @@ const StatCard = ({
 );
 
 const DashboardPage = () => {
+  const selectedBranchId =
+    useAppSelector((state) => state.branch.selectedBranchId) || "";
+  const { data } = useQuery({
+    queryKey: ["AdminOverview", selectedBranchId],
+    queryFn: () => getAdminDashboardData(selectedBranchId),
+    refetchOnWindowFocus: false,
+    enabled: selectedBranchId !== null,
+  });
   return (
     <div className="p-6 space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Tổng học viên"
-          value="1,234"
+          value={data?.totalStudents.toLocaleString() || ""}
           icon={Users}
           trend={{ value: 12, isPositive: true }}
         />
         <StatCard
           title="Tổng giáo viên"
-          value="89"
+          value={data?.totalTeachers.toLocaleString() || ""}
           icon={GraduationCap}
           trend={{ value: 5, isPositive: true }}
         />
         <StatCard
           title="Tổng lớp học"
-          value="45"
+          value={data?.totalClasses.toLocaleString() || ""}
           icon={BookOpen}
           trend={{ value: 8, isPositive: true }}
         />
         <StatCard
-          title="Đơn chờ duyệt"
-          value="23"
+          title="Doanh thu của chi nhánh"
+          value={`${data?.totalRevenue.toLocaleString()} vnđ` || ""}
           icon={Bell}
           trend={{ value: 5, isPositive: false }}
         />
