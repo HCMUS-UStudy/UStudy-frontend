@@ -455,7 +455,7 @@ const AssignmentModal = ({
             <div className="mt-3">
               <Select
                 label="Chế độ bài tập"
-                defaultValue={"PRATICE"}
+                defaultValue={"PRACTICE"}
                 defaultLabel="Luyện tập"
                 onValueChange={(value) => {
                   setNewAssignment((prev) => ({
