@@ -30,7 +30,7 @@ import { IoIosTimer } from "react-icons/io";
 
 export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
   {
-    title: "Thống kê",
+    title: "Trang chủ",
     path: "/admin/dashboard",
     icon: <RiDashboard2Line size={20} />,
   },

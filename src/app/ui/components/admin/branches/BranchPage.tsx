@@ -6,7 +6,6 @@ import { Button } from "@/app/ui/components/_common/Button";
 import { getAllBranches } from "@/app/lib/services/branch";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { Branch } from "@/app/types";
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "next/navigation";
 import { setBranches } from "@/app/store/branch-slice";
@@ -18,11 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import { Eye } from "lucide-react";
 import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal";
+import EditBranchModal from "./EditBranchModal";
 import { useEncodedRoute } from "@/app/lib/hooks";
+import { Branch } from "@/app/types";
 
 const BranchPage = () => {
   const [mounted, setMounted] = useState(false);
@@ -51,10 +52,28 @@ const BranchPage = () => {
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
+  const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
   const onCreateBranch = () => {
     if (mounted) {
       setShowModal(true);
     }
+  };
+
+  const handleEditBranch = (branch: Branch) => {
+    setEditingBranch(branch);
+    setShowEditModal(true);
+  };
+
+  const handleEditSuccess = () => {
+    // Refetch branches after successful edit
+    if (mounted) {
+      // This will trigger a refetch of the branches
+      setCurrentPage((prev) => prev);
+    }
+    setShowEditModal(false);
+    setEditingBranch(null);
   };
 
   const { handleNavigate } = useEncodedRoute();
@@ -165,15 +184,18 @@ const BranchPage = () => {
                     <TableCell>{item.rooms}</TableCell>
                     <TableCell className="flex items-center h-full gap-2">
                       <Tooltip text="Chỉnh sửa chi nhánh">
-                        <button className="text-blue-600 hover:text-blue-800 transition-all">
+                        <button
+                          onClick={() => handleEditBranch(item)}
+                          className="text-blue-600 hover:text-blue-800 transition-all"
+                        >
                           <FaEdit className="size-4 md:size-5" />
                         </button>
                       </Tooltip>
-                      <Tooltip text="Xóa chi nhánh">
+                      {/* <Tooltip text="Xóa chi nhánh">
                         <button className="text-red-600 hover:text-red-800 transition-all">
                           <FaTrashAlt className="size-4 md:size-5" />
                         </button>
-                      </Tooltip>
+                      </Tooltip> */}
                       <Tooltip text="Xem chi tiết">
                         <button
                           onClick={() => handleDetail(item)}
@@ -204,12 +226,22 @@ const BranchPage = () => {
         />
 
         {/* Modal for Adding Branch */}
-        {/* {showModal && ( */}
         <CreateBranchModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
         />
-        {/* )} */}
+
+        {editingBranch && (
+          <EditBranchModal
+            isOpen={showEditModal}
+            onClose={() => {
+              setShowEditModal(false);
+              setEditingBranch(null);
+            }}
+            branch={editingBranch}
+            onSuccess={handleEditSuccess}
+          />
+        )}
       </div>
     </Suspense>
   );

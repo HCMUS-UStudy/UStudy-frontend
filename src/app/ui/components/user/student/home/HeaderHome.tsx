@@ -147,9 +147,9 @@ export default function HeaderHome() {
               </div>
               <div>
                 <CardTitle className="text-xl font-bold text-gray-800">
-                  Bài tập thực hành
+                  Bài luyện tập
                 </CardTitle>
-                <p className="text-xs text-gray-500">Theo dõi bài tập về nhà</p>
+                <p className="text-xs text-gray-500">Theo dõi bài luyện tập</p>
               </div>
             </div>
           </CardHeader>

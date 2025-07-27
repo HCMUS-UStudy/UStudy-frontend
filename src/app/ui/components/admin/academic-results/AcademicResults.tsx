@@ -53,12 +53,12 @@ export default function AcademicResultsTable({
           <tr>
             <th className="pl-6 pr-4 py-2 text-left rounded-tl-lg">
               <span className="flex items-center gap-2">
-                Mã học viên
+                Mã người dùng
                 <button
                   type="button"
                   className="ml-1 text-sm px-2 py-1 transition flex flex-col items-center"
                   onClick={() => setSortAsc((v) => !v)}
-                  aria-label="Sắp xếp mã học viên"
+                  aria-label="Sắp xếp mã người dùng"
                 >
                   <FaSortUp
                     className={sortAsc ? "text-black" : "text-gray-400"}

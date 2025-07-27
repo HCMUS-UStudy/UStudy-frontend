@@ -70,8 +70,7 @@ const ClassList: React.FC<ClassListProps> = ({
               </h3>
               <p className="text-sm text-gray-600">
                 <strong>Giáo viên:</strong>{" "}
-                {/* {classItem?.teacher?.name ||
-                    "Chưa có giáo viên"} */}
+                {classItem?.teacher[0]?.name || "Chưa có giáo viên"}
               </p>
               {/* <p className="text-sm text-gray-600">
                   <strong>Phòng học:</strong> {classItem.room.name}

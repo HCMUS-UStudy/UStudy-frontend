@@ -250,7 +250,7 @@ export default function AccountsComponent() {
                 Họ tên
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
-                Mã số
+                Mã người dùng
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
                 Chức vụ
