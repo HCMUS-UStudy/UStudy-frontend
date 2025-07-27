@@ -304,7 +304,10 @@ export default function Schedule() {
                   </div>
                 </div>
                 <div className="flex justify-end mt-4">
-                  <button className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center transition-all duration-200 px-2 py-1 hover:bg-blue-100 rounded">
+                  <button
+                    className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center transition-all duration-200 px-2 py-1 hover:bg-blue-100 rounded"
+                    onClick={() => router.push("/member/classes")}
+                  >
                     Chi tiết <FaArrowRight className="ml-1 h-2 w-2" />
                   </button>
                 </div>
