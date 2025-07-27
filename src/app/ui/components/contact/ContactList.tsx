@@ -17,6 +17,7 @@ import { ContactsLoading } from "../_common/loading";
 import { SearchField } from "../_common/text-field";
 import { useSearchParams } from "next/navigation";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import PlayAnimation from "../../../ui/lotties/animation";
 
 interface Props {
   closeList?: () => void;
@@ -66,11 +67,20 @@ export const ContactList = ({ closeList }: Props) => {
         ) : (
           <>
             {rooms?.totalElements === 0 ? (
-              <div className="w-full h-full flex justify-center items-center  rounded-lg  bg-primary-lighter">
-                {/* <PlayAnimation animationKey="contacts" loop={false} /> */}
-                <div className="text-primary-darkest text-base text-center">
-                  Vui lòng tìm giáo vụ trên thanh tìm kiếm
+              <div className="w-full h-full flex justify-center items-center  rounded-lg  bg-primary-lighter border-2 border-dashed border-primary-dark">
+                <div className="w-36">
+                  <PlayAnimation animationKey="xIcon" loop={false} />
+                  <div className="text-primary-darker font-bold w-full text-center">
+                    Không có giáo vụ nào được tìm thấy
+                  </div>
                 </div>
+                {/* <EmptyListOrTable
+                  message="Không có giáo vụ nào được tìm thấy"
+                  className="md:text-sm"
+                /> */}
+                {/* <div className="text-primary-darkest text-base text-center">
+                  Không có giáo vụ nào được tìm thấy
+                </div> */}
               </div>
             ) : (
               <>
