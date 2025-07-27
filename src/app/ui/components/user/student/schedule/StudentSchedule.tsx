@@ -8,6 +8,7 @@ import {
   FaChalkboardTeacher,
   FaCheckCircle,
   FaSpinner,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import {
   Card,
@@ -265,11 +266,11 @@ export default function StudentSchedule() {
       {/* Calendar Section */}
       <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-primary-darkest">
-              📅 Lịch học
+          <div className="flex items-center justify-between h-full min-h-[56px]">
+            <CardTitle className="text-2xl font-bold text-primary-darkest flex items-center">
+              <FaCalendarAlt className="inline-block mr-2" /> Lịch học
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-600 flex items-center">
               Chọn ngày để xem chi tiết
             </CardDescription>
           </div>
@@ -312,8 +313,8 @@ export default function StudentSchedule() {
       {/* Schedule Detail Section */}
       <Card className="w-full lg:flex-[1] bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden overflow-y-auto max-h-[350px] lg:max-h-none">
         <CardHeader className="p-6">
-          <CardTitle className="text-2xl font-bold text-primary-darkest">
-            📖 Chi tiết lịch học
+          <CardTitle className="text-2xl font-bold text-primary-darkest flex items-center">
+            <FaBook className="inline-block mr-2" /> Chi tiết lịch học
           </CardTitle>
           <CardDescription className="text-gray-600">
             {selectedDate.toLocaleDateString("vi-VN", {
