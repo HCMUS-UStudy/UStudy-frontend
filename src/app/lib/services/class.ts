@@ -27,7 +27,7 @@ export const getAllClasses = async (
   currentPage: number,
   limit: number,
   branchId: string,
-  isAssigned: boolean,
+  isAssigned?: boolean,
   courseQuery?: string,
   gradeQuery?: string,
 ): Promise<ClassData> => {
@@ -37,7 +37,7 @@ export const getAllClasses = async (
         page: currentPage,
         limit: limit,
         name: nameQuery,
-        isAssigned: isAssigned,
+        isAssigned: isAssigned || false,
         course: courseQuery,
         grade: gradeQuery,
         branchId: branchId,
