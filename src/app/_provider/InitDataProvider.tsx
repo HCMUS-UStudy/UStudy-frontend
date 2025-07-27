@@ -1,11 +1,14 @@
 "use client";
 
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
-import { getPermissions } from "../lib/services";
+import { getAllChildrenOfParent, getPermissions } from "../lib/services";
 import { useAppDispatch } from "../store/store";
 import { setPermissions, setStatus } from "../store/PermissionScreenSlice";
 import { usePathname } from "next/navigation";
+import { setChildren, setSelectedChild } from "../store/ChildrenSlice";
+import { getUserDataFromCookies } from "../lib/action";
+import { setUserData } from "../store/userSlice";
 
 export default function InitDataProvider({
   children,
@@ -14,6 +17,13 @@ export default function InitDataProvider({
 }) {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
+
+  const { data: userData } = useQuery({
+    queryKey: ["UserData"],
+    queryFn: () => getUserDataFromCookies(),
+    refetchOnWindowFocus: false,
+  });
+
   const results = useQueries({
     queries: [
       {
@@ -26,9 +36,16 @@ export default function InitDataProvider({
           pathname === "/register"
         ),
       },
+      {
+        queryKey: ["ChildrenOfParent"],
+        queryFn: () => getAllChildrenOfParent(),
+        refetchOnWindowFocus: false,
+        enabled: userData?.role.defaultRoute === "PARENT",
+      },
     ],
   });
   const permissions = results[0];
+  const childrenData = results[1];
 
   useEffect(() => {
     if (permissions.status === "success") {
@@ -41,6 +58,19 @@ export default function InitDataProvider({
       dispatch(setStatus("error"));
     }
   }, [permissions]);
+
+  useEffect(() => {
+    if (userData) {
+      dispatch(setUserData(userData));
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (childrenData.data) {
+      dispatch(setChildren(childrenData.data));
+      dispatch(setSelectedChild(childrenData.data[0]));
+    }
+  }, [childrenData]);
 
   // useEffect(() => {
   //   dispatch(fetchAllGrades({ page: 0, limit: 100, filter: "" }));

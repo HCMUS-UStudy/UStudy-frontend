@@ -16,6 +16,7 @@ import { setRoom } from "@/app/store/ChatSlice";
 import { ContactsLoading } from "../_common/loading";
 import { SearchField } from "../_common/text-field";
 import { useSearchParams } from "next/navigation";
+import { getUserDataFromCookies } from "@/app/lib/action";
 
 interface Props {
   closeList?: () => void;
@@ -29,9 +30,22 @@ export const ContactList = ({ closeList }: Props) => {
   const params = useSearchParams();
   const name = params?.get("name") as string;
 
+  const selectedChildId = useAppSelector(
+    (state) => state.children.selectedChild?.id,
+  );
+
+  const { data: userData } = useQuery({
+    queryKey: ["UserData"],
+    queryFn: () => getUserDataFromCookies(),
+    refetchOnWindowFocus: false,
+  });
+
+  const isParent = userData?.role.defaultRoute === "PARENT";
+
   const { data: rooms, status } = useQuery({
-    queryKey: ["RoomChats", 0, name],
-    queryFn: () => getAllRooms(0, 100, name, ""),
+    queryKey: ["RoomChats", 0, name, selectedChildId || ""],
+    queryFn: () => getAllRooms(0, 100, name, isParent ? selectedChildId : ""),
+    refetchOnWindowFocus: false,
   });
 
   return (

@@ -21,8 +21,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Eye } from "lucide-react";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { useRouter } from "next/navigation";
 
 interface AccountTableProps {
   searchQuery: string;
@@ -38,10 +38,10 @@ const AccountTable: React.FC<AccountTableProps> = ({
   // const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  // const router = useRouter();
+  const router = useRouter();
   // const [trigger, setTrigger] = useState<boolean>(false);
 
-  const { handleNavigate } = useEncodedRoute();
+  // const { handleNavigate } = useEncodedRoute();
   const { addToast } = useCustomToast();
 
   const {
@@ -71,8 +71,8 @@ const AccountTable: React.FC<AccountTableProps> = ({
   }, [fetchAccounts]);
 
   const handleDetail = (userId: string) => {
-    handleNavigate(userId, "/admin/accounts");
-    // router.push(`/admin/accounts/${userId}`);
+    // handleNavigate(userId, "/admin/accounts");
+    router.push(`/admin/accounts/${userId}`);
   };
 
   const queryClient = useQueryClient();

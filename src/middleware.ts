@@ -3,7 +3,6 @@ import {
   getTokensFromCookies,
   getUserDataFromCookies,
   handleLogoutCookies,
-  // getPermissions,
 } from "./app/lib/action";
 import { handleRefreshToken } from "./app/lib/services/auth";
 import { getPermissions } from "./app/lib/services";

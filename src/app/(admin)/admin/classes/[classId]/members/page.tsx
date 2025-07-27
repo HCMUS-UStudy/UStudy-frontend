@@ -116,24 +116,14 @@ const MemberPage = () => {
                 "Ngày sinh",
                 "Giới tính",
                 "Vai trò",
-                "",
+                "Hành động",
               ]}
             />
             <TableBody noDataMessage={false}>
               {memberListWithRole?.map((member) => (
                 <TableRow key={member.id}>
                   <TableCell>{member.genId}</TableCell>
-                  <TableCell>
-                    {member.email?.length > 25 ? (
-                      <button>
-                        <Tooltip text={member.email}>
-                          {member.email.slice(0, 25)}...
-                        </Tooltip>
-                      </button>
-                    ) : (
-                      member.email
-                    )}
-                  </TableCell>
+                  <TableCell>{member.name}</TableCell>
                   {/* Email column: hidden on mobile, shown on md+ */}
                   <TableCell className="hidden md:table-cell">
                     {member.email?.length > 25 ? (
@@ -153,7 +143,7 @@ const MemberPage = () => {
                     {member.gender === "MALE" ? "Nam" : "Nữ"}
                   </TableCell>
                   <TableCell>{member.role}</TableCell>
-                  <TableCell className="flex items-center">
+                  <TableCell className="flex items-center px-10">
                     {member.role !== "Giáo vụ" && (
                       <Tooltip text="Xóa thành viên">
                         <RiDeleteBin6Line

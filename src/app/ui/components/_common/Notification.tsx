@@ -11,6 +11,7 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { NotificationItem } from "@/app/types";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { useAppSelector } from "@/app/store/store";
 
 export const Notification = ({ role }: { role: string }) => {
   const { addToast } = useCustomToast();
@@ -27,12 +28,14 @@ export const Notification = ({ role }: { role: string }) => {
   const params = useParams();
   const pathname = usePathname();
   const currentNotificationId = params?.notificationId as string | undefined;
+  const userData = useAppSelector((state) => state.user);
 
   // Fetch notifications
   const query = useQuery({
     queryKey: ["notifications"],
     queryFn: () => getListNotification(),
     refetchOnWindowFocus: false,
+    enabled: userData.role.defaultRoute !== "PARENT",
   });
 
   // Mark all as read mutation

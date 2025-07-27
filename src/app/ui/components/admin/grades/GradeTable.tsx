@@ -34,27 +34,24 @@ const GradeTable: React.FC<GradeTableProps> = ({ searchQuery }) => {
       <Table>
         <TableHeader columns={["Tên khối", "Hành động"]} />
         <TableBody isLoading={status === "pending"}>
-          {grades?.content
-            .slice()
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map((grade) => (
-              <TableRow key={grade.id}>
-                <TableCell className="w-1/2">{grade.name}</TableCell>
-                <TableCell className="flex gap-2 justify-start">
-                  <Tooltip text="Chỉnh sửa khối">
-                    <button
-                      onClick={() => {
-                        setIsOpen(true);
-                        setGrade(grade);
-                      }}
-                      className="text-blue-600 hover:text-blue-800 transition-all"
-                    >
-                      <FaEdit className="size-4 md:size-5" />
-                    </button>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
+          {grades?.content.slice().map((grade) => (
+            <TableRow key={grade.id}>
+              <TableCell className="w-1/2">{grade.name}</TableCell>
+              <TableCell className="flex gap-2 justify-start">
+                <Tooltip text="Chỉnh sửa khối">
+                  <button
+                    onClick={() => {
+                      setIsOpen(true);
+                      setGrade(grade);
+                    }}
+                    className="text-blue-600 hover:text-blue-800 transition-all"
+                  >
+                    <FaEdit className="size-4 md:size-5" />
+                  </button>
+                </Tooltip>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
 

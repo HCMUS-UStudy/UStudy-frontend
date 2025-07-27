@@ -31,3 +31,4 @@ export * from "./AI";
 export * from "./register-class";
 export * from "./classSchedule";
 export * from "./chat";
+export * from "./dashboard";

@@ -10,12 +10,11 @@ import { AccountDetailItem, ClassUserItem } from "@/app/types";
 import { getListUserClass } from "@/app/lib/services/class";
 import ApproveClassStudentModal from "@/app/ui/components/admin/accounts/ApproveClassStudentModal";
 import Image from "next/image";
-import { useEncodedRoute } from "@/app/lib/hooks";
 
 const AccountDetail = () => {
   const params = useParams<{ userId: string }>();
-  const { decodeId } = useEncodedRoute();
-  const userId = decodeId(params?.userId as string);
+  // const { decodeId } = useEncodedRoute();
+  const userId = params?.userId as string;
   // const userId = Array.isArray(params?.userID)
   //   ? params.userID[0]
   //   : params?.userID;
@@ -126,7 +125,7 @@ const AccountDetail = () => {
                 <Image
                   width={96}
                   height={96}
-                  src={user.avatar}
+                  src={`/userAvatars/${user.avatar}.png`}
                   alt="Avatar"
                   className="rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
                 />
