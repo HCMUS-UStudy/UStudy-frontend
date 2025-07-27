@@ -40,7 +40,9 @@ const AssignmentPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [attachments, setAttachments] = useState<{ [key: string]: File[] }>({});
   const [submittedAnswers, setSubmittedAnswers] = useState<{
     [questionId: string]: {
@@ -65,7 +67,7 @@ const AssignmentPage = () => {
     if (currentQuestionIndex === questions.length - 1) {
       setShowReview(true);
     }
-  }, [answers, attachments, currentQuestionIndex, questions.length]);
+  }, [currentQuestionIndex, questions.length]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -87,16 +89,18 @@ const AssignmentPage = () => {
       }
     };
     fetchQuestions();
-  }, [assignmentId, duration, handleSubmitAssignment]);
+  }, [assignmentId, duration, handleSubmitAssignment, questions.length]);
 
   useEffect(() => {
+    // Nếu duration = 0 thì không giảm thời gian
+    if (Number(duration) === 0) return;
     if (timeLeft > 0 && !showResult) {
       const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && !showResult) {
       handleSubmitAssignment();
     }
-  }, [timeLeft, showResult, handleSubmitAssignment]);
+  }, [timeLeft, showResult, handleSubmitAssignment, duration]);
 
   const handleAnswerSelect = (questionId: string, optionId: string) => {
     setSubmittedAnswers((prev) => ({
@@ -287,6 +291,7 @@ const AssignmentPage = () => {
             setCurrentQuestionIndex={setCurrentQuestionIndex}
             timeLeft={timeLeft}
             formatTime={formatTime}
+            isUnlimitedTime={true}
           />
         </div>
       )}

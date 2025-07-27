@@ -194,7 +194,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
               <div className="flex flex-col gap-4 mb-3">
                 <Input
                   id="name"
-                  label="Tên lớp"
+                  label="Tên lớp*"
                   isError={errors.name !== undefined}
                   errorMsg={errors.name?.message}
                   {...register("name")}
@@ -210,7 +210,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       grades.find((item) => item.id === watch("gradeId"))
                         ?.name || ""
                     }
-                    label="Khối học"
+                    label="Khối học*"
                   />
                   <ReadonlyTextField
                     className="bg-white"
@@ -220,7 +220,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                           item.detailedCourseDto.id === watch("courseId"),
                       )?.detailedCourseDto.name || ""
                     }
-                    label="Môn học"
+                    label="Môn học*"
                   />
                 </div>
                 <div className="flex w-full gap-3">
@@ -231,7 +231,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       classDetail?.startDate || "",
                     ).toLocaleDateString("VI")}
                     disabled
-                    label="Ngày bắt đầu"
+                    label="Ngày bắt đầu*"
                   />
                   <Input
                     id="startDate"
@@ -240,7 +240,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       classDetail?.startDate || "",
                     ).toLocaleDateString("VI")}
                     disabled
-                    label="Ngày bắt đầu"
+                    label="Ngày bắt đầu*"
                   />
                   <Input
                     id="endDate"
@@ -249,7 +249,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       classDetail?.endDate || "",
                     ).toLocaleDateString("VI")}
                     disabled
-                    label="Ngày kết thúc"
+                    label="Ngày kết thúc*"
                   />
                 </div>
                 <div>
@@ -259,7 +259,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                     onChange={handleFeeChange}
                     isError={errors.fee !== undefined}
                     errorMsg={errors.fee?.message}
-                    label="Học phí"
+                    label="Học phí*"
                   />
                   <span className="text-primary-darkest text-sm">
                     {fee.text}

@@ -13,7 +13,7 @@ export default function DurationSelector() {
   return (
     <div className="flex flex-col mt-2">
       <h1 className="font-bold text-sm md:text-base">
-        Chọn thời gian học cho lớp
+        Chọn thời gian học cho lớp *
       </h1>
       <div className="w-full md:w-2/3 mt-2">
         <div className="flex flex-col gap-4">

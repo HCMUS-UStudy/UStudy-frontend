@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import RoleDisplay from "@/app/ui/components/admin/roles/RoleDisplay";
+import RoleNumber from "@/app/ui/components/admin/roles/RoleNumber";
 
 // props: {
 //   searchParams?: Promise<{
@@ -20,7 +21,7 @@ export default async function RolePage() {
     <>
       <div className="px-2">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Tổng số chức vụ ({4})</h2>
+          <RoleNumber />
           <div className="flex items-center space-x-2">
             {/* <AddCourseModal buttonLabel="Tạo chức vụ" /> */}
           </div>

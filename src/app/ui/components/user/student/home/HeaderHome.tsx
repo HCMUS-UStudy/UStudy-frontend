@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "../../../_common/Card";
 import { FaBook } from "react-icons/fa6";
-import { FaQuestionCircle, FaTasks, FaChevronRight } from "react-icons/fa";
+import { FaQuestionCircle, FaTasks } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getStudentClassCount } from "@/app/lib/services/class";
@@ -123,12 +123,12 @@ export default function HeaderHome() {
             </div>
 
             {/* Thêm nút xem chi tiết */}
-            <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
+            {/* <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
               <button className="text-blue-600 hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-1.5 py-0.5 rounded hover:bg-blue-100">
                 Chi tiết
                 <FaChevronRight className="ml-1 h-2 w-2" />
               </button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </motion.div>
@@ -196,12 +196,12 @@ export default function HeaderHome() {
             </div>
 
             {/* Footer */}
-            <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
+            {/* <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
               <button className="text-green-600 hover:text-green-800 transition-colors flex items-center bg-green-50 px-1.5 py-0.5 rounded hover:bg-green-100">
                 Xem tất cả
                 <FaChevronRight className="ml-1 h-2 w-2" />
               </button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </motion.div>
@@ -267,12 +267,12 @@ export default function HeaderHome() {
             </div>
 
             {/* Footer */}
-            <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
+            {/* <div className="mt-1.5 flex justify-end items-end text-xs border-t border-gray-100 pt-1.5">
               <button className="text-red-600 hover:text-red-800 transition-colors flex items-center bg-red-50 px-1.5 py-0.5 rounded hover:bg-red-100">
                 Làm ngay
                 <FaChevronRight className="ml-1 h-2 w-2" />
               </button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </motion.div>
