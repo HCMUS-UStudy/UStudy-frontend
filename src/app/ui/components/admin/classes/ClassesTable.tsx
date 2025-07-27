@@ -27,6 +27,7 @@ export default function ClassesTable() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const params = useSearchParams();
   const query = params?.get("query") || "";
+  const isAssigned = params?.get("type") === "isAssigned" ? true : false;
   const branchId =
     useAppSelector((state) => state.branch.selectedBranchId) || "";
 
@@ -35,43 +36,13 @@ export default function ClassesTable() {
     status,
     error,
   } = useQuery<ClassData>({
-    queryKey: ["Classes", query, currentPage, branchId],
-    queryFn: () => getAllClasses(query, currentPage - 1, 5, branchId, "", ""),
+    queryKey: ["Classes", query, currentPage, branchId, isAssigned],
+    queryFn: () =>
+      getAllClasses(query, currentPage - 1, 5, branchId, isAssigned, "", ""),
     // enabled: mounted, // Only run query after component is mounted
   });
   const totalPages = fetchClasses?.totalPages || 0;
   const router = useRouter();
-
-  // const [isOpen, setIsOpen] = useState<boolean>(false);
-  // const [selectedId, setSelectedId] = useState<string>("");
-
-  // if (!mounted) {
-  //   return (
-  //     <div>
-  //       <Table>
-  //         <TableHeader
-  //           columns={[
-  //             "Tên lớp",
-  //             "Môn học",
-  //             "Khối",
-  //             "Học phí",
-  //             "Ngày bắt đầu",
-  //             "Ngày kết thúc",
-  //             "",
-  //           ]}
-  //         />
-  //         <TableBody isLoading={true}>
-  //           <TableRow>
-  //             <TableCell colSpan={7}>
-  //               <div className="bg-slate-200 h-3 my-1 rounded"></div>
-  //             </TableCell>
-  //           </TableRow>
-  //         </TableBody>
-  //       </Table>
-  //     </div>
-  //   );
-  // }
-
   if (error) {
     return <div>{error.message}</div>;
   }

@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { BsEmojiSmile, BsPerson } from "react-icons/bs";
+import { BsPerson } from "react-icons/bs";
 import { CardHeader, CardTitle, CardDescription } from "../_common/Card";
 import Image from "next/image";
-import EmojiPicker from "emoji-picker-react";
 import { Button } from "../_common/Button";
 import { FaListUl, FaPaperPlane } from "react-icons/fa6";
 import { useAppSelector } from "@/app/store/store";
@@ -23,9 +22,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   // selectedRoom,
   messageInput,
   setMessageInput,
-  showEmojiPicker,
-  setShowEmojiPicker,
-  emojiRef,
   handleSendMessage,
   openList,
 }) => {
@@ -45,8 +41,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   }, [messages]);
 
   return (
-    <div className="relative w-full lg:w-[calc(100%-270px)] h-full md:col-span-3 bg-white">
-      <CardHeader className="w-full flex-none border-b bg-primary-lighter md:h-[60px] lg:h-[80px]">
+    <div className="relative w-full lg:w-[calc(100%-270px)] h-full md:col-span-3 bg-primary-lighter">
+      <CardHeader className="w-full flex-none border-b bg-primary md:h-[60px] lg:h-[80px] ">
         {selectedRoom ? (
           <div className="flex items-center">
             <FaListUl
@@ -82,7 +78,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               <CardTitle className="text-primary-darkest text-sm lg:text-base">
                 {selectedRoom?.user?.name}
               </CardTitle>
-              <CardDescription className="text-gray-500 text-xs lg:text-sm">
+              <CardDescription className="text-gray-900 text-xs lg:text-sm">
                 {selectedRoom.listClassName &&
                   selectedRoom?.listClassName.length > 0 &&
                   selectedRoom.listClassName.join(", ")}
@@ -94,19 +90,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             <CardTitle className="flex text-primary-darkest text-sm lg:text-base">
               <FaListUl
                 onClick={openList}
-                className="flex lg:hidden mr-3 size-5 text-primary-darker hover:text-primary-darkest transition-all cursor-pointer"
+                className="flex lg:hidden mr-3 size-5 text-primary-darker hover:text-primary-darkest transition-all cursor-pointer lg:text-xl"
                 title="Open List"
               />
               Tin nhắn
             </CardTitle>
-            <CardDescription className=" text-gray-500 text-sm lg:text-base">
+            <CardDescription className=" text-gray-700 text-sm lg:text-base">
               Chọn một giáo viên để bắt đầu cuộc trò chuyện
             </CardDescription>
           </>
         )}
       </CardHeader>
       <div className="relative min-h-[65vh] max-h-[65vh] overflow-auto">
-        <div className="space-y-4 py-4 px-4   bg-white  scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+        <div className="space-y-4 py-4 px-4   bg-primary-lighter  scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
           {status === "pending" ? (
             <div className="w-1/3 mx-auto bg-primary-lighter rounded-full p-10 mt-5">
               <PlayAnimation animationKey="chatLoading" />
@@ -151,8 +147,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   </div>
                 ))
               ) : selectedRoom ? (
-                <div className="flex items-center justify-center flex-1 h-64">
-                  <div className="flex flex-col w-1/3 pt-20">
+                <div className="flex items-center justify-center flex-1 h-64 lg:text-xl bg-primary-lighter">
+                  <div className="flex flex-col w-2/5 pt-40">
                     <PlayAnimation animationKey={"chat"} loop={true} />
                     <p className="font-semibold text-primary-darkest text-center text-nowrap">
                       Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
@@ -160,8 +156,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center flex-1 h-64">
-                  <div className="flex flex-col w-1/3 pt-20">
+                <div className="flex items-center justify-center flex-1 h-64 lg:text-xl ">
+                  <div className="flex flex-col w-2/5 pt-40">
                     <PlayAnimation animationKey={"chat"} loop={true} />
                     <p className="font-semibold text-primary-darkest text-center text-nowrap">
                       Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
@@ -174,19 +170,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </div>
         <div className="" ref={ref}></div>
       </div>
-      <div className="sticky right-0  bottom-0  w-full">
+      <div className="sticky right-0 bottom-0 w-full">
         {selectedRoom && (
           // lg:mx-1 xl:mx-2 left-[19vw] md:left-[33vw] lg:left-[41vw] xl:left-[36vw]
           <div className=" w-full bg-primary-lighter backdrop-blur-sm border-t-2 border-slate-200 ">
             <div className="py-4 px-4">
-              <div className="flex flex-col gap-2 relative max-w-7xl mx-auto">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col relative max-w-7xl mx-auto">
+                <div className="flex items-center gap-8 justify-between">
                   <textarea
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     placeholder="Nhập tin nhắn..."
                     rows={2}
-                    className="flex-grow w-full text-xs md:text-sm xl:text-base md:w-auto resize-none p-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-dark"
+                    className="flex-grow w-full text-xs md:text-sm xl:text-base placeholder:text-gray-700 md:w-auto resize-none p-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-dark transition-all"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -194,14 +190,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                       }
                     }}
                   />
-                  <button
+                  {/* <button
                     className="text-2xl text-gray-500 hover:text-primary-dark transition flex-shrink-0"
                     title="Chèn emoji"
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                   >
                     <BsEmojiSmile className="size-5 md:size-7" />
-                  </button>
-                  {showEmojiPicker && (
+                  </button> */}
+                  {/* {showEmojiPicker && (
                     <div
                       ref={emojiRef}
                       className="absolute bottom-16 right-0 z-10"
@@ -213,13 +209,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                         }
                       />
                     </div>
-                  )}
+                  )} */}
                   <Button
                     onClick={handleSendMessage}
-                    className="p-3 bg-primary-dark text-white rounded-full hover:bg-primary-darker transition duration-200 flex-shrink-0"
+                    className="p-8 bg-primary-darker text-white rounded-lg hover:bg-primary-darkest transition duration-200 flex-shrink-0"
                     title="Gửi tin nhắn"
                   >
-                    <FaPaperPlane className="size-3 md:size-5" />
+                    <FaPaperPlane className="size-3 md:size-8" />
                   </Button>
                 </div>
               </div>

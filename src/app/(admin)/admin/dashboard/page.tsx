@@ -130,41 +130,50 @@ const StatCard = ({
 const DashboardPage = () => {
   const selectedBranchId =
     useAppSelector((state) => state.branch.selectedBranchId) || "";
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["AdminOverview", selectedBranchId],
     queryFn: () => getAdminDashboardData(selectedBranchId),
     refetchOnWindowFocus: false,
-    enabled: selectedBranchId !== null,
+    enabled: selectedBranchId !== null && selectedBranchId !== "",
   });
   return (
     <div className="p-6 space-y-6">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Tổng học viên"
-          value={data?.totalStudents.toLocaleString() || ""}
-          icon={Users}
-          trend={{ value: 12, isPositive: true }}
-        />
-        <StatCard
-          title="Tổng giáo viên"
-          value={data?.totalTeachers.toLocaleString() || ""}
-          icon={GraduationCap}
-          trend={{ value: 5, isPositive: true }}
-        />
-        <StatCard
-          title="Tổng lớp học"
-          value={data?.totalClasses.toLocaleString() || ""}
-          icon={BookOpen}
-          trend={{ value: 8, isPositive: true }}
-        />
-        <StatCard
-          title="Doanh thu của chi nhánh"
-          value={`${data?.totalRevenue.toLocaleString()} vnđ` || ""}
-          icon={Bell}
-          trend={{ value: 5, isPositive: false }}
-        />
-      </div>
+      {status === "pending" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="border-2 border-slate-200 h-32 bg-slate-200 animate-pulse"></div>
+          <div className="border-2 border-slate-200 h-32 bg-slate-200 animate-pulse"></div>
+          <div className="border-2 border-slate-200 h-32 bg-slate-200 animate-pulse"></div>
+          <div className="border-2 border-slate-200 h-32 bg-slate-200 animate-pulse"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title="Tổng học viên"
+            value={data?.totalStudents.toLocaleString() || ""}
+            icon={Users}
+            trend={{ value: 12, isPositive: true }}
+          />
+          <StatCard
+            title="Tổng giáo viên"
+            value={data?.totalTeachers.toLocaleString() || ""}
+            icon={GraduationCap}
+            trend={{ value: 5, isPositive: true }}
+          />
+          <StatCard
+            title="Tổng lớp học"
+            value={data?.totalClasses.toLocaleString() || ""}
+            icon={BookOpen}
+            trend={{ value: 8, isPositive: true }}
+          />
+          <StatCard
+            title="Doanh thu của chi nhánh"
+            value={`${data?.totalRevenue.toLocaleString()} vnđ` || ""}
+            icon={Bell}
+            trend={{ value: 5, isPositive: false }}
+          />
+        </div>
+      )}
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
