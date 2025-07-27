@@ -9,6 +9,7 @@ export interface EmptyListOrTableProps {
    * @default "Không có dữ liệu"
    */
   message?: string;
+  className?: string;
 }
 
 const Lottie = dynamic(() => import("lottie-react"), {
@@ -29,6 +30,7 @@ const Lottie = dynamic(() => import("lottie-react"), {
  */
 export default function EmptyListOrTable({
   message = "Không có dữ liệu",
+  className = "",
 }: EmptyListOrTableProps): JSX.Element {
   const [isClient, setIsClient] = useState(false);
 
@@ -37,7 +39,9 @@ export default function EmptyListOrTable({
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center text-center bg-primary-lighter border border-dashed border-primary-darkest p-6 rounded-xl shadow-sm">
+    <div
+      className={`flex flex-col items-center justify-center text-center bg-primary-lighter border border-dashed border-primary-darkest p-6 rounded-xl shadow-sm ${className}`}
+    >
       {isClient ? (
         <Lottie
           className="size-24"
