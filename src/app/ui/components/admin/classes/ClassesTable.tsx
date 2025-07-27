@@ -63,7 +63,12 @@ export default function ClassesTable() {
         />
         <TableBody isLoading={status === "pending"}>
           {fetchClasses?.content.map((c, i) => (
-            <TableRow key={i}>
+            <TableRow
+              key={i}
+              onClick={() => {
+                router.push(`/admin/classes/${c.id}`);
+              }}
+            >
               <TableCell>{c.name}</TableCell>
               <TableCell>{c.course.name}</TableCell>
               <TableCell>{c.grade.name}</TableCell>

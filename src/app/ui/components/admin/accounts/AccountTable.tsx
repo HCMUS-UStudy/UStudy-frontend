@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaTrashAlt } from "react-icons/fa";
-import { FiLock } from "react-icons/fi";
+import DeletePopup from "@/app/ui/components/_common/DeletePopup";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import {
   Table,
@@ -38,6 +38,8 @@ const AccountTable: React.FC<AccountTableProps> = ({
   // const [error, setError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const router = useRouter();
   // const [trigger, setTrigger] = useState<boolean>(false);
 
@@ -87,8 +89,22 @@ const AccountTable: React.FC<AccountTableProps> = ({
     },
   });
 
-  const handleDeleteAccount = async (userId: string) => {
-    useDeleteAccountMutation.mutate(userId);
+  const handleDeleteClick = (userId: string) => {
+    setSelectedUserId(userId);
+    setShowDeletePopup(true);
+  };
+
+  const handleConfirmDelete = useCallback(() => {
+    if (selectedUserId) {
+      useDeleteAccountMutation.mutate(selectedUserId);
+      setShowDeletePopup(false);
+      setSelectedUserId(null);
+    }
+  }, [selectedUserId]);
+
+  const handleCancelDelete = () => {
+    setShowDeletePopup(false);
+    setSelectedUserId(null);
   };
 
   function formatDateToVN(dateString: string): string {
@@ -142,18 +158,18 @@ const AccountTable: React.FC<AccountTableProps> = ({
                 <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
                 <TableCell className="flex justify-start items-center gap-2">
                   <button
-                    onClick={() => handleDeleteAccount(user.id)}
+                    onClick={() => handleDeleteClick(user.id)}
                     className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
                   >
                     <Tooltip text="Xóa tài khoản">
                       <FaTrashAlt className="size-4 md:size-4" />
                     </Tooltip>
                   </button>
-                  <button className="flex justify-center items-center text-yellow-600 hover:text-yellow-800 transition-colors">
+                  {/* <button className="flex justify-center items-center text-yellow-600 hover:text-yellow-800 transition-colors">
                     <Tooltip text="Khóa tài khoản">
                       <FiLock className="size-4 md:size-5" />
                     </Tooltip>
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => handleDetail(user.id)}
                     className="flex justify-center items-center text-primary-dark hover:text-primary-darkest transition-colors"
@@ -168,6 +184,12 @@ const AccountTable: React.FC<AccountTableProps> = ({
           )}
         </TableBody>
       </Table>
+      {showDeletePopup && (
+        <DeletePopup
+          onDelete={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
