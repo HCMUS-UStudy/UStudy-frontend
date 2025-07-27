@@ -13,6 +13,7 @@ interface QuestionSidebarProps {
   setCurrentQuestionIndex: (index: number) => void;
   timeLeft: number;
   formatTime: (time: number) => string;
+  isUnlimitedTime?: boolean;
 }
 
 const QuestionSidebar: React.FC<QuestionSidebarProps> = ({
@@ -21,12 +22,13 @@ const QuestionSidebar: React.FC<QuestionSidebarProps> = ({
   setCurrentQuestionIndex,
   timeLeft,
   formatTime,
+  isUnlimitedTime,
 }) => {
   return (
     <div className="w-1/4 bg-primary-lighter shadow-lg rounded-3xl p-6 backdrop-blur-md border border-primary-light">
       <div className="flex items-center justify-center text-sm text-highlight-text mb-4 bg-primary-light py-2 rounded-md">
         <FaClock className="mr-2 text-highlight-text" />
-        <span>{formatTime(timeLeft)}</span>
+        <span>{isUnlimitedTime ? "Không giới hạn" : formatTime(timeLeft)}</span>
       </div>
 
       <h4 className="text-xl font-bold mb-4 text-center text-primary-darkest">

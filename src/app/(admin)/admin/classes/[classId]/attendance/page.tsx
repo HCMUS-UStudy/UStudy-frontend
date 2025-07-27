@@ -352,7 +352,7 @@ const AttendancePage = () => {
           <Table>
             <TableHeader
               columns={[
-                "GenId",
+                "Mã học viên",
                 "Tên",
                 "Ngày sinh",
                 "Giới tính",

@@ -59,24 +59,24 @@ const AddGradeModal = ({
 
   return (
     <>
-      <Dialog isOpen={isOpen} onClose={onClose}>
+      <Dialog isOpen={isOpen} onClose={onClose} className="max-w-sm w-full">
         <DialogHeader>Tạo khối học mới</DialogHeader>
         <DialogContent>
           <form id="add-course-admin-form" onSubmit={handleSubmit(onSubmit)}>
             {/*Creator*/}
             {/* <Input
-              type="text"
-              readOnly
-              placeholder="Người tạo"
-              label="Người tạo *"
-              disabled
-              {...register("creator")}
-            /> */}
+          type="text"
+          readOnly
+          placeholder="Người tạo"
+          label="Người tạo *"
+          disabled
+          {...register("creator")}
+        /> */}
             {/*Name*/}
             <Input
               type="text"
-              placeholder="Nhập tên khối"
-              label="Tên khối"
+              placeholder="Nhập tên khối (Bắt buộc)"
+              label="Tên khối *"
               isError={!!errors.name}
               errorMsg={errors.name?.message}
               {...register("name")}

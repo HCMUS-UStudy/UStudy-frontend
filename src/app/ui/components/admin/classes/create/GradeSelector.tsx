@@ -18,7 +18,9 @@ export default function GradeSelector() {
 
   return (
     <div>
-      <h1 className="font-bold text-sm md:text-base">Chọn khối cho lớp học</h1>
+      <h1 className="font-bold text-sm md:text-base">
+        Chọn khối cho lớp học *
+      </h1>
       <div className="flex flex-wrap gap-2 md:gap-4 w-full xl:w-2/3 mt-2">
         <Selector
           data={grades?.content || []}

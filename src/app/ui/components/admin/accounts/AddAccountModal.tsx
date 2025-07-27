@@ -174,7 +174,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
               <Select
                 id="gender"
                 name="gender"
-                label="Giới tính"
+                label="Giới tính *"
                 defaultValue={"MALE"}
                 defaultLabel="Nam"
                 onValueChange={(value) => {
@@ -195,7 +195,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
               <Select
                 id="role"
                 name="role"
-                label="Chức vụ"
+                label="Chức vụ *"
                 isLoading={rolesStatus === "pending"}
                 onValueChange={(value) => {
                   setValue("roleId", String(value));

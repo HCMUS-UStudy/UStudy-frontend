@@ -157,7 +157,7 @@ export default function MemberList({
       >
         <Table>
           <TableHeader
-            columns={["GenId", "Tên", "Email", "Trạng thái", "Chọn"]}
+            columns={["Mã học viên", "Tên", "Email", "Trạng thái", "Chọn"]}
           />
           <TableBody isLoading={isLoading}>
             {[...selectedMembers, ...filteredUnselectedMembers].map(

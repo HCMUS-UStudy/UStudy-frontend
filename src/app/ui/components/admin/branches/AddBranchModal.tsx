@@ -82,7 +82,7 @@ const CreateBranchModal = ({
 
   return (
     <div>
-      <Dialog isOpen={isOpen} onClose={onClose}>
+      <Dialog isOpen={isOpen} onClose={onClose} className="max-w-lg w-full">
         <DialogHeader className="text-center">Tạo chi nhánh mới</DialogHeader>
         <DialogContent>
           <form
@@ -90,29 +90,29 @@ const CreateBranchModal = ({
             className="flex flex-col gap-4"
           >
             <Input
-              label="Tên chi nhánh"
-              placeholder="Tên chi nhánh"
+              label="Tên chi nhánh *"
+              placeholder="Tên chi nhánh (Bắt buộc)"
               isError={!!errors.name}
               errorMsg={errors.name?.message}
               {...register("name")}
             />
             <Input
-              label="Địa chỉ"
-              placeholder="Địa chỉ"
+              label="Địa chỉ *"
+              placeholder="Địa chỉ (Bắt buộc)"
               isError={!!errors.address}
               errorMsg={errors.address?.message}
               {...register("address")}
             />
             <Input
-              label="Số điện thoại"
-              placeholder="Số điện thoại"
+              label="Số điện thoại *"
+              placeholder="Số điện thoại (Bắt buộc)"
               isError={!!errors.contactNumber}
               errorMsg={errors.contactNumber?.message}
               {...register("contactNumber")}
             />
             <Input
-              label="Số phòng học"
-              placeholder="Số phòng học"
+              label="Số phòng học *"
+              placeholder="Số phòng học (Bắt buộc)"
               type="number"
               isError={!!errors.rooms}
               errorMsg={errors.rooms?.message}
@@ -123,7 +123,8 @@ const CreateBranchModal = ({
             {/* Phần chọn Ca học với checkbox */}
             <div>
               <div className="flex gap-2 items-center text-gray-700">
-                Ca học {status === "pending" && <Loading className="size-6" />}
+                Ca học {status === "pending" && <Loading className="size-6" />}{" "}
+                *
               </div>
               {sessions?.content.length === 0 ? (
                 <div className="px-2 py-1 text-center text-xs md:text-[13px] text-error border-error border rounded bg-error/10">

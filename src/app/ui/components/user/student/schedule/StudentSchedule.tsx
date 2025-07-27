@@ -17,7 +17,7 @@ import {
   CardContent,
 } from "../../../_common/Card";
 import { useState, useEffect } from "react";
-import { FaBell, FaBook, FaRegClipboard } from "react-icons/fa6";
+import { FaBook, FaRegClipboard } from "react-icons/fa6";
 import { getPersonalClassSchedule } from "@/app/lib/services/classSchedule";
 import { ClassSchedule } from "@/app/types";
 import { useRouter } from "next/navigation";
@@ -99,13 +99,28 @@ export default function StudentSchedule() {
           const localDate = new Date(year, month - 1, day);
           const formattedDate = localDate.toLocaleDateString("vi-VN");
 
+          let formatLabel = "";
+          switch (format.toLocaleLowerCase()) {
+            case "mixed":
+              formatLabel = "trắc nghiệm & tự luận";
+              break;
+            case "multiple_choice":
+              formatLabel = "trắc nghiệm";
+              break;
+            case "essay":
+              formatLabel = "tự luận";
+              break;
+            default:
+              formatLabel = format;
+          }
+
           newScheduleData.dates[dateStr].push({
             classId: clazz.id,
             class: clazz.name,
             subject: `${clazz.course.name} - ${clazz.grade.name}`,
             title: title,
             time: `${time} - ${formattedDate}`,
-            note: `Bài tập ${format.toLowerCase()}`,
+            note: `Bài tập ${formatLabel}`,
             type: "Task",
             submitted: submitted === true,
           });
@@ -368,29 +383,14 @@ export default function StudentSchedule() {
                     </div>
                   )}
 
-                  {/* Ghi chú */}
+                  {/* Loại */}
                   {record.note && (
                     <div className="flex items-center gap-2">
                       <FaStickyNote className="text-yellow-400" />
-                      <span className="font-medium">Ghi chú:</span>
+                      <span className="font-medium">Phân loại:</span>
                       <span>{record.note}</span>
                     </div>
                   )}
-
-                  {/* Phân loại */}
-                  <div className="flex items-center gap-2">
-                    {record.type === "Task" ? (
-                      <FaRegClipboard className="text-blue-400" />
-                    ) : (
-                      <FaBell className="text-yellow-400" />
-                    )}
-                    <span className="font-medium">Phân loại:</span>
-                    <span>
-                      {record.type === "Task"
-                        ? "Bài tập về nhà"
-                        : "Nhắc nhở ngày học"}
-                    </span>
-                  </div>
 
                   {record.type === "Task" && (
                     <div className="flex items-center gap-2">
@@ -532,6 +532,34 @@ export default function StudentSchedule() {
         .react-calendar__tile--active:enabled:hover,
         .react-calendar__tile--active:enabled:focus {
           background: #1f845a;
+        }
+        .tile-task:enabled:hover {
+          background-color: #add7c1 !important;
+        }
+        .tile-task:enabled:focus {
+          background-color: #1f845a !important;
+        }
+
+        .tile-reminder:enabled:hover {
+          background-color: #add7c1 !important;
+        }
+        .tile-reminder:enabled:focus {
+          background-color: #1f845a !important;
+        }
+
+        .tile-both:enabled:hover {
+          background-color: #add7c1 !important;
+        }
+        .tile-both:enabled:focus {
+          background-color: #1f845a !important;
+        }
+
+        /* Khi ngày được chọn (active) */
+        .tile-task.react-calendar__tile--active,
+        .tile-reminder.react-calendar__tile--active,
+        .tile-both.react-calendar__tile--active {
+          background: #3aa97a !important;
+          color: white !important;
         }
       `}</style>
     </div>

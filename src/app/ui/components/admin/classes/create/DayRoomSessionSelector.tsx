@@ -183,7 +183,7 @@ export default function DayRoomSessionSelector() {
     <div className="flex flex-col gap-2">
       <div className="flex flex-col">
         <h1 className="font-bold text-sm md:text-base">
-          Thành lập thời khóa biểu
+          Thành lập thời khóa biểu *
         </h1>
         <div className="mt-2">
           <div className="flex flex-wrap gap-2 md:gap-4">

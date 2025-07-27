@@ -96,7 +96,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
         onClose={handleClose}
         className="max-w-xl w-full"
       >
-        <DialogHeader>Thêm phòng học</DialogHeader>
+        <DialogHeader>Tạo phòng học mới</DialogHeader>
         <DialogContent>
           {/* {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -105,7 +105,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
           )} */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block mb-1 font-medium">Tên phòng</label>
+              <label className="block mb-1 font-medium">Tên phòng *</label>
               <Input
                 type="text"
                 value={roomName}
@@ -118,7 +118,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ buttonLabel }) => {
             </div>
             <div>
               <label className="block mb-1 font-medium">
-                Sức chứa (học sinh)
+                Sức chứa (học sinh) *
               </label>
               <Input
                 type="number"

@@ -71,9 +71,9 @@ function EditGrade({ isOpen, onClose, grade }: Props) {
           <Input
             className="w-full"
             type="text"
-            label="Tên khối học"
+            label="Tên khối học*"
             alwaysShowLabel={true}
-            placeholder="Enter your full name"
+            placeholder="Nhập tên khối học (Bắt buộc)"
             isError={!!errors.name}
             errorMsg={errors.name?.message}
             {...register("name")}
