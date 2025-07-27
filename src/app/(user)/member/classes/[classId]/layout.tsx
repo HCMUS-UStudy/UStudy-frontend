@@ -1,7 +1,6 @@
 "use client";
 import { getClassById } from "@/app/lib/services/class";
 import React, { useEffect } from "react";
-import { BsFillBookFill } from "react-icons/bs";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -34,9 +33,9 @@ export default function ClassLayout({
 
   const tabs = {
     // overview: "Tổng quan",
-    participant: "Thành viên",
-    material: "Tài liệu",
     assignment: "Bài tập & Kiểm tra",
+    material: "Tài liệu",
+    participant: "Thành viên",
   };
 
   const handleTabChange = (id: string) => {
@@ -53,11 +52,8 @@ export default function ClassLayout({
     <>
       <div className="border-b border-primary-light">
         <div className="flex items-center space-x-4 mb-3">
-          <div className="bg-highlight-text hidden md:flex text-white p-3 rounded-lg shadow">
-            <BsFillBookFill className="size-6" />
-          </div>
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary-darkest">
+          <div className="flex items-center space-x-4 ml-2 mt-2">
+            <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-primary-darkest">
               {classDetail?.course.name
                 ? `Lớp ${classDetail?.name} - ${classDetail?.course.name} ${classDetail?.grade.name}`
                 : classDetail?.name}
@@ -84,12 +80,12 @@ export default function ClassLayout({
         {/* <ClassNavigationBar /> */}
 
         <>
-          <div className="flex gap-5 text-primary-dark text-sm sm:text-base md:text-lg font-medium">
+          <div className="flex gap-5 text-primary-dark text-sm md:text-[16px] font-medium">
             {Object.entries(tabs).map(([id, label]) => (
               <label
                 key={id}
                 htmlFor={id}
-                className="relative group cursor-pointer hover:text-highlight-text has-[:checked]:hover:text-primary-dark transition-all duration-300 py-1.5 px-4 has-[:checked]:text-primary-darkest has-[:checked]:font-bold"
+                className="relative group cursor-pointer hover:text-primary-darker has-[:checked]:hover:text-primary-darker transition-all duration-300 py-1.5 px-4 has-[:checked]:text-primary-darkest has-[:checked]:font-bold"
               >
                 <input
                   id={id}

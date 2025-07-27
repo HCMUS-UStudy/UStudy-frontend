@@ -291,12 +291,13 @@ const AttendancePage = () => {
                   </option>
                 ))}
             </select>
-            {typeof date === "string" && date.startsWith("custom-") && (
+            {((typeof date === "string" && date.startsWith("custom-")) ||
+              !date) && (
               <input
                 type="date"
                 className="ml-2 border border-primary-darker rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark"
                 value={(() => {
-                  if (date === "custom-") {
+                  if (date === "custom-" || !date) {
                     return new Date().toISOString().split("T")[0];
                   }
                   const customDate = new Date(date.replace("custom-", ""));
@@ -352,7 +353,7 @@ const AttendancePage = () => {
           <Table>
             <TableHeader
               columns={[
-                "Mã học viên",
+                "GenId",
                 "Tên",
                 "Ngày sinh",
                 "Giới tính",

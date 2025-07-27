@@ -68,7 +68,7 @@ export default function ClassMembers({
     <div>
       <Table>
         <TableHeader
-          columns={["Mã học viên", "Họ tên", "Email", "Giới tính", "Hành động"]}
+          columns={["Mã học viên", "Họ tên", "Email", "Giới tính"]}
         />
         <TableBody isLoading={loading}>
           {members.map((member, index) => (
@@ -83,7 +83,6 @@ export default function ClassMembers({
                     ? "Nam"
                     : "Khác"}
               </TableCell>
-              <TableCell>chat</TableCell>
             </TableRow>
           ))}
         </TableBody>
