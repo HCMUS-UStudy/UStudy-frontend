@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "react-calendar/dist/Calendar.css";
 import { Tab, TabList, TabPanel, Tabs } from "@/app/ui/components/_common/Tabs";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
@@ -70,6 +70,21 @@ export default function StudentAttendance() {
     queryKey: ["studentClasses"],
     queryFn: () => getAllStudentClasses(0, 100),
   });
+
+  // Auto-select first class when classes are loaded
+  useEffect(() => {
+    if (
+      classes &&
+      Array.isArray(classes.content) &&
+      classes.content.length > 0 &&
+      !selectedClassId
+    ) {
+      const firstClass = classes.content[0];
+      if (firstClass && firstClass.id) {
+        setSelectedClassId(firstClass.id);
+      }
+    }
+  }, [classes, selectedClassId]);
 
   // Fetch attendance data when class is selected
   const { data: attendanceData, isLoading: isLoadingAttendance } = useQuery({
@@ -207,7 +222,7 @@ export default function StudentAttendance() {
               </label>
 
               <Select
-                defaultValue={selectedClassId}
+                value={selectedClassId}
                 defaultLabel="Chọn lớp để xem điểm danh"
                 onValueChange={handleClassChange}
                 className="w-full bg-white"
