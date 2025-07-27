@@ -131,9 +131,16 @@ export default function AttendanceCalendar({
     }
   };
 
+  function formatDateLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
   // Lấy dữ liệu điểm danh của ngày được chọn
   const getAttendanceForSelectedDate = (): AttendanceRecord | undefined => {
-    const dateStr = selectedDate.toISOString().split("T")[0];
+    const dateStr = formatDateLocal(selectedDate);
     return mockAttendanceData.dates[dateStr];
   };
 
@@ -141,7 +148,7 @@ export default function AttendanceCalendar({
   const getTileClassName = ({ date, view }: TileProps): string => {
     if (view !== "month") return "";
 
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = formatDateLocal(date);
     const attendance = mockAttendanceData.dates[dateStr];
 
     if (!attendance) return "";
@@ -168,7 +175,7 @@ export default function AttendanceCalendar({
   const renderTileContent = ({ date, view }: TileProps): React.ReactNode => {
     if (view !== "month") return null;
 
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = formatDateLocal(date);
     const attendance = mockAttendanceData.dates[dateStr];
 
     if (!attendance) return null;

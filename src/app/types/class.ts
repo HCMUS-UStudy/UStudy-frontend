@@ -83,6 +83,7 @@ export type ClassUserItem = Pick<
 > & {
   course: BaseCourseInfo;
   grade: BaseGradeInfo;
+  teacher: UserSummary[];
 };
 
 export type UserClassData = BasePaginationResponse<ClassUserItem>;

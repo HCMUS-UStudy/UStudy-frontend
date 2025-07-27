@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { deleteSession, getSession } from "@/app/lib/services/session";
+import {
+  deleteSession,
+  getSession,
+  updateSession,
+} from "@/app/lib/services/session";
 import { Button } from "@/app/ui/components/_common/Button";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import SessionModal from "@/app/ui/components/admin/branches/SessionModal";
+import EditSessionModal from "./EditSessionModal";
+import DeletePopup from "@/app/ui/components/_common/DeletePopup";
 import {
   keepPreviousData,
   useMutation,
@@ -27,7 +33,11 @@ import { Session } from "@/app/types";
 
 const SessionManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [editingSession, setEditingSession] = useState<Session | null>(null);
+  const [deletingSession, setDeletingSession] = useState<Session | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedSession, setSelectedSession] = useState<Session | undefined>(
     undefined,
   );
@@ -52,8 +62,19 @@ const SessionManagement = () => {
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }, [_sessions]);
 
-  const handleDeleteSession = (sessionId: string) => {
-    useDeleteSessionMutation.mutate(sessionId);
+  const handleDeleteClick = (session: Session) => {
+    setDeletingSession(session);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deletingSession) {
+      useDeleteSessionMutation.mutate(deletingSession.id);
+      setDeletingSession(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeletingSession(null);
   };
   const queryClient = useQueryClient();
   const { addToast } = useCustomToast();
@@ -68,9 +89,28 @@ const SessionManagement = () => {
     },
   });
 
+  // Update session mutation
+  const updateSessionMutation = useMutation({
+    mutationFn: (updatedSession: Session) => updateSession(updatedSession),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["Sessions"] });
+      addToast.success("Cập nhật ca học thành công");
+      setIsEditModalOpen(false);
+      setEditingSession(null);
+    },
+    onError: () => {
+      addToast.error("Có lỗi xảy ra khi cập nhật ca học");
+    },
+  });
+
   const handleUpdateSession = (session: Session) => {
-    setSelectedSession(session);
-    setIsModalOpen(true);
+    setEditingSession(session);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSessionUpdate = (updatedSession: Session) => {
+    updateSessionMutation.mutate(updatedSession);
   };
 
   return (
@@ -116,7 +156,10 @@ const SessionManagement = () => {
                     </Tooltip>
                     <Tooltip text="Xóa ca học">
                       <button
-                        onClick={() => handleDeleteSession(item.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(item);
+                        }}
                         className="text-red-600 hover:text-red-800 transition-all"
                       >
                         <FaTrashAlt className="size-4 md:size-5" />
@@ -145,8 +188,27 @@ const SessionManagement = () => {
       <SessionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        selectedSession={selectedSession ?? undefined}
       />
+      {editingSession && (
+        <EditSessionModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            if (!updateSessionMutation.isPending) {
+              setIsEditModalOpen(false);
+              setEditingSession(null);
+            }
+          }}
+          session={editingSession}
+          onUpdate={handleSessionUpdate}
+          isLoading={updateSessionMutation.isPending}
+        />
+      )}
+      {deletingSession && (
+        <DeletePopup
+          onDelete={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };

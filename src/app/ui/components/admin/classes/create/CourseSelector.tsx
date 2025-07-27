@@ -41,7 +41,9 @@ export default function CourseSelector() {
   } else {
     return (
       <div>
-        <h1 className="font-bold text-sm md:text-base">Chọn môn cho lớp học</h1>
+        <h1 className="font-bold text-sm md:text-base">
+          Chọn môn cho lớp học *
+        </h1>
         <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-2/3 mt-2">
           <Selector
             data={courses?.content || []}

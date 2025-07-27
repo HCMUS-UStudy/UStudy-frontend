@@ -33,7 +33,7 @@ export default function ClassLayout({
   }
 
   const tabs = {
-    overview: "Tổng quan",
+    // overview: "Tổng quan",
     participant: "Thành viên",
     material: "Tài liệu",
     assignment: "Bài tập & Kiểm tra",

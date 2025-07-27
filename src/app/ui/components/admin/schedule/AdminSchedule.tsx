@@ -13,7 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import { getBranchSchedule } from "@/app/lib/services/classSchedule";
-import { BranchSchedule } from "@/app/types";
+import { BranchSchedule, UserSummary } from "@/app/types";
 import Image from "next/image";
 import { Loading } from "../../_common/loading";
 
@@ -22,7 +22,7 @@ interface AdminScheduleRecord {
   class: string;
   subject: string;
   grade: string;
-  teachers: { id: string; name: string; avatar?: string }[];
+  teachers: UserSummary[];
   time: string;
   room: string;
 }
@@ -46,12 +46,12 @@ export default function AdminSchedule() {
 
   const { selectedBranchId } = useSelector((state: RootState) => state.branch);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleActiveStartDateChange = (args: any) => {
-    if (args.activeStartDate) {
-      setActiveStartDate(args.activeStartDate);
-    }
-  };
+  const handleActiveStartDateChange: CalendarProps["onActiveStartDateChange"] =
+    ({ activeStartDate }) => {
+      if (activeStartDate) {
+        setActiveStartDate(activeStartDate);
+      }
+    };
 
   useEffect(() => {
     const fetchSchedule = async (month: number, year: number) => {
@@ -75,30 +75,47 @@ export default function AdminSchedule() {
             const classSession = schedule.classSession;
             const clazz = classSession.clazz;
 
+            // Helper function to normalize teacher data
+            const normalizeTeacher = (teacher: unknown): UserSummary | null => {
+              if (!teacher || typeof teacher !== "object") return null;
+
+              const teacherObj = teacher as Record<string, unknown>;
+              return {
+                id: typeof teacherObj.id === "string" ? teacherObj.id : "",
+                name:
+                  typeof teacherObj.name === "string"
+                    ? teacherObj.name
+                    : "Giáo viên",
+                avatar:
+                  typeof teacherObj.avatar === "string"
+                    ? teacherObj.avatar
+                    : "",
+                genId:
+                  typeof teacherObj.genId === "string" ? teacherObj.genId : "",
+                email:
+                  typeof teacherObj.email === "string" ? teacherObj.email : "",
+              };
+            };
+
+            // Get teachers array from the API response structure
+            let teachers: UserSummary[] = [];
+            const classTeachers = schedule.classSession?.clazz?.teachers; // Changed back to teachers to match API
+
+            if (Array.isArray(classTeachers)) {
+              teachers = classTeachers
+                .map((teacher) => normalizeTeacher(teacher))
+                .filter((teacher): teacher is UserSummary => teacher !== null);
+            }
+
             const record: AdminScheduleRecord = {
               classId: clazz.id || "",
-              class: clazz.name || "",
-              subject: clazz.course?.name || "",
-              grade: clazz.grade?.name || "",
-              teachers: Array.isArray(classSession.clazz.teacher)
-                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  classSession.clazz.teacher.map((teacher: any) => ({
-                    id: teacher.id,
-                    name: teacher.name,
-                    avatar: undefined, // API không trả về avatar
-                  }))
-                : classSession.clazz.teacher
-                  ? [
-                      {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        id: (classSession.clazz.teacher as any).id,
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        name: (classSession.clazz.teacher as any).name,
-                        avatar: undefined,
-                      },
-                    ]
-                  : [],
-              time: `${classSession.session?.startTime || ""} - ${classSession.session?.endTime || ""}`,
+              class: clazz.name || "Lớp học",
+              subject: clazz.course?.name || "Môn học",
+              grade: clazz.grade?.name || "Khối",
+              teachers,
+              time: classSession.session
+                ? `${classSession.session.startTime || "--:--"} - ${classSession.session.endTime || "--:--"}`
+                : "--:-- - --:--",
               room: classSession.room?.name || "Chưa có phòng",
             };
 
@@ -110,6 +127,8 @@ export default function AdminSchedule() {
         });
 
         setScheduleData(transformedData);
+
+        // Removed console.log for production
       } catch (error) {
         console.error("Failed to fetch branch schedule:", error);
         // Fallback to empty data
@@ -301,28 +320,36 @@ export default function AdminSchedule() {
                     <span className="font-medium whitespace-nowrap">
                       Giáo viên:
                     </span>
-                    <div className="flex flex-wrap gap-2">
-                      {record.teachers.map((t) => (
-                        <span
-                          key={t.id}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium shadow-sm"
-                        >
-                          {/* Avatar nếu có */}
-                          <span className=" w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-darkest flex items-center justify-center text-white font-bold">
-                            {t.avatar ? (
-                              <Image
-                                src={t.avatar}
-                                alt={t.name}
-                                className="w-6 h-6 rounded-full object-cover"
-                              />
-                            ) : (
-                              t.name.charAt(0)
-                            )}
+                    {record.teachers.length === 0 ? (
+                      <span className="text-gray-400 italic ml-2">
+                        Không có
+                      </span>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {record.teachers.map((teacher) => (
+                          <span
+                            key={teacher.id}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium shadow-sm bg-white/80"
+                          >
+                            <span className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-darkest flex items-center justify-center text-white font-bold">
+                              {teacher.avatar &&
+                              teacher.avatar.startsWith("http") ? (
+                                <Image
+                                  src={teacher.avatar}
+                                  alt={teacher.name}
+                                  width={24}
+                                  height={24}
+                                  className="w-6 h-6 rounded-full object-cover"
+                                />
+                              ) : (
+                                teacher.name.charAt(0)
+                              )}
+                            </span>
+                            {teacher.name}
                           </span>
-                          {t.name}
-                        </span>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {/* Thời gian */}
                   <div className="flex items-center gap-1">

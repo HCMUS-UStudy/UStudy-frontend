@@ -45,13 +45,7 @@ export const createNewSubmission = async (
     formData.append(`answers[${index}].optionId`, answer.optionId);
     formData.append(`answers[${index}].content`, answer.content);
 
-    // Nếu không có file, vẫn nên gửi rỗng
-    if (answer.files.length === 0) {
-      formData.append(
-        `answers[${index}].files`,
-        new Blob([], { type: "application/octet-stream" }),
-      );
-    } else {
+    if (answer.files.length > 0) {
       answer.files.forEach((file) => {
         formData.append(`answers[${index}].files`, file);
       });

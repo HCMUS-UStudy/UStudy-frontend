@@ -93,7 +93,7 @@ export default function Homework() {
           </div>
           <div>
             <h3 className="text-xl font-bold text-gray-800">Bài tập về nhà</h3>
-            <p className="text-xs text-gray-500">Theo dõi tiến độ học tập</p>
+            <p className="text-xs text-gray-500">Theo dõi bài tập về nhà</p>
           </div>
         </div>
         <button

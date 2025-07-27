@@ -96,7 +96,7 @@ const MemberPage = () => {
       <Table>
         <TableHeader
           columns={[
-            "GenId",
+            "Mã người dùng",
             "Tên",
             ...(!isMobile ? ["Email"] : []),
             // "Địa chỉ",

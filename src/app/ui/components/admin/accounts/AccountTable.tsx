@@ -105,7 +105,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
       <Table>
         <TableHeader
           columns={[
-            "Mã số",
+            "Mã người dùng",
             "Họ tên",
             "Email",
             "Vai trò",

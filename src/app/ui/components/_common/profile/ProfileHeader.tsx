@@ -37,7 +37,7 @@ const ProfileHeader = ({ user }: { user: UserProfile | undefined }) => {
             {user?.name || "Unknown User"}
           </h1>
           <p className="text-sm text-gray-600 mt-1">
-            Mã số: {user?.genId || "N/A"}
+            Mã người dùng: {user?.genId || "N/A"}
           </p>
         </div>
       </div>

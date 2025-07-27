@@ -40,7 +40,7 @@ const AllPaymentTable: React.FC<AllPaymentTableProps> = ({
             "Số tiền",
             "Thời gian",
             "Trạng thái",
-            "Thao tác",
+            "Hành động",
           ]}
           className="bg-primary-lighter text-gray-700"
         />

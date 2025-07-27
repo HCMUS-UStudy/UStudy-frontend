@@ -75,7 +75,7 @@ export type BranchClassSession = {
       id: string;
       name: string;
     };
-    teacher: Teacher[];
+    teachers: Teacher[];
     classSessions: {
       id: string;
       day:

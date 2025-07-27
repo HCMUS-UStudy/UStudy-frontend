@@ -83,9 +83,9 @@ function EditCourse({ isOpen, onClose, course }: Props) {
           <Input
             className="w-full"
             type="text"
-            label="Tên môn học"
+            label="Tên môn học*"
             alwaysShowLabel={true}
-            placeholder="Enter your full name"
+            placeholder="Nhập tên môn học (Bắt buộc)"
             isError={!!errors.name}
             errorMsg={errors.name?.message}
             {...register("name")}

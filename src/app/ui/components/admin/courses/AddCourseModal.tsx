@@ -94,19 +94,19 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
             id="add-course-admin-form"
           >
             {/*Creator*/}
-            <Input
+            {/* <Input
               type="text"
               readOnly
               placeholder="Người tạo"
               label="Người tạo *"
               disabled
               {...register("creator")}
-            />
+            /> */}
             {/*Name*/}
             <div className="relative mb-4">
               <Input
                 type="text"
-                placeholder="Nhập tên môn học"
+                placeholder="Nhập tên môn học (Bắt buộc)"
                 label="Tên môn *"
                 isError={errors.name !== undefined}
                 errorMsg={errors.name?.message}
@@ -117,7 +117,7 @@ const AddCourseModal: React.FC<ModalCourseWrapperProps> = ({ buttonLabel }) => {
             {/*Description*/}
             <div className="relative mb-4">
               <TextArea
-                placeholder="Nhập mô tả môn học"
+                placeholder="Nhập mô tả môn học (Bắt buộc)"
                 isError={errors.description !== undefined}
                 errorMsg={errors.description?.message}
                 label="Mô tả môn học *"

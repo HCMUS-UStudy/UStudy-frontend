@@ -110,7 +110,7 @@ const MemberPage = () => {
           <Table>
             <TableHeader
               columns={[
-                "GenId",
+                "Mã người dùng",
                 "Tên",
                 "Email",
                 "Ngày sinh",
