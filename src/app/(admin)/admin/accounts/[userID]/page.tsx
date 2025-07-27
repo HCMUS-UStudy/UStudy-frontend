@@ -144,7 +144,7 @@ const AccountDetail = () => {
               <tbody>
                 {[
                   { label: "Email", value: user?.email },
-                  { label: "Mã học viên", value: user?.genId },
+                  { label: "Mã người dùng", value: user?.genId },
                   {
                     label: "Giới tính",
                     value: user?.gender === "FEMALE" ? "Nữ" : "Nam",

@@ -68,7 +68,13 @@ export default function ClassMembers({
     <div>
       <Table>
         <TableHeader
-          columns={["Mã học viên", "Họ tên", "Email", "Giới tính", "Hành động"]}
+          columns={[
+            "Mã người dùng",
+            "Họ tên",
+            "Email",
+            "Giới tính",
+            "Hành động",
+          ]}
         />
         <TableBody isLoading={loading}>
           {members.map((member, index) => (
