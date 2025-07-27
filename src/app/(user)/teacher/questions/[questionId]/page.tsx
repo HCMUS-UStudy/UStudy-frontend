@@ -6,7 +6,7 @@ import {
   editQuestion,
   handleDownloadFile,
 } from "@/app/lib/services/question";
-import { Question } from "@/app/types";
+import { Question, UserData } from "@/app/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { IoReturnUpBack } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
@@ -16,6 +16,7 @@ import FileUpload from "@/app/ui/components/_common/FileUpload";
 import isEqual from "lodash/isEqual";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { getUserDataFromCookies } from "@/app/lib/action";
 
 type QuestionEdit = Question & {
   isManyAnswers?: boolean;
@@ -25,6 +26,15 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
   const router = useRouter();
   const { questionId } = React.use(props.params);
   const queryClient = useQueryClient();
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const data = await getUserDataFromCookies();
+      setUserData(data);
+    };
+    fetchUserData();
+  }, []);
 
   const {
     data: question,
@@ -198,7 +208,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
           <IoReturnUpBack className="inline-block mr-2" />
           Trở về
         </button>
-        {!isEdit && (
+        {!isEdit && userData?.genId === question?.createdBy?.genId && (
           <button
             className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
             onClick={() => setIsEdit(true)}

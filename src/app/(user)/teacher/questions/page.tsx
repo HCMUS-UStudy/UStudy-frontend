@@ -6,31 +6,33 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllGrades } from "@/app/lib/services/grade";
 import { getCoursesByGradeId } from "@/app/lib/services/course";
 import { getQuestionList } from "@/app/lib/services/question";
-import { getUserDataFromCookies } from "@/app/lib/action";
-import { UserData, Question } from "@/app/types";
+import { Question, UserData } from "@/app/types";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import QuestionModal from "@/app/ui/components/user/teacher/QuestionModal";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { getUserDataFromCookies } from "@/app/lib/action";
+import Checkbox from "@/app/ui/components/_common/Checkbox";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
+  const [showMine, setShowMine] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
   const [selectedGradeId, setSelectedGradeId] = useState<string>("");
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
-  const [user, setUser] = useState<UserData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [sortField, setSortField] = useState<string>("lastModified");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc" | "none">("desc");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const userInfo = await getUserDataFromCookies();
-      setUser(userInfo);
-    };
-    fetchData();
-  }, []);
-
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const u = await getUserDataFromCookies();
+      setUser(u);
+    };
+    fetchUser();
+  }, []);
 
   const { data: gradesData } = useQuery({
     queryKey: ["Grades"],
@@ -48,9 +50,7 @@ const QuestionList = () => {
   // Đảm bảo useQuery gọi lại khi selectedGradeId hoặc selectedCourseId thay đổi
   const questionQuery = useQuery({
     queryKey: ["Questions", selectedCourseId, selectedGradeId],
-    queryFn: () =>
-      getQuestionList(selectedCourseId, selectedGradeId, user?.genId || ""),
-    enabled: !!user,
+    queryFn: () => getQuestionList(selectedCourseId, selectedGradeId),
     refetchOnWindowFocus: false,
   });
 
@@ -66,9 +66,11 @@ const QuestionList = () => {
       data = data.filter(
         (q) =>
           q.description.toLowerCase().includes(s) ||
-          q.grade.name.toLowerCase().includes(s) ||
-          q.course.name.toLowerCase().includes(s),
+          q.createdBy.name.toLowerCase().includes(s),
       );
+    if (showMine && user?.genId) {
+      data = data.filter((q) => q.createdBy?.genId === user.genId);
+    }
     // Sort giảm dần theo lastModified
     return data
       .slice()
@@ -77,7 +79,7 @@ const QuestionList = () => {
           new Date(b.lastModified).getTime() -
           new Date(a.lastModified).getTime(),
       );
-  }, [search, questions]);
+  }, [search, questions, showMine, user]);
 
   // Sửa useEffect: chỉ set mặc định khi lần đầu vào trang (selectedGradeId === undefined)
   useEffect(() => {
@@ -128,6 +130,10 @@ const QuestionList = () => {
           aValue = a.questionType;
           bValue = b.questionType;
           break;
+        case "createdBy":
+          aValue = a.createdBy.genId;
+          bValue = b.createdBy.genId;
+          break;
         case "lastModified":
         default:
           aValue = new Date(a.lastModified).getTime();
@@ -161,15 +167,15 @@ const QuestionList = () => {
           <span className="px-2">+ Tạo câu hỏi</span>
         </Button>
       </div>
-      <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-stretch sm:items-center justify-between">
+      <div className="mb-4 flex flex-col lg:flex-row gap-2 lg:gap-6 items-center lg:justify-between">
         <input
           type="text"
-          className="w-full sm:w-80 px-3 py-2 border-2 border-primary-light rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light text-sm"
-          placeholder="Tìm kiếm theo mô tả, môn, khối..."
+          className="w-full lg:w-2/3 px-3 py-2 border-2 border-primary-light rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-light text-sm"
+          placeholder="Tìm kiếm theo mô tả, người tạo..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <div className="flex lg:justify-end gap-2 w-full items-center mr-1">
           <select
             className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
             focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
@@ -214,6 +220,20 @@ const QuestionList = () => {
               </option>
             )}
           </select>
+          <div
+            className="flex items-center gap-1 cursor-pointer ml-2 select-none"
+            onClick={() => setShowMine(!showMine)}
+          >
+            <Checkbox
+              checked={showMine}
+              onChange={() => setShowMine(!showMine)}
+              className="border-primary-dark"
+            />
+            <span className="text-[13px] sm:text-[14.5px] whitespace-nowrap">
+              <span className="hidden sm:inline">Câu hỏi của tôi</span>
+              <span className="inline sm:hidden">Hiện của tôi</span>
+            </span>
+          </div>
         </div>
       </div>
       {/* Table for desktop, card for mobile */}
@@ -297,6 +317,24 @@ const QuestionList = () => {
                 )}
               </th>
               <th
+                className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-700 text-center cursor-pointer select-none"
+                onClick={() => handleSort("createdBy")}
+              >
+                Người tạo
+                {sortField === "createdBy" && sortOrder === "desc" && (
+                  <FaSortDown className="inline ml-1" />
+                )}
+                {sortField === "createdBy" && sortOrder === "asc" && (
+                  <FaSortUp className="inline ml-1" />
+                )}
+                {sortField === "createdBy" && sortOrder === "none" && (
+                  <FaSort className="inline ml-1" />
+                )}
+                {sortField !== "createdBy" && (
+                  <FaSort className="inline ml-1 text-gray-400" />
+                )}
+              </th>
+              <th
                 className="px-2 sm:px-4 py-2 sm:py-3 rounded-tr-xl font-semibold text-gray-700 text-center cursor-pointer select-none"
                 onClick={() => handleSort("lastModified")}
               >
@@ -352,6 +390,9 @@ const QuestionList = () => {
                     ? "Trắc nghiệm"
                     : "Tự luận"}
                 </td>
+                <td className="px-2 sm:px-4 py-2 sm:py-3 align-top text-center font-medium">
+                  {q.createdBy?.name || ""}
+                </td>
                 <td
                   className={`px-2 sm:px-4 py-2 sm:py-3 align-top text-center text-gray-700
                     ${idx === filteredData.length - 1 ? "rounded-br-xl" : ""}
@@ -394,13 +435,25 @@ const QuestionList = () => {
                 q.description
               )}
             </div>
-            <div className="flex gap-3 text-sm mt-1">
-              <span className="bg-indigo-50 text-indigo-900 px-2 py-0.5 rounded">
-                {q.grade.name}
-              </span>
-              <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded">
-                {q.course.name}
-              </span>
+            <div className="flex gap-3 text-sm mt-1 justify-between">
+              <div className="flex gap-2">
+                <span className="bg-indigo-50 text-indigo-900 px-2 py-0.5 rounded">
+                  {q.grade.name}
+                </span>
+                <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded">
+                  {q.course.name}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <span className="bg-gray-50 text-gray-700 px-2 py-0.5 rounded">
+                  {q.questionType === "MULTIPLE_CHOICE"
+                    ? "Trắc nghiệm"
+                    : "Tự luận"}
+                </span>
+                <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                  {q.createdBy?.name || ""}
+                </span>
+              </div>
             </div>
           </div>
         ))}

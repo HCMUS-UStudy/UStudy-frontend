@@ -125,7 +125,7 @@ export async function middleware(request: NextRequest) {
       const classPageRegex = /^\/member\/classes\/([^\/]+)$/;
       if (classPageRegex.test(pathname)) {
         return NextResponse.redirect(
-          new URL(`${pathname}/participant`, request.url),
+          new URL(`${pathname}/assignment`, request.url),
         );
       }
       // Allow access to attendance without permission check
