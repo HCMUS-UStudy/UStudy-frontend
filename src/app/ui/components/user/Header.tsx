@@ -81,7 +81,7 @@ const Header = ({
   // }, []);
 
   useEffect(() => {
-    if (role === "student") {
+    if (role === "member") {
       setSIDENAV_ITEMS(SIDENAV_ITEMS_STUDENT);
     } else if (role === "teacher") {
       setSIDENAV_ITEMS(SIDENAV_ITEMS_TEACHER);
