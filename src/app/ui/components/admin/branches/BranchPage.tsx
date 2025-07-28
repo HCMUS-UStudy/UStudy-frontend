@@ -8,7 +8,7 @@ import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { Branch } from "@/app/types";
 import { useDispatch } from "react-redux";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { setBranches } from "@/app/store/branch-slice";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
@@ -18,15 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import Tooltip from "@/app/ui/components/_common/Tooltip";
-import { Eye } from "lucide-react";
 import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal";
-import { useEncodedRoute } from "@/app/lib/hooks";
 
 const BranchPage = () => {
   const [mounted, setMounted] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const searchParams = useSearchParams();
@@ -57,14 +54,12 @@ const BranchPage = () => {
     }
   };
 
-  const { handleNavigate } = useEncodedRoute();
-
   const handleDetail = (branch: Branch) => {
     // handleNavigate(branch.id, "/admin/branches");
     // router.push(`/admin/branches/${branch.id}`);
     if (mounted) {
-      // router.push(`/admin/branches/${branch.id}`);
-      handleNavigate(branch.id, "/admin/branches");
+      router.push(`/admin/branches/${branch.id}`);
+      // handleNavigate(branch.id, "/admin/branches");
     }
   };
 
@@ -148,7 +143,6 @@ const BranchPage = () => {
                 "Địa chỉ",
                 "Số điện thoại",
                 "Số phòng học",
-                "Hành động",
               ]}
             />
             <TableBody isLoading={status === "pending"}>
@@ -156,32 +150,18 @@ const BranchPage = () => {
                 .slice()
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item) => (
-                  <TableRow key={item.id}>
+                  <TableRow
+                    className="cursor-pointer"
+                    key={item.id}
+                    onClick={() => handleDetail(item)}
+                  >
                     <TableCell className="text-nowrap">{item.name}</TableCell>
                     <TableCell>{item.address}</TableCell>
                     <TableCell className=" truncate">
                       {item.contactNumber}
                     </TableCell>
-                    <TableCell>{item.rooms}</TableCell>
-                    <TableCell className="flex items-center h-full gap-2">
-                      <Tooltip text="Chỉnh sửa chi nhánh">
-                        <button className="text-blue-600 hover:text-blue-800 transition-all">
-                          <FaEdit className="size-4 md:size-5" />
-                        </button>
-                      </Tooltip>
-                      <Tooltip text="Xóa chi nhánh">
-                        <button className="text-red-600 hover:text-red-800 transition-all">
-                          <FaTrashAlt className="size-4 md:size-5" />
-                        </button>
-                      </Tooltip>
-                      <Tooltip text="Xem chi tiết">
-                        <button
-                          onClick={() => handleDetail(item)}
-                          className="text-primary-dark hover:text-primary-darkest transition-all"
-                        >
-                          <Eye className="size-4 md:size-5" />
-                        </button>
-                      </Tooltip>
+                    <TableCell className="text-center px-10 text-left">
+                      {item.rooms}
                     </TableCell>
                   </TableRow>
                 ))}

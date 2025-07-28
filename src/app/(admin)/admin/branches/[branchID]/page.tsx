@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import { IoChevronBackOutline } from "react-icons/io5";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import { Branch } from "@/app/types";
 import { setSelectedBranch, setBranches } from "@/app/store/branch-slice";
 import { RootState } from "@/app/store/store";
@@ -24,7 +24,6 @@ import EditSessionModal from "@/app/ui/components/admin/branches/EditSessionModa
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { FiCheck } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 type Clerk = {
@@ -50,8 +49,8 @@ const BranchDetail = () => {
   // const branchID = (params?.branchID ?? "") as string;
 
   const params = useParams<{ branchID: string }>();
-  const { decodeId } = useEncodedRoute();
-  const branchID = decodeId(params?.branchID as string);
+  // const { decodeId } = useEncodedRoute();
+  const branchID = params?.branchID as string;
 
   const [branch, setBranch] = useState<Branch>();
   const router = useRouter();
@@ -254,9 +253,7 @@ const BranchDetail = () => {
                     {branch.name}
                   </div>
                 )}
-                <div className="flex items-center cursor-pointer p-2 rounded-full bg-gray-200 text-red-500 hover:bg-gray-300 hover:text-red-600 hover:shadow-md">
-                  <FaTrashAlt className="w-5 h-5" />
-                </div>
+                <div className="flex items-center cursor-pointer  rounded-full bg-gray-200 text-red-500 hover:bg-gray-300 hover:text-red-600 hover:shadow-md"></div>
               </div>
 
               <div className="flex flex-col mt-4 gap-2 justify-center items-start text-lg w-[50%] mx-auto">

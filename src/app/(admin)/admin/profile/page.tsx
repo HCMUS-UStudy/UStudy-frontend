@@ -6,7 +6,6 @@ import ProfileInfoGrid from "@/app/ui/components/_common/profile/ProfileInfoGrid
 import ProfileLoadingSkeleton from "@/app/ui/components/_common/profile/ProfileLoadingSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile } from "@/app/lib/services";
-
 const ProfilePage: React.FC = () => {
   const { data: user, isLoading } = useQuery({
     queryKey: ["UserProfile"],

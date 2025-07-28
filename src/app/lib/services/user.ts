@@ -157,7 +157,7 @@ export const updateAvatar = async (file: File) => {
 export const updatePathAvatar = async (pathFile: string) => {
   try {
     const response = await axiosInstance.put(
-      `/user/update-path-avatar?pathFile=${pathFile}`,
+      `/user/update-avatar?avatar=${pathFile}`,
     );
     const userData = await getUserDataFromCookies();
     const updatedUserData = { ...userData, avatar: response.data.data.avatar };
