@@ -47,7 +47,7 @@ export default function MemberList({
       searchParams?.get("AccountName") ?? "",
     ],
     refetchOnWindowFocus: false,
-    queryFn: () => getFreeUsers(classId as string, 10, role, currentPage),
+    queryFn: () => getFreeUsers(classId as string, 100, role, currentPage),
   });
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function MemberList({
   const filteredUnselectedMembers = unselectedMembers.filter(
     (member) =>
       member.user.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      member.user.name.toLowerCase().includes(searchKeyword.toLowerCase()),
+      member.user.genId.toLowerCase().includes(searchKeyword.toLowerCase()),
   );
 
   const useAddMembersMutation = useMutation({

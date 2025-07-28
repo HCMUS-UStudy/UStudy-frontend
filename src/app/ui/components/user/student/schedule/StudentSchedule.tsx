@@ -414,7 +414,7 @@ export default function StudentSchedule() {
                         router.push(
                           record.type === "Task"
                             ? `/member/classes/${record.classId}/assignment`
-                            : `/member/classes/${record.classId}/overview`,
+                            : `/member/classes/${record.classId}/participant`,
                         )
                       }
                       className="group inline-flex items-center gap-2 bg-primary-darkest text-white px-4 py-2 rounded-xl hover:bg-primary transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md"

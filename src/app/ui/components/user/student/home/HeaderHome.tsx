@@ -162,7 +162,7 @@ export default function HeaderHome() {
               <div className="flex gap-1 text-xs">
                 <div className="px-1 py-0.5 bg-red-50 rounded-md">
                   <span className="font-semibold text-red-600">
-                    {practiceData?.overdue || 0} cần nộp
+                    {practiceData?.overdue || 0} quá hạn
                   </span>
                 </div>
                 <div className="px-1 py-0.5 bg-green-50 rounded-md">
@@ -235,7 +235,7 @@ export default function HeaderHome() {
               <div className="flex items-center gap-1 text-xs">
                 <div className="px-1 py-0.5 bg-red-50 rounded-md">
                   <span className="font-semibold text-red-600">
-                    {testData?.overdue || 0} cần làm
+                    {testData?.overdue || 0} quá hạn
                   </span>
                 </div>
                 <div className="px-1 py-0.5 bg-green-50 rounded-md">

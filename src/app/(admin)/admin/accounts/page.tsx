@@ -8,7 +8,7 @@ import AccountNumber from "@/app/ui/components/admin/accounts/AccountNumber";
 
 const roles = {
   All: "Tất cả",
-  ADMIN: "Admin",
+  ADMIN: "Quản trị viên",
   TEACHER: "Giáo viên",
   PARENT: "Phụ huynh",
   STUDENT: "Học sinh",

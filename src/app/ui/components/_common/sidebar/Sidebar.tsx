@@ -130,7 +130,7 @@ const Sidebar = ({
         >
           <div className="flex items-center justify-center pt-5 pb-6">
             {collapsed ? (
-              <Image src="/UstudyIcon.png" alt="Logo" width={25} height={25} />
+              <Image src="/UStudyIcon.png" alt="Logo" width={25} height={25} />
             ) : (
               <Image src="/logo.png" alt="Logo" width={120} height={120} />
             )}

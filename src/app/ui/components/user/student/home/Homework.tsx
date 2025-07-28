@@ -36,7 +36,7 @@ export default function Homework() {
   }, []);
 
   const getStatusInfo = (status: string, completionRate: number) => {
-    if (completionRate === 100) {
+    if (completionRate === 100 || status === "COMPLETED") {
       return {
         text: "Hoàn thành",
         color: "text-green-600",
@@ -54,7 +54,7 @@ export default function Homework() {
       };
     } else {
       return {
-        text: "Đang học",
+        text: "Chưa hoàn thành",
         color: "text-blue-600",
         bgColor: "bg-blue-50",
         borderColor: "border-blue-200",

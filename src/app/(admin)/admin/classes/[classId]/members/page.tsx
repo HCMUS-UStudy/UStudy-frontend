@@ -72,7 +72,7 @@ const MemberPage = () => {
     },
     onSuccess: () => {
       addToast.success("Xóa thành viên thành công");
-      queryClient.invalidateQueries({ queryKey: ["ListMembers", currentPage] });
+      queryClient.invalidateQueries({ queryKey: ["ListMembers"] });
     },
     onError: () => {
       addToast.error("Xóa thành viên thất bại");
