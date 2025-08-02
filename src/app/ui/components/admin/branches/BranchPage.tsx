@@ -7,7 +7,7 @@ import { getAllBranches } from "@/app/lib/services/branch";
 import SearchField from "@/app/ui/components/_common/text-field/SearchField";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { useDispatch } from "react-redux";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { setBranches } from "@/app/store/branch-slice";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
@@ -19,15 +19,14 @@ import {
 } from "@/app/ui/components/_common/Table";
 import { FaEdit } from "react-icons/fa";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
-import { Eye } from "lucide-react";
 import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal";
 import EditBranchModal from "./EditBranchModal";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { Branch } from "@/app/types";
 
 const BranchPage = () => {
   const [mounted, setMounted] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const searchParams = useSearchParams();
@@ -76,14 +75,12 @@ const BranchPage = () => {
     setEditingBranch(null);
   };
 
-  const { handleNavigate } = useEncodedRoute();
-
   const handleDetail = (branch: Branch) => {
     // handleNavigate(branch.id, "/admin/branches");
     // router.push(`/admin/branches/${branch.id}`);
     if (mounted) {
-      // router.push(`/admin/branches/${branch.id}`);
-      handleNavigate(branch.id, "/admin/branches");
+      router.push(`/admin/branches/${branch.id}`);
+      // handleNavigate(branch.id, "/admin/branches");
     }
   };
 
@@ -175,17 +172,24 @@ const BranchPage = () => {
                 .slice()
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item) => (
-                  <TableRow key={item.id}>
+                  <TableRow
+                    className="cursor-pointer"
+                    key={item.id}
+                    onClick={() => handleDetail(item)}
+                  >
                     <TableCell className="text-nowrap">{item.name}</TableCell>
                     <TableCell>{item.address}</TableCell>
                     <TableCell className=" truncate">
                       {item.contactNumber}
                     </TableCell>
                     <TableCell>{item.rooms}</TableCell>
-                    <TableCell className="flex items-center h-full gap-2">
+                    <TableCell className="flex items-center h-full gap-2 px-10">
                       <Tooltip text="Chỉnh sửa chi nhánh">
                         <button
-                          onClick={() => handleEditBranch(item)}
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            handleEditBranch(item);
+                          }}
                           className="text-blue-600 hover:text-blue-800 transition-all"
                         >
                           <FaEdit className="size-4 md:size-5" />
@@ -196,14 +200,6 @@ const BranchPage = () => {
                           <FaTrashAlt className="size-4 md:size-5" />
                         </button>
                       </Tooltip> */}
-                      <Tooltip text="Xem chi tiết">
-                        <button
-                          onClick={() => handleDetail(item)}
-                          className="text-primary-dark hover:text-primary-darkest transition-all"
-                        >
-                          <Eye className="size-4 md:size-5" />
-                        </button>
-                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}

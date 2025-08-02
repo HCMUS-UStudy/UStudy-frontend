@@ -186,20 +186,20 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
               Bạn có chắc chắn muốn đăng ký lớp học này không?
             </p>
             {selectedClass && (
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-slate-50 p-4 rounded-lg">
                 <h3 className="font-medium text-gray-900">
                   {selectedClass.classDto.name}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-700 mt-1">
                   Mô tả: {selectedClass.classDto.description}
                 </p>
-                <p className="text-sm text-gray-600">
-                  Khóa học: {selectedClass.classDto.course.name}
+                <p className="text-sm text-gray-700">
+                  Môn học: {selectedClass.classDto.course.name}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-700">
                   Khối: {selectedClass.classDto.grade.name}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-700">
                   Thời gian:{" "}
                   {new Date(
                     selectedClass.classDto.startDate,

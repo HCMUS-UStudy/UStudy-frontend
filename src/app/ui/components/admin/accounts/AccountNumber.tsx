@@ -23,6 +23,7 @@ const AccountNumber: React.FC<AccountNumberProps> = ({
         0,
       ),
     placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 
   return (

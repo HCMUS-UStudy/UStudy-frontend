@@ -7,13 +7,12 @@ import {
 } from "antd";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
-import clsx from "clsx";
 import viVN from "antd/locale/vi_VN";
 
 type CustomDatePickerProps<T extends FieldValues> = AntdDatePickerProps & {
-  name: Path<T>;
-  control: Control<T>;
   label: string;
+  name?: Path<T>;
+  control?: Control<T>;
   placeholder?: string;
   isError?: boolean;
   errorMsg?: string;
@@ -78,65 +77,64 @@ export const CustomDatePicker = <T extends FieldValues>({
   ...datePickerProps
 }: CustomDatePickerProps<T>) => {
   return (
-    <div className="w-full text-sm">
-      <label
-        htmlFor={name}
-        className={clsx(
-          `flex gap-2 items-center w-full px-3 h-[40px] rounded-md cursor-pointer`,
-          {
-            "border border-control-border": !isError,
-            "border-2 border-error": isError,
-          },
-        )}
-      >
-        <div className="text-gray-700 flex items-center">
-          {label}
-          <div className="flex-1 w-full">
-            <Controller
-              control={control}
-              name={name}
-              render={({ field }) => {
-                return (
-                  <ConfigProvider locale={viVN}>
-                    <AntdDatepicker
-                      {...datePickerProps}
-                      classNames={{
-                        popup: {
-                          root: "text-primary-darkest hover:!text-primary-darkest",
-                        },
-                      }}
-                      placeholder={placeholder}
-                      id={name}
-                      format="DD/MM/YYYY"
-                      variant="borderless"
-                      className="w-full px-2 rounded outline-none border-none text-[14px] focus:outline-green-500  cursor-pointer text-sm bg-transparent"
-                      onChange={(dateValue) => {
-                        // setDate(dateValue);
-                        // const isoDate = dateValue
-                        //   ? new Date(
-                        //       Date.UTC(
-                        //         dateValue.getFullYear(),
-                        //         dateValue.getMonth(),
-                        //         dateValue.getDate(),
-                        //       ),
-                        //     )
-                        //       .toISOString()
-                        //       .split("T")[0]
-                        //   : "";
-                        const isoDate = dateValue
-                          ? dateValue.format("YYYY-MM-DD")
-                          : "";
-                        field.onChange(isoDate);
-                      }}
-                    />
-                  </ConfigProvider>
-                );
-              }}
+    <>
+      {control && name ? (
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => {
+            return (
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#4ea677",
+                    colorError: "#dc2626",
+                    fontSize: 14,
+                  },
+                }}
+                locale={viVN}
+              >
+                <AntdDatepicker
+                  {...datePickerProps}
+                  placeholder={placeholder}
+                  id={name}
+                  format="DD/MM/YYYY"
+                  prefix={label}
+                  status={isError ? "error" : ""}
+                  className={`w-full px-3 py-2   rounded-lg cursor-pointer text-sm bg-transparent ${isError ? "border-2 border-error" : "border border-control-border"}`}
+                  onChange={(dateValue) => {
+                    const isoDate = dateValue
+                      ? dateValue.format("YYYY-MM-DD")
+                      : "";
+                    field.onChange(isoDate);
+                  }}
+                />
+              </ConfigProvider>
+            );
+          }}
+        />
+      ) : (
+        <>
+          <ConfigProvider
+            theme={{
+              token: { colorPrimary: "#4ea677" },
+            }}
+            locale={viVN}
+          >
+            <AntdDatepicker
+              {...datePickerProps}
+              placeholder={placeholder}
+              id={name}
+              format="DD/MM/YYYY"
+              variant="borderless"
+              className="w-full px-2 rounded outline-none border-none text-[14px] focus:outline-green-500  cursor-pointer text-sm bg-transparent"
             />
-          </div>
-        </div>
-      </label>
-      <span className="text-[13px] text-error mt-2">{errorMsg}</span>
-    </div>
+          </ConfigProvider>
+        </>
+      )}
+      {isError && (
+        <span className="text-[13px] text-error mt-2">{errorMsg}</span>
+      )}
+    </>
   );
 };

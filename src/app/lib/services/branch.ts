@@ -1,6 +1,14 @@
 import axiosInstance from "@/app/lib/axios";
-import { Branch, BranchData } from "@/app/types";
+import {
+  BasePaginationResponse,
+  Branch,
+  BranchData,
+  BranchItem,
+  UserSummary,
+  UserSummaryWithRole,
+} from "@/app/types";
 import { CreateBranchInputs } from "@/app/ui/components/admin/branches/AddBranchModal";
+import { getUserId } from "../action";
 
 type BranchUpdate = {
   id: string;
@@ -47,19 +55,39 @@ export const assignClerks = async (branchId: string, clerkIds: string[]) => {
   return response.data;
 };
 
-export const getListClerk = async (branchId: string) => {
-  const response = await axiosInstance.get(`/branch/list-admins/${branchId}`, {
-    params: {
-      page: 0,
-      limit: 100,
-    },
-  });
-  return response.data;
+export const getListClerk = async (
+  branchId: string,
+): Promise<BasePaginationResponse<UserSummaryWithRole>> => {
+  try {
+    const response = await axiosInstance.get(
+      `/branch/list-admins/${branchId}`,
+      {
+        params: {
+          page: 0,
+          limit: 100,
+        },
+      },
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getAvailableClerks = async () => {
   const response = await axiosInstance.get(`/user/list-clerks`);
   return response.data;
+};
+
+export const getAvailableClerksByBranchId = async (
+  branchId: string,
+): Promise<UserSummary[]> => {
+  try {
+    const response = await axiosInstance.get(`/user/list-clerks/${branchId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const updateBranch = async (branch: BranchUpdate) => {
@@ -71,24 +99,44 @@ export const updateBranch = async (branch: BranchUpdate) => {
   return response.data;
 };
 
-export const updateSessions = async (branchId: string, sessions: string[]) => {
-  const response = await axiosInstance.patch(
-    `/branch/update-sessions/${branchId}`,
-    {
-      sessions: sessions,
-    },
-  );
-  return response.data;
+export const updateSessions = async (
+  branchId: string,
+  sessions: string[],
+): Promise<Branch> => {
+  try {
+    const response = await axiosInstance.patch(
+      `/branch/update-sessions/${branchId}`,
+      {
+        sessions: sessions,
+      },
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const updateAdmins = async (branchId: string, clerkIds: string[]) => {
-  const response = await axiosInstance.patch(
-    `/branch/update-admins/${branchId}`,
-    {
-      clerkIds: clerkIds,
-    },
-  );
-  return response.data;
+export const updateAdmins = async (
+  branchId: string,
+  clerkIds: string[],
+): Promise<UserSummaryWithRole[]> => {
+  try {
+    const userId = await getUserId();
+    console.log(userId);
+    if (userId === "") {
+      throw new Error("Không tìm thấy UserId");
+    }
+    const ids = [...clerkIds, userId];
+    const response = await axiosInstance.patch(
+      `/branch/update-admins/${branchId}`,
+      {
+        clerkIds: ids,
+      },
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getUserBranches = async () => {
@@ -100,4 +148,13 @@ export const getUserBranches = async () => {
   });
 
   return response.data.data;
+};
+
+export const getBranchById = async (branchId: string): Promise<BranchItem> => {
+  try {
+    const response = await axiosInstance.get(`/branch/details/${branchId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };

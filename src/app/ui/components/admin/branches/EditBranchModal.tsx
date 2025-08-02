@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/app/ui/components/_common/Button";
 import { Input } from "@/app/ui/components/_common/text-field/Input";
 import { updateBranch } from "@/app/lib/services/branch";
-import { toast } from "react-toastify";
 import { Branch } from "@/app/types";
 import {
   Dialog,
@@ -12,6 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/app/ui/components/_common/Dialog";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
 interface EditBranchModalProps {
   isOpen: boolean;
@@ -33,23 +33,24 @@ export default function EditBranchModal({
     contactNumber: branch?.contactNumber || "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const { addToast } = useCustomToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.address || !formData.contactNumber) {
-      toast.error("Vui lòng điền đầy đủ thông tin");
+      addToast.error("Vui lòng điền đầy đủ thông tin");
       return;
     }
 
     try {
       setIsLoading(true);
       await updateBranch(formData);
-      toast.success("Cập nhật chi nhánh thành công");
+      addToast.success("Cập nhật chi nhánh thành công");
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Error updating branch:", error);
-      toast.error("Có lỗi xảy ra khi cập nhật chi nhánh");
+      addToast.error("Có lỗi xảy ra khi cập nhật chi nhánh");
     } finally {
       setIsLoading(false);
     }

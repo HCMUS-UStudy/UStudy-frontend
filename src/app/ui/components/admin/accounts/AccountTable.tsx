@@ -14,13 +14,7 @@ import {
 import { deleteUser, getAllAccount } from "@/app/lib/services/user";
 import Tooltip from "../../_common/Tooltip";
 import { accountStatus } from "@/app/lib/utils";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Eye } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { useRouter } from "next/navigation";
 
@@ -64,7 +58,6 @@ const AccountTable: React.FC<AccountTableProps> = ({
         roleQuery === "All" ? "" : roleQuery.toUpperCase(),
         currentPage - 1,
       ),
-    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
 
@@ -142,7 +135,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
               <TableRow
                 key={user.id}
                 className="hover:bg-primary-lighter cursor-pointer"
-                // onClick={() => handleDetail(user.id)}
+                onClick={() => handleDetail(user.id)}
               >
                 <TableCell>{user.genId}</TableCell>
                 <TableCell>{user.name}</TableCell>
@@ -156,26 +149,16 @@ const AccountTable: React.FC<AccountTableProps> = ({
                   </span>
                 </TableCell>
                 <TableCell>{formatDateToVN(user.createdAt)}</TableCell>
-                <TableCell className="flex justify-start items-center gap-2">
+                <TableCell className="flex justify-start items-center gap-2 px-10">
                   <button
-                    onClick={() => handleDeleteClick(user.id)}
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      handleDeleteClick(user.id);
+                    }}
                     className="flex justify-center items-center text-red-600 hover:text-red-800 transition-colors"
                   >
                     <Tooltip text="Xóa tài khoản">
                       <FaTrashAlt className="size-4 md:size-4" />
-                    </Tooltip>
-                  </button>
-                  {/* <button className="flex justify-center items-center text-yellow-600 hover:text-yellow-800 transition-colors">
-                    <Tooltip text="Khóa tài khoản">
-                      <FiLock className="size-4 md:size-5" />
-                    </Tooltip>
-                  </button> */}
-                  <button
-                    onClick={() => handleDetail(user.id)}
-                    className="flex justify-center items-center text-primary-dark hover:text-primary-darkest transition-colors"
-                  >
-                    <Tooltip text="Xem chi tiết">
-                      <Eye className="size-5 md:size-6" />
                     </Tooltip>
                   </button>
                 </TableCell>
