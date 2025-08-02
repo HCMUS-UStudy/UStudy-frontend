@@ -250,7 +250,7 @@ export default function HeaderHome() {
             <div className="mt-1.5 mb-1.5">
               <div className="flex justify-between items-center mb-0.5">
                 <span className="text-xs font-medium text-gray-700">
-                  Hoàn thành
+                  Đã hoàn thành
                 </span>
                 <span className="text-xs font-medium text-red-700">
                   {testData ? `${testData.submitted}/${testData.total}` : "0/0"}

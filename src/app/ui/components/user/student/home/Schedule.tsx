@@ -142,13 +142,13 @@ export default function Schedule() {
         </div>
         <div className="flex items-center space-x-3">
           <div className="flex items-center">
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">
+            <span className="bg-primary-lighter text-primary-darkest text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">
               {selectedDaySchedules.length}
             </span>
             <span className="text-xs text-gray-600">lớp trong ngày</span>
           </div>
           <button
-            className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm"
+            className="text-primary-darker font-semibold hover:text-primary-darkest transition-colors flex items-center bg-primary-lighter px-3 py-1.5 rounded-lg hover:bg-rimary-light text-sm"
             onClick={() => router.push("/member/schedule")}
           >
             <span>Xem tất cả</span>
@@ -174,7 +174,7 @@ export default function Schedule() {
               className={`text-sm font-medium ${
                 format(day.date, "yyyy-MM-dd") ===
                 format(selectedDay, "yyyy-MM-dd")
-                  ? "text-blue-800"
+                  ? "text-primary-darkest"
                   : "text-gray-500"
               }`}
             >
@@ -184,7 +184,7 @@ export default function Schedule() {
               className={`text-xl font-bold ${
                 format(day.date, "yyyy-MM-dd") ===
                 format(selectedDay, "yyyy-MM-dd")
-                  ? "text-blue-800"
+                  ? "text-primary-darkest"
                   : "text-gray-700"
               }`}
             >

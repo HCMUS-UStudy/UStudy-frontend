@@ -83,8 +83,8 @@ export default function ResultStudy() {
       {
         label: "Điểm của bạn",
         data: classesData.map((cls) => cls.studentAverage || 0),
-        backgroundColor: "rgba(59, 130, 246, 0.8)",
-        borderColor: "rgba(59, 130, 246, 1)",
+        backgroundColor: "rgba(78, 166, 119, 0.8)",
+        borderColor: "rgba(31, 132, 90, 1)",
         borderWidth: 2,
         borderRadius: 6,
         borderSkipped: false,
@@ -345,7 +345,7 @@ export default function ResultStudy() {
           </div>
         </div>
         <button
-          className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm"
+          className="text-primary-darker font-semibold hover:text-primary-darkest transition-colors flex items-center bg-primary-lighter px-3 py-1.5 rounded-lg hover:bg-rimary-light text-sm"
           onClick={() => router.push("/member/academic-results")}
         >
           <span>Xem tất cả</span>
@@ -368,7 +368,7 @@ export default function ResultStudy() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-8 flex-grow">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-dark mb-2"></div>
           <p className="text-gray-500 text-sm">Đang tải dữ liệu...</p>
         </div>
       ) : error ? (
