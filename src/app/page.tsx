@@ -111,9 +111,7 @@ export default async function Home() {
           <RenderMainFeatures />
         </div>
         <div className="relative max-w-[1120px] h-max-[220px]  px-5 md:px-36 py-10 mt-10 md:mt-32 rounded-3xl text-white text-center mx-8 md:mx-auto text-sm md:text-2xl  bg-gradient-to-r from-primary-darkest via-primary-darker to-primary-darkest">
-          “Everybody is a genius. But if you judge a fish by its ability to
-          climb a tree, it will live its whole life believing that it is stupid.
-          - Mọi người đều là thiên tài. Nhưng nếu bạn đánh giá một con cá bằng
+          “Mọi người đều là thiên tài. Nhưng nếu bạn đánh giá một con cá bằng
           khả năng leo cây của nó, nó sẽ sống cả cuộc đời tin rằng nó là ngu
           ngốc.”
           <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-3 flex flex-col items-center">
