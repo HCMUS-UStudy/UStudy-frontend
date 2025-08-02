@@ -12,6 +12,8 @@ interface SearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onSearch?: (term: string) => void;
   queryKey?: string | string[];
   isLoading?: boolean;
+  debouncedTime?: number;
+  queryWithSearchParams?: boolean;
 }
 
 /**
@@ -38,13 +40,15 @@ const SearchField = ({
   onSearch,
   queryKey = "query",
   isLoading = false,
+  debouncedTime = 500,
+  queryWithSearchParams = true,
   ...props
 }: SearchProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const handleSearch = useDebouncedCallback((term: string) => {
+  const handleSearchParams = useDebouncedCallback((term: string) => {
     onSearch?.(term);
     if (!searchParams) {
       return null;
@@ -64,7 +68,11 @@ const SearchField = ({
     });
 
     replace(`${pathname}?${params.toString()}`);
-  }, 500);
+  }, debouncedTime);
+
+  const handleSearch = (term: string) => {
+    onSearch?.(term);
+  };
 
   // Handle the case where the component is rendered on the server
   const [mounted, setMounted] = React.useState(false);
@@ -107,7 +115,11 @@ const SearchField = ({
       <input
         type="text"
         onChange={(e) => {
-          handleSearch(e.target.value);
+          if (queryWithSearchParams) {
+            return handleSearchParams(e.target.value);
+          } else {
+            return handleSearch(e.target.value);
+          }
         }}
         className="w-full rounded-lg px-3 py-2 text-xs md:text-sm text-ellipsis outline-none placeholder-gray-600 bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
         {...props}

@@ -1,3 +1,5 @@
+import { RoleItem } from "./role";
+
 export type SideNavItem = {
   title: string;
   path: string;
@@ -37,6 +39,8 @@ export type UserSummary = {
   name: string;
   avatar: string;
 };
+
+export type UserSummaryWithRole = UserSummary & { role: RoleItem };
 
 export interface BaseEntity {
   id: string;

@@ -11,13 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/ui/components/_common/Table";
-import {
-  //  ArrowRight,
-  Eye,
-} from "lucide-react";
 import { ClassData } from "@/app/types";
-// import ClassEnrollmentModal from "./enrollment/ClassEnrollmentModal";
-import Tooltip from "../../_common/Tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "@/app/store/store";
 import Pagination from "../../_common/Pagination";
@@ -58,13 +52,13 @@ export default function ClassesTable() {
             "Học phí",
             "Ngày bắt đầu",
             "Ngày kết thúc",
-            "Hành động",
           ]}
         />
         <TableBody isLoading={status === "pending"}>
           {fetchClasses?.content.map((c, i) => (
             <TableRow
               key={i}
+              className="cursor-pointer"
               onClick={() => {
                 router.push(`/admin/classes/${c.id}`);
               }}
@@ -75,17 +69,6 @@ export default function ClassesTable() {
               <TableCell>{c.fee} VNĐ</TableCell>
               <TableCell>{c.startDate}</TableCell>
               <TableCell>{c.endDate}</TableCell>
-              <TableCell className="p-0 w-full flex items-center justify-start gap-2 px-10 py-3">
-                <div
-                  onClick={() => {
-                    router.push(`/admin/classes/${c.id}`);
-                  }}
-                >
-                  <Tooltip text="Xem lớp học">
-                    <Eye className="size-6 text-primary-dark hover:text-primary-darkest cursor-pointer transition-all" />
-                  </Tooltip>
-                </div>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>

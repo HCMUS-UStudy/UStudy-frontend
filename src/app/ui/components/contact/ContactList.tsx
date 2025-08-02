@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { memo, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -9,8 +9,8 @@ import {
 } from "../_common/Card";
 import { BsPerson } from "react-icons/bs";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
-import { getAllRooms } from "@/app/lib/services/chat";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAllRooms, markMessageAsRead } from "@/app/lib/services/chat";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { setRoom } from "@/app/store/ChatSlice";
 import { ContactsLoading } from "../_common/loading";
@@ -18,18 +18,23 @@ import { SearchField } from "../_common/text-field";
 import { useSearchParams } from "next/navigation";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import PlayAnimation from "../../../ui/lotties/animation";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { markAsRead, setRoomChat } from "@/app/store/RoomChatSlice";
 
 interface Props {
   closeList?: () => void;
 }
 
-export const ContactList = ({ closeList }: Props) => {
+const ContactList = ({ closeList }: Props) => {
   const dispatch = useAppDispatch();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const selectedRoom = useAppSelector((state: any) => state.chat.room);
+  const roomChats = useAppSelector((state) => state.roomChat.rooms);
 
   const params = useSearchParams();
   const name = params?.get("name") as string;
+
+  const { addToast } = useCustomToast();
 
   const selectedChildId = useAppSelector(
     (state) => state.children.selectedChild?.id,
@@ -47,6 +52,24 @@ export const ContactList = ({ closeList }: Props) => {
     queryKey: ["RoomChats", 0, name, selectedChildId || ""],
     queryFn: () => getAllRooms(0, 100, name, isParent ? selectedChildId : ""),
     refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (status === "success") {
+      dispatch(setRoomChat(rooms.content));
+    }
+  }, [rooms, status]);
+
+  const queryClient = useQueryClient();
+  const markAsReadMutation = useMutation({
+    mutationFn: (roomId: string) => markMessageAsRead(roomId),
+    onError: () => {
+      addToast.error("Không thể đánh dấu tin nhắn đã đọc");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["RoomChats"] });
+    },
   });
 
   return (
@@ -84,7 +107,7 @@ export const ContactList = ({ closeList }: Props) => {
               </div>
             ) : (
               <>
-                {rooms?.content.map((room) => (
+                {roomChats.map((room) => (
                   <div
                     key={room.user.id}
                     className={`relative flex items-center p-3 border rounded cursor-pointer transition-all duration-200 ease-in-out hover:shadow-sm ${
@@ -95,6 +118,8 @@ export const ContactList = ({ closeList }: Props) => {
                     onClick={() => {
                       // setSelectedRoom(room);
                       dispatch(setRoom(room));
+                      markAsReadMutation.mutate(room.user.id);
+                      dispatch(markAsRead(room.user.id));
                       if (closeList) closeList();
                     }}
                   >
@@ -141,3 +166,5 @@ export const ContactList = ({ closeList }: Props) => {
     </Card>
   );
 };
+
+export default memo(ContactList);

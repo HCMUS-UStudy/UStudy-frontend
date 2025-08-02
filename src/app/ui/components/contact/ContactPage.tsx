@@ -2,10 +2,10 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-import { ChatMessage } from "./ChatMessage";
+import ChatMessage from "./ChatMessage";
 import { useWebSocketService } from "@/app/hooks/use-web-socket";
 import { Dialog } from "../_common/Dialog";
-import { ContactList } from "./ContactList";
+import ContactList from "./ContactList";
 import { useAppDispatch, useAppSelector } from "@/app/store/store";
 import { MessageItem } from "@/app/types";
 import { addMessage } from "@/app/store/ChatSlice";

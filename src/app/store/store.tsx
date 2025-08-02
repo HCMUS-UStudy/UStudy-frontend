@@ -6,6 +6,7 @@ import encryptedIdReducer from "./EncryptedIdSlice";
 import chatReducer from "./ChatSlice";
 import gradeReducer from "./GradeSlice";
 import userReducer from "./userSlice";
+import roomChatReducer from "./RoomChatSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,6 +19,7 @@ const store = configureStore({
     chat: chatReducer,
     grades: gradeReducer,
     user: userReducer,
+    roomChat: roomChatReducer,
   },
 });
 

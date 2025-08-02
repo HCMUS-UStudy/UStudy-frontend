@@ -31,12 +31,12 @@ export type UpdateClassType = Pick<
 export default function ClassSetting() {
   const params = useParams<{ classId: string }>();
   const classId = params?.classId as string;
-
   const queryClient = new QueryClient();
 
   const { data: classDetail, status } = useQuery({
     queryKey: ["ClassDetails", classId],
     queryFn: () => getClassById(classId),
+    refetchOnWindowFocus: false,
     enabled: !!classId,
   });
 
@@ -45,10 +45,12 @@ export default function ClassSetting() {
       {
         queryKey: ["Courses"],
         queryFn: () => getAllCourses("", 100, 0),
+        refetchOnWindowFocus: false,
       },
       {
         queryKey: ["Grades"],
         queryFn: () => getAllGrades("", 100, 0),
+        refetchOnWindowFocus: false,
       },
     ],
   });
@@ -81,40 +83,16 @@ export default function ClassSetting() {
     [],
   );
 
-  // const updateScheduleMutation = useMutation({
-  //   mutationFn: ({
-  //     classId,
-  //     data,
-  //   }: {
-  //     classId: string;
-  //     data: UpdateSchedule;
-  //   }) => updateSchedule({ classId, data }),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["ClassDetails"] });
-  //     toast.success("Chỉnh sửa lớp học thành công", {
-  //       position: "bottom-right",
-  //       autoClose: 3000,
-  //       hideProgressBar: true,
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error.message, {
-  //       position: "bottom-right",
-  //       autoClose: 3000,
-  //       hideProgressBar: true,
-  //     });
-  //   },
-  // });
-
-  // const handleUpdateSchedule = useCallback(
-  //   ({ classId, data }: { classId: string; data: UpdateSchedule }) => {
-  //     updateScheduleMutation.mutate({ classId, data });
-  //   },
-  //   [],
-  // );
-
   if (status === "pending") {
     return <ClassSettingLoading />;
+  } else if (new Date() > new Date(classDetail?.endDate || "")) {
+    return (
+      <div className="flex justify-center items-center mt-10 mx-20 h-60 bg-red-50 border-2 border-red-300 rounded-lg">
+        <div className="text-red-500 lg:text-lg">
+          Không thể chỉnh sửa lớp đã kết thúc
+        </div>
+      </div>
+    );
   } else if (status === "success") {
     return (
       <>
