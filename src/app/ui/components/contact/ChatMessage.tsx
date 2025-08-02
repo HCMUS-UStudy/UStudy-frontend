@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import { BsPerson } from "react-icons/bs";
 import { CardHeader, CardTitle, CardDescription } from "../_common/Card";
 import Image from "next/image";
@@ -123,7 +123,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                       className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-sm text-sm ${
                         message.isSender
                           ? "bg-primary-dark text-white rounded-br-none"
-                          : "bg-gray-100 text-gray-800 rounded-bl-none"
+                          : "bg-white text-gray-800 rounded-bl-none"
                       }`}
                     >
                       <p>
@@ -227,4 +227,4 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   );
 };
 
-export { ChatMessage };
+export default memo(ChatMessage);

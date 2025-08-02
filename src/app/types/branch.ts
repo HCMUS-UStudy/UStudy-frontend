@@ -1,3 +1,4 @@
+import { UserSummaryWithRole } from "./common";
 import { Session } from "./session";
 
 export type Branch = {
@@ -16,4 +17,14 @@ export type BranchData = {
   pageSize: number;
   totalElements: number;
   totalPages: number;
+};
+
+export type BranchItem = {
+  id: string;
+  name: string;
+  address: string;
+  contactNumber: string;
+  numRooms: number;
+  sessions: Session[];
+  admins: UserSummaryWithRole[];
 };

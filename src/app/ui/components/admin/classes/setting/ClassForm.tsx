@@ -175,7 +175,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
   };
 
   return (
-    <div className=" mx-auto py-6" onSubmit={handleSubmit(onSubmit)}>
+    <div className="mx-auto py-6" onSubmit={handleSubmit(onSubmit)}>
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-col gap-3 md:flex-row justify-between items-center text-lg md:text-xl">

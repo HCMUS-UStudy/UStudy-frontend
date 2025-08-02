@@ -48,12 +48,19 @@ const SmallCheckbox: React.FC<SmallCheckboxProps> = ({
 }) => {
   if (variant === "icon") {
     return (
-      <label
-        className={`relative w-5 h-5 border-2 rounded border-primary-darker flex items-center justify-center 
+      <label className="flex gap-3 cursor-pointer group">
+        <div
+          className={`relative w-5 h-5 border-2 rounded border-primary-darker flex items-center justify-center cursor-pointer
                 hover:cursor-pointer hover:bg-primary ${className}`}
-      >
-        <input type="checkbox" className="hidden peer" {...props} />
-        <FaCheck className="absolute size-3 text-primary-darkest opacity-0 peer-checked:opacity-100 transition-all" />
+        >
+          <input type="checkbox" className="hidden peer" {...props} />
+          <FaCheck className="absolute size-3 text-primary-darkest opacity-0 peer-checked:opacity-100 transition-all" />
+        </div>
+        <span
+          className={`text-sm pr-5 transition-colors group-hover:text-primary-darkest ${isLoading ? "bg-gray-200 text-transparent w-full animate-pulse rounded" : "text-gray-700 peer-checked:text-primary-darkest"}`}
+        >
+          {labelText}
+        </span>
       </label>
     );
   }

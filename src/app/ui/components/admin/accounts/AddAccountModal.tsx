@@ -74,6 +74,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ buttonLabel }) => {
   const { data: roles, status: rolesStatus } = useQuery({
     queryKey: ["Roles"],
     queryFn: () => getAllRoles(),
+    refetchOnWindowFocus: false,
   });
   const queryClient = useQueryClient();
   const createUserMutation = useMutation({

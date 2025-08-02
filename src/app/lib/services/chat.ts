@@ -50,3 +50,14 @@ export const getAllMessages = async (
     throw error;
   }
 };
+
+export const markMessageAsRead = async (
+  senderId: string,
+): Promise<BasePaginationResponse<RoomChatItem>> => {
+  try {
+    const response = await axiosInstance.get(`/message/update/${senderId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};

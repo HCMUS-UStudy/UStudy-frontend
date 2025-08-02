@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createSession, updateSession } from "@/app/lib/services/session";
 import { Session } from "@/app/types";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import CustomTimePicker from "../../_common/text-field/CustomTimePicker";
 
 const CreateSessionSchema = z
   .object({
@@ -51,6 +52,7 @@ const SessionModal = ({
     register,
     formState: { errors },
     handleSubmit,
+    control,
   } = useForm<CreateSessionInputs>({
     resolver: zodResolver(CreateSessionSchema),
     defaultValues: {
@@ -110,19 +112,21 @@ const SessionModal = ({
             errorMsg={errors.name?.message}
             {...register("name")}
           />
-          <Input
-            type="time"
-            label="Thời gian bắt đầu"
+          <CustomTimePicker
+            control={control}
+            name={"startTime"}
+            prefix={"Giờ bắt đầu: "}
+            format={"HH:mm"}
             isError={!!errors.startTime}
             errorMsg={errors.startTime?.message}
-            {...register("startTime")}
           />
-          <Input
-            type="time"
-            label="Thời gian kết thúc"
+          <CustomTimePicker
+            control={control}
+            name={"endTime"}
+            prefix={"Giờ kết thúc: "}
+            format={"HH:mm"}
             isError={!!errors.endTime}
             errorMsg={errors.endTime?.message}
-            {...register("endTime")}
           />
         </form>
       </DialogContent>

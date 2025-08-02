@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { setChildren, setSelectedChild } from "../store/ChildrenSlice";
 import { getUserDataFromCookies } from "../lib/action";
 import { setUserData } from "../store/userSlice";
+import "@ant-design/v5-patch-for-react-19";
 
 export default function InitDataProvider({
   children,

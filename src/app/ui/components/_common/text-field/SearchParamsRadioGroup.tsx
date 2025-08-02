@@ -123,7 +123,7 @@ export const SearchParamsRadioGroup: React.FC<SearchParamsRadioGroupProps> = ({
   };
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn("flex flex-col gap-2 h-full", className)}>
       {label && (
         <h1 className={cn("text-gray-700", labelClassName)}>{label}</h1>
       )}

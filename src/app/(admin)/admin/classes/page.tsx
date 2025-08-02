@@ -9,10 +9,10 @@ export default async function Classes() {
   return (
     <Suspense>
       <div className="flex flex-col gap-5">
-        <div className="flex justify-between gap-10">
+        <div className="flex justify-between items-center gap-10">
           <SearchField className="w-1/2" placeholder="Tìm theo tên lớp..." />
           <SearchParamsRadioGroup
-            className="text-sm text-nowrap w-full sm:w-auto"
+            className="text-sm text-nowrap w-full h-full sm:w-auto"
             options={[
               {
                 label: "Tất cả lớp",
