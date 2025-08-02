@@ -184,6 +184,7 @@ export type UpdateSchedule = {
 
 export type StudentClassCount = {
   inProgressClasses: number;
+  completedClasses: number;
   totalClasses: number;
 };
 

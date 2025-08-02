@@ -100,12 +100,12 @@ export default function HeaderHome() {
             <div className="mt-1.5 mb-1.5">
               <div className="flex justify-between items-center mb-0.5">
                 <span className="text-xs font-medium text-gray-700">
-                  Tiến độ học tập
+                  Đã hoàn thành
                 </span>
                 <span className="text-xs font-medium text-blue-700">
                   {classData
                     ? Math.round(
-                        (classData.inProgressClasses / classData.totalClasses) *
+                        (classData.completedClasses / classData.totalClasses) *
                           100,
                       )
                     : 0}
