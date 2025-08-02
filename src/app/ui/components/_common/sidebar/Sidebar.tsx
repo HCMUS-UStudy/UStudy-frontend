@@ -9,49 +9,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Tooltip from "../Tooltip";
 import { useAppSelector } from "@/app/store/store";
 
-// Function to determine home route based on current path, user role, and permissions
-const getHomeRoute = (
-  pathname: string | null,
-  userRole?: string,
-  permissions?: string[],
-): string => {
-  if (!pathname) return "/home";
-
-  // If user is trying to access /member/home but doesn't have permission, redirect to /member/classes
-  if (
-    pathname === "/member/home" &&
-    permissions &&
-    !permissions.includes("/member/home")
-  ) {
-    return "/member/classes";
-  }
-
-  // If user is a parent trying to access /member/home, redirect to /member/classes
-  if (pathname === "/member/home" && userRole === "PARENT") {
-    return "/member/classes";
-  }
-
-  if (pathname.startsWith("/admin")) {
-    return "/admin/dashboard";
-  } else if (pathname.startsWith("/teacher")) {
-    return "/teacher/classes";
-  } else if (pathname.startsWith("/member")) {
-    // Check if user has permission for /member/home
-    const hasHomePermission =
-      !permissions || permissions.includes("/member/home");
-
-    // Check user role to determine the correct home route
-    if (userRole === "STUDENT") {
-      return hasHomePermission ? "/member/home" : "/member/classes";
-    } else if (userRole === "PARENT") {
-      return "/member/classes";
-    }
-    return hasHomePermission ? "/member/home" : "/member/classes"; // Default fallback
-  }
-
-  return "/home";
-};
-
 const Sidebar = ({
   isOpen,
   handleClose,
@@ -63,13 +20,11 @@ const Sidebar = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { role } = useAppSelector((state) => state.user);
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { status, screens: permissions } = useAppSelector(
     (state) => state.permission,
   );
-  const homeRoute = getHomeRoute(pathname, role?.name, permissions);
-  const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -99,6 +54,16 @@ const Sidebar = ({
     .sort((a: string, b: string) => {
       return allMenuPaths.indexOf(a) - allMenuPaths.indexOf(b);
     });
+
+  const handleLogoClick = () => {
+    if (sortedPermissions && sortedPermissions.length > 0) {
+      const firstValidPath = sortedPermissions.find((path) => routeMap[path]);
+      if (firstValidPath) {
+        router.push(firstValidPath);
+        handleClose(false);
+      }
+    }
+  };
 
   if (!mounted) {
     return null; // Return null during SSR to prevent hydration mismatch
@@ -144,9 +109,7 @@ const Sidebar = ({
                         <div
                           key={item}
                           className={`flex items-center px-[14px] py-[10px] rounded-2xl cursor-pointer transition-colors duration-200 ${
-                            pathname === item ||
-                            (item === homeRoute && pathname === "/home") ||
-                            (item === homeRoute && pathname === "/dashboard")
+                            pathname?.includes(item)
                               ? "bg-primary hover:bg-hover-primary"
                               : "hover:bg-primary-light"
                           }`}
@@ -176,31 +139,18 @@ const Sidebar = ({
             ${collapsed ? "w-sidebar-collapsed" : " w-sidebar-width"}`}
         >
           <div className="flex items-center justify-center pt-5 pb-6">
-            {collapsed ? (
-              <Image
-                src="/UStudyIcon.png"
-                alt="Logo"
-                width={25}
-                height={25}
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push(homeRoute);
-                  handleClose(false);
-                }}
-              />
-            ) : (
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                width={120}
-                height={120}
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push(homeRoute);
-                  handleClose(false);
-                }}
-              />
-            )}
+            <div className="cursor-pointer" onClick={() => handleLogoClick()}>
+              {collapsed ? (
+                <Image
+                  src="/UStudyIcon.png"
+                  alt="Logo"
+                  width={25}
+                  height={25}
+                />
+              ) : (
+                <Image src="/logo.png" alt="Logo" width={120} height={120} />
+              )}
+            </div>
           </div>
           {status === "pending" ? (
             <div className="flex flex-col gap-2 px-4 mt-2">

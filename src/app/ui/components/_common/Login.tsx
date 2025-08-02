@@ -270,7 +270,7 @@ export default function Login() {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bg-foreground p-10 lg:px-14 xl:p-16 rounded-3xl shadow-lg z-[100]"
+            className="bg-foreground p-10 lg:px-12 xl:px-16 xl:pt-16 xl:pb-14 rounded-3xl shadow-lg z-[100]"
           >
             <div className="text-[#F48C06] text-2xl md:text-3xl font-bold flex justify-center">
               Đăng nhập
