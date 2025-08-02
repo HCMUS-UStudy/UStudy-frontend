@@ -191,10 +191,7 @@ const QuestionModal = ({
   };
 
   return (
-    <div
-      className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-50"
-      onClick={() => onClose(false)}
-    >
+    <div className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-50">
       <motion.div
         className="flex flex-col bg-white px-7 py-5 rounded-lg w-3/4 sm:w-1/2 shadow-lg"
         onClick={(e) => e.stopPropagation()}
