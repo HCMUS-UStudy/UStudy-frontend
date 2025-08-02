@@ -5,6 +5,7 @@ import {
   DeleteAccountResponse,
   UpdateProfilePayload,
   UserProfile,
+  UserSummaryWithRole,
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { getUserDataFromCookies, setUserDataCookies } from "../action";
@@ -163,6 +164,19 @@ export const updatePathAvatar = async (pathFile: string) => {
     const updatedUserData = { ...userData, avatar: response.data.data.avatar };
     setUserDataCookies(JSON.stringify(updatedUserData));
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getListAvailableAdmins = async (
+  branchId: string,
+): Promise<UserSummaryWithRole[]> => {
+  try {
+    const response = await axiosInstance.get(
+      `/user/list-available-admins/${branchId}`,
+    );
+    return response.data.data;
   } catch (error) {
     throw error;
   }

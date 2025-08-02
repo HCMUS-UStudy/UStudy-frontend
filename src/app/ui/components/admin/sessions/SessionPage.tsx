@@ -54,6 +54,7 @@ const SessionManagement = () => {
     queryKey: ["Sessions", currentPage - 1, sessionFilter],
     queryFn: () => getSession(currentPage - 1, 5, sessionFilter),
     placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 
   const sessions = useMemo(() => {

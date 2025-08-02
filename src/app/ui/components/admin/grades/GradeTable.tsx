@@ -37,7 +37,7 @@ const GradeTable: React.FC<GradeTableProps> = ({ searchQuery }) => {
           {grades?.content.slice().map((grade) => (
             <TableRow key={grade.id}>
               <TableCell className="w-1/2">{grade.name}</TableCell>
-              <TableCell className="flex gap-2 justify-start">
+              <TableCell className="flex px-10 gap-2 justify-start">
                 <Tooltip text="Chỉnh sửa khối">
                   <button
                     onClick={() => {

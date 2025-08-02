@@ -63,7 +63,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
                   <TableCell>
                     {course.detailedCourseDto.createdBy?.name || "Trống"}
                   </TableCell>
-                  <TableCell className="flex items-center gap-3">
+                  <TableCell className="flex items-center gap-3 px-10">
                     <Tooltip text="Chỉnh sửa môn học">
                       <button
                         onClick={() => {

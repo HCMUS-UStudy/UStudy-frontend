@@ -19,10 +19,8 @@ import {
 } from "@/app/ui/components/_common/Table";
 import { FaEdit } from "react-icons/fa";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
-import { Eye } from "lucide-react";
 import CreateBranchModal from "@/app/ui/components/admin/branches/AddBranchModal";
 import EditBranchModal from "./EditBranchModal";
-import { useEncodedRoute } from "@/app/lib/hooks";
 import { Branch } from "@/app/types";
 
 const BranchPage = () => {
@@ -76,8 +74,6 @@ const BranchPage = () => {
     setShowEditModal(false);
     setEditingBranch(null);
   };
-
-  const { handleNavigate } = useEncodedRoute();
 
   const handleDetail = (branch: Branch) => {
     // handleNavigate(branch.id, "/admin/branches");
@@ -168,6 +164,7 @@ const BranchPage = () => {
                 "Địa chỉ",
                 "Số điện thoại",
                 "Số phòng học",
+                "Hành động",
               ]}
             />
             <TableBody isLoading={status === "pending"}>
@@ -186,10 +183,13 @@ const BranchPage = () => {
                       {item.contactNumber}
                     </TableCell>
                     <TableCell>{item.rooms}</TableCell>
-                    <TableCell className="flex items-center h-full gap-2">
+                    <TableCell className="flex items-center h-full gap-2 px-10">
                       <Tooltip text="Chỉnh sửa chi nhánh">
                         <button
-                          onClick={() => handleEditBranch(item)}
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            handleEditBranch(item);
+                          }}
                           className="text-blue-600 hover:text-blue-800 transition-all"
                         >
                           <FaEdit className="size-4 md:size-5" />
@@ -200,14 +200,6 @@ const BranchPage = () => {
                           <FaTrashAlt className="size-4 md:size-5" />
                         </button>
                       </Tooltip> */}
-                      <Tooltip text="Xem chi tiết">
-                        <button
-                          onClick={() => handleDetail(item)}
-                          className="text-primary-dark hover:text-primary-darkest transition-all"
-                        >
-                          <Eye className="size-4 md:size-5" />
-                        </button>
-                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
