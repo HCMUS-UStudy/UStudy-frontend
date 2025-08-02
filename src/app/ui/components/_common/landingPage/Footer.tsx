@@ -2,45 +2,65 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <div className="h-fit xl:px-20 px-7 py-12 bg-footer text-white tracking-wider flex flex-col gap-7 lg:gap-10 lg:flex-row justify-between">
-      <div className=" max-w-[445px]">
-        <div id="introduce" className="text-[50px] md:text-[62px] font-bold">
-          UStudy
+    <footer className="bg-footer text-white px-6 md:px-12 lg:px-20 py-16">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Giới thiệu */}
+        <div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-primary mb-4">
+            UStudy
+          </h1>
+          <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+            UStudy là nền tảng học tập hiện đại giúp giáo viên, học viên và phụ
+            huynh kết nối hiệu quả. Với các công cụ như tạo lớp học, giao bài,
+            chấm điểm và theo dõi tiến độ, UStudy đồng hành cùng bạn trong hành
+            trình chinh phục tri thức.
+          </p>
         </div>
-        <div className="text-xs lg:text-base text-slate-300 leading-6">
-          UStudy giúp giáo viên, học viên và phụ huynh kết nối dễ dàng trong môi
-          trường học tập hiện đại. Với các công cụ hỗ trợ tạo lớp học, giao bài
-          tập, chấm điểm, theo dõi tiến độ và điểm danh, UStudy mang đến trải
-          nghiệm học tập hiệu quả và tiện lợi. Hãy bắt đầu hành trình chinh phục
-          tri thức của bạn ngay hôm nay!
+
+        {/* Tính năng nổi bật */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Tính năng nổi bật</h2>
+          <ul className="space-y-3 text-slate-300 text-sm md:text-base">
+            <li className="hover:text-white transition">
+              Tạo và quản lý lớp học
+            </li>
+            <li className="hover:text-white transition">
+              Giao bài tập và chấm điểm
+            </li>
+            <li className="hover:text-white transition">
+              Theo dõi tiến độ học tập
+            </li>
+            <li className="hover:text-white transition">
+              Kết nối giáo viên - học viên - phụ huynh
+            </li>
+          </ul>
         </div>
-        {/* <div className="flex w-full mt-5 gap-7 justify-items-start">
-          <FaFacebook className="w-10 h-10" />
-          <FaInstagram className="w-10 h-10" />
-          <FaYoutube className="w-10 h-10" />
-          <FaXTwitter className="w-10 h-10" />
-        </div> */}
+
+        {/* Liên hệ */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Liên hệ</h2>
+          <ul className="space-y-3 text-slate-300 text-sm md:text-base">
+            <li>227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM</li>
+            <li>+84 202-918-2132</li>
+            <li>tploc@fit.hcmus.edu.vn</li>
+            <li>
+              <a
+                href="https://ustudy.io.vn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white transition"
+              >
+                https://ustudy.io.vn
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div>
-        <p className="font-bold text-lg lg:text-2xl">Thông tin chung</p>
-        <div className="flex flex-col gap-2 lg:gap-5 mt-4 font-thin text-sm lg:text-base">
-          <p>21127116 - Nguyễn Lê Thanh Nghĩa</p>
-          <p>21127143 - Nguyễn Minh Quân</p>
-          <p>21127147 - Võ Anh Quân</p>
-          <p>21127419 - Ngô Phước Tài</p>
-          <p>21127478 - Trần Thị Thanh Vân</p>
-          <p>21127616 - Lê Phước Quang Huy</p>
-        </div>
+
+      {/* Bản quyền */}
+      <div className="mt-12 text-center text-xs text-slate-400">
+        © {new Date().getFullYear()} UStudy. Mọi quyền được bảo mật.
       </div>
-      <div>
-        <p className="font-bold text-lg lg:text-2xl">Liên hệ</p>
-        <div className="flex flex-col gap-2 lg:gap-5 mt-4 font-thin text-sm lg:text-base">
-          <p>227 Đ. Nguyễn Văn Cừ, Phường 4, Quận 5, Hồ Chí Minh</p>
-          <p>+1 202-918-2132</p>
-          <p>tploc@fit.hcmus.edu.vn</p>
-          <p>https://ustudy.io.vn</p>
-        </div>
-      </div>
-    </div>
+    </footer>
   );
 }
