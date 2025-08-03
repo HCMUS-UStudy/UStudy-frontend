@@ -42,17 +42,21 @@ export const getQuestionList = async (
   courseId?: string,
   gradeId?: string,
   createdBy?: string,
+  page: number = 0,
+  limit: number = 100,
+  filter: string = "",
 ) => {
   const response = await axiosInstance.get("/question/list", {
     params: {
-      page: 0,
-      limit: 100,
+      page: page,
+      limit: limit,
       courseId: courseId,
       gradeId: gradeId,
       createdBy: createdBy || "",
+      filter: filter,
     },
   });
-  return response.data.data.content;
+  return response.data.data;
 };
 
 export const getQnAListByAssignmentId = async (

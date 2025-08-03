@@ -314,7 +314,28 @@ const Select: React.FC<SelectProps> = ({
             </Label>
           )}
           {isOpen ? (
-            <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
+            <div
+              className="absolute mt-1 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-44 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent"
+              style={{
+                scrollbarWidth: "thin",
+                // For Firefox
+              }}
+            >
+              <style>
+                {`
+            /* For Chrome, Edge, and Safari */
+            .scrollbar-thin::-webkit-scrollbar {
+              width: 4px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+              background: #cbd5e1;
+              border-radius: 4px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-track {
+              background: transparent;
+            }
+          `}
+              </style>
               {options.length === 0 ? (
                 <div className="px-3 py-2 text-xs md:text-sm text-slate-500 text-center">
                   Không có dữ liệu
@@ -325,6 +346,14 @@ const Select: React.FC<SelectProps> = ({
                     ref: (el: HTMLDivElement) =>
                       (optionsRefs.current[idx] = el),
                     isFocused: focusedIndex === idx,
+                    className: cn(
+                      (child as React.ReactElement<any>).props.className,
+                      {
+                        "bg-primary-light":
+                          selectedValue ===
+                          (child as React.ReactElement<any>).props.value,
+                      },
+                    ),
                   }),
                 )
               )}

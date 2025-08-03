@@ -204,7 +204,11 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
       <div className="flex items-center gap-4 mb-6">
         <button
           className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
-          onClick={() => router.back()}
+          onClick={() =>
+            router.push(
+              `/admin/questions?courseId=${question?.course?.id}&gradeId=${question?.grade?.id}`,
+            )
+          }
         >
           <IoReturnUpBack className="inline-block mr-2" />
           Trở về

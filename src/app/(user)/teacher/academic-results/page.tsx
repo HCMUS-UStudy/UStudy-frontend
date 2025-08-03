@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDetailAcademicResult } from "@/app/lib/services";
 import { getClassesForTeacher } from "@/app/lib/services";
 import { AcademicResultManage } from "@/app/types";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 type TeacherClass = { id: string; name: string };
 
@@ -45,8 +46,25 @@ export default function AcademicResultsPage() {
         <h2 className="text-2xl font-bold text-primary-dark">
           Kết quả học tập lớp
         </h2>
+
+        <Select
+          value={selectedClassId}
+          defaultValue={selectedClassId}
+          onValueChange={(value) => setSelectedClassId(value as string)}
+          disabled={classLoading}
+          name="select"
+          showClearButton={false}
+          className="w-[150px]"
+        >
+          {classes.map((item: TeacherClass) => (
+            <SelectItem key={item.id} value={item.id} className="text-gray-800">
+              {item.name}
+            </SelectItem>
+          ))}
+        </Select>
+        {/* 
         <select
-          className="border-2 rounded-lg border-primary-dark px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark z-auto text-[15px] pr-8"
+          className="rounded-lg border border-primary-dark px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-dark z-auto text-[15px]"
           value={selectedClassId}
           onChange={(e) => setSelectedClassId(e.target.value)}
           disabled={classLoading}
@@ -56,7 +74,7 @@ export default function AcademicResultsPage() {
               {item.name}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
 
       <AcademicResults

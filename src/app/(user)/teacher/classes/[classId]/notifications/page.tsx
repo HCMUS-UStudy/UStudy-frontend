@@ -185,157 +185,161 @@ const Notification = () => {
             )}
         </div>
       </div>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b bg-primary-dark text-white">
-            <th className="pl-4 py-2 rounded-tl-lg"></th>
-            <th className="text-left text-[14px] sm:text-[16px] px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
-              Tiêu đề
-            </th>
-            <th className="rounded-tr-lg text-left text-[14px] sm:text-[16px] px-3 py-2">
-              Thông tin
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {notifications.map((notification) => (
-            <tr
-              key={notification.id}
-              className={`cursor-pointer border border-primary-light transition-all ${
-                popupId === notification.id
-                  ? !notification.read
-                    ? "bg-primary-lighter"
-                    : ""
-                  : !notification.read
-                    ? "bg-primary-lighter hover:bg-primary-light"
-                    : "hover:bg-primary-lighter"
-              }`}
-              onClick={() => {
-                if (!notification.read) {
-                  notification.read = true;
-                }
-                router.push(
-                  `/teacher/classes/${classId}/notifications/${notification.id}`,
-                );
-              }}
-            >
-              <td className="pl-4 py-3">
-                {notification.sender.genId === userData?.genId && (
-                  <div
-                    className="flex cursor-pointer items-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <Tooltip text="Chọn">
-                      <Checkbox
-                        checked={selectedIds.includes(notification.id)}
-                        onChange={(checked) => {
-                          if (checked) {
-                            setSelectedIds((prev) => [
-                              ...prev,
-                              notification.id,
-                            ]);
-                          } else {
-                            setSelectedIds((prev) =>
-                              prev.filter((id) => id !== notification.id),
-                            );
-                          }
-                        }}
-                      />
-                    </Tooltip>
-                  </div>
-                )}
-              </td>
-              <td className="px-3 py-3 text-left text-primary-darkest">
-                <span className="text-[13px] sm:text-[15px]">
-                  {notification.title}
-                </span>
-              </td>
-              <td className="px-3 py-3">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={`/userAvatars/${notification.sender.avatar}.png`}
-                      alt="notification"
-                      width={35}
-                      height={35}
-                      className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
-                    />
-                    <div className="flex flex-col">
-                      <div className="text-[12px] sm:text-[14px]">
-                        {notification.sender.name}
-                      </div>
-                      <div className="text-[12px] sm:text-[14px]">
-                        {new Date(notification.sendDate).toLocaleString(
-                          "vi-VN",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          },
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
+      {notifications.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">Không có thông báo</div>
+      ) : (
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b bg-primary-dark text-white">
+              <th className="pl-4 py-2 rounded-tl-lg"></th>
+              <th className="text-left text-[14px] sm:text-[16px] px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
+                Tiêu đề
+              </th>
+              <th className="rounded-tr-lg text-left text-[14px] sm:text-[16px] px-3 py-2">
+                Thông tin
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {notifications.map((notification) => (
+              <tr
+                key={notification.id}
+                className={`cursor-pointer border border-primary-light transition-all ${
+                  popupId === notification.id
+                    ? !notification.read
+                      ? "bg-primary-lighter"
+                      : ""
+                    : !notification.read
+                      ? "bg-primary-lighter hover:bg-primary-light"
+                      : "hover:bg-primary-lighter"
+                }`}
+                onClick={() => {
+                  if (!notification.read) {
+                    notification.read = true;
+                  }
+                  router.push(
+                    `/teacher/classes/${classId}/notifications/${notification.id}`,
+                  );
+                }}
+              >
+                <td className="pl-4 py-3">
                   {notification.sender.genId === userData?.genId && (
-                    <div className="relative ml-auto">
-                      <div
-                        className="flex items-center text-gray-600 text-[17px]
-                      sm:text-[19px] cursor-pointer hover:bg-gray-300 rounded-full transition-all"
-                      >
-                        <Tooltip text="Tùy chọn">
-                          <IoMdMore
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPopupId(
-                                notification.id === popupId
-                                  ? null
-                                  : notification.id,
+                    <div
+                      className="flex cursor-pointer items-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Tooltip text="Chọn">
+                        <Checkbox
+                          checked={selectedIds.includes(notification.id)}
+                          onChange={(checked) => {
+                            if (checked) {
+                              setSelectedIds((prev) => [
+                                ...prev,
+                                notification.id,
+                              ]);
+                            } else {
+                              setSelectedIds((prev) =>
+                                prev.filter((id) => id !== notification.id),
                               );
-                            }}
-                          />
-                        </Tooltip>
-                      </div>
-                      {popupId === notification.id && (
-                        <div
-                          className="absolute right-0 mt-1 w-28 bg-white border border-gray-300
-                      rounded-lg shadow-lg z-10 overflow-auto"
-                          onClick={(e) => e.stopPropagation()}
-                          ref={dropdownRef}
-                        >
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => {
-                              setUpdatingNotification(notification);
-                              setIsOpen(true);
-                              setPopupId(null);
-                            }}
-                          >
-                            Chỉnh sửa
-                          </button>
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                            onClick={() => {
-                              setShowDeleteModal([notification.id]);
-                              setPopupId(null);
-                            }}
-                          >
-                            Xóa
-                          </button>
-                        </div>
-                      )}
+                            }
+                          }}
+                        />
+                      </Tooltip>
                     </div>
                   )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+                <td className="px-3 py-3 text-left text-primary-darkest">
+                  <span className="text-[13px] sm:text-[15px]">
+                    {notification.title}
+                  </span>
+                </td>
+                <td className="px-3 py-3">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={`/userAvatars/${notification.sender.avatar}.png`}
+                        alt="notification"
+                        width={35}
+                        height={35}
+                        className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
+                      />
+                      <div className="flex flex-col">
+                        <div className="text-[12px] sm:text-[14px]">
+                          {notification.sender.name}
+                        </div>
+                        <div className="text-[12px] sm:text-[14px]">
+                          {new Date(notification.sendDate).toLocaleString(
+                            "vi-VN",
+                            {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {notification.sender.genId === userData?.genId && (
+                      <div className="relative ml-auto">
+                        <div
+                          className="flex items-center text-gray-600 text-[17px]
+                        sm:text-[19px] cursor-pointer hover:bg-gray-300 rounded-full transition-all"
+                        >
+                          <Tooltip text="Tùy chọn">
+                            <IoMdMore
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPopupId(
+                                  notification.id === popupId
+                                    ? null
+                                    : notification.id,
+                                );
+                              }}
+                            />
+                          </Tooltip>
+                        </div>
+                        {popupId === notification.id && (
+                          <div
+                            className="absolute right-0 mt-1 w-28 bg-white border border-gray-300
+                        rounded-lg shadow-lg z-10 overflow-auto"
+                            onClick={(e) => e.stopPropagation()}
+                            ref={dropdownRef}
+                          >
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => {
+                                setUpdatingNotification(notification);
+                                setIsOpen(true);
+                                setPopupId(null);
+                              }}
+                            >
+                              Chỉnh sửa
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                              onClick={() => {
+                                setShowDeleteModal([notification.id]);
+                                setPopupId(null);
+                              }}
+                            >
+                              Xóa
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
       {isOpen && (
         <NotificationModal
           notification={updatingNotification}
@@ -351,7 +355,7 @@ const Notification = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-md sm:text-lg font-bold mb-4">Xác nhận xóa</h2>
             <p className="text-[14px] sm:text-[16px]">
-              Bạn có chắc chắn muốn xóa tài liệu này không?
+              Bạn có chắc chắn muốn xóa không?
             </p>
             <div className="flex justify-end gap-4 mt-6 text-[13px] sm:text-[15px]">
               <button

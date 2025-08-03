@@ -60,11 +60,7 @@ const AssignmentModal = ({
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const data = await getQuestionList(
-          courseId,
-          gradeId,
-          userData?.genId || "",
-        );
+        const data = await getQuestionList(courseId, gradeId, "");
         setQuestions(data);
       } catch (error) {
         console.error("Failed to fetch questions:", error);
@@ -181,17 +177,19 @@ const AssignmentModal = ({
         {step === 1 && (
           <>
             <div className="flex mt-5 gap-4">
-              <div className="w-1/2 border-r pr-4">
+              <div className="w-1/2 border-r">
                 <h2 className="font-semibold mb-3 text-primary-darker">
                   Danh sách câu hỏi
                 </h2>
-                <input
-                  type="text"
-                  className="w-full mb-3 px-3 py-2 border border-primary-dark rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-sm"
-                  placeholder="Tìm kiếm tên câu hỏi..."
-                  value={searchQuestion}
-                  onChange={(e) => setSearchQuestion(e.target.value)}
-                />
+                <div className="pr-4">
+                  <input
+                    type="text"
+                    className="w-full mb-3 px-3 py-2 border border-primary-dark rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+                    placeholder="Tìm kiếm tên câu hỏi..."
+                    value={searchQuestion}
+                    onChange={(e) => setSearchQuestion(e.target.value)}
+                  />
+                </div>
                 <div className="h-96 overflow-y-auto">
                   {questions
                     .filter(

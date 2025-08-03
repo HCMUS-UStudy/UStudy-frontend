@@ -118,7 +118,7 @@ const QuestionModal = ({
       addToast.success("Tạo câu hỏi thành công");
       onClose(false);
       queryClient.invalidateQueries({
-        queryKey: ["Questions", courseId, gradeId],
+        queryKey: ["Questions"],
       });
     } catch (error) {
       console.error("Failed to create question:", error);

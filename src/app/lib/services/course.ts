@@ -26,6 +26,25 @@ export const getAllCourses = async (
   }
 };
 
+export const getAllCourses2 = async (
+  query: string,
+  limit: number,
+  currentPage: number,
+): Promise<BasePaginationResponse<CourseDto>> => {
+  try {
+    const response = await axiosInstance.get("/course/list", {
+      params: {
+        page: currentPage,
+        limit: limit,
+        filter: query,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getCoursesByGradeId = async (
   gradeId: string,
 ): Promise<BasePaginationResponse<CourseDto>> => {
