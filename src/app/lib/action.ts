@@ -113,6 +113,7 @@ export async function setTokensAndUserDataCookies(
         secure: true,
         httpOnly: true,
         sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
       });
       cookieStore.set("userData_iv", iv, {
         secure: true,

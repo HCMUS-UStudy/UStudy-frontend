@@ -84,7 +84,7 @@ export default async function Home() {
   };
   return (
     <div className=" bg-background">
-      <div className=" bg-hero h-fit pb-10 md:pb-0 md:h-[570px] lg:h-[540px] pt-10 px-12 lg:px-20 relative">
+      <div className=" bg-hero  pb-10 md:pb-0 h-[450px] md:h-[450px] lg:h-[570px] pt-5 md:pt-10 px-5 md:px-12 lg:px-20 relative">
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
           <svg
             data-name="Layer 1"

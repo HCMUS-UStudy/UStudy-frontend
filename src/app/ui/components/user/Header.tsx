@@ -109,6 +109,8 @@ const Header = ({
   const queryClient = useQueryClient();
   const handleLogout = () => {
     queryClient.invalidateQueries({ queryKey: ["payments"] });
+    // queryClient.invalidateQueries();
+    // queryClient.invalidateQueries({ queryKey: ["ChildrenOfParent"] });
     handleLogoutCookies();
   };
 

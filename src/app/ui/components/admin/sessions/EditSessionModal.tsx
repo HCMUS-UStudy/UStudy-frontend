@@ -1,150 +1,138 @@
 "use client";
 
 import { Button } from "@/app/ui/components/_common/Button";
-import { FormEvent, useState, useEffect } from "react";
+import { memo, useMemo, useState } from "react";
 import { Session } from "@/app/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "../../_common/Dialog";
+import { Input } from "../../_common/text-field";
+import { FaEdit } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import CustomTimePicker from "../../_common/text-field/CustomTimePicker";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateSession } from "@/app/lib/services";
+import { useCustomToast } from "@/app/lib/hooks/useToast";
 
-interface EditSessionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  session: Session;
-  onUpdate: (updatedSession: Session) => void;
-  isLoading?: boolean;
-}
+const editSessionSchema = z.object({
+  id: z.string().optional(),
+  name: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  startTime: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+  endTime: z
+    .string({ message: "Đây là trường bắt buộc" })
+    .min(1, "Đây là trường bắt buộc"),
+});
 
-export default function EditSessionModal({
-  isOpen,
-  onClose,
-  session,
-  onUpdate,
-  isLoading = false,
-}: EditSessionModalProps) {
-  const [name, setName] = useState(session.name);
-  const [startTime, setStartTime] = useState(session.startTime);
-  const [endTime, setEndTime] = useState(session.endTime);
+function EditSessionModal({ session }: { session: Session }) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  // Update form when session prop changes
-  useEffect(() => {
-    if (session) {
-      setName(session.name);
-      setStartTime(session.startTime);
-      setEndTime(session.endTime);
-    }
+  const defaultValues: Session = useMemo(() => {
+    return {
+      id: session.id,
+      name: session.name,
+      startTime: session.startTime,
+      endTime: session.endTime,
+    };
   }, [session]);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onUpdate({
-      ...session,
-      name,
-      startTime,
-      endTime,
-    });
+  const {
+    register,
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<Session>({
+    resolver: zodResolver(editSessionSchema),
+    defaultValues: defaultValues,
+  });
+
+  // // Update form when session prop changes
+  const { addToast } = useCustomToast();
+  const queryClient = useQueryClient();
+
+  const updateSessionMutation = useMutation({
+    mutationFn: (updatedSession: Session) => updateSession(updatedSession),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["Sessions"] });
+      addToast.success("Cập nhật ca học thành công");
+      setIsOpen(false);
+    },
+    onError: () => {
+      addToast.error("Có lỗi xảy ra khi cập nhật ca học");
+    },
+  });
+
+  const onSubmit = (data: Session) => {
+    updateSessionMutation.mutate(data);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Chỉnh sửa ca học</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-            aria-label="Close"
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="text-blue-600 hover:text-blue-800 transition-all"
+      >
+        <FaEdit className="size-4 md:size-5" />
+      </button>
+      <Dialog
+        className="w-1/3"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <DialogHeader>Chỉnh sửa ca học</DialogHeader>
+        <DialogContent>
+          <form
+            id="EditSession"
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-3"
+            action=""
           >
-            ✕
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tên ca học
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border rounded-md"
-              required
+            <Input
+              label="Tên ca học"
+              placeholder="Nhập tên ca học..."
+              isError={!!errors.name}
+              errorMsg={errors.name?.message}
+              {...register("name")}
             />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Giờ bắt đầu
-              </label>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                className="w-full p-2 border rounded-md"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Giờ kết thúc
-              </label>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="w-full p-2 border rounded-md"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outlined"
-              onClick={onClose}
-              className="px-4 py-2"
-              disabled={isLoading}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              className="px-4 py-2 flex items-center gap-2 min-w-[120px] justify-center"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Đang lưu...
-                </>
-              ) : (
-                "Lưu thay đổi"
-              )}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+            <CustomTimePicker
+              prefix={"Giờ bắt đầu:"}
+              format={"HH:mm"}
+              control={control}
+              isError={!!errors.startTime}
+              errorMsg={errors.startTime?.message}
+              name="startTime"
+            />
+            <CustomTimePicker
+              prefix={"Giờ kết thúc:"}
+              format={"HH:mm"}
+              control={control}
+              isError={!!errors.endTime}
+              errorMsg={errors.endTime?.message}
+              name="endTime"
+            />
+          </form>
+        </DialogContent>
+        <DialogFooter>
+          <Button
+            form="EditSession"
+            className="w-full"
+            isPending={updateSessionMutation.status === "pending"}
+          >
+            Chỉnh sửa
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
   );
 }
+
+export default memo(EditSessionModal);

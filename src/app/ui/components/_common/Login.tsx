@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import Link from "next/link";
 import { setUserData } from "@/app/store/userSlice";
+import SmallCheckbox from "./SmallCheckbox";
 
 const LogInSchema = z.object({
   username: z
@@ -297,7 +298,12 @@ export default function Login() {
             </div>
             <div className="flex flex-col gap-2 md:flex-row w-full justify-between mt-4 px-1">
               <div className="flex items-center">
-                <input
+                <SmallCheckbox
+                  labelText="Ghi nhớ đăng nhập"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />
+                {/* <input
                   type="checkbox"
                   id="rememberMe"
                   className="mr-1"
@@ -309,7 +315,7 @@ export default function Login() {
                   className="text-sm text-gray-600 cursor-pointer"
                 >
                   Ghi nhớ đăng nhập
-                </label>
+                </label> */}
               </div>
               <div className="flex">
                 <button
