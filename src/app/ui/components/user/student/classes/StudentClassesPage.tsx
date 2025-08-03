@@ -21,7 +21,10 @@ export default function StudentClassesPage() {
       </div>
 
       <div className="flex items-center justify-between mt-2 gap-14">
-        <SearchField className="w-full " placeholder="Tìm kiếm lớp học..." />
+        <SearchField
+          className="w-full bg-white"
+          placeholder="Tìm kiếm lớp học..."
+        />
         {/* <div className="flex items-center gap-6 px-4">
           <div className="flex items-center">
             <DropdownGrade label="Lọc" />

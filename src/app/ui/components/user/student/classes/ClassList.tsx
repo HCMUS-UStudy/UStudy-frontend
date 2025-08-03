@@ -57,7 +57,7 @@ const ClassList: React.FC<ClassListProps> = ({
         {classes?.content.map((classItem) => (
           <div
             key={classItem.id}
-            className={`flex items-center bg-gradient-to-r from-primary-light to-lighter border border-gray-200 p-4 md:p-6 rounded-lg transition-all transform hover:shadow-md ${type === "row" ? "w-full" : ""}`}
+            className={`flex items-center border border-primary p-4 md:p-6 rounded-lg transition-all transform hover:shadow-md ${type === "row" ? "w-full" : ""}`}
           >
             <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary-lighter text-primary-darkest flex items-center justify-center font-extrabold text-sm md:text-lg mr-3 md:mr-6">
               {classItem.course?.name.charAt(0) || "?"}

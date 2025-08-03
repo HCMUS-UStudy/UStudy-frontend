@@ -196,14 +196,10 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                   isActive
                     ? "border-2 border-primary bg-primary-lighter shadow-lg scale-[1.02] ring-2 ring-primary/50"
                     : isUnread
-                      ? "border-l-4 border-l-red-500 bg-gradient-to-r from-red-50 to-white hover:shadow-md"
+                      ? "border-l-4 border-l-red-500 bg-red-50 hover:shadow-md"
                       : "hover:border-primary-light bg-white hover:shadow-md"
                 } ${navigating ? "pointer-events-none opacity-75" : ""}`}
-                style={
-                  {
-                    // Removed animations for better performance
-                  }
-                }
+                style={{}}
                 onClick={() => {
                   if (!navigating) {
                     onNotificationClick(item.id);
@@ -248,7 +244,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                       {item.title}
                     </h3>
                     {item.content && (
-                      <p className="text-xs text-primary-dark line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-black line-clamp-2 leading-relaxed">
                         {item.content}
                       </p>
                     )}
@@ -261,11 +257,11 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                           height={20}
                           className="rounded-full w-5 h-5 shadow-sm object-cover"
                         />
-                        <span className="text-xs font-medium text-primary-darkest">
+                        <span className="text-xs font-medium text-black">
                           {item.sender.name}
                         </span>
                       </div>
-                      <span className="text-xs text-primary-dark">
+                      <span className="text-xs text-black">
                         {formatDate(item.sendDate)}
                       </span>
                     </div>
