@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  deleteSession,
-  getSession,
-  updateSession,
-} from "@/app/lib/services/session";
+import { deleteSession, getSession } from "@/app/lib/services/session";
 import { Button } from "@/app/ui/components/_common/Button";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 import SessionModal from "@/app/ui/components/admin/branches/SessionModal";
 import EditSessionModal from "./EditSessionModal";
 import DeletePopup from "@/app/ui/components/_common/DeletePopup";
@@ -33,8 +29,6 @@ import { Session } from "@/app/types";
 
 const SessionManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-  const [editingSession, setEditingSession] = useState<Session | null>(null);
   const [deletingSession, setDeletingSession] = useState<Session | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -90,30 +84,6 @@ const SessionManagement = () => {
     },
   });
 
-  // Update session mutation
-  const updateSessionMutation = useMutation({
-    mutationFn: (updatedSession: Session) => updateSession(updatedSession),
-    onSuccess: () => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["Sessions"] });
-      addToast.success("Cập nhật ca học thành công");
-      setIsEditModalOpen(false);
-      setEditingSession(null);
-    },
-    onError: () => {
-      addToast.error("Có lỗi xảy ra khi cập nhật ca học");
-    },
-  });
-
-  const handleUpdateSession = (session: Session) => {
-    setEditingSession(session);
-    setIsEditModalOpen(true);
-  };
-
-  const handleSessionUpdate = (updatedSession: Session) => {
-    updateSessionMutation.mutate(updatedSession);
-  };
-
   return (
     <>
       <div className="px-2">
@@ -148,12 +118,7 @@ const SessionManagement = () => {
                   <TableCell>{item.endTime.slice(0, 5)}</TableCell>
                   <TableCell className="flex gap-2">
                     <Tooltip text="Chỉnh sửa ca học">
-                      <button
-                        onClick={() => handleUpdateSession(item)}
-                        className="text-blue-600 hover:text-blue-800 transition-all"
-                      >
-                        <FaEdit className="size-4 md:size-5" />
-                      </button>
+                      <EditSessionModal session={item} />
                     </Tooltip>
                     <Tooltip text="Xóa ca học">
                       <button
@@ -190,7 +155,7 @@ const SessionManagement = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      {editingSession && (
+      {/* {editingSession && (
         <EditSessionModal
           isOpen={isEditModalOpen}
           onClose={() => {
@@ -203,7 +168,7 @@ const SessionManagement = () => {
           onUpdate={handleSessionUpdate}
           isLoading={updateSessionMutation.isPending}
         />
-      )}
+      )} */}
       {deletingSession && (
         <DeletePopup
           onDelete={handleConfirmDelete}

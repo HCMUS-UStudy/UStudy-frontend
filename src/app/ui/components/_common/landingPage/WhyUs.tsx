@@ -9,10 +9,10 @@ export default function WhyUs() {
   return (
     <div className="mt-12 mx-9 md:mx-36 xl:mx-44">
       <div className="flex flex-col md:flex-row items-center gap-8">
-        <div className="w-full md:w-1/2">
+        <div className="w-full md:w-1/2 hidden lg:flex">
           <Lottie animationData={booksAnimation} loop className="w-4/5" />
         </div>
-        <div className="w-full md:w-1/2 text-center">
+        <div className="w-full lg:w-1/2 text-center">
           <div className="font-bold text-[30px] tracking-tighter md:tracking-normal md:text-[40px]">
             <span className="text-highlight-text">Vì sao</span> nên chọn UStudy?
           </div>
