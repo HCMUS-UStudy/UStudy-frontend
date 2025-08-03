@@ -170,7 +170,8 @@ const SubmissionHistoryModal: React.FC<Props> = ({
                               </Tooltip>
                               {(assignment.format === "ESSAY" ||
                                 assignment.format === "MIXED") &&
-                                !isExpired(assignment.endTime) && (
+                                !isExpired(assignment.endTime) &&
+                                !assignment.duration && (
                                   <button
                                     onClick={() => onEdit(submission.id)}
                                     className="p-2 text-green-600 hover:text-green-800"
@@ -199,7 +200,8 @@ const SubmissionHistoryModal: React.FC<Props> = ({
 
                               {(assignment.format === "ESSAY" ||
                                 assignment.format === "MIXED") &&
-                                !isExpired(assignment.endTime) && (
+                                !isExpired(assignment.endTime) &&
+                                !assignment.duration && (
                                   <button
                                     onClick={() => onEdit(submission.id)}
                                     className="p-2 text-green-600 hover:text-green-800"
