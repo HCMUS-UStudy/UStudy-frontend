@@ -204,7 +204,11 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
       <div className="flex items-center gap-4 mb-6">
         <button
           className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
-          onClick={() => router.back()}
+          onClick={() =>
+            router.push(
+              `/admin/questions?courseId=${question?.course?.id}&gradeId=${question?.grade?.id}`,
+            )
+          }
         >
           <IoReturnUpBack className="inline-block mr-2" />
           Trở về
@@ -474,8 +478,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
           <>
             <div className="mb-3">
               <span className="font-semibold">Mô tả:</span>{" "}
-              {/* {question.description} */}
-              <MarkdownInput content={editData?.description || ""} />
+              <MarkdownInput content={question.description} />
             </div>
             <div className="mb-3">
               <span className="font-semibold">Khối:</span> {question.grade.name}
@@ -522,21 +525,18 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                     {question.options.map((opt, idx) => (
                       <li
                         key={opt.id}
-                        className={`
-                          flex gap-2
-                          ${
-                            opt.isCorrect
-                              ? "text-green-700 font-semibold"
-                              : "text-gray-700"
-                          }
-                        `}
+                        className={`flex gap-2 ${
+                          opt.isCorrect
+                            ? "text-green-700 font-semibold"
+                            : "text-gray-700"
+                        }`}
                       >
                         <span className="inline-block w-6 font-bold">
                           {String.fromCharCode(65 + idx)}.
                         </span>{" "}
                         <MarkdownInput content={opt.description} />
                         {opt.isCorrect && (
-                          <span className="ml-2 bg-primary-light text-primary-darkest px-2 py-1 rounded-full text-xs">
+                          <span className="ml-2 bg-primary-light text-primary-darkest px-2 py-0.5 rounded-full text-xs">
                             Đúng
                           </span>
                         )}
