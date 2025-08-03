@@ -69,10 +69,12 @@ const ReviewAnswers: React.FC<Props> = ({
                   {isAnswered ? (
                     isEssay ? (
                       <>
-                        <span className="font-semibold">Tự luận:</span>{" "}
-                        {submittedContent.length > 60
-                          ? submittedContent.slice(0, 60) + "..."
-                          : submittedContent}
+                        <div className="w-full">
+                          <span className="font-semibold">Tự luận:</span>
+                          <div className="mt-1 w-full max-w-[400px] min-w-[150px] whitespace-pre-wrap max-h-20 overflow-y-auto p-3 bg-white rounded-lg border border-gray-200 shadow-sm text-gray-800 leading-relaxed">
+                            {submittedContent}
+                          </div>
+                        </div>
                         {submittedAnswers[q.id]?.files?.length ? (
                           <ul className="mt-2 space-y-1 text-sm text-blue-600 underline">
                             {submittedAnswers[q.id]?.files?.map((file, idx) => (
