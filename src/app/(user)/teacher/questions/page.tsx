@@ -14,6 +14,7 @@ import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import MarkdownInput from "@/app/ui/components/_common/text-field/MarkdownInput";
+import { safeSliceMathMarkdown } from "@/app/lib/utils";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
@@ -372,13 +373,12 @@ const QuestionList = () => {
                 <td className="px-2 sm:px-4 py-2 sm:py-3 align-top min-w-[180px] sm:min-w-[260px] overflow-visible">
                   {q.description.length > 40 ? (
                     <Tooltip text={q.description}>
-                      {/* <span className="text-gray-900">
-                        {q.description.slice(0, 40)}...
-                      </span> */}
-                      <MarkdownInput content={q.description.slice(0, 40)} />
+                      <MarkdownInput
+                        content={safeSliceMathMarkdown(q.description, 40)}
+                      />
                     </Tooltip>
                   ) : (
-                    q.description
+                    <MarkdownInput content={q.description} />
                   )}
                 </td>
                 <td className="px-2 sm:px-4 py-2 sm:py-3 align-top text-center text-indigo-900 font-medium">
@@ -430,11 +430,13 @@ const QuestionList = () => {
               {q.description.length > 40 ? (
                 <Tooltip text={q.description}>
                   <span className="text-gray-900">
-                    {q.description.slice(0, 40)}...
+                    <MarkdownInput
+                      content={safeSliceMathMarkdown(q.description, 40)}
+                    />
                   </span>
                 </Tooltip>
               ) : (
-                q.description
+                <MarkdownInput content={q.description} />
               )}
             </div>
             <div className="flex gap-3 text-sm mt-1 justify-between">
