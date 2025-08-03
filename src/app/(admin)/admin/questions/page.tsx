@@ -13,6 +13,7 @@ import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
+import MarkdownInput from "@/app/ui/components/_common/text-field/MarkdownInput";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
@@ -428,7 +429,7 @@ const QuestionList = () => {
               {q.description.length > 40 ? (
                 <Tooltip text={q.description}>
                   <span className="text-gray-900">
-                    {q.description.slice(0, 40)}...
+                    <MarkdownInput content={q.description.slice(0, 40)} />
                   </span>
                 </Tooltip>
               ) : (

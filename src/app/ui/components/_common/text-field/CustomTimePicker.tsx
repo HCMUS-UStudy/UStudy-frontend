@@ -3,6 +3,7 @@ import { ConfigProvider, TimePicker } from "antd";
 import type { TimePickerProps } from "antd";
 import viVN from "antd/locale/vi_VN";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
+import dayjs from "dayjs";
 
 type Props<T extends FieldValues> = TimePickerProps & {
   isError?: boolean;
@@ -39,6 +40,14 @@ const CustomTimePicker = <T extends FieldValues>({
                 <div className="flex flex-col gap-1">
                   <TimePicker
                     {...props}
+                    value={
+                      field.value
+                        ? dayjs(
+                            field.value,
+                            props.format ? "HH:mm" : "HH:mm:ss",
+                          )
+                        : null
+                    }
                     status={isError ? "error" : ""}
                     prefix={props.prefix || ""}
                     format={props.format || ""}

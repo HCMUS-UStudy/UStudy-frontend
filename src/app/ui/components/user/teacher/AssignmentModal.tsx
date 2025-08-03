@@ -12,6 +12,8 @@ import { getUserDataFromCookies } from "@/app/lib/action";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import { Select, SelectItem } from "../../_common/Select";
+import { CustomDatePicker } from "../../_common/text-field";
+import dayjs from "dayjs";
 
 const AssignmentModal = ({
   returnButton = false,
@@ -107,8 +109,8 @@ const AssignmentModal = ({
       await createAssignment({
         classId: classId,
         title: newAssignment.title,
-        startTime: newAssignment.startTime,
-        endTime: newAssignment.endTime,
+        startTime: newAssignment.startTime.replace(" ", "T"),
+        endTime: newAssignment.endTime.replace(" ", "T"),
         duration: totalDurationSeconds,
         numAttempts: newAssignment.numAttempts,
         mode: newAssignment.mode,
@@ -138,6 +140,10 @@ const AssignmentModal = ({
 
   const [step, setStep] = useState<1 | 2>(1);
   const [searchQuestion, setSearchQuestion] = useState("");
+
+  useEffect(() => {
+    console.log(newAssignment);
+  }, [newAssignment]);
 
   return (
     <div
@@ -349,21 +355,45 @@ const AssignmentModal = ({
 
             <div className="mt-3 flex gap-4">
               <div className="w-1/2">
-                <label className="font-medium">Thời gian bắt đầu</label>
-                <input
-                  type="datetime-local"
-                  value={newAssignment.startTime}
-                  onChange={(e) =>
+                <CustomDatePicker
+                  label="Thời gian bắt đầu"
+                  placeholder=""
+                  showTime
+                  value={
+                    newAssignment.startTime
+                      ? dayjs(newAssignment.startTime)
+                      : null
+                  }
+                  onChange={(e) => {
+                    const formattedData = dayjs(e).format(
+                      "YYYY-MM-DD HH:mm:ss",
+                    );
                     setNewAssignment((prev) => ({
                       ...prev,
-                      startTime: e.target.value,
-                    }))
-                  }
-                  className="w-full border border-primary-dark focus:outline-none focus:ring-1 focus:ring-primary rounded-lg p-2 mt-1"
+                      startTime: formattedData,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-1/2">
-                <label className="font-medium">Thời gian kết thúc</label>
+                <CustomDatePicker
+                  label="Thời gian kết thúc"
+                  placeholder=""
+                  showTime
+                  value={
+                    newAssignment.endTime ? dayjs(newAssignment.endTime) : null
+                  }
+                  onChange={(e) => {
+                    const formattedData = dayjs(e).format(
+                      "YYYY-MM-DD HH:mm:ss",
+                    );
+                    setNewAssignment((prev) => ({
+                      ...prev,
+                      endTime: formattedData,
+                    }));
+                  }}
+                />
+                {/* <label className="font-medium">Thời gian kết thúc</label>
                 <input
                   type="datetime-local"
                   value={newAssignment.endTime}
@@ -374,7 +404,7 @@ const AssignmentModal = ({
                     }))
                   }
                   className="w-full border border-primary-dark focus:outline-none focus:ring-1 focus:ring-primary rounded-lg p-2 mt-1"
-                />
+                /> */}
               </div>
             </div>
 

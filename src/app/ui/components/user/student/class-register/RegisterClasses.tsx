@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { getListClassToRegister } from "@/app/lib/services/class";
 import { useSearchParams } from "next/navigation";
@@ -50,6 +50,10 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   const [paymentPendingId, setPaymentPendingId] = useState<string | null>(null);
   const [onConfirm, setOnConfirm] = useState<boolean>(false);
   const [selectedClass, setSelectedClass] = useState<ClassToRegisterItem>();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchParams]);
 
   const [registrationSuccess, setRegistrationSuccess] =
     useState<RegisterClassResponse>();

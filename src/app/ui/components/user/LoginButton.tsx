@@ -10,7 +10,7 @@ const LoginButton = () => {
       onClick={() => {
         router.push("/login");
       }}
-      className="text-base md:text-xl px-5 py-2 md:px-10 md:py-3 bg-transparent border-2 border-primary-darkest text-primary-darkest"
+      className="text-sm sm:text-base md:text-xl text-nowrap px-3 py-2 sm:px-5 sm:py-2 md:px-10 md:py-3 bg-transparent border-2 border-primary-darkest text-primary-darkest"
     >
       Đăng nhập
     </Button>

@@ -7,7 +7,7 @@ import { useAppDispatch } from "../store/store";
 import { setPermissions, setStatus } from "../store/PermissionScreenSlice";
 import { usePathname } from "next/navigation";
 import { setChildren, setSelectedChild } from "../store/ChildrenSlice";
-import { getUserDataFromCookies } from "../lib/action";
+import { getUserDataFromCookies, getUserId } from "../lib/action";
 import { setUserData } from "../store/userSlice";
 import "@ant-design/v5-patch-for-react-19";
 
@@ -25,6 +25,12 @@ export default function InitDataProvider({
     refetchOnWindowFocus: false,
   });
 
+  const { data: userId } = useQuery({
+    queryKey: ["UserId"],
+    queryFn: () => getUserId(),
+    refetchOnWindowFocus: false,
+  });
+
   const results = useQueries({
     queries: [
       {
@@ -38,10 +44,10 @@ export default function InitDataProvider({
         ),
       },
       {
-        queryKey: ["ChildrenOfParent"],
+        queryKey: ["ChildrenOfParent", userId],
         queryFn: () => getAllChildrenOfParent(),
         refetchOnWindowFocus: false,
-        enabled: userData?.role.defaultRoute === "PARENT",
+        enabled: userData?.role.defaultRoute === "PARENT" && userId !== "",
       },
     ],
   });
