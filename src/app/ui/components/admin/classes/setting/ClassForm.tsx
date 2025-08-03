@@ -143,17 +143,6 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     [],
   );
 
-  // const handleEditClass = useCallback(() => {
-  //   const data = {
-  //     name: getValues("name"),
-  //     description: getValues("description"),
-  //     courseId: getValues("courseId"),
-  //     gradeId: getValues("gradeId"),
-  //     fee: getValues("fee"),
-  //   };
-  //   console.log(data);
-  // }, []);
-
   const onSubmit = (inputs: updateClassFormInputs) => {
     // console.log(classDetail.id, {
     //   name: inputs.name,

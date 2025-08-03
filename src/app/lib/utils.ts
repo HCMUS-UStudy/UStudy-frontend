@@ -98,3 +98,23 @@ export const daysInWeekMap: Record<DaysInWeek, string> = {
   SATURDAY: "Thứ bảy",
   SUNDAY: "Chủ Nhật",
 };
+
+export function safeSliceMathMarkdown(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+
+  let sliceEnd = maxLength;
+  const openIndexes = [...text.matchAll(/\$/g)].map((m) => m.index || 0);
+
+  // Đếm số dấu $ trong khoảng từ đầu đến sliceEnd
+  const dollarCountInSlice = openIndexes.filter((i) => i < sliceEnd).length;
+
+  // Nếu có dấu $ lẻ → đang cắt giữa biểu thức → mở rộng đến dấu $ tiếp theo
+  if (dollarCountInSlice % 2 !== 0) {
+    const nextDollar = text.indexOf("$", sliceEnd);
+    if (nextDollar !== -1) {
+      sliceEnd = nextDollar + 1;
+    }
+  }
+
+  return text.slice(0, sliceEnd);
+}
