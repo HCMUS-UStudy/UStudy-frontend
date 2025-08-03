@@ -15,6 +15,7 @@ import Tooltip from "../../_common/Tooltip";
 import { AnimatePresence } from "framer-motion";
 import FileUpload from "../../_common/FileUpload";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import MarkdownGuide from "../../_common/text-field/MarkdownGuide";
 
 type FormValues = {
   question: string;
@@ -256,8 +257,11 @@ const QuestionModal = ({
           {!essayQuestion ? (
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mt-3">
-                <label className="font-medium flex items-center gap-1">
-                  Câu hỏi <span className="text-red-500">*</span>
+                <label className="font-medium flex justify-between items-center gap-1">
+                  <div>
+                    Câu hỏi <span className="text-red-500">*</span>
+                  </div>
+                  <MarkdownGuide />
                 </label>
                 <TextArea
                   className="mt-1 min-h-12 max-h-32"

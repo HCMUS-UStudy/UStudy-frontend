@@ -9,7 +9,7 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 export default function Hero() {
   return (
     <div className="flex flex-col md:grid grid-cols-5 justify-between gap-3 px-3 md:px-5 lg:px-2 pt-10">
-      <div className="flex flex-col gap-6 md:col-span-3 text-[35px] lg:text-[40px] xl:text-[50px] md:mr-10 font-bold">
+      <div className="flex flex-col gap-6 col-span-5 lg:col-span-3 text-3xl md:text-[35px] lg:text-[40px] xl:text-[50px] md:mr-10 font-bold">
         <div className="leading-tight md:leading-normal">
           <div className=" tracking-tight md:tracking-normal">
             <span className="text-highlight-text">Kết nối</span> tri thức
@@ -17,7 +17,7 @@ export default function Hero() {
           <div className=" tracking-tight md:tracking-normal">
             <span className="text-highlight-text">Chinh phục</span> mọi mục tiêu
           </div>
-          <div className="text-secondary-text font-light text-sm md:text-sm lg:text-base mt-2">
+          <div className="text-secondary-text font-light text-xs md:text-sm lg:text-base mt-2">
             UStudy giúp giáo viên, học viên và phụ huynh kết nối dễ dàng trong
             môi trường học tập hiện đại. Với các công cụ hỗ trợ tạo lớp học,
             giao bài tập, chấm điểm, theo dõi tiến độ và điểm danh, UStudy mang
@@ -35,7 +35,7 @@ export default function Hero() {
         alt="tutorSystem"
         loading="lazy"
       /> */}
-      <div className="relative col-span-2 w-full md:h-[350px] lg:h-[300px]">
+      <div className="relative col-span-2 hidden lg:flex items-center w-full md:h-[350px] lg:h-[300px] ">
         <Lottie
           className="w-full"
           animationData={learningSystemAnimation}

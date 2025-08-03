@@ -80,29 +80,29 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
     }
   };
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "Hệ thống";
-      case "CLASS":
-        return `Lớp ${notification.className || ""}`;
-      case "USER":
-        return "Cá nhân";
-      default:
-        return type;
-    }
-  };
+  // const getTypeLabel = (type: string) => {
+  //   switch (type) {
+  //     case "SYSTEM":
+  //       return "Hệ thống";
+  //     case "CLASS":
+  //       return `Lớp ${notification.className || ""}`;
+  //     case "USER":
+  //       return "Cá nhân";
+  //     default:
+  //       return type;
+  //   }
+  // };
 
-  const getTypeBadgeColor = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
-      case "CLASS":
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
-      default:
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
-    }
-  };
+  // const getTypeBadgeColor = (type: string) => {
+  //   switch (type) {
+  //     case "SYSTEM":
+  //       return "bg-primary-lighter text-primary-darkest border-primary-light";
+  //     case "CLASS":
+  //       return "bg-primary-lighter text-primary-darkest border-primary-light";
+  //     default:
+  //       return "bg-primary-lighter text-primary-darkest border-primary-light";
+  //   }
+  // };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -127,34 +127,41 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
   };
 
   return (
-    <div className="p-4 lg:p-6 animate-fadeIn">
-      {/* Header with gradient background */}
+    <div className="p-4 lg:p-6 animate-fadeIn bg-white">
       <div className="relative mb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-dark/5 via-primary/8 to-primary-light/12 rounded-xl"></div>
+        <div className="absolute inset-0 bg-primary-lighter rounded-xl"></div>
         <div className="relative p-4">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-4 mb-4">
+            {/* Icon bên trái */}
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br ${getTypeGradient(notification.receiverType)} shadow-lg group-hover:scale-105 transition-transform duration-300`}
             >
               {getTypeIcon(notification.receiverType)}
             </div>
+
+            {/* Phần nội dung */}
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <span
-                  className={`text-xs px-3 py-1.5 rounded-full font-semibold border ${getTypeBadgeColor(notification.receiverType)} shadow-sm`}
-                >
-                  {getTypeLabel(notification.receiverType)}
-                </span>
-                {!notification.read && (
-                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-red-100 to-red-200 text-red-700 border border-red-300 shadow-sm">
-                    <div className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></div>
-                    Chưa đọc
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                {/* Tiêu đề */}
+                <h1 className="text-xl lg:text-2xl font-bold text-primary-darkest leading-tight">
+                  {notification.title}
+                </h1>
+
+                {/* Badge */}
+                {/* <div className="flex items-center gap-2 mt-2 sm:mt-0 flex-wrap justify-end">
+                  <span
+                    className={`text-xs px-3 py-1.5 rounded-full font-semibold border ${getTypeBadgeColor(notification.receiverType)} shadow-sm`}
+                  >
+                    {getTypeLabel(notification.receiverType)}
                   </span>
-                )}
+                  {!notification.read && (
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-red-100 to-red-200 text-red-700 border border-red-300 shadow-sm">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></div>
+                      Chưa đọc
+                    </span>
+                  )}
+                </div> */}
               </div>
-              <h1 className="text-xl lg:text-2xl font-bold text-primary-darkest mb-3 leading-tight">
-                {notification.title}
-              </h1>
             </div>
           </div>
 
@@ -181,7 +188,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
             <div className="flex items-center gap-2 lg:justify-end">
               <div className="text-right">
                 <div className="text-xs text-primary-dark">Gửi lúc</div>
-                <div className="font-semibold text-primary-darkest text-sm">
+                <div className="font-semibold text-gray-600 text-sm">
                   {formatDate(notification.sendDate)}
                 </div>
               </div>
@@ -240,7 +247,7 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
           <div className="p-4 lg:p-5">
             {notification.content ? (
               <div className="prose prose-sm max-w-none">
-                <div className="text-primary-darkest leading-relaxed space-y-3">
+                <div className="text-black leading-relaxed space-y-3">
                   {notification.content.split("\\n").map((line, index) => (
                     <p
                       key={index}

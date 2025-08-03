@@ -17,6 +17,7 @@ import isEqual from "lodash/isEqual";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { getUserDataFromCookies } from "@/app/lib/action";
+import MarkdownInput from "@/app/ui/components/_common/text-field/MarkdownInput";
 
 type QuestionEdit = Question & {
   isManyAnswers?: boolean;
@@ -473,7 +474,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
           <>
             <div className="mb-3">
               <span className="font-semibold">Mô tả:</span>{" "}
-              {question.description}
+              <MarkdownInput content={question.description} />
             </div>
             <div className="mb-3">
               <span className="font-semibold">Khối:</span> {question.grade.name}
@@ -520,16 +521,16 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                     {question.options.map((opt, idx) => (
                       <li
                         key={opt.id}
-                        className={
+                        className={`flex gap-2 ${
                           opt.isCorrect
                             ? "text-green-700 font-semibold"
                             : "text-gray-700"
-                        }
+                        }`}
                       >
                         <span className="inline-block w-6 font-bold">
                           {String.fromCharCode(65 + idx)}.
                         </span>{" "}
-                        {opt.description}{" "}
+                        <MarkdownInput content={opt.description} />
                         {opt.isCorrect && (
                           <span className="ml-2 bg-primary-light text-primary-darkest px-2 py-0.5 rounded-full text-xs">
                             Đúng

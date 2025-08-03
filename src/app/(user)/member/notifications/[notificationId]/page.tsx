@@ -202,7 +202,7 @@ const SingleNotification = () => {
   // }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+    <div className="min-h-screen">
       {/* Navigation Loading Overlay */}
       {/* {navigating && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">

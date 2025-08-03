@@ -150,7 +150,7 @@ export default function AcademicResultsView() {
               type="text"
               value={academicYear}
               readOnly
-              className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-50"
+              className="w-full border border-primary-light focus:outline-primary-dark rounded-md px-4 py-2 bg-gray-50"
             />
           </div>
         )}

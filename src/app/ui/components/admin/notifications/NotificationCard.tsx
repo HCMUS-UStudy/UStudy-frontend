@@ -139,7 +139,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     <Card
       className={`cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group ${
         isUnread
-          ? "border-l-4 border-l-red-500 bg-gradient-to-r from-red-50 to-white shadow-lg"
+          ? "border-l-4 border-l-red-500 bg-red-50 shadow-lg"
           : "hover:border-primary bg-white shadow-md"
       }`}
       style={{
@@ -186,7 +186,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           </h3>
 
           {notification.content && (
-            <p className="text-primary-dark leading-relaxed text-sm line-clamp-2 font-medium mb-3 sm:mb-0">
+            <p className="text-black leading-relaxed text-sm line-clamp-2 font-medium mb-3 sm:mb-0">
               {notification.content}
             </p>
           )}
@@ -204,14 +204,14 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               className="rounded-full w-6 h-6 sm:w-7 sm:h-7 shadow-sm object-cover ring-2 ring-white flex-shrink-0"
             />
             <div className="text-right hidden sm:block min-w-0">
-              <div className="text-xs font-semibold text-primary-darkest break-words">
+              <div className="text-xs font-semibold text-black break-words">
                 {notification.sender.name}
               </div>
             </div>
           </div>
 
           {/* Time */}
-          <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-primary-dark">
+          <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-black">
             <svg
               className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse"
               fill="none"
@@ -232,7 +232,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           </div>
 
           {/* View details hint */}
-          <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-primary-dark">
+          {/* <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-primary-dark">
             <svg
               className="w-3 h-3 sm:w-3.5 sm:h-3.5"
               fill="none"
@@ -252,7 +252,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               />
             </svg>
             <span className="hidden sm:inline">Chi tiết</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </Card>

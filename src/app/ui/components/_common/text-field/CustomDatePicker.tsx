@@ -74,6 +74,7 @@ export const CustomDatePicker = <T extends FieldValues>({
   isError = false,
   errorMsg = "",
   placeholder = "dd/MM/yyyy",
+  showTime = false,
   ...datePickerProps
 }: CustomDatePickerProps<T>) => {
   return (
@@ -98,13 +99,16 @@ export const CustomDatePicker = <T extends FieldValues>({
                   {...datePickerProps}
                   placeholder={placeholder}
                   id={name}
-                  format="DD/MM/YYYY"
+                  format={showTime ? "DD/MM/YYYY HH:mm:ss" : "DD/MM/YYYY"}
+                  showTime={showTime}
                   prefix={label}
                   status={isError ? "error" : ""}
-                  className={`w-full px-3 py-2   rounded-lg cursor-pointer text-sm bg-transparent ${isError ? "border-2 border-error" : "border border-control-border"}`}
+                  className={`w-full px-3 py-2 border border-control-border rounded-lg cursor-pointer text-sm bg-transparent ${isError ? "border-2 border-error" : "border border-control-border"}`}
                   onChange={(dateValue) => {
                     const isoDate = dateValue
-                      ? dateValue.format("YYYY-MM-DD")
+                      ? dateValue.format(
+                          showTime ? "YYYY-MM-DD HH:mm:ss" : "YYYY-MM-DD",
+                        )
                       : "";
                     field.onChange(isoDate);
                   }}
@@ -117,7 +121,11 @@ export const CustomDatePicker = <T extends FieldValues>({
         <>
           <ConfigProvider
             theme={{
-              token: { colorPrimary: "#4ea677" },
+              token: {
+                colorPrimary: "#4ea677",
+                colorError: "#dc2626",
+                fontSize: 14,
+              },
             }}
             locale={viVN}
           >
@@ -125,9 +133,11 @@ export const CustomDatePicker = <T extends FieldValues>({
               {...datePickerProps}
               placeholder={placeholder}
               id={name}
-              format="DD/MM/YYYY"
-              variant="borderless"
-              className="w-full px-2 rounded outline-none border-none text-[14px] focus:outline-green-500  cursor-pointer text-sm bg-transparent"
+              prefix={label}
+              format={showTime ? "DD/MM/YYYY HH:mm:ss" : "DD/MM/YYYY"}
+              showTime={showTime}
+              status={isError ? "error" : ""}
+              className={`w-full px-3 py-2 border border-control-border rounded-lg cursor-pointer text-sm bg-transparent ${isError ? "border-2 border-error" : "border border-control-border"}`}
             />
           </ConfigProvider>
         </>
