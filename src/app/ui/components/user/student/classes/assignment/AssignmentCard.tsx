@@ -137,18 +137,27 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
             : "flex items-center justify-end mt-4"
         }`}
       >
-        <Button
-          className={`px-4 py-2 text-sm transition-all ${
-            assignment.mode === "PRACTICE"
-              ? "bg-green-600 hover:bg-green-700 text-white"
-              : "bg-purple-600 hover:bg-purple-700 text-white"
-          }`}
-          onClick={() => onStart(assignment)}
-        >
-          {assignment.mode === "PRACTICE"
-            ? "Luyện tập ngay"
-            : "Bắt đầu kiểm tra"}
-        </Button>
+        {new Date() > new Date(assignment.endTime) ? (
+          <Button
+            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all"
+            onClick={() => onStart(assignment)}
+          >
+            Xem lại bài cũ
+          </Button>
+        ) : (
+          <Button
+            className={`px-4 py-2 text-sm transition-all ${
+              assignment.mode === "PRACTICE"
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-purple-600 hover:bg-purple-700 text-white"
+            }`}
+            onClick={() => onStart(assignment)}
+          >
+            {assignment.mode === "PRACTICE"
+              ? "Luyện tập ngay"
+              : "Bắt đầu kiểm tra"}
+          </Button>
+        )}
       </div>
     </div>
   );

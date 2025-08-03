@@ -66,6 +66,16 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     setCurrentQuestionIndex((prev) => Math.min(prev + 1, questionsLength - 1));
   };
 
+  const handleCompleteAssignment = () => {
+    // If there's unsent message or attachments, send them first
+    if (chatInputRef.current?.hasUnsentMessage()) {
+      chatInputRef.current.sendMessage();
+    }
+
+    // Proceed with assignment submission
+    handleSubmitAssignment();
+  };
+
   return (
     <div className="bg-primary-lighter shadow-lg rounded-3xl max-w-4xl w-full p-8 backdrop-blur-md border border-primary-light">
       <h3 className="text-3xl font-bold mb-6 text-center text-primary-darkest">
@@ -157,9 +167,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   <h4 className="text-lg font-semibold text-gray-700 mb-2">
                     ✍ Câu trả lời của bạn:
                   </h4>
-                  <p className="text-gray-800">
+                  <div className="text-gray-800 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2">
                     {answers[currentQuestion.id]?.content}
-                  </p>
+                  </div>
 
                   {(answers[currentQuestion.id]?.files ?? []).length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-3">
@@ -234,7 +244,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         {currentQuestionIndex === questionsLength - 1 ? (
           <button
             className="px-4 py-2 bg-primary-darker text-white rounded-lg shadow-md hover:bg-primary-darkest transition-all"
-            onClick={handleSubmitAssignment}
+            onClick={handleCompleteAssignment}
           >
             Hoàn thành
           </button>

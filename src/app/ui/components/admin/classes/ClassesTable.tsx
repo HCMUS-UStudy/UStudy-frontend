@@ -40,6 +40,22 @@ export default function ClassesTable() {
   if (error) {
     return <div>{error.message}</div>;
   }
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
+  };
+
+  function formatDate(dateInput: string | Date): string {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "Invalid date";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 
   return (
     <div>
@@ -66,9 +82,9 @@ export default function ClassesTable() {
               <TableCell>{c.name}</TableCell>
               <TableCell>{c.course.name}</TableCell>
               <TableCell>{c.grade.name}</TableCell>
-              <TableCell>{c.fee} VNĐ</TableCell>
-              <TableCell>{c.startDate}</TableCell>
-              <TableCell>{c.endDate}</TableCell>
+              <TableCell>{formatCurrency(c.fee)}</TableCell>
+              <TableCell>{formatDate(c.startDate)}</TableCell>
+              <TableCell>{formatDate(c.endDate)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

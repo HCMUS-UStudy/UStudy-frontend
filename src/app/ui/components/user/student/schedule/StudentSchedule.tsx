@@ -266,7 +266,7 @@ export default function StudentSchedule() {
       {/* Calendar Section */}
       <Card className="w-full lg:flex-[2] mb-4 lg:mb-0 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
         <CardHeader className="p-6">
-          <div className="flex items-center justify-between h-full min-h-[56px]">
+          <div className="flex items-center justify-between h-full">
             <CardTitle className="text-2xl font-bold text-primary-darkest flex items-center">
               <FaCalendarAlt className="inline-block mr-2" /> Lịch học
             </CardTitle>

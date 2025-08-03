@@ -143,16 +143,14 @@ const AssignmentPage = () => {
       const result = await createNewSubmission(assignmentId as string, body);
 
       if (result?.statusCode === "CREATED") {
-        addToast.success("Asssignment submitted successfully:", result);
+        addToast.success("Bài tập đã nộp thành công:", result);
         setModalOpen(true);
       } else {
-        addToast.error("Failed to submit Asssignment!");
+        addToast.error("Nộp bài thất bại!");
       }
     } catch (error) {
       console.error("Error submitting Asssignment:", error);
-      addToast.error(
-        "An error occurred while submitting the Asssignment. Please try again!",
-      );
+      addToast.error("Đã xảy ra lỗi khi nộp bài. Vui lòng thử lại!");
     } finally {
       setIsLoading(false); // Disable loading after the result
     }

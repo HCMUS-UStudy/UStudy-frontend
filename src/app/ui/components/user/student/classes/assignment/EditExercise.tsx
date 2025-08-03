@@ -133,8 +133,13 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
             return null; // Skip other types
           }
 
-          const currentContent = submittedAnswers[question.questionId] || "";
+          let currentContent = submittedAnswers[question.questionId] || "";
           const originalContent = question.content || "";
+
+          // Replace newlines with \n to preserve them in the API request
+          if (currentContent) {
+            currentContent = currentContent.replace(/\n/g, "\\n");
+          }
 
           const hasChanged = currentContent !== originalContent;
 
