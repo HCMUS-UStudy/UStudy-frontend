@@ -75,6 +75,7 @@ export interface BaseClassInfo {
   description: string;
   startDate: string;
   endDate: string;
+  numLessons?: number;
 }
 
 export interface BaseGradeInfo {

@@ -27,6 +27,11 @@ const updateClassSchema = z
     fee: z.number().min(0, "Học phí không được âm"),
     startDate: z.string(),
     endDate: z.string(),
+    numLessons: z
+      .number()
+      .min(0, "Số buổi học không được âm")
+      .optional()
+      .default(0),
   })
   .superRefine((data, ctx) => {
     const startDate = new Date(data.startDate);
@@ -78,6 +83,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
       description: classDetail.description,
       startDate: classDetail.startDate,
       endDate: classDetail.endDate,
+      numLessons: classDetail.numLessons || 0,
       fee: classDetail.fee,
       gradeId: classDetail.grade.id,
     };
@@ -163,6 +169,17 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     });
   };
 
+  function formatDate(dateInput?: string | Date | null): string {
+    if (!dateInput) return "";
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   return (
     <div className="mx-auto py-6" onSubmit={handleSubmit(onSubmit)}>
       <Card>
@@ -212,35 +229,58 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                     label="Môn học*"
                   />
                 </div>
-                <div className="flex w-full gap-3">
-                  <Input
-                    id="startDate"
-                    className="w-full"
-                    defaultValue={new Date(
-                      classDetail?.startDate || "",
-                    ).toLocaleDateString("VI")}
-                    disabled
-                    label="Ngày bắt đầu*"
-                  />
-                  <Input
-                    id="startDate"
-                    className="w-full"
-                    defaultValue={new Date(
-                      classDetail?.startDate || "",
-                    ).toLocaleDateString("VI")}
-                    disabled
-                    label="Ngày bắt đầu*"
-                  />
-                  <Input
-                    id="endDate"
-                    className="w-full"
-                    defaultValue={new Date(
-                      classDetail?.endDate || "",
-                    ).toLocaleDateString("VI")}
-                    disabled
-                    label="Ngày kết thúc*"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Ngày bắt đầu */}
+                  <div className="flex flex-col">
+                    <label
+                      htmlFor="startDate"
+                      className="mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Ngày bắt đầu*
+                    </label>
+                    <input
+                      type="text"
+                      id="startDate"
+                      className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-800 outline-none cursor-not-allowed"
+                      value={formatDate(classDetail?.startDate)}
+                      readOnly
+                    />
+                  </div>
+
+                  {/* Ngày kết thúc */}
+                  <div className="flex flex-col">
+                    <label
+                      htmlFor="endDate"
+                      className="mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Ngày kết thúc*
+                    </label>
+                    <input
+                      type="text"
+                      id="endDate"
+                      className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-800 outline-none cursor-not-allowed"
+                      value={formatDate(classDetail?.endDate)}
+                      readOnly
+                    />
+                  </div>
+
+                  {/* Số buổi */}
+                  <div className="flex flex-col">
+                    <label
+                      htmlFor="numLessons"
+                      className="mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Số buổi*
+                    </label>
+                    <input
+                      type="number"
+                      id="numLessons"
+                      className="px-4 py-2 border rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      defaultValue={classDetail?.numLessons || 0}
+                    />
+                  </div>
                 </div>
+
                 <div>
                   <Input
                     id="fee"

@@ -70,11 +70,11 @@ export default function ClassAssignment() {
         if (isExpired(selectedAssignment.endTime)) {
           router.push(`/member/classes/${classId}/review/${submissionId}`);
         } else {
-          addToast.error("Assignment is not yet expired.");
+          addToast.error("Bài tập vẫn chưa hết hạn.");
         }
       }
     } else {
-      addToast.error("Selected assignment is not available.");
+      addToast.error("Bài tập không tồn tại.");
     }
   };
 
@@ -139,7 +139,7 @@ export default function ClassAssignment() {
     <div>
       <div>
         <SearchField
-          className="w-full bg-primary-lighter py-[2px] rounded-2xl mb-6"
+          className="w-full bg-white py-[2px] rounded-2xl mb-6"
           placeholder="Tìm kiếm bài tập..."
         />
 

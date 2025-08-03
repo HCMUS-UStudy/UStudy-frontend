@@ -6,12 +6,12 @@ import {
 } from "@/app/lib/services/submission";
 import { SubmissionDetail } from "@/app/types";
 import { Button } from "@/app/ui/components/_common/Button";
-import ChatInput from "@/app/ui/components/_common/ChatInput";
 import ReviewQuizLoading from "@/app/ui/components/_common/loading/ReviewQuizLoading";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaCheckCircle, FaSave, FaTimesCircle } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import ChatInput, { ChatInputRef } from "@/app/ui/components/_common/ChatInput";
 
 interface EditExerciseProps {
   submissionId: string;
@@ -30,9 +30,8 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
   const [deletedFiles, setDeletedFiles] = useState<{ [key: string]: string[] }>(
     {},
   );
-  const [updatedFiles, setUpdatedFiles] = useState<{ [key: string]: File[] }>(
-    {},
-  );
+  const [addedFiles, setAddedFiles] = useState<{ [key: string]: File[] }>({});
+  const chatInputRef = useRef<ChatInputRef>(null);
 
   const { addToast } = useCustomToast();
 
@@ -86,7 +85,7 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
       ...prev,
       [questionId]: updatedAnswer,
     }));
-    setUpdatedFiles((prev) => ({
+    setAddedFiles((prev) => ({
       ...prev,
       [questionId]: message.files,
     }));
@@ -133,19 +132,24 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
             return null; // Skip other types
           }
 
-          const currentContent = submittedAnswers[question.questionId] || "";
+          let currentContent = submittedAnswers[question.questionId] || "";
           const originalContent = question.content || "";
+
+          // Replace newlines with \n to preserve them in the API request
+          if (currentContent) {
+            currentContent = currentContent.replace(/\n/g, "\\n");
+          }
 
           const hasChanged = currentContent !== originalContent;
 
-          const addedFiles = updatedFiles[question.questionId] || [];
+          const addedFilesForQuestion = addedFiles[question.questionId] || [];
           const deletedFilesForQuestion =
             deletedFiles[question.questionId] || []; // Get deleted files for this question
 
           return {
             questionId: question.questionId,
             content: hasChanged ? currentContent : originalContent,
-            addedFiles,
+            addedFiles: addedFilesForQuestion,
             deletedFiles: deletedFilesForQuestion,
           };
         })
@@ -175,7 +179,7 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
     }
   };
 
-  const uploadedFiles = updatedFiles[currentQuestion.questionId] ?? [];
+  const uploadedFiles = addedFiles[currentQuestion.questionId] ?? [];
   const deletedFileIds = deletedFiles[currentQuestion.questionId] ?? [];
 
   // Safely check if currentQuestion.files exists and filter out deleted files
@@ -226,7 +230,7 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
               <h4 className="text-lg font-semibold text-gray-700 mb-2">
                 ✍ Câu trả lời của bạn:
               </h4>
-              <p className="text-gray-800 mb-4">
+              <p className="text-gray-800 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2">
                 {submittedAnswers[currentQuestion.questionId]}
               </p>
 
@@ -273,7 +277,7 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
                   ✏ Chỉnh sửa
                 </Button>
                 <Button
-                  className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-primary-darkest transition-all"
+                  className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600 transition-all"
                   onClick={() => handleDeleteAnswer(currentQuestion.questionId)}
                 >
                   🗑 Xóa câu trả lời
@@ -340,7 +344,9 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
                 Chỉnh sửa câu trả lời:
               </p>
               <ChatInput
+                ref={chatInputRef}
                 currentQuestionId={currentQuestion.questionId}
+                key={currentQuestion.questionId}
                 initialMessage={
                   submittedAnswers[currentQuestion.questionId] ||
                   currentQuestion.content ||
@@ -373,9 +379,13 @@ export default function EditExercise({ submissionId }: EditExerciseProps) {
           </Button>
           <Button
             className="px-4 py-2 bg-primary-darker text-white shadow-md hover:bg-primary-darkest rounded-lg flex items-center"
-            onClick={() => {
+            onClick={async () => {
+              // Check for unsent messages first
+              if (chatInputRef.current?.hasUnsentMessage()) {
+                await chatInputRef.current.sendMessage();
+              }
               if (currentIndex === (reviewData?.questions.length ?? 1) - 1) {
-                handleSave(); // Gọi hàm lưu
+                await handleSave(); // Gọi hàm lưu
               } else {
                 setCurrentIndex((prev) =>
                   Math.min(prev + 1, (reviewData?.questions.length ?? 1) - 1),

@@ -21,7 +21,7 @@ const QuestionReview: React.FC<QuestionReviewProps> = ({
   const answer = answers[selectedQuestion.id];
 
   return (
-    <div className="text-center py-8 bg-gray-50 min-h-screen">
+    <div className="text-center py-8 bg-gray-50">
       <h3 className="text-3xl font-bold mb-6 text-primary-darkest">
         📝 Chi tiết câu hỏi
       </h3>
@@ -46,15 +46,16 @@ const QuestionReview: React.FC<QuestionReviewProps> = ({
             ))}
           </ul>
         ) : (
-          <div className="mb-6 text-left">
+          <div className="mb-6 text-left max-w-3xl w-full">
             <p className="mb-2 text-gray-700 font-medium">Câu trả lời:</p>
-            <p className="bg-gray-100 p-3 rounded-md text-left whitespace-pre-line">
+            <p className="bg-gray-100 p-3 rounded-md text-left whitespace-pre-line break-words max-h-60 overflow-y-auto">
               {answers[selectedQuestion.id]?.content || "Chưa có câu trả lời"}
             </p>
+
             {answer?.files && answer.files.length > 0 && (
               <div className="mt-3">
                 <p className="font-semibold mb-1">Tệp đính kèm:</p>
-                <ul className="list-disc list-inside text-left">
+                <ul className="list-disc list-inside text-left break-words">
                   {answer.files.map((file, i) => (
                     <li key={i}>{file.name}</li>
                   ))}

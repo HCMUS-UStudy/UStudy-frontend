@@ -242,7 +242,7 @@ const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
           )}
 
           <textarea
-            className="flex-1 mx-3 p-3 border border-gray-200 rounded-lg min-h-[50px] resize-none focus:ring-2 focus:ring-primary-light focus:outline-none transition-all"
+            className="flex-1 mx-3 p-3 border border-gray-200 rounded-lg min-h-[150px] resize-none focus:ring-2 focus:ring-primary-light focus:outline-none transition-all"
             rows={2}
             placeholder="Nhập tin nhắn..."
             value={message[currentQuestionId] || ""}
