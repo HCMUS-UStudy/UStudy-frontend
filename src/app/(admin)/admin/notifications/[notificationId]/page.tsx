@@ -199,7 +199,7 @@ const SingleNotification = () => {
   // }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+    <div className="min-h-screen">
       {/* Navigation Loading Overlay */}
       {/* {navigating && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -253,7 +253,7 @@ const SingleNotification = () => {
         )}
 
         {/* Right Side - Notification Detail */}
-        <div className="flex-1 bg-gradient-to-br from-white via-primary-lighter/20 to-primary-light/10 overflow-y-auto relative">
+        <div className="flex-1 overflow-y-auto relative">
           <AnimatePresence mode="wait">
             {notification ? (
               <motion.div

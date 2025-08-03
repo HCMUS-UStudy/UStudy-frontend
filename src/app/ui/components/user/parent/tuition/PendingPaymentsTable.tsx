@@ -71,7 +71,7 @@ export default function PendingPaymentsTable({
                 <TableCell>
                   <div className="flex items-center">
                     <FaUser className="h-4 w-4" />
-                    <span>{payment.student.name}</span>
+                    <span className="pl-2">{payment.student.name}</span>
                   </div>
                 </TableCell>
                 <TableCell>

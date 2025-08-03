@@ -146,10 +146,7 @@ const AssignmentModal = ({
   }, [newAssignment]);
 
   return (
-    <div
-      className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-50"
-      onClick={() => onClose(false)}
-    >
+    <div className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-50">
       <motion.div
         className={`bg-white p-5 rounded-lg ${step === 1 ? "w-[90vw] max-w-6xl" : "w-[80vw] max-w-4xl"} shadow-lg`}
         onClick={(e) => e.stopPropagation()}

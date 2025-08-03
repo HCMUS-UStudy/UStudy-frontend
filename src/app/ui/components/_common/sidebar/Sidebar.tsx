@@ -55,6 +55,16 @@ const Sidebar = ({
       return allMenuPaths.indexOf(a) - allMenuPaths.indexOf(b);
     });
 
+  const handleLogoClick = () => {
+    if (sortedPermissions && sortedPermissions.length > 0) {
+      const firstValidPath = sortedPermissions.find((path) => routeMap[path]);
+      if (firstValidPath) {
+        router.push(firstValidPath);
+        handleClose(false);
+      }
+    }
+  };
+
   if (!mounted) {
     return null; // Return null during SSR to prevent hydration mismatch
   }
@@ -129,11 +139,18 @@ const Sidebar = ({
             ${collapsed ? "w-sidebar-collapsed" : " w-sidebar-width"}`}
         >
           <div className="flex items-center justify-center pt-5 pb-6">
-            {collapsed ? (
-              <Image src="/UStudyIcon.png" alt="Logo" width={25} height={25} />
-            ) : (
-              <Image src="/logo.png" alt="Logo" width={120} height={120} />
-            )}
+            <div className="cursor-pointer" onClick={() => handleLogoClick()}>
+              {collapsed ? (
+                <Image
+                  src="/UStudyIcon.png"
+                  alt="Logo"
+                  width={25}
+                  height={25}
+                />
+              ) : (
+                <Image src="/logo.png" alt="Logo" width={120} height={120} />
+              )}
+            </div>
           </div>
           {status === "pending" ? (
             <div className="flex flex-col gap-2 px-4 mt-2">

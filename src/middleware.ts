@@ -90,7 +90,7 @@ export async function middleware(request: NextRequest) {
         case "STUDENT":
           return NextResponse.redirect(new URL("/member/home", request.url));
         case "PARENT":
-          return NextResponse.redirect(new URL("/member/tuition", request.url));
+          return NextResponse.redirect(new URL("/member/classes", request.url));
         case "ADMIN":
           return NextResponse.redirect(
             new URL("/admin/dashboard", request.url),

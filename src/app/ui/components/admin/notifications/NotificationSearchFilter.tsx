@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
+import { SearchField } from "../../_common/text-field";
 
 interface NotificationSearchFilterProps {
   searchTerm: string;
@@ -33,27 +34,11 @@ const NotificationSearchFilter: React.FC<NotificationSearchFilterProps> = ({
               Tìm kiếm
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                <svg
-                  className="h-4 w-4 sm:h-5 sm:w-5 text-primary-dark animate-pulse"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-              <input
-                type="text"
-                placeholder="Tìm kiếm theo tiêu đề, nội dung hoặc người gửi..."
+              <SearchField
+                className="w-full bg-white"
+                placeholder="Tìm kiếm lớp học..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="block w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 border border-primary-light rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-all duration-200 bg-primary-lighter focus:bg-white"
               />
             </div>
           </div>

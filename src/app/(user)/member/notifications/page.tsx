@@ -160,7 +160,7 @@ const Notification = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+    <div className="min-h-screen">
       {/* Header */}
       <NotificationHeader onRefresh={fetchData} />
 

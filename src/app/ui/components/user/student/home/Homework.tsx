@@ -92,12 +92,12 @@ export default function Homework() {
             <FaBook className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">Bài tập về nhà</h3>
-            <p className="text-xs text-gray-500">Theo dõi bài tập về nhà</p>
+            <h3 className="text-xl font-bold text-gray-800">Tiến độ bài tập</h3>
+            <p className="text-xs text-gray-500">Theo dõi bài tập theo lớp</p>
           </div>
         </div>
         <button
-          className="text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 text-sm"
+          className="text-primary-darker font-semibold hover:text-primary-darkest transition-colors flex items-center bg-primary-lighter px-3 py-1.5 rounded-lg hover:bg-rimary-light text-sm"
           onClick={() => router.push("/member/classes")}
         >
           <span>Xem tất cả</span>

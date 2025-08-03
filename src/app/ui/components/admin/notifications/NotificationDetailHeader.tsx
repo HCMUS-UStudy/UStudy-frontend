@@ -18,7 +18,7 @@ const NotificationDetailHeader: React.FC<NotificationDetailHeaderProps> = ({
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-primary-lighter to-primary-light text-primary-darkest rounded-lg hover:from-primary-light hover:to-primary transition-all duration-300 shadow-sm hover:shadow-md group"
+          className="flex items-center gap-3 px-4 py-2.5 text-primary-darkest hover:text-primary-dark transition-all duration-300 group"
         >
           <IoReturnUpBack className="text-xl group-hover:scale-110 transition-transform duration-300" />
           <span className="font-semibold text-sm hidden sm:inline">
@@ -29,7 +29,7 @@ const NotificationDetailHeader: React.FC<NotificationDetailHeaderProps> = ({
         {/* Mobile Sidebar Toggle */}
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden sidebar-toggle flex items-center justify-center w-10 h-10 bg-gradient-to-r from-primary-lighter to-primary-light text-primary-darkest rounded-lg hover:from-primary-light hover:to-primary transition-all duration-300 shadow-sm hover:shadow-md"
+          className="lg:hidden sidebar-toggle flex items-center justify-center w-10 h-10 text-primary-darkest rounded-lg hover:from-primary-light hover:to-primary transition-all duration-300 shadow-sm hover:shadow-md"
         >
           {sidebarOpen ? (
             <IoClose className="text-xl" />
