@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 
 export default function ClassCard({
   cls,
-  completed,
+  status,
 }: {
   cls: ClassTeacher;
-  completed: boolean;
+  status?: "OPEN" | "PROGRESS" | "COMPLETED";
 }) {
   const router = useRouter();
   const handleClick = () => {
@@ -21,7 +21,7 @@ export default function ClassCard({
   return (
     <div
       className={`border border-slate-200 rounded-2xl shadow-sm p-5 cursor-pointer transition-all 
-      ${!completed ? "bg-white hover:shadow-md hover:shadow-primary-light" : "bg-slate-100 hover:bg-slate-200"}`}
+      ${status !== "COMPLETED" ? "bg-white hover:shadow-md hover:shadow-primary-light" : "bg-slate-100 hover:bg-slate-200"}`}
       onClick={handleClick}
     >
       <h2 className="text-sm md:text-lg font-semibold">{cls.name}</h2>
@@ -31,7 +31,7 @@ export default function ClassCard({
       <div className="flex-col py-2 text-xs md:text-sm">
         {cls.studentAmount} học sinh
       </div>
-      {!completed && (
+      {status === "PROGRESS" && (
         <div className="flex items-center gap-4">
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
