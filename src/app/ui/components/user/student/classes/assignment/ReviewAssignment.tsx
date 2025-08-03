@@ -145,12 +145,12 @@ export default function ReviewAssignment({
         {/* ESSAY */}
         {isEssay && (
           <div className="space-y-6 mb-8">
-            <div>
-              <p className="text-lg font-semibold text-gray-800 mb-3">
-                Câu trả lời của bạn:
-              </p>
-              <p className="bg-gray-50 p-4 rounded-lg shadow-md whitespace-pre-wrap text-gray-700">
-                {currentQuestion.content || "Không có nội dung"}
+            <div className="mb-6 p-6 bg-gray-50 rounded-lg border border-gray-300 shadow-sm">
+              <h4 className="text-lg font-semibold text-gray-700 mb-2">
+                ✍ Câu trả lời của bạn:
+              </h4>
+              <p className="text-gray-800 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2">
+                {currentQuestion.content || "Bạn chưa nhập câu trả lời."}
               </p>
             </div>
             {currentQuestion?.files && currentQuestion.files.length > 0 && (

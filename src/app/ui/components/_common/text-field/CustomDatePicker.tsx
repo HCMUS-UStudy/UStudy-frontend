@@ -4,10 +4,22 @@ import {
   DatePicker as AntdDatepicker,
   DatePickerProps as AntdDatePickerProps,
   ConfigProvider,
+  ThemeConfig,
 } from "antd";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
 import viVN from "antd/locale/vi_VN";
+
+const customTheme: ThemeConfig = {
+  token: {
+    colorPrimary: "#4ea677",
+    colorError: "#dc2626",
+    fontSize: 14,
+    colorTextDisabled: "#374151",
+    colorBgContainerDisabled: "white",
+    colorBorder: "#9ca3af",
+  },
+};
 
 type CustomDatePickerProps<T extends FieldValues> = AntdDatePickerProps & {
   label: string;
@@ -85,16 +97,7 @@ export const CustomDatePicker = <T extends FieldValues>({
           name={name}
           render={({ field }) => {
             return (
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: "#4ea677",
-                    colorError: "#dc2626",
-                    fontSize: 14,
-                  },
-                }}
-                locale={viVN}
-              >
+              <ConfigProvider theme={customTheme} locale={viVN}>
                 <AntdDatepicker
                   {...datePickerProps}
                   placeholder={placeholder}
@@ -119,16 +122,7 @@ export const CustomDatePicker = <T extends FieldValues>({
         />
       ) : (
         <>
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: "#4ea677",
-                colorError: "#dc2626",
-                fontSize: 14,
-              },
-            }}
-            locale={viVN}
-          >
+          <ConfigProvider theme={customTheme} locale={viVN}>
             <AntdDatepicker
               {...datePickerProps}
               placeholder={placeholder}

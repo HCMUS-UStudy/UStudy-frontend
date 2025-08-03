@@ -101,15 +101,24 @@ const StatCard = ({
   icon: React.ElementType;
   trend?: { value: number; isPositive: boolean };
 }) => (
-  <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark">
+  <Card className="p-6 bg-foreground border-2 border-slate-200 transition-all duration-300 hover:bg-primary-lighter hover:shadow-lg hover:border-primary-dark max-w-full">
     <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <h3 className="text-2xl font-bold mt-2">{value}</h3>
+      <div className="flex-1 min-w-0">
+        {/* Title */}
+        <p className="text-sm font-medium text-gray-600 truncate" title={title}>
+          {title}
+        </p>
+
+        {/* Value */}
+        <h3 className="text-2xl font-bold mt-2 truncate max-w-xs" title={value}>
+          {value}
+        </h3>
+
+        {/* Trend */}
         {trend && (
           <div className="flex items-center mt-2">
             <span
-              className={`text-sm ${trend.isPositive ? "text-green-600" : "text-red-600"}`}
+              className={`text-sm ${trend.isPositive ? "text-green-600" : "text-red-600"} truncate`}
             >
               {trend.isPositive ? "+" : "-"}
               {trend.value}%
@@ -120,7 +129,9 @@ const StatCard = ({
           </div>
         )}
       </div>
-      <div className="p-3 bg-blue-50 rounded-full transition-all duration-300 group-hover:bg-blue-100">
+
+      {/* Icon */}
+      <div className="p-3 bg-blue-50 rounded-full transition-all duration-300 group-hover:bg-blue-100 shrink-0 ml-4">
         <Icon className="w-6 h-6 text-blue-600" />
       </div>
     </div>
@@ -152,25 +163,29 @@ const DashboardPage = () => {
             title="Tổng học viên"
             value={data?.totalStudents.toLocaleString() || ""}
             icon={Users}
-            trend={{ value: 12, isPositive: true }}
+            //trend={{ value: 12, isPositive: true }}
           />
           <StatCard
             title="Tổng giáo viên"
             value={data?.totalTeachers.toLocaleString() || ""}
             icon={GraduationCap}
-            trend={{ value: 5, isPositive: true }}
+            //trend={{ value: 5, isPositive: true }}
           />
           <StatCard
             title="Tổng lớp học"
             value={data?.totalClasses.toLocaleString() || ""}
             icon={BookOpen}
-            trend={{ value: 8, isPositive: true }}
+            //trend={{ value: 8, isPositive: true }}
           />
           <StatCard
             title="Doanh thu của chi nhánh"
-            value={`${data?.totalRevenue.toLocaleString()} vnđ` || ""}
+            value={
+              typeof data?.totalRevenue === "number"
+                ? `${data.totalRevenue.toLocaleString()} vnđ`
+                : ""
+            }
             icon={Bell}
-            trend={{ value: 5, isPositive: false }}
+            //trend={{ value: 5, isPositive: false }}
           />
         </div>
       )}
