@@ -35,7 +35,7 @@ export default function ParentTuition() {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["payments", activeTab, selectedChild?.id, currentPage - 1],
+    queryKey: ["payments", selectedChild?.id, currentPage - 1],
     queryFn: () =>
       getPaymentByStuId(selectedChild?.id, currentPage - 1, 5, statusParam),
     placeholderData: keepPreviousData,

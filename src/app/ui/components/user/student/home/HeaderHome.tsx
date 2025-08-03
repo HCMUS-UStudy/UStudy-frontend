@@ -116,7 +116,7 @@ export default function HeaderHome() {
                 <div
                   className="bg-blue-600 h-1 rounded-full"
                   style={{
-                    width: `${classData ? (classData.inProgressClasses / classData.totalClasses) * 100 : 0}%`,
+                    width: `${classData ? (classData.completedClasses / classData.totalClasses) * 100 : 0}%`,
                   }}
                 ></div>
               </div>
@@ -181,8 +181,11 @@ export default function HeaderHome() {
                 </span>
                 <span className="text-xs font-medium text-green-700">
                   {practiceData
-                    ? `${practiceData.submitted}/${practiceData.total}`
-                    : "0/0"}
+                    ? Math.round(
+                        (practiceData.submitted / practiceData.total) * 100,
+                      )
+                    : 0}
+                  %
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1">
@@ -253,7 +256,10 @@ export default function HeaderHome() {
                   Đã hoàn thành
                 </span>
                 <span className="text-xs font-medium text-red-700">
-                  {testData ? `${testData.submitted}/${testData.total}` : "0/0"}
+                  {testData
+                    ? Math.round((testData.submitted / testData.total) * 100)
+                    : 0}
+                  %
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-1">

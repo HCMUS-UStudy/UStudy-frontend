@@ -41,7 +41,7 @@ export default function StudentTuition() {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["payments", activeTab, userData, currentPage - 1],
+    queryKey: ["payments", userData, currentPage - 1],
     queryFn: () =>
       getPaymentByStuId(undefined, currentPage - 1, totalPages, statusParam),
     placeholderData: keepPreviousData,
