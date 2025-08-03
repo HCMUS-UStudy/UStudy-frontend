@@ -29,7 +29,7 @@ const CourseTable: React.FC<CourseTableProps> = ({ searchQuery }) => {
 
   const { data: courses, status } = useQuery({
     queryKey: ["Courses", currentPage - 1, searchQuery],
-    queryFn: () => getAllCourses(searchQuery, 5, currentPage - 1),
+    queryFn: () => getAllCourses(searchQuery, 10, currentPage - 1),
     placeholderData: keepPreviousData,
   });
 

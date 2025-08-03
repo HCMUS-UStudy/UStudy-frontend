@@ -14,9 +14,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { convertToVietnameseText } from "@/app/lib/utils";
 import TextArea from "../../../_common/text-field/TextArea";
-import { ReadonlyTextField } from "../../../_common/text-field";
+import {
+  CustomDatePicker,
+  ReadonlyTextField,
+} from "../../../_common/text-field";
 import { UpdateClassType } from "@/app/(admin)/admin/classes/[classId]/setting/page";
 import GradeAndCourseSelector from "./gradeAndCourseSelector";
+import dayjs from "dayjs";
 
 const updateClassSchema = z
   .object({
@@ -24,12 +28,17 @@ const updateClassSchema = z
     description: z.string().optional(),
     courseId: z.string().min(1, "Vui lòng chọn môn học"),
     gradeId: z.string().min(1, "Vui lòng chọn khối học"),
-    fee: z.number().min(0, "Học phí không được âm"),
+    fee: z
+      .number()
+      .min(0, "Học phí không được âm")
+      .max(100000000, "Học phí không được quá 100.000.000 vnđ"),
     startDate: z.string(),
     endDate: z.string(),
     numLessons: z
-      .number()
-      .min(0, "Số buổi học không được âm")
+      .preprocess(
+        (val) => (val !== null && val !== undefined ? Number(val) : val),
+        z.number().min(0, "Số buổi học không được âm"),
+      )
       .optional()
       .default(0),
   })
@@ -94,6 +103,8 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     formState: { errors },
     watch,
     handleSubmit,
+    setError,
+    clearErrors,
     setValue,
   } = useForm<updateClassFormInputs>({
     resolver: zodResolver(updateClassSchema),
@@ -127,6 +138,14 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputFee = e.target.value.replace(/[^0-9]/g, "");
       const value = Number(inputFee);
+      if (value > 100000000) {
+        setError("fee", {
+          message: '"Học phí không được quá 100.000.000 vnđ"',
+        });
+        return;
+      } else {
+        clearErrors("fee");
+      }
       const formatted = new Intl.NumberFormat("it-IT", {
         style: "currency",
         currency: "VND",
@@ -168,17 +187,6 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
       },
     });
   };
-
-  function formatDate(dateInput?: string | Date | null): string {
-    if (!dateInput) return "";
-    const date = new Date(dateInput);
-    if (isNaN(date.getTime())) return "";
-
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  }
 
   return (
     <div className="mx-auto py-6" onSubmit={handleSubmit(onSubmit)}>
@@ -229,9 +237,21 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                     label="Môn học*"
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="flex gap-2">
+                  <CustomDatePicker
+                    label="Ngày bắt đầu"
+                    value={dayjs(classDetail.startDate)}
+                    disabled
+                    suffixIcon={null}
+                  />
+                  <CustomDatePicker
+                    label="Ngày kết thúc"
+                    value={dayjs(classDetail.endDate)}
+                    disabled
+                    suffixIcon={null}
+                  />
                   {/* Ngày bắt đầu */}
-                  <div className="flex flex-col">
+                  {/* <div className="flex flex-col">
                     <label
                       htmlFor="startDate"
                       className="mb-1 text-sm font-medium text-gray-700"
@@ -245,10 +265,10 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       value={formatDate(classDetail?.startDate)}
                       readOnly
                     />
-                  </div>
+                  </div> */}
 
                   {/* Ngày kết thúc */}
-                  <div className="flex flex-col">
+                  {/* <div className="flex flex-col">
                     <label
                       htmlFor="endDate"
                       className="mb-1 text-sm font-medium text-gray-700"
@@ -262,10 +282,10 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       value={formatDate(classDetail?.endDate)}
                       readOnly
                     />
-                  </div>
+                  </div> */}
 
                   {/* Số buổi */}
-                  <div className="flex flex-col">
+                  {/* <div className="flex flex-col">
                     <label
                       htmlFor="numLessons"
                       className="mb-1 text-sm font-medium text-gray-700"
@@ -278,7 +298,16 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                       className="px-4 py-2 border rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                       defaultValue={classDetail?.numLessons || 0}
                     />
-                  </div>
+                  </div> */}
+                </div>
+                <div>
+                  <Input
+                    type="number"
+                    label="Số buổi học"
+                    isError={!!errors.numLessons}
+                    errorMsg={errors.numLessons?.message}
+                    {...register("numLessons")}
+                  />
                 </div>
 
                 <div>

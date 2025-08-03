@@ -381,7 +381,7 @@ const QuestionList = () => {
                       </span>
                     </Tooltip>
                   ) : (
-                    q.description
+                    <MarkdownInput content={q.description} />
                   )}
                 </td>
                 <td className="px-2 sm:px-4 py-2 sm:py-3 align-top text-center text-indigo-900 font-medium">
@@ -433,11 +433,13 @@ const QuestionList = () => {
               {q.description.length > 40 ? (
                 <Tooltip text={q.description}>
                   <span className="text-gray-900">
-                    <MarkdownInput content={q.description.slice(0, 40)} />
+                    <MarkdownInput
+                      content={safeSliceMathMarkdown(q.description, 40)}
+                    />
                   </span>
                 </Tooltip>
               ) : (
-                q.description
+                <MarkdownInput content={q.description} />
               )}
             </div>
             <div className="flex gap-3 text-sm mt-1 justify-between">
