@@ -179,7 +179,7 @@ export type UpdateSchedule = {
     day: DaysInWeek;
     branchSessionId: string;
     roomId: string;
-  };
+  }[];
 };
 
 export type StudentClassCount = {

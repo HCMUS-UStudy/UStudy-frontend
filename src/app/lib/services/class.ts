@@ -293,9 +293,15 @@ export const updateSchedule = async ({
   data: UpdateSchedule;
 }): Promise<BaseResponse> => {
   try {
+    const updatedData = {
+      startDate: data.startDate,
+      numLessons: data.numLessons,
+      classSessions:
+        data.classSessions.length !== 0 ? data.classSessions : null,
+    };
     const response = await axiosInstance.patch(
       `/class/update-schedule/${classId}`,
-      data,
+      updatedData,
     );
     return response.data.data;
   } catch (error) {

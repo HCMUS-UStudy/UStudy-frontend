@@ -16,7 +16,7 @@ const customTheme: ThemeConfig = {
     colorError: "#dc2626",
     fontSize: 14,
     colorTextDisabled: "#374151",
-    colorBgContainerDisabled: "white",
+    colorBgContainerDisabled: "#f1f5f9",
     colorBorder: "#9ca3af",
   },
 };

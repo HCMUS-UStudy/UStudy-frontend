@@ -19,7 +19,7 @@ import {
   ReadonlyTextField,
 } from "../../../_common/text-field";
 import { UpdateClassType } from "@/app/(admin)/admin/classes/[classId]/setting/page";
-import GradeAndCourseSelector from "./gradeAndCourseSelector";
+// import GradeAndCourseSelector from "./gradeAndCourseSelector";
 import dayjs from "dayjs";
 
 const updateClassSchema = z
@@ -82,8 +82,8 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     formatted: "",
     text: "",
   });
-  const [isSelectingGradesCourses, setIsSelectingGradesCourses] =
-    useState<boolean>(false);
+  // const [isSelectingGradesCourses, setIsSelectingGradesCourses] =
+  //   useState<boolean>(false);
 
   const defaultValues = useMemo(() => {
     return {
@@ -111,7 +111,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     defaultValues: defaultValues,
   });
 
-  const gradeId = watch("gradeId");
+  // const gradeId = watch("gradeId");
 
   useEffect(() => {
     const nameInput = document.getElementById("name") as HTMLInputElement;
@@ -140,7 +140,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
       const value = Number(inputFee);
       if (value > 100000000) {
         setError("fee", {
-          message: '"Học phí không được quá 100.000.000 vnđ"',
+          message: "Học phí không được quá 100.000.000 vnđ",
         });
         return;
       } else {
@@ -160,22 +160,15 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
     [],
   );
 
-  const handleChangeGradeAndCourse = useCallback(
-    ({ gradeId, courseId }: { gradeId: string; courseId: string }) => {
-      setValue("gradeId", gradeId);
-      setValue("courseId", courseId);
-    },
-    [],
-  );
+  // const handleChangeGradeAndCourse = useCallback(
+  //   ({ gradeId, courseId }: { gradeId: string; courseId: string }) => {
+  //     setValue("gradeId", gradeId);
+  //     setValue("courseId", courseId);
+  //   },
+  //   [],
+  // );
 
   const onSubmit = (inputs: updateClassFormInputs) => {
-    // console.log(classDetail.id, {
-    //   name: inputs.name,
-    //   description: inputs.description || "",
-    //   courseId: inputs.courseId,
-    //   gradeId: inputs.gradeId,
-    //   fee: inputs.fee,
-    // });
     handleUpdate({
       classId: classDetail.id,
       data: {
@@ -214,12 +207,9 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                   {...register("name")}
                 />
 
-                <div
-                  onClick={() => setIsSelectingGradesCourses(true)}
-                  className="flex flex-col gap-4 border-dashed border-2 border-primary-dark hover:bg-primary-lighter rounded-lg p-3 transition-all cursor-pointer"
-                >
+                <div className="flex flex-col gap-4 border-dashed border-2 border-primary-dark  rounded-lg p-3 transition-all ">
                   <ReadonlyTextField
-                    className="bg-white"
+                    className="bg-slate-100"
                     text={
                       grades.find((item) => item.id === watch("gradeId"))
                         ?.name || ""
@@ -227,7 +217,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                     label="Khối học*"
                   />
                   <ReadonlyTextField
-                    className="bg-white"
+                    className="bg-slate-100"
                     text={
                       courses.find(
                         (item) =>
@@ -237,7 +227,7 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                     label="Môn học*"
                   />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-8">
                   <CustomDatePicker
                     label="Ngày bắt đầu"
                     value={dayjs(classDetail.startDate)}
@@ -300,15 +290,6 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
                     />
                   </div> */}
                 </div>
-                <div>
-                  <Input
-                    type="number"
-                    label="Số buổi học"
-                    isError={!!errors.numLessons}
-                    errorMsg={errors.numLessons?.message}
-                    {...register("numLessons")}
-                  />
-                </div>
 
                 <div>
                   <Input
@@ -337,12 +318,12 @@ function ClassForm({ classDetail, grades, courses, handleUpdate }: Props) {
           </form>
         </CardContent>
       </Card>
-      <GradeAndCourseSelector
+      {/* <GradeAndCourseSelector
         isOpen={isSelectingGradesCourses}
         onClose={() => setIsSelectingGradesCourses(false)}
         gradeId={gradeId}
         onSave={handleChangeGradeAndCourse}
-      />
+      /> */}
     </div>
   );
 }
