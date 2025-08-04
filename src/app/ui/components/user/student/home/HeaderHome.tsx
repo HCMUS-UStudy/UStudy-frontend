@@ -103,7 +103,9 @@ export default function HeaderHome() {
                   Đã hoàn thành
                 </span>
                 <span className="text-xs font-medium text-blue-700">
-                  {classData
+                  {classData &&
+                  classData?.completedClasses !== 0 &&
+                  classData?.totalClasses !== 0
                     ? Math.round(
                         (classData.completedClasses / classData.totalClasses) *
                           100,
@@ -116,7 +118,15 @@ export default function HeaderHome() {
                 <div
                   className="bg-blue-600 h-1 rounded-full"
                   style={{
-                    width: `${classData ? (classData.completedClasses / classData.totalClasses) * 100 : 0}%`,
+                    width: `${
+                      classData &&
+                      classData?.completedClasses !== 0 &&
+                      classData?.totalClasses !== 0
+                        ? (classData.completedClasses /
+                            classData.totalClasses) *
+                          100
+                        : 0
+                    }%`,
                   }}
                 ></div>
               </div>
@@ -180,7 +190,9 @@ export default function HeaderHome() {
                   Đã hoàn thành
                 </span>
                 <span className="text-xs font-medium text-green-700">
-                  {practiceData
+                  {practiceData &&
+                  practiceData?.submitted !== 0 &&
+                  practiceData?.total !== 0
                     ? Math.round(
                         (practiceData.submitted / practiceData.total) * 100,
                       )
@@ -192,7 +204,7 @@ export default function HeaderHome() {
                 <div
                   className="bg-green-600 h-1 rounded-full"
                   style={{
-                    width: `${practiceData ? (practiceData.submitted / practiceData.total) * 100 : 0}%`,
+                    width: `${practiceData && practiceData?.submitted !== 0 && practiceData?.total !== 0 ? (practiceData.submitted / practiceData.total) * 100 : 0}%`,
                   }}
                 ></div>
               </div>
@@ -256,7 +268,9 @@ export default function HeaderHome() {
                   Đã hoàn thành
                 </span>
                 <span className="text-xs font-medium text-red-700">
-                  {testData
+                  {testData &&
+                  testData?.submitted !== 0 &&
+                  testData?.total !== 0
                     ? Math.round((testData.submitted / testData.total) * 100)
                     : 0}
                   %
@@ -266,7 +280,13 @@ export default function HeaderHome() {
                 <div
                   className="bg-red-600 h-1 rounded-full"
                   style={{
-                    width: `${testData ? (testData.submitted / testData.total) * 100 : 0}%`,
+                    width: `${
+                      testData &&
+                      testData?.submitted !== 0 &&
+                      testData?.total !== 0
+                        ? (testData.submitted / testData.total) * 100
+                        : 0
+                    }%`,
                   }}
                 ></div>
               </div>
