@@ -1,22 +1,20 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import { useQuery } from "@tanstack/react-query";
+import { getClassScheduleForTeacher } from "@/app/lib/services";
+import { ClassSchedule } from "@/app/types";
 
-// primary: "#BEE5D1",
-// "primary-light": "#d5e9e1",
-// "primary-lighter": "#EBF8F4",
-// "hover-primary": "#9dc9b2",
-// "primary-dark": "#78AE91",
-// "primary-darker": "#4ea677",
-// "primary-darkest": "#1F845A",
+// Custom style for calendar
 const calendarPrimaryStyle = `
 .react-calendar {
-  border: 2px solid #4ea677 !important; /* primary-darker */
+  border: 2px solid #4ea677 !important;
   border-radius: 1rem;
   min-height: 400px;
   width: 100%;
   padding: 1.5rem 1rem 0rem 1rem;
-  /* tăng padding và chiều cao */
 }
 .react-calendar__viewContainer {
   min-height: 340px;
@@ -27,18 +25,18 @@ const calendarPrimaryStyle = `
 }
 .react-calendar__tile--active,
 .react-calendar__tile:enabled:focus {
-  background: #BEE5D1 !important; /* primary */
+  background: #BEE5D1 !important;
   border-radius: 0.5rem;
   color: #000 !important;
 }
 .react-calendar__tile--now {
-  background: #dbeafe !important; /* primary-100 */
-  color: #2563eb !important; /* primary-100 */
+  background: #dbeafe !important;
+  color: #2563eb !important;
   border-radius: 0.5rem;
 }
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile--now:enabled:hover {
-  background: #d5e9e1 !important; /* primary-light */
+  background: #d5e9e1 !important;
   color: #000 !important;
   border-radius: 0.5rem;
 }
@@ -52,27 +50,22 @@ const calendarPrimaryStyle = `
 }
 .react-calendar__navigation button:enabled:hover,
 .react-calendar__navigation button:enabled:focus {
-  background: #d5e9e1 !important; /* primary-light */
+  background: #d5e9e1 !important;
   color: #000 !important;
 }
 .react-calendar__navigation__label {
-  color: #1F845A !important; /* primary-darkest */
+  color: #1F845A !important;
   font-weight: bold;
   font-size: 16px;
 }
 .react-calendar__month-view__weekdays__weekday {
-  color: #1F845A !important; /* primary-darkest */
+  color: #1F845A !important;
   font-size: 14px;
 }
 .react-calendar__month-view__days__day--weekend {
   color: #000 !important;
 }
 `;
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import { getPersonalClassSchedule } from "@/app/lib/services/classSchedule";
-import { useQuery } from "@tanstack/react-query";
-import { ClassSession } from "@/app/types";
 
 // const classData = [
 //   {
@@ -133,7 +126,14 @@ import { ClassSession } from "@/app/types";
 //   },
 // ];
 
+type ClassScheduleTeacher = {
+  date: string; // Format: YYYY-MM-DD
+  classSession: ClassSchedule;
+};
+
 const SchedulePage = () => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedSessions, setSelectedSessions] = useState<ClassSchedule[]>([]);
   const [calendarYearMonth, setCalendarYearMonth] = useState<{
     year: number;
     month: number;
@@ -142,26 +142,32 @@ const SchedulePage = () => {
     month: new Date().getMonth() + 1,
   });
 
+  // Fetch class schedule for the teacher
   const classSchedule = useQuery({
-    queryKey: [
-      "classSchedule",
-      calendarYearMonth.year,
-      calendarYearMonth.month,
-    ],
+    queryKey: ["classScheduleForTeacher"],
     queryFn: () =>
-      getPersonalClassSchedule(calendarYearMonth.month, calendarYearMonth.year),
+      getClassScheduleForTeacher(
+        calendarYearMonth.month,
+        calendarYearMonth.year,
+      ),
+    refetchOnWindowFocus: false,
   });
-
-  // Nếu là AxiosResponse thì lấy .data.data, nếu không thì []
   const classData = useMemo(
     () =>
       classSchedule.data && Array.isArray(classSchedule.data.data)
-        ? classSchedule.data.data
+        ? classSchedule.data.data.map((item: ClassSchedule) => ({
+            date: item.date,
+            classSession: item.classSession,
+          }))
         : [],
     [classSchedule.data],
   );
 
-  // Inject custom calendar style
+  useEffect(() => {
+    console.log("Class data:", classData);
+  }, [classData]);
+
+  // Inject calendar style
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = calendarPrimaryStyle;
@@ -170,38 +176,21 @@ const SchedulePage = () => {
       document.head.removeChild(style);
     };
   }, []);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedSessions, setSelectedSessions] = useState<ClassSession[]>([]);
 
-  // Tạo map ngày -> danh sách buổi học
-  const dateMap = classData.reduce(
-    (acc, item) => {
-      acc[item.date] = acc[item.date] || [];
-      acc[item.date].push(item);
-      return acc;
-    },
-    {} as Record<string, typeof classData>,
-  );
+  const dateMap = useMemo(() => {
+    return classData.reduce(
+      (
+        acc: Record<string, ClassScheduleTeacher[]>,
+        item: ClassScheduleTeacher,
+      ) => {
+        acc[item.date] = acc[item.date] || [];
+        acc[item.date].push(item);
+        return acc;
+      },
+      {} as Record<string, ClassScheduleTeacher[]>,
+    );
+  }, [classData]);
 
-  // Hàm custom tile để highlight ngày có buổi học
-  const tileContent = ({ date, view }: { date: Date; view: string }) => {
-    if (view === "month") {
-      const d = date.toISOString().slice(0, 10);
-      if (dateMap[d]) {
-        return <div className="w-2 h-2 bg-sky-600 rounded-full mx-auto mt-2" />;
-      }
-    }
-    return null;
-  };
-
-  // Khi click vào ngày
-  const handleChange = (val: Date) => {
-    setSelectedDate(val);
-    const d = val.toISOString().slice(0, 10);
-    setSelectedSessions(dateMap[d] || []);
-  };
-
-  // Khi chuyển tháng/năm trên calendar
   const handleActiveStartDateChange = ({
     activeStartDate,
   }: {
@@ -214,9 +203,39 @@ const SchedulePage = () => {
     });
   };
 
+  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+    if (view === "month") {
+      const d = date.toISOString().slice(0, 10);
+      if (dateMap[d]) {
+        return <div className="w-2 h-2 bg-sky-600 rounded-full mx-auto mt-2" />;
+      }
+    }
+    return null;
+  };
+
+  const handleChange = (val: Date) => {
+    setSelectedDate(val);
+    const d = val.toISOString().slice(0, 10);
+    setSelectedSessions(dateMap[d] || []);
+  };
+
+  useEffect(() => {
+    const d = selectedDate.toISOString().slice(0, 10);
+    setSelectedSessions(dateMap[d] || []);
+  }, [selectedDate, dateMap]);
+
+  useEffect(() => {
+    const d = selectedDate.toISOString().slice(0, 10);
+    setSelectedSessions(dateMap[d] || []);
+  }, [selectedDate, dateMap]);
+
+  useEffect(() => {
+    classSchedule.refetch();
+  }, [calendarYearMonth]);
+
   return (
-    <div className="p-4 flex gap-6">
-      <div className="flex items-center justify-center w-3/5 sm:w-2/3">
+    <div className="p-4 flex gap-6 h-fit items-center">
+      <div className="flex items-center justify-center w-full">
         <Calendar
           onChange={(val) => handleChange(val as Date)}
           value={selectedDate}
@@ -227,28 +246,33 @@ const SchedulePage = () => {
       </div>
       <div className="flex-1">
         {selectedSessions.length > 0 ? (
-          <div className="bg-white rounded-xl border shadow p-4">
-            <div className="font-bold text-lg mb-2">Thông tin buổi học</div>
-            {selectedSessions.map((session, idx) => (
-              <div
-                key={idx}
-                className="mb-4 border-b last:border-b-0 pb-2 last:pb-0"
-              >
-                <div>
-                  <b>Lớp:</b> {session.clazz.name}
+          <div className="bg-white rounded-xl border shadow p-4 w-[140px] md:w-[200px] lg:w-[250px]">
+            <div className="font-bold text-primary-darker text-lg">
+              Thông tin buổi học
+            </div>
+            {selectedSessions.map((item, idx) => {
+              const session = item.classSession;
+              return (
+                <div
+                  key={idx}
+                  className="border-b last:border-b-0 py-3 last:pb-0 text-[14px]"
+                >
+                  <div>
+                    <b>Lớp:</b> {session?.clazz.name}
+                  </div>
+                  <div>
+                    <b>Phòng:</b> {session?.room?.name}
+                  </div>
+                  <div>
+                    <b>Ca:</b> {session?.session?.name} (
+                    {session?.session?.startTime} - {session?.session?.endTime})
+                  </div>
+                  <div>
+                    <b>Ngày:</b> {selectedDate.toLocaleDateString("vi-VN")}
+                  </div>
                 </div>
-                <div>
-                  <b>Phòng:</b> {session.room?.name}
-                </div>
-                <div>
-                  <b>Ca:</b> {session.session.name} ({session.session.startTime}{" "}
-                  - {session.session.endTime})
-                </div>
-                <div>
-                  <b>Ngày:</b> {selectedDate.toLocaleDateString("vi-VN")}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-gray-500 mt-8">

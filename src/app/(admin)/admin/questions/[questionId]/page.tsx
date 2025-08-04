@@ -28,6 +28,17 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
   const { questionId } = React.use(props.params);
   const queryClient = useQueryClient();
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [localGradeId, setLocalGradeId] = useState<string>("");
+  const [localCourseId, setLocalCourseId] = useState<string>("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const gradeId = params.get("gradeId");
+      const courseId = params.get("courseId");
+      if (gradeId) setLocalGradeId(gradeId);
+      if (courseId) setLocalCourseId(courseId);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -205,9 +216,11 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
         <button
           className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
           onClick={() =>
-            router.push(
-              `/admin/questions?courseId=${question?.course?.id}&gradeId=${question?.grade?.id}`,
-            )
+            localGradeId
+              ? router.push(
+                  `/admin/questions?gradeId=${localGradeId}&courseId=${localCourseId}`,
+                )
+              : router.push(`/admin/questions`)
           }
         >
           <IoReturnUpBack className="inline-block mr-2" />
