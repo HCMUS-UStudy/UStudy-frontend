@@ -80,7 +80,8 @@ export const convertToVietnameseText = (num: number): string => {
     unitIndex++;
   }
 
-  return result.trim() + " đồng";
+  const str = result.trim() + " VNĐ";
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 export const accountStatus: Record<string, { label: string; color: string }> = {
