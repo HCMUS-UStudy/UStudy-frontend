@@ -16,6 +16,7 @@ import Checkbox from "@/app/ui/components/_common/Checkbox";
 import MarkdownInput from "@/app/ui/components/_common/text-field/MarkdownInput";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { safeSliceMathMarkdown } from "@/app/lib/utils";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
@@ -132,10 +133,20 @@ const QuestionList = () => {
   }, [gradesData, selectedGradeId]);
 
   useEffect(() => {
-    if (coursesData && coursesData.content && coursesData.content.length > 0) {
+    if (
+      coursesData &&
+      coursesData.content &&
+      coursesData.content.length > 0 &&
+      !selectedCourseId
+    ) {
       setSelectedCourseId(coursesData.content[0].id);
+      // Cập nhật URL params nếu có courseId
       updateUrlParams(selectedGradeId, coursesData.content[0].id);
-    } else {
+    } else if (
+      coursesData &&
+      coursesData.content &&
+      coursesData.content.length === 0
+    ) {
       setSelectedCourseId("");
     }
   }, [coursesData, selectedGradeId]);
@@ -220,52 +231,55 @@ const QuestionList = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="flex lg:justify-end gap-2 w-full items-center mr-1">
-          <select
-            className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
-            focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
+          <Select
             value={selectedGradeId}
-            onChange={(e) => {
-              const newGradeId = e.target.value;
-              setSelectedGradeId(newGradeId);
+            onEventChange={(value, event) => {
+              setSelectedGradeId(value as string);
               setSelectedCourseId("");
-              updateUrlParams(newGradeId, "");
+              if (event) updateUrlParams(value as string, "");
             }}
+            disabled={gradesData?.content.length === 0}
+            name="select"
+            showClearButton={false}
+            className="w-[150px]"
           >
-            <option value="">Tất cả khối</option>
+            <SelectItem value="">Tất cả khối</SelectItem>
             {gradesData?.content.map((item) => (
-              <option key={item.id} value={item.id}>
+              <SelectItem key={item.id} value={item.id}>
                 {item.name}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-          <select
-            className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
-            focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
+          </Select>
+
+          <Select
+            defaultValue={selectedCourseId}
             value={selectedCourseId}
-            disabled={isLoadingCourse}
-            onChange={(e) => {
-              const newCourseId = e.target.value;
-              setSelectedCourseId(newCourseId);
-              updateUrlParams(selectedGradeId, newCourseId);
+            onEventChange={(value, event) => {
+              if (event) {
+                setSelectedCourseId(value as string);
+                updateUrlParams(selectedGradeId, value as string);
+              }
             }}
+            disabled={
+              isLoadingCourse ||
+              !selectedGradeId ||
+              coursesData?.content.length === 0
+            }
+            name="select"
+            showClearButton={false}
+            className="w-[150px]"
           >
-            <option value="">Tất cả môn</option>
-            {isLoadingCourse ? (
-              <option value="" disabled>
-                Đang tải môn học...
-              </option>
-            ) : coursesData?.content && coursesData.content.length > 0 ? (
-              coursesData.content.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                Không có môn học
-              </option>
-            )}
-          </select>
+            <SelectItem value="">Tất cả môn</SelectItem>
+            {coursesData?.content.map((item) => (
+              <SelectItem
+                key={item.id}
+                value={item.id}
+                className="text-gray-800"
+              >
+                {item.name}
+              </SelectItem>
+            ))}
+          </Select>
           <div
             className="flex items-center gap-1 cursor-pointer ml-2 select-none"
             onClick={() => setShowMine(!showMine)}
@@ -405,7 +419,11 @@ const QuestionList = () => {
               <tr
                 key={q.id}
                 className="bg-white hover:bg-primary-lighter transition-all cursor-pointer"
-                onClick={() => router.push(`/admin/questions/${q.id}`)}
+                onClick={() =>
+                  router.push(
+                    `/teacher/questions/${q.id}?gradeId=${selectedGradeId}&courseId=${selectedCourseId}`,
+                  )
+                }
               >
                 <td
                   className={`px-2 sm:px-3 py-2 sm:py-3 align-top text-center text-md text-gray-700

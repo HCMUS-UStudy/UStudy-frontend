@@ -371,7 +371,7 @@ const QuestionModal = ({
               </div>
             </form>
           ) : (
-            <div>
+            <div className="flex flex-col w-full">
               <div className="mt-3">
                 <label className="font-medium flex items-center gap-1">
                   Câu hỏi <span className="text-red-500">*</span>
@@ -401,17 +401,19 @@ const QuestionModal = ({
               <div className="text-[14px] mt-4 mb-1 text-primary-darkest">
                 Đính kèm tệp (nếu có){" "}
               </div>
-              <FileUpload
-                value={selectedFile}
-                onChange={(file, baseName) => {
-                  setSelectedFile(file);
-                  setCustomBaseName(baseName);
-                }}
-                customBaseName={customBaseName}
-                setCustomBaseName={setCustomBaseName}
-                isEditing={isEditing}
-                setIsEditing={setIsEditing}
-              />
+              <div className="flex justify-center w-full">
+                <FileUpload
+                  value={selectedFile}
+                  onChange={(file, baseName) => {
+                    setSelectedFile(file);
+                    setCustomBaseName(baseName);
+                  }}
+                  customBaseName={customBaseName}
+                  setCustomBaseName={setCustomBaseName}
+                  isEditing={isEditing}
+                  setIsEditing={setIsEditing}
+                />
+              </div>
               <div className="flex justify-end mt-4 border-t pt-3">
                 <Button
                   className="px-4 py-2 rounded-lg"

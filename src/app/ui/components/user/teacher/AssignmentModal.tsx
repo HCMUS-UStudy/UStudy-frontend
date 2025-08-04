@@ -60,8 +60,8 @@ const AssignmentModal = ({
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const data = await getQuestionList(courseId, gradeId, "");
-        setQuestions(data);
+        const data = await getQuestionList(courseId, gradeId, "", 0, 200);
+        setQuestions(data.content);
       } catch (error) {
         console.error("Failed to fetch questions:", error);
       }
@@ -190,7 +190,7 @@ const AssignmentModal = ({
                     onChange={(e) => setSearchQuestion(e.target.value)}
                   />
                 </div>
-                <div className="h-96 overflow-y-auto">
+                <div className="h-96 overflow-y-auto overflow-x-hidden">
                   {questions
                     .filter(
                       (q) =>
