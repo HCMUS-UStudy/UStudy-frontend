@@ -130,3 +130,20 @@ export const getBranchSchedule = (
     params: { month, year },
   });
 };
+
+export const getClassScheduleForTeacher = async (
+  month: number,
+  year: number,
+) => {
+  try {
+    const response = await axiosInstance.get("/class-schedule/list/personal", {
+      params: {
+        month,
+        year,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

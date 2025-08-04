@@ -14,7 +14,9 @@ import { useCustomToast } from "@/app/lib/hooks/useToast";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Checkbox from "@/app/ui/components/_common/Checkbox";
 import MarkdownInput from "@/app/ui/components/_common/text-field/MarkdownInput";
+import Pagination from "@/app/ui/components/_common/Pagination";
 import { safeSliceMathMarkdown } from "@/app/lib/utils";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 const QuestionList = () => {
   const [search, setSearch] = React.useState("");
@@ -22,6 +24,36 @@ const QuestionList = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [selectedGradeId, setSelectedGradeId] = useState<string>("");
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+
+  // Helper: update URL params without reload
+  const updateUrlParams = (gradeId: string, courseId: string) => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (gradeId) {
+        params.set("gradeId", gradeId);
+      } else {
+        params.delete("gradeId");
+      }
+      if (courseId) {
+        params.set("courseId", courseId);
+      } else {
+        params.delete("courseId");
+      }
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", newUrl);
+    }
+  };
+
+  // Lấy courseId, gradeId từ query string nếu có
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const gradeId = params.get("gradeId");
+      const courseId = params.get("courseId");
+      if (gradeId) setSelectedGradeId(gradeId);
+      if (courseId) setSelectedCourseId(courseId);
+    }
+  }, []);
   const [showModal, setShowModal] = useState(false);
   const [sortField, setSortField] = useState<string>("lastModified");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc" | "none">("desc");
@@ -49,39 +81,48 @@ const QuestionList = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Đảm bảo useQuery gọi lại khi selectedGradeId hoặc selectedCourseId thay đổi
+  // Paging state
+  const [page, setPage] = useState(0);
+  const limit = 20;
+
+  // Reset page về 0 khi đổi bộ lọc
+  useEffect(() => {
+    setPage(0);
+  }, [selectedGradeId, selectedCourseId, search, showMine]);
+
+  // Đảm bảo useQuery gọi lại khi selectedGradeId, selectedCourseId, page, search thay đổi
   const questionQuery = useQuery({
-    queryKey: ["Questions", selectedCourseId, selectedGradeId],
-    queryFn: () => getQuestionList(selectedCourseId, selectedGradeId),
+    queryKey: ["Questions", selectedCourseId, selectedGradeId, page, search],
+    queryFn: () =>
+      getQuestionList(
+        selectedCourseId,
+        selectedGradeId,
+        "",
+        page,
+        limit,
+        search.trim(),
+      ),
     refetchOnWindowFocus: false,
   });
 
   const questions: Question[] = React.useMemo(
-    () => questionQuery.data || [],
+    () =>
+      questionQuery.data && Array.isArray(questionQuery.data.content)
+        ? questionQuery.data.content
+        : [],
     [questionQuery.data],
   );
+  const total = questionQuery.data?.totalElements || 0;
+  const totalPages = Math.ceil(total / limit);
 
+  // Lọc client chỉ với 'của tôi', còn search đã filter từ API
   const filteredData = React.useMemo(() => {
-    let data = questions;
-    const s = search.trim().toLowerCase();
-    if (s)
-      data = data.filter(
-        (q) =>
-          q.description.toLowerCase().includes(s) ||
-          q.createdBy.name.toLowerCase().includes(s),
-      );
+    let data: Question[] = Array.isArray(questions) ? questions : [];
     if (showMine && user?.genId) {
       data = data.filter((q) => q.createdBy?.genId === user.genId);
     }
-    // Sort giảm dần theo lastModified
-    return data
-      .slice()
-      .sort(
-        (a, b) =>
-          new Date(b.lastModified).getTime() -
-          new Date(a.lastModified).getTime(),
-      );
-  }, [search, questions, showMine, user]);
+    return data;
+  }, [questions, showMine, user]);
 
   // Sửa useEffect: chỉ set mặc định khi lần đầu vào trang (selectedGradeId === undefined)
   useEffect(() => {
@@ -92,12 +133,23 @@ const QuestionList = () => {
   }, [gradesData, selectedGradeId]);
 
   useEffect(() => {
-    if (coursesData && coursesData.content && coursesData.content.length > 0) {
+    if (
+      coursesData &&
+      coursesData.content &&
+      coursesData.content.length > 0 &&
+      !selectedCourseId
+    ) {
       setSelectedCourseId(coursesData.content[0].id);
-    } else {
+      // Cập nhật URL params nếu có courseId
+      updateUrlParams(selectedGradeId, coursesData.content[0].id);
+    } else if (
+      coursesData &&
+      coursesData.content &&
+      coursesData.content.length === 0
+    ) {
       setSelectedCourseId("");
     }
-  }, [coursesData]);
+  }, [coursesData, selectedGradeId]);
 
   const handleSort = (field: string) => {
     if (sortField !== field) {
@@ -110,6 +162,7 @@ const QuestionList = () => {
     }
   };
 
+  // Sắp xếp chỉ khi search/showMine, còn mặc định API đã trả về đúng thứ tự
   const sortedData = React.useMemo(() => {
     if (sortOrder === "none") return filteredData;
     return [...filteredData].sort((a, b) => {
@@ -150,7 +203,7 @@ const QuestionList = () => {
   const { addToast } = useCustomToast();
 
   return (
-    <div className="p-2 sm:p-4 mx-auto">
+    <div className="p-2 sm:p-4 mx-auto h-full flex flex-col overflow-y-hidden">
       <div className="mb-2 sm:mb-4 flex items-center justify-between">
         <h1 className="text-[20px] sm:text-[22px] font-extrabold text-primary-darker tracking-wide drop-shadow">
           Danh sách câu hỏi
@@ -178,50 +231,55 @@ const QuestionList = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="flex lg:justify-end gap-2 w-full items-center mr-1">
-          <select
-            className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
-            focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
+          <Select
             value={selectedGradeId}
-            onChange={(e) => {
-              const newGradeId = e.target.value;
-              setSelectedGradeId(newGradeId);
+            onEventChange={(value, event) => {
+              setSelectedGradeId(value as string);
               setSelectedCourseId("");
+              if (event) updateUrlParams(value as string, "");
             }}
+            disabled={gradesData?.content.length === 0}
+            name="select"
+            showClearButton={false}
+            className="w-[150px]"
           >
-            <option value="">Tất cả khối</option>
+            <SelectItem value="">Tất cả khối</SelectItem>
             {gradesData?.content.map((item) => (
-              <option key={item.id} value={item.id}>
+              <SelectItem key={item.id} value={item.id}>
                 {item.name}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-          <select
-            className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
-            focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
+          </Select>
+
+          <Select
+            defaultValue={selectedCourseId}
             value={selectedCourseId}
-            disabled={isLoadingCourse}
-            onChange={(e) => {
-              const newCourseId = e.target.value;
-              setSelectedCourseId(newCourseId);
+            onEventChange={(value, event) => {
+              if (event) {
+                setSelectedCourseId(value as string);
+                updateUrlParams(selectedGradeId, value as string);
+              }
             }}
+            disabled={
+              isLoadingCourse ||
+              !selectedGradeId ||
+              coursesData?.content.length === 0
+            }
+            name="select"
+            showClearButton={false}
+            className="w-[150px]"
           >
-            <option value="">Tất cả môn</option>
-            {isLoadingCourse ? (
-              <option value="" disabled>
-                Đang tải môn học...
-              </option>
-            ) : coursesData?.content && coursesData.content.length > 0 ? (
-              coursesData.content.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                Không có môn học
-              </option>
-            )}
-          </select>
+            <SelectItem value="">Tất cả môn</SelectItem>
+            {coursesData?.content.map((item) => (
+              <SelectItem
+                key={item.id}
+                value={item.id}
+                className="text-gray-800"
+              >
+                {item.name}
+              </SelectItem>
+            ))}
+          </Select>
           <div
             className="flex items-center gap-1 cursor-pointer ml-2 select-none"
             onClick={() => setShowMine(!showMine)}
@@ -239,7 +297,7 @@ const QuestionList = () => {
         </div>
       </div>
       {/* Table for desktop, card for mobile */}
-      <div className="hidden md:block shadow-lg bg-white rounded-b-xl">
+      <div className="hidden md:block bg-white rounded-b-xl overflow-y-auto">
         <table className="min-w-[700px] w-full rounded-b-xl">
           <thead className="bg-primary-light">
             <tr>
@@ -361,14 +419,18 @@ const QuestionList = () => {
               <tr
                 key={q.id}
                 className="bg-white hover:bg-primary-lighter transition-all cursor-pointer"
-                onClick={() => router.push(`/admin/questions/${q.id}`)}
+                onClick={() =>
+                  router.push(
+                    `/admin/questions/${q.id}?gradeId=${selectedGradeId}&courseId=${selectedCourseId}`,
+                  )
+                }
               >
                 <td
                   className={`px-2 sm:px-3 py-2 sm:py-3 align-top text-center text-md text-gray-700
                   ${idx === filteredData.length - 1 ? "rounded-bl-xl" : ""}
                   `}
                 >
-                  {idx + 1}
+                  {page * limit + idx + 1}
                 </td>
                 <td className="px-2 sm:px-4 py-2 sm:py-3 align-top min-w-[180px] sm:min-w-[260px] overflow-visible">
                   {q.description.length > 40 ? (
@@ -409,22 +471,27 @@ const QuestionList = () => {
             ))}
           </tbody>
         </table>
-        {filteredData.length === 0 && (
+        {sortedData.length === 0 && (
           <div className="text-center text-gray-500 py-8">
-            Không tìm thấy câu hỏi phù hợp.
+            {questionQuery.isLoading || questionQuery.isFetching
+              ? "Đang tải câu hỏi..."
+              : "Không tìm thấy câu hỏi phù hợp."}
           </div>
         )}
       </div>
+
       {/* Card view for mobile */}
-      <div className="md:hidden space-y-4">
-        {filteredData.map((q, idx) => (
+      <div className="md:hidden space-y-4 overflow-y-auto">
+        {sortedData.map((q, idx) => (
           <div
             key={q.id}
             className="bg-white rounded-xl shadow border border-gray-100 p-4 flex flex-col gap-2 cursor-pointer hover:bg-primary-lighter transition"
-            onClick={() => router.push(`/teacher/questions/${q.id}`)}
+            onClick={() => router.push(`/admin/questions/${q.id}`)}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-500">#{idx + 1}</span>
+              <span className="text-xs text-gray-500">
+                #{page * limit + idx + 1}
+              </span>
               <span className="text-xs text-gray-500">
                 {new Date(q.lastModified).toLocaleDateString("vi-VN")}
               </span>
@@ -464,7 +531,7 @@ const QuestionList = () => {
             </div>
           </div>
         ))}
-        {filteredData.length === 0 && (
+        {sortedData.length === 0 && (
           <div className="text-center text-gray-500 py-8">
             Không tìm thấy câu hỏi.
           </div>
@@ -479,6 +546,19 @@ const QuestionList = () => {
           returnButton={false}
         />
       )}
+      <div className="flex justify-end">
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={page + 1}
+            totalPages={totalPages}
+            handlePageClick={(p: number) => setPage(p - 1)}
+            handlePreviousPage={() => setPage((prev) => Math.max(prev - 1, 0))}
+            handleNextPage={() =>
+              setPage((prev) => Math.min(prev + 1, totalPages - 1))
+            }
+          />
+        )}
+      </div>
     </div>
   );
 };

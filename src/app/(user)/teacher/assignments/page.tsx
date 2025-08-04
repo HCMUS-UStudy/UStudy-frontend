@@ -13,6 +13,7 @@ import {
 import { AssignmentItem, ClassDetail } from "@/app/types";
 import AssignmentModal from "@/app/ui/components/user/teacher/AssignmentModal";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 
 type TeacherClass = { id: string; name: string };
 
@@ -152,7 +153,7 @@ const AssignmentList = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <select
+            {/* <select
               className="border rounded-lg border-primary-dark px-2 py-1 focus:outline-none
              focus:ring-1 focus:ring-primary-dark z-auto text-[14.5px]"
               value={selectedClassId}
@@ -165,7 +166,28 @@ const AssignmentList = () => {
                   {item.name}
                 </option>
               ))}
-            </select>
+            </select> */}
+
+            <Select
+              defaultValue={selectedClassId}
+              value={selectedClassId}
+              onEventChange={(value, event) => {
+                if (event) {
+                  setSelectedClassId(value as string);
+                }
+              }}
+              disabled={classLoading}
+              name="select"
+              showClearButton={false}
+              className="w-[150px]"
+            >
+              <SelectItem value="">Tất cả lớp</SelectItem>
+              {classes.map((item: TeacherClass) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
         </div>
         <div className="hidden md:block shadow-lg bg-white rounded-b-xl">

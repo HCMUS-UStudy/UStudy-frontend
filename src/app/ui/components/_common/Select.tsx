@@ -21,6 +21,10 @@ interface SelectProps {
   defaultValue?: string | number;
   defaultLabel?: string;
   onValueChange?: (value: string | number) => void;
+  /**
+   * onEventChange: callback nhận (value, event) khi chọn option
+   */
+  onEventChange?: (value: string | number, event: React.SyntheticEvent) => void;
   name?: string;
   disabled?: boolean;
   required?: boolean;
@@ -36,7 +40,11 @@ interface SelectProps {
 
 interface SelectContextProps {
   selectedValue: string | number;
-  handleSetSelectedValue: (value: string | number, label: string) => void;
+  handleSetSelectedValue: (
+    value: string | number,
+    label: string,
+    event?: React.SyntheticEvent,
+  ) => void;
   toggleOpen: () => void;
   clearSelection: () => void;
 }
@@ -82,6 +90,7 @@ const Select: React.FC<SelectProps> = ({
   defaultValue = "",
   defaultLabel = "",
   onValueChange,
+  onEventChange,
   name,
   disabled = false,
   required = false,
@@ -172,13 +181,20 @@ const Select: React.FC<SelectProps> = ({
     }
   };
 
-  const handleSetSelectedValue = (val: string | number, label: string) => {
+  const handleSetSelectedValue = (
+    val: string | number,
+    label: string,
+    event?: React.SyntheticEvent,
+  ) => {
     if (!isControlled) setUncontrolledValue(val);
     setSelectedLabel(label);
     setIsOpen(false);
     setFocusedIndex(-1);
     if (onValueChange) {
       onValueChange(val);
+    }
+    if (typeof onEventChange === "function" && event) {
+      onEventChange(val, event);
     }
   };
 
@@ -314,7 +330,28 @@ const Select: React.FC<SelectProps> = ({
             </Label>
           )}
           {isOpen ? (
-            <div className="absolute mt-2 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-32">
+            <div
+              className="absolute mt-1 w-full bg-popover rounded-md shadow-lg z-[999] overflow-x-auto border-2 border-slate-200 overflow-auto max-h-48 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent"
+              style={{
+                scrollbarWidth: "thin",
+                // For Firefox
+              }}
+            >
+              <style>
+                {`
+            /* For Chrome, Edge, and Safari */
+            .scrollbar-thin::-webkit-scrollbar {
+              width: 4px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+              background: #cbd5e1;
+              border-radius: 4px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-track {
+              background: transparent;
+            }
+          `}
+              </style>
               {options.length === 0 ? (
                 <div className="px-3 py-2 text-xs md:text-sm text-slate-500 text-center">
                   Không có dữ liệu
@@ -325,6 +362,14 @@ const Select: React.FC<SelectProps> = ({
                     ref: (el: HTMLDivElement) =>
                       (optionsRefs.current[idx] = el),
                     isFocused: focusedIndex === idx,
+                    className: cn(
+                      (child as React.ReactElement<any>).props.className,
+                      {
+                        "bg-primary-light":
+                          selectedValue ===
+                          (child as React.ReactElement<any>).props.value,
+                      },
+                    ),
                   }),
                 )
               )}
@@ -380,8 +425,8 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
           },
           className,
         )}
-        onClick={() => {
-          handleSetSelectedValue(value, children as string);
+        onClick={(e) => {
+          handleSetSelectedValue(value, children as string, e);
           toggleOpen();
         }}
         tabIndex={-1}

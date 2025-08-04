@@ -86,15 +86,15 @@ export default function Classes() {
           />
         </div>
         <TabPanel value={"ongoing"}>
-          <ClassList classes={filterByName(ongoingClasses)} completed={false} />
+          <ClassList classes={filterByName(ongoingClasses)} status="PROGRESS" />
         </TabPanel>
         <TabPanel value={"open"}>
-          <ClassList classes={filterByName(openClasses)} completed={false} />
+          <ClassList classes={filterByName(openClasses)} status="OPEN" />
         </TabPanel>
         <TabPanel value={"completed"}>
           <ClassList
             classes={filterByName(completedClasses)}
-            completed={true}
+            status="COMPLETED"
           />
         </TabPanel>
       </Tabs>

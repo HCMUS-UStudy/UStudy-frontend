@@ -28,6 +28,17 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
   const { questionId } = React.use(props.params);
   const queryClient = useQueryClient();
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [localGradeId, setLocalGradeId] = useState<string>("");
+  const [localCourseId, setLocalCourseId] = useState<string>("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const gradeId = params.get("gradeId");
+      const courseId = params.get("courseId");
+      if (gradeId) setLocalGradeId(gradeId);
+      if (courseId) setLocalCourseId(courseId);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -204,7 +215,13 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
       <div className="flex items-center gap-4 mb-6">
         <button
           className="px-2 py-1 rounded-lg hover:bg-primary-lighter text-primary-darkest border border-gray-200"
-          onClick={() => router.back()}
+          onClick={() =>
+            localGradeId
+              ? router.push(
+                  `/teacher/questions?gradeId=${localGradeId}&courseId=${localCourseId}`,
+                )
+              : router.push(`/teacher/questions`)
+          }
         >
           <IoReturnUpBack className="inline-block mr-2" />
           Trở về
@@ -474,8 +491,7 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
           <>
             <div className="mb-3">
               <span className="font-semibold">Mô tả:</span>{" "}
-              {/* {question.description} */}
-              <MarkdownInput content={editData?.description || ""} />
+              <MarkdownInput content={question.description} />
             </div>
             <div className="mb-3">
               <span className="font-semibold">Khối:</span> {question.grade.name}
@@ -522,21 +538,18 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
                     {question.options.map((opt, idx) => (
                       <li
                         key={opt.id}
-                        className={`
-                          flex gap-2
-                          ${
-                            opt.isCorrect
-                              ? "text-green-700 font-semibold"
-                              : "text-gray-700"
-                          }
-                        `}
+                        className={`flex gap-2 ${
+                          opt.isCorrect
+                            ? "text-green-700 font-semibold"
+                            : "text-gray-700"
+                        }`}
                       >
                         <span className="inline-block w-6 font-bold">
                           {String.fromCharCode(65 + idx)}.
                         </span>{" "}
                         <MarkdownInput content={opt.description} />
                         {opt.isCorrect && (
-                          <span className="ml-2 bg-primary-light text-primary-darkest px-2 py-1 rounded-full text-xs">
+                          <span className="ml-2 bg-primary-light text-primary-darkest px-2 py-0.5 rounded-full text-xs">
                             Đúng
                           </span>
                         )}
