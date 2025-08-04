@@ -21,6 +21,7 @@ import {
 import ClassForm from "@/app/ui/components/admin/classes/setting/ClassForm";
 import { ClassSchema } from "@/app/types";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import ClassSessions from "@/app/ui/components/admin/classes/setting/ClassSessions";
 // import ClassSessions from "@/app/ui/components/admin/classes/setting/ClassSessions";
 
 export type UpdateClassType = Pick<
@@ -39,6 +40,7 @@ export default function ClassSetting() {
     refetchOnWindowFocus: false,
     enabled: !!classId,
   });
+  console.log(classDetail);
 
   const results = useQueries({
     queries: [
@@ -103,7 +105,7 @@ export default function ClassSetting() {
           handleUpdate={handleUpdate}
         />
         <div className="space-y-3">
-          {/* <ClassSessions classSessions={classDetail.classSessions} /> */}
+          <ClassSessions classDetail={classDetail} />
         </div>
       </>
     );
