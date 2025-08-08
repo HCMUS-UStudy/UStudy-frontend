@@ -8,7 +8,7 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   title?: string;
   message?: string;
-  type?: "confirm" | "delete" | "success";
+  type?: "confirm" | "delete" | "success" | "warning";
   confirmText?: string;
   cancelText?: string;
 }
@@ -31,8 +31,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       <FaTrash className="text-red-500 text-3xl" />
     ) : type === "success" ? (
       <FaCheckCircle className="text-green-500 text-3xl" />
-    ) : (
+    ) : type === "warning" ? (
       <FaExclamationCircle className="text-yellow-500 text-3xl" />
+    ) : (
+      <FaExclamationCircle className="text-blue-500 text-3xl" />
     );
 
   const confirmBtnColor =
@@ -40,7 +42,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       ? "bg-red-500 hover:bg-red-600"
       : type === "success"
         ? "bg-green-500 hover:bg-green-600"
-        : "bg-blue-500 hover:bg-blue-600";
+        : type === "warning"
+          ? "bg-primary-dark hover:bg-primary-light"
+          : "bg-blue-500 hover:bg-blue-600";
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">

@@ -10,9 +10,15 @@ interface Props {
   assignment: AssignmentItem;
   viewMode: "list" | "grid";
   onStart: (assignment: AssignmentItem) => void;
+  classStatus?: string;
 }
 
-const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
+const AssignmentCard: React.FC<Props> = ({
+  assignment,
+  viewMode,
+  onStart,
+  classStatus,
+}) => {
   const randomImages = [
     "https://storage.googleapis.com/a1aa/image/etK-TPGHJCUFTdDL1RCjvPVzYEME-6M-4WM0R6qL1r4.jpg",
     "https://storage.googleapis.com/a1aa/image/b3_Tj5jRj0RauxUD0v2nmQbjuj4Ru05BPm2FGdHScV0.jpg",
@@ -137,9 +143,11 @@ const AssignmentCard: React.FC<Props> = ({ assignment, viewMode, onStart }) => {
             : "flex items-center justify-end mt-4"
         }`}
       >
-        {new Date() > new Date(assignment.endTime) ? (
+        {classStatus === "COMPLETED" ||
+        classStatus === "OPEN" ||
+        new Date() > new Date(assignment.endTime) ? (
           <Button
-            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all"
+            className="px-4 py-2 text-sm bg-highlight-text hover:bg-[#FBB85E] text-white transition-all"
             onClick={() => onStart(assignment)}
           >
             Xem lại bài cũ

@@ -1,6 +1,7 @@
 "use client";
 import { getAssignmentByClassId } from "@/app/lib/services/assignment";
 import { getSubmissionByAssignmentId } from "@/app/lib/services/submission";
+import { getClassById } from "@/app/lib/services/class";
 import { SubmissionItem } from "@/app/types";
 import { AssignmentItem } from "@/app/types/assignment";
 import { Button } from "@/app/ui/components/_common/Button";
@@ -14,6 +15,7 @@ import SubmissionHistoryModal from "@/app/ui/components/user/student/classes/ass
 import AssignmentCard from "@/app/ui/components/user/student/classes/assignment/AssignmentCard";
 import { Select, SelectItem } from "@/app/ui/components/_common/Select";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import Pagination from "@/app/ui/components/_common/Pagination";
 
 export default function ClassAssignment() {
   const params = useParams<{ classId: string }>();
@@ -25,10 +27,18 @@ export default function ClassAssignment() {
     "ALL" | "MULTIPLE_CHOICE" | "ESSAY" | "MIXED"
   >("ALL");
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const itemsPerPage = 6;
+
   const [assignment, setAssignment] = useState<AssignmentItem[]>([]);
   const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingSubmission, setLoadingSubmission] = useState<boolean>(false);
+  const [classStatus, setClassStatus] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedAssignment, setSelectedAssignment] =
     useState<AssignmentItem | null>(null);
@@ -82,6 +92,22 @@ export default function ClassAssignment() {
     router.push(`/member/classes/${classId}/editExercise/${submissionId}`);
   };
 
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page - 1); // Convert to 0-based index
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAssignment(null); // Clear selected assignment when closing
@@ -96,8 +122,19 @@ export default function ClassAssignment() {
     const fetchExercise = async () => {
       try {
         setLoading(true);
-        const response = await getAssignmentByClassId(0, 10, classId ?? "");
+        // Fetch class details first to get the status
+        const classData = await getClassById(classId ?? "");
+        setClassStatus(classData.status);
+
+        // Then fetch assignments
+        const response = await getAssignmentByClassId(
+          currentPage,
+          itemsPerPage,
+          classId ?? "",
+        );
         setAssignment(response.content);
+        setTotalPages(response.totalPages);
+        setTotalItems(response.totalElements);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         addToast.error("Không thể tải bài tập. Vui lòng thử lại sau.");
@@ -106,8 +143,7 @@ export default function ClassAssignment() {
       }
     };
     fetchExercise();
-    return;
-  }, [classId]);
+  }, [classId, currentPage, itemsPerPage]);
 
   useEffect(() => {
     if (selectedAssignment) {
@@ -245,6 +281,7 @@ export default function ClassAssignment() {
               onEdit={handleEdit}
               onStartExercise={handleStartExercise}
               isExpired={isExpired}
+              classStatus={classStatus}
             />
           </div>
         </div>
@@ -281,12 +318,26 @@ export default function ClassAssignment() {
               assignment={assignment}
               viewMode={viewMode}
               onStart={handleOpenModal}
+              classStatus={classStatus}
             />
           ))}
         </div>
       ) : (
         <div className="text-center text-gray-500 text-lg font-semibold mt-10">
           Không có bài tập nào
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-end">
+          <Pagination
+            currentPage={currentPage + 1} // Convert to 1-based for display
+            totalPages={totalPages}
+            handlePageClick={handlePageClick}
+            handlePreviousPage={handlePreviousPage}
+            handleNextPage={handleNextPage}
+          />
         </div>
       )}
 

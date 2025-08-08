@@ -16,7 +16,7 @@ export type ClassDetail = BaseClassInfo & {
   grade: GradeItem;
   course: Course;
   fee: number;
-  status: string | null;
+  status: "OPEN" | "PROGRESS" | "COMPLETED";
   classSessions: classSessions[];
 };
 
@@ -84,6 +84,8 @@ export type ClassUserItem = Pick<
   course: BaseCourseInfo;
   grade: BaseGradeInfo;
   teacher: UserSummary[];
+  classSession: ClassSessionItem[];
+  status: "OPEN" | "PROGRESS" | "COMPLETED";
 };
 
 export type UserClassData = BasePaginationResponse<ClassUserItem>;
