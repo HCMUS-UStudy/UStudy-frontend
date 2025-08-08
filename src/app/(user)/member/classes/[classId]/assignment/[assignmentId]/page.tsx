@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import {
   getQnAListByAssignmentId,
@@ -15,11 +16,17 @@ import ScoreModal from "@/app/ui/components/user/student/classes/quiz/ScoreModal
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import BlockingOverlay from "@/app/ui/components/user/student/classes/assignment/BlockingOverlay";
+import ConfirmModal from "@/app/ui/components/_common/ConfirmModal";
+
+// Key for session storage to track assignment attempt
+const ASSIGNMENT_ATTEMPT_KEY = "assignment_attempt_active";
+const ASSIGNMENT_ID_KEY = "current_assignment_id";
 
 const AssignmentPage = () => {
   const params = useParams();
   const router = useRouter();
-  const assignmentId = params?.assignmentId;
+  const assignmentId = params?.assignmentId as string;
   const searchParams = useSearchParams();
   const duration = searchParams?.get("duration");
 
@@ -27,6 +34,8 @@ const AssignmentPage = () => {
   const [showResult, setShowResult] = useState(false);
   const [showReview, setShowReview] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isBlocking, setIsBlocking] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const [questions, setQuestions] = useState<QnA[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -39,6 +48,273 @@ const AssignmentPage = () => {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [showFullscreenWarning, setShowFullscreenWarning] = useState(false);
+
+  // Check if browser supports fullscreen API
+  const isFullScreenAPISupported = () => {
+    return (
+      document.fullscreenEnabled ||
+      (document as any).webkitFullscreenEnabled ||
+      (document as any).mozFullScreenEnabled ||
+      (document as any).msFullscreenEnabled
+    );
+  };
+
+  // Block keyboard shortcuts
+  const blockKeyboardShortcuts = (e: KeyboardEvent) => {
+    // Block F11, Esc, Alt+Tab, etc.
+    if (
+      e.key === "F11" ||
+      e.key === "Escape" ||
+      (e.altKey && e.key === "Tab") ||
+      (e.ctrlKey && e.key.toLowerCase() === "f")
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  };
+
+  // Fullscreen entry component
+  const FullscreenEntry = React.memo(
+    ({ onEnterFullscreen }: { onEnterFullscreen: () => void }) => {
+      const buttonRef = React.useRef<HTMLButtonElement>(null);
+
+      // Auto-focus the button when component mounts or updates
+      React.useEffect(() => {
+        if (buttonRef.current) {
+          buttonRef.current.focus();
+        }
+      }, []);
+
+      // Handle keyboard events
+      const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onEnterFullscreen();
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[9999] p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Chuẩn bị làm bài
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Vui lòng bật chế độ toàn màn hình để bắt đầu làm bài.
+            </p>
+            <button
+              ref={buttonRef}
+              onClick={onEnterFullscreen}
+              onKeyDown={handleKeyDown}
+              className="px-6 py-3 bg-primary-dark text-white rounded-lg font-medium hover:bg-primary-light transition-colors focus:outline-none focus:ring-2 focus:ring-primary-lighter focus:ring-offset-2"
+              autoFocus
+            >
+              Bật chế độ toàn màn hình
+            </button>
+          </div>
+        </div>
+      );
+    },
+  );
+
+  // Add display name for better debugging
+  FullscreenEntry.displayName = "FullscreenEntry";
+
+  // Request fullscreen
+  const requestFullScreen = async () => {
+    try {
+      const element = document.documentElement;
+
+      // Add event listeners to prevent exiting
+      document.addEventListener("keydown", blockKeyboardShortcuts, true);
+
+      // Try to enter fullscreen
+      const fullscreenPromise = (
+        element.requestFullscreen ||
+        (element as any).webkitRequestFullscreen ||
+        (element as any).mozRequestFullScreen ||
+        (element as any).msRequestFullscreen
+      )?.call(element);
+
+      if (fullscreenPromise) {
+        await fullscreenPromise.catch((err) => {
+          console.warn("Fullscreen request failed:", err);
+          return Promise.resolve();
+        });
+      }
+
+      setIsFullScreen(true);
+      setShowFullscreenWarning(false);
+      return true;
+    } catch (err) {
+      console.warn("Error in fullscreen request:", err);
+      return false;
+    }
+  };
+
+  // Exit fullscreen
+  const exitFullScreen = async () => {
+    try {
+      const doc = document as any;
+      if (doc.exitFullscreen) {
+        await doc.exitFullscreen();
+      } else if (doc.webkitExitFullscreen) {
+        await doc.webkitExitFullscreen();
+      } else if (doc.mozCancelFullScreen) {
+        await doc.mozCancelFullScreen();
+      } else if (doc.msExitFullscreen) {
+        await doc.msExitFullscreen();
+      }
+    } catch (err) {
+      console.warn("Error exiting fullscreen:", err);
+    }
+  };
+
+  // Check fullscreen state
+  const checkFullScreen = () => {
+    const isCurrentlyFullscreen = !!(
+      document.fullscreenElement ||
+      (document as any).webkitFullscreenElement ||
+      (document as any).mozFullScreenElement ||
+      (document as any).msFullscreenElement
+    );
+
+    // If we were in fullscreen but now we're not
+    if (isFullScreen && !isCurrentlyFullscreen) {
+      setShowFullscreenWarning(true);
+      // Remove keyboard shortcuts when not in fullscreen
+      document.removeEventListener("keydown", blockKeyboardShortcuts, true);
+      // Force exit fullscreen to ensure consistent state
+      if (document.fullscreenElement) {
+        exitFullScreen();
+      }
+    }
+
+    setIsFullScreen(isCurrentlyFullscreen);
+    return isCurrentlyFullscreen;
+  };
+
+  // Set up event listeners for fullscreen changes
+  useEffect(() => {
+    if (!isFullScreenAPISupported()) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        // When tab becomes visible, check fullscreen state
+        const isInFullscreen = checkFullScreen();
+        if (!isInFullscreen) {
+          setShowFullscreenWarning(true);
+        }
+      }
+    };
+
+    const handleFocus = () => {
+      // When window regains focus, check fullscreen state
+      const isInFullscreen = checkFullScreen();
+      if (!isInFullscreen) {
+        setShowFullscreenWarning(true);
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener("fullscreenchange", checkFullScreen);
+    document.addEventListener("webkitfullscreenchange", checkFullScreen);
+    document.addEventListener("mozfullscreenchange", checkFullScreen);
+    document.addEventListener("MSFullscreenChange", checkFullScreen);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+
+    // Request fullscreen when component mounts
+    requestFullScreen();
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener("fullscreenchange", checkFullScreen);
+      document.removeEventListener("webkitfullscreenchange", checkFullScreen);
+      document.removeEventListener("mozfullscreenchange", checkFullScreen);
+      document.removeEventListener("MSFullscreenChange", checkFullScreen);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("keydown", blockKeyboardShortcuts, true);
+    };
+  }, []);
+
+  // Effect to handle fullscreen warning
+  useEffect(() => {
+    if (showFullscreenWarning) {
+      // Only disable pointer events for elements behind the modal
+      const mainContent = document.querySelector("main");
+      if (mainContent) {
+        mainContent.style.pointerEvents = "none";
+      }
+    } else {
+      const mainContent = document.querySelector("main");
+      if (mainContent) {
+        mainContent.style.pointerEvents = "auto";
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      const mainContent = document.querySelector("main");
+      if (mainContent) {
+        mainContent.style.pointerEvents = "auto";
+      }
+    };
+  }, [showFullscreenWarning]);
+
+  // Handle fullscreen entry button click
+  const handleFullscreenClick = async () => {
+    try {
+      setShowFullscreenWarning(false);
+      const success = await requestFullScreen();
+      if (success) {
+        // Re-add keyboard shortcuts when entering fullscreen
+        document.addEventListener("keydown", blockKeyboardShortcuts, true);
+      } else {
+        // If fullscreen request fails, show warning again
+        setShowFullscreenWarning(true);
+      }
+    } catch (error) {
+      console.warn("Error in handleFullscreenClick:", error);
+      setShowFullscreenWarning(true);
+    }
+  };
+
+  useEffect(() => {
+    // Hàm xử lý sự kiện beforeunload
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    };
+
+    // Hàm xử lý sự kiện keydown để ngăn phím tắt
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ngăn Ctrl+T, Ctrl+N, Ctrl+Shift+N, F5, Ctrl+R, Ctrl+Tab, Alt+Tab
+      if (
+        (e.ctrlKey && ["t", "T", "n", "N", "Tab"].includes(e.key)) ||
+        e.key === "F5" ||
+        (e.ctrlKey && e.key === "r") ||
+        (e.altKey && e.key === "Tab")
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Thêm các event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("keydown", handleKeyDown, { capture: true });
+    };
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -69,38 +345,154 @@ const AssignmentPage = () => {
     }
   }, [currentQuestionIndex, questions.length]);
 
+  // Check for existing assignment attempt on mount
   useEffect(() => {
+    const checkExistingAttempt = () => {
+      const existingAttempt = sessionStorage.getItem(ASSIGNMENT_ATTEMPT_KEY);
+      const existingAssignmentId = sessionStorage.getItem(ASSIGNMENT_ID_KEY);
+
+      if (
+        existingAttempt === "true" &&
+        existingAssignmentId &&
+        existingAssignmentId !== assignmentId
+      ) {
+        // Another assignment is already in progress
+        alert(
+          "Bạn đang có bài kiểm tra khác đang mở. Vui lòng hoàn thành hoặc đóng bài kiểm tra đó trước.",
+        );
+        router.push(`/member/classes/${params.classId}/assignment`);
+        return false;
+      }
+
+      // Mark this assignment as active
+      sessionStorage.setItem(ASSIGNMENT_ATTEMPT_KEY, "true");
+      sessionStorage.setItem(ASSIGNMENT_ID_KEY, assignmentId);
+      return true;
+    };
+
+    if (!checkExistingAttempt()) {
+      return;
+    }
+
     const fetchQuestions = async () => {
       try {
-        const response = await getQnAListByAssignmentId(
-          assignmentId as string,
-          0,
-          100,
-        );
+        const response = await getQnAListByAssignmentId(assignmentId, 0, 100);
         setQuestions(response.content || []);
         setFileNames(
           response.content.map((q: QnA) =>
             q.fileName && q.fileName.trim() !== "" ? q.fileName : "",
           ),
         );
-        setTimeLeft(Number(duration)); // giả sử mỗi câu 1 phút
+        setTimeLeft(Number(duration));
+        // Enable full screen mode when questions are loaded
+        setIsFullScreen(true);
       } catch (error) {
         console.error("Failed to fetch questions:", error);
       }
     };
+
     fetchQuestions();
-  }, [assignmentId, duration, handleSubmitAssignment, questions.length]);
+
+    // Clean up on unmount
+    return () => {
+      if (!isSubmit) {
+        sessionStorage.removeItem(ASSIGNMENT_ATTEMPT_KEY);
+        sessionStorage.removeItem(ASSIGNMENT_ID_KEY);
+      }
+    };
+  }, [assignmentId, duration, isSubmit, params.classId, router]);
+
+  // Prevent tab switching and show warning
+  // State for violation modal
+  const [showViolationModal, setShowViolationModal] = useState(false);
+  const [violationMessage, setViolationMessage] = useState("");
+  const [isModalConfirmed, setIsModalConfirmed] = useState(false);
+  const [isCheckingViolation, setIsCheckingViolation] = useState(false);
 
   useEffect(() => {
-    // Nếu duration = 0 thì không giảm thời gian
-    if (Number(duration) === 0) return;
-    if (timeLeft > 0 && !showResult) {
-      const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0 && !showResult) {
-      handleSubmitAssignment();
+    if (!isFullScreen) return;
+
+    const handleViolation = (message: string) => {
+      if (!isCheckingViolation) {
+        setIsCheckingViolation(true);
+        setViolationMessage(message);
+        setShowViolationModal(true);
+        // Force focus back to the test
+        window.focus();
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden" && !isModalConfirmed) {
+        // User switched tabs or minimized window
+        handleViolation(
+          "Vui lòng không chuyển tab trong khi làm bài kiểm tra!",
+        );
+      }
+    };
+
+    const handleBlur = () => {
+      // Show warning when window loses focus
+      if (!isModalConfirmed) {
+        handleViolation(
+          "Vui lòng không chuyển cửa sổ trong khi làm bài kiểm tra!",
+        );
+      }
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+      // Prevent right-click context menu
+      e.preventDefault();
+      return false;
+    };
+
+    // Add event listeners
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
+    document.addEventListener("contextmenu", handleContextMenu);
+
+    // Timer for the test
+    let timer: NodeJS.Timeout;
+    if (Number(duration) > 0 && timeLeft > 0 && !showResult) {
+      timer = setInterval(
+        () =>
+          setTimeLeft((prev) => {
+            // Only decrement if timeLeft is greater than 0
+            if (prev > 0) {
+              return prev - 1;
+            }
+            return 0; // Keep it at 0 if it reaches 0
+          }),
+        1000,
+      );
     }
-  }, [timeLeft, showResult, handleSubmitAssignment, duration]);
+
+    // Clean up
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("contextmenu", handleContextMenu);
+    };
+  }, [
+    timeLeft,
+    showResult,
+    handleSubmitAssignment,
+    duration,
+    isFullScreen,
+    isModalConfirmed,
+    isCheckingViolation,
+  ]);
+
+  const handleViolationConfirm = () => {
+    setShowViolationModal(false);
+    setIsModalConfirmed(true);
+    // Allow some time before resetting the confirmation state
+    setTimeout(() => {
+      setIsModalConfirmed(false);
+      setIsCheckingViolation(false);
+    }, 1000);
+  };
 
   const handleAnswerSelect = (questionId: string, optionId: string) => {
     setSubmittedAnswers((prev) => ({
@@ -122,6 +514,25 @@ const AssignmentPage = () => {
     setShowResult(true);
     setShowReview(false);
     setIsSubmit(true);
+    setIsBlocking(true); // Block UI during submission
+
+    // Release the assignment lock when submitting
+    sessionStorage.removeItem(ASSIGNMENT_ATTEMPT_KEY);
+    sessionStorage.removeItem(ASSIGNMENT_ID_KEY);
+
+    // Exit fullscreen when submitting
+    try {
+      await exitFullScreen();
+      setIsFullScreen(false);
+      setShowFullscreenWarning(false); // Hide the fullscreen warning
+    } catch (error) {
+      console.warn("Error exiting fullscreen:", error);
+      setIsFullScreen(false);
+      setShowFullscreenWarning(false); // Ensure warning is hidden even if fullscreen exit fails
+    }
+
+    // Remove keyboard shortcuts
+    document.removeEventListener("keydown", blockKeyboardShortcuts, true);
 
     // const durationInMinutes = Math.round(
     //   (questions.length * 60 - timeLeft) / 60,
@@ -153,6 +564,7 @@ const AssignmentPage = () => {
       addToast.error("Đã xảy ra lỗi khi nộp bài. Vui lòng thử lại!");
     } finally {
       setIsLoading(false); // Disable loading after the result
+      setIsBlocking(false); // Unblock UI after submission is complete
     }
   };
 
@@ -250,49 +662,95 @@ const AssignmentPage = () => {
     );
   }
 
+  // Fullscreen warning modal
+  const FullscreenWarningModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">Cảnh báo</h2>
+        <p className="mb-6">
+          Vui lòng bật chế độ toàn màn hình để tiếp tục làm bài.
+        </p>
+        <div className="flex justify-end">
+          <button
+            onClick={requestFullScreen}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          >
+            Bật toàn màn hình
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   if (isModalOpen) {
     return (
-      <ScoreModal
-        assignmentId={assignmentId as string}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
+      <div className="relative min-h-screen bg-gray-50">
+        <ScoreModal
+          assignmentId={assignmentId}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      </div>
     );
   }
 
+  // Show fullscreen entry screen if not in fullscreen and not submitted
+  if (!isFullScreen && !isSubmit) {
+    return <FullscreenEntry onEnterFullscreen={handleFullscreenClick} />;
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center py-2">
-      {isLoading && <LoadingOverlay />}
+    <div className="relative min-h-screen bg-gray-50">
+      <ConfirmModal
+        isOpen={showViolationModal}
+        onClose={handleViolationConfirm}
+        onConfirm={handleViolationConfirm}
+        title="Cảnh báo"
+        message={violationMessage}
+        type="warning"
+        confirmText="Tôi đã hiểu"
+      />
+      {showFullscreenWarning && <FullscreenWarningModal />}
+      <div className="flex-1 overflow-auto flex items-center justify-center min-h-[calc(100vh-64px)]">
+        {isLoading && <LoadingOverlay />}
+        <BlockingOverlay
+          isVisible={isBlocking}
+          message="Đang xử lý, vui lòng đợi trong giây lát..."
+        />
+        {showFullscreenWarning && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
+        )}
 
-      {!isSubmit && (
-        <div className="flex w-full max-w-6xl gap-6">
-          <QuestionCard
-            currentQuestion={currentQuestion}
-            currentQuestionIndex={currentQuestionIndex}
-            questionsLength={questions.length}
-            progress={progress}
-            hasFile={hasFile}
-            answers={submittedAnswers}
-            optionLabels={optionLabels}
-            handleAnswerSelect={handleAnswerSelect}
-            handleAnswerChange={handleAnswerChange}
-            downloadFile={downloadFile}
-            handleDeleteAnswer={handleDeleteAnswer}
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-            handleSubmitAssignment={handleSubmitAssignment}
-          />
+        {!isSubmit && (
+          <div className="flex w-full max-w-6xl gap-6 mx-4 p-6 bg-white rounded-lg shadow-lg">
+            <QuestionCard
+              currentQuestion={currentQuestion}
+              currentQuestionIndex={currentQuestionIndex}
+              questionsLength={questions.length}
+              progress={progress}
+              hasFile={hasFile}
+              answers={submittedAnswers}
+              optionLabels={optionLabels}
+              handleAnswerSelect={handleAnswerSelect}
+              handleAnswerChange={handleAnswerChange}
+              downloadFile={downloadFile}
+              handleDeleteAnswer={handleDeleteAnswer}
+              setCurrentQuestionIndex={setCurrentQuestionIndex}
+              handleSubmitAssignment={handleSubmitAssignment}
+            />
 
-          {/* Assignment Navigation */}
-          <QuestionSidebar
-            questions={questions}
-            answers={submittedAnswers}
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-            timeLeft={timeLeft}
-            formatTime={formatTime}
-            isUnlimitedTime={true}
-          />
-        </div>
-      )}
+            {/* Assignment Navigation */}
+            <QuestionSidebar
+              questions={questions}
+              answers={submittedAnswers}
+              setCurrentQuestionIndex={setCurrentQuestionIndex}
+              timeLeft={timeLeft}
+              formatTime={formatTime}
+              {...(timeLeft === 0 && { isUnlimitedTime: true })}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

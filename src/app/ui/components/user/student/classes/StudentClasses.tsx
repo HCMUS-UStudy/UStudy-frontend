@@ -1,40 +1,65 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
-import { getAllStudentClasses } from "@/app/lib/services/class";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import ClassList from "./ClassList";
+import { ClassUserItem } from "@/app/types/class";
+import { Loading } from "../../../_common/loading";
 
 interface StudentClassesProps {
-  searchQuery: string;
-  classQuery?: string;
+  classes: ClassUserItem[];
+  isLoading: boolean;
+  itemsPerPage?: number;
 }
 
-const StudentClasses: React.FC<StudentClassesProps> = ({ searchQuery }) => {
+const StudentClasses: React.FC<StudentClassesProps> = ({
+  classes = [],
+  isLoading = false,
+  itemsPerPage = 5,
+}) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data: classes, status } = useQuery({
-    queryKey: ["Classes", currentPage - 1, searchQuery],
-    queryFn: () => getAllStudentClasses(currentPage - 1, 5, searchQuery),
-    placeholderData: keepPreviousData,
-  });
+  // Calculate pagination
+  const totalPages = Math.ceil(classes.length / itemsPerPage);
+  const paginatedClasses = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return classes.slice(startIndex, startIndex + itemsPerPage);
+  }, [classes, currentPage, itemsPerPage]);
+
+  // Format data to match expected structure
+  const classData = useMemo(
+    () => ({
+      content: paginatedClasses,
+      totalElements: classes.length,
+      totalPages,
+      pageNumber: currentPage - 1,
+      pageSize: itemsPerPage,
+      last: currentPage === totalPages,
+    }),
+    [paginatedClasses, classes.length, totalPages, currentPage, itemsPerPage],
+  );
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div>
-      <ClassList status={status} classes={classes} type="row" />
-      {classes?.totalElements !== 0 && (
+      <ClassList
+        status={isLoading ? "pending" : "success"}
+        classes={classData}
+        type="row"
+      />
+      {classes.length > 0 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={classes?.totalPages || 1}
+          totalPages={totalPages}
           handlePageClick={(page) => setCurrentPage(page)}
           handlePreviousPage={() =>
             setCurrentPage((prev) => Math.max(prev - 1, 1))
           }
           handleNextPage={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, classes?.totalPages || 1),
-            )
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
         />
       )}

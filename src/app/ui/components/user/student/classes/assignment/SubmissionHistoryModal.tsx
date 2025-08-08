@@ -11,8 +11,9 @@ import {
 } from "@/app/ui/components/_common/Table";
 import Tooltip from "@/app/ui/components/_common/Tooltip";
 import Modal from "@/app/ui/components/modal";
-import React from "react";
+import React, { useState } from "react";
 import { FaEye, FaEdit } from "react-icons/fa";
+import RulesModal from "./RulesModal";
 
 interface Props {
   assignment: AssignmentItem;
@@ -29,6 +30,7 @@ interface Props {
     format: "MULTIPLE_CHOICE" | "MIXED" | "ESSAY",
   ) => void;
   isExpired: (date: string) => boolean;
+  classStatus?: string;
 }
 
 const SubmissionHistoryModal: React.FC<Props> = ({
@@ -42,7 +44,31 @@ const SubmissionHistoryModal: React.FC<Props> = ({
   onEdit,
   onStartExercise,
   isExpired,
+  classStatus,
 }) => {
+  const [showRules, setShowRules] = useState(false);
+  const [pendingAction, setPendingAction] = useState<() => void>(
+    () => () => {},
+  );
+
+  const handleStartExercise = () => {
+    const action = () => {
+      onStartExercise(assignment.id, assignment.duration, assignment.format);
+    };
+
+    setPendingAction(() => action);
+    setShowRules(true);
+  };
+
+  const handleConfirmRules = () => {
+    setShowRules(false);
+    pendingAction();
+  };
+  // Check if we're in review-only mode (class completed, class open, or assignment expired)
+  const isReviewOnly =
+    classStatus === "COMPLETED" ||
+    classStatus === "OPEN" ||
+    isExpired(assignment.endTime);
   function formatDateToVN(dateString: string): string {
     const date = new Date(dateString);
     return (
@@ -158,19 +184,17 @@ const SubmissionHistoryModal: React.FC<Props> = ({
                         <div className="flex gap-2 justify-center">
                           {assignment.mode === "PRACTICE" ? (
                             <>
-                              <Tooltip text="Xem lại">
-                                <button
-                                  type="button"
-                                  onClick={() => onReview(submission)}
-                                  className="p-2 text-primary-dark hover:text-primary-darkest transition-colors"
-                                  title="Xem lại"
-                                >
-                                  <FaEye className="text-xl" />
-                                </button>
-                              </Tooltip>
-                              {(assignment.format === "ESSAY" ||
-                                assignment.format === "MIXED") &&
-                                !isExpired(assignment.endTime) &&
+                              <button
+                                type="button"
+                                onClick={() => onReview(submission)}
+                                className="p-2 text-primary-dark hover:text-primary-darkest transition-colors"
+                                title="Xem lại"
+                              >
+                                <FaEye className="text-xl" />
+                              </button>
+                              {!isReviewOnly &&
+                                (assignment.format === "ESSAY" ||
+                                  assignment.format === "MIXED") &&
                                 !assignment.duration && (
                                   <button
                                     onClick={() => onEdit(submission.id)}
@@ -198,9 +222,9 @@ const SubmissionHistoryModal: React.FC<Props> = ({
                                 <div>Bài tập chưa hết hạn</div>
                               ) : null}
 
-                              {(assignment.format === "ESSAY" ||
-                                assignment.format === "MIXED") &&
-                                !isExpired(assignment.endTime) &&
+                              {!isReviewOnly &&
+                                (assignment.format === "ESSAY" ||
+                                  assignment.format === "MIXED") &&
                                 !assignment.duration && (
                                   <button
                                     onClick={() => onEdit(submission.id)}
@@ -239,37 +263,36 @@ const SubmissionHistoryModal: React.FC<Props> = ({
             Quay lại khóa học
           </Button>
 
-          {submissions.length === 0 ? (
-            <button
-              onClick={() =>
-                onStartExercise(
-                  assignment.id,
-                  assignment.duration,
-                  assignment.format,
-                )
-              }
-              className="bg-primary-darker hover:bg-primary-darkest transition-colors text-white font-semibold px-8 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-primary-darkest transform hover:scale-105"
-            >
-              Bắt đầu
-            </button>
-          ) : (
-            submissions.length < assignment.numAttempts && (
-              <Button
-                onClick={() =>
-                  onStartExercise(
-                    assignment.id,
-                    assignment.duration,
-                    assignment.format,
-                  )
-                }
-                className="px-8 py-3 hover:bg-primary-dark font-semibold"
+          {!isReviewOnly &&
+            (submissions.length === 0 ? (
+              <button
+                onClick={handleStartExercise}
+                className="bg-primary-darker hover:bg-primary-darkest transition-colors text-white font-semibold px-8 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-primary-darkest transform hover:scale-105"
               >
-                Làm lại
-              </Button>
-            )
-          )}
+                Bắt đầu
+              </button>
+            ) : (
+              submissions.length < assignment.numAttempts && (
+                <Button
+                  onClick={handleStartExercise}
+                  className="px-8 py-3 hover:bg-primary-dark font-semibold"
+                >
+                  Làm lại
+                </Button>
+              )
+            ))}
         </div>
       </div>
+
+      <RulesModal
+        isOpen={showRules}
+        onClose={() => setShowRules(false)}
+        onConfirm={handleConfirmRules}
+        assignmentTitle={assignment.title}
+        duration={assignment.duration}
+        currentAttempts={submissions.length}
+        maxAttempts={assignment.numAttempts}
+      />
     </Modal>
   );
 };
