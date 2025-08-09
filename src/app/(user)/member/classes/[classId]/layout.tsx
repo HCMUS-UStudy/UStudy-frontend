@@ -51,11 +51,18 @@ export default function ClassLayout({
     assignment: "Bài tập & Kiểm tra",
     material: "Tài liệu",
     participant: "Thành viên",
+    ...(classDetail?.status === "COMPLETED"
+      ? { review: "Đánh giá lớp học" }
+      : {}),
   };
 
+  // Get current tab from pathname, default to assignment if not found
+  // const currentTab = (() => {
+  //   const tabFromPath = pathname?.split("/").pop();
+  //   return tabFromPath && tabFromPath in tabs ? tabFromPath : "assignment";
+  // })();
+
   const handleTabChange = (id: string) => {
-    const classId = pathname?.split("/")[3];
-    // setCurrentTab(id as keyof typeof tabs);
     router.push(`/member/classes/${classId}/${id}`);
   };
 
