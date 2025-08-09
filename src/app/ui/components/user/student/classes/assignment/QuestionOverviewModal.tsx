@@ -130,7 +130,7 @@ const QuestionOverviewModal: React.FC<Props> = ({
               e.preventDefault();
               if (submissionId) onReview(submissionId);
             }}
-            className="px-5 py-2 rounded-full bg-rimary-darker text-white font-semibold hover:bg-primary transition"
+            className="px-5 py-2 rounded-full bg-primary-darker text-white font-semibold hover:bg-primary transition"
           >
             Xem chi tiết
           </button>

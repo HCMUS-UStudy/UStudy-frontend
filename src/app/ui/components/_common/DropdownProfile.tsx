@@ -5,6 +5,47 @@ import Image from "next/image";
 import { UserData } from "@/app/types";
 import { useRef, useEffect, useState } from "react";
 
+// Role configuration with colors and icons
+// const roleConfig = {
+//   ADMIN: {
+//     bg: "bg-primary-lighter",
+//     text: "text-primary-darker",
+//     border: "border-primary-light",
+//     icon: <FaUserShield className="text-primary-darker" />,
+//     label: "Quản trị viên",
+//   },
+//   TEACHER: {
+//     bg: "bg-primary-lighter",
+//     text: "text-primary-darker",
+//     border: "border-primary-light",
+//     icon: <FaChalkboardTeacher className="text-primary-darker" />,
+//     label: "Giảng viên",
+//   },
+//   STUDENT: {
+//     bg: "bg-primary-lighter",
+//     text: "text-primary-darker",
+//     border: "border-primary-light",
+//     icon: <FaUserGraduate className="text-primary-darker" />,
+//     label: "Sinh viên",
+//   },
+//   PARENT: {
+//     bg: "bg-primary-lighter",
+//     text: "text-primary-darker",
+//     border: "border-primary-light",
+//     icon: <FaUserCircle className="text-primary-darker" />,
+//     label: "Phụ huynh",
+//   },
+//   default: {
+//     bg: "bg-primary-lighter",
+//     text: "text-primary-darker",
+//     border: "border-primary-light",
+//     icon: <FaUserCircle className="text-primary-darker" />,
+//     label: "Người dùng",
+//   },
+// } as const;
+
+//type RoleKey = keyof typeof roleConfig;
+
 const DropdownProfile = ({
   userInfo,
   handleProfileClick,
@@ -55,11 +96,40 @@ const DropdownProfile = ({
         ) : (
           <FaUserCircle size={40} className="rounded-full" />
         )}
-        <div className="hidden md:flex flex-col justify-center items-center">
-          <div className="text-[13px]">
-            {userInfo?.name?.split(" ").slice(-2).join(" ")}
+        <div className="hidden md:flex flex-col justify-center items-start ml-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-gray-900">
+              {userInfo?.name?.split(" ").slice(-2).join(" ")}
+            </span>
+
+            {/* {userInfo?.role && (
+              <span
+                className={`text-[11px] font-medium px-2 py-0.5 rounded-full border 
+          ${
+            roleConfig[userInfo.role.defaultRoute as RoleKey]?.bg ||
+            roleConfig.default.bg
+          }
+          ${
+            roleConfig[userInfo.role.defaultRoute as RoleKey]?.text ||
+            roleConfig.default.text
+          }
+          ${
+            roleConfig[userInfo.role.defaultRoute as RoleKey]?.border ||
+            roleConfig.default.border
+          }
+          flex items-center gap-1`}
+              >
+                {roleConfig[userInfo.role.defaultRoute as RoleKey]?.icon ||
+                  roleConfig.default.icon}
+                {roleConfig[userInfo.role.defaultRoute as RoleKey]?.label ||
+                  userInfo.role.name}
+              </span>
+            )} */}
           </div>
-          <div className="text-[13px] text-gray-600">{userInfo?.genId}</div>
+
+          <span className="text-xs text-gray-500 tracking-wide mt-0.5">
+            {userInfo?.genId}
+          </span>
         </div>
       </div>
       {toggleCollapse && (
@@ -69,7 +139,10 @@ const DropdownProfile = ({
         >
           <div
             className="py-2 px-4 hover:bg-primary-light cursor-pointer rounded-t-lg transition-all"
-            onClick={handleProfileClick}
+            onClick={() => {
+              handleProfileClick();
+              setToggleCollapse(false);
+            }}
           >
             <div className="flex gap-3 items-center text-gray-800">
               <FaUserCircle size={18} /> Hồ sơ
