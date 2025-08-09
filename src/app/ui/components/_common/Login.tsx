@@ -19,7 +19,6 @@ import Cookies from "js-cookie";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import Link from "next/link";
 import { setUserData } from "@/app/store/userSlice";
-import SmallCheckbox from "./SmallCheckbox";
 
 const LogInSchema = z.object({
   username: z
@@ -214,6 +213,10 @@ export default function Login() {
     useLoginMutation.mutate(data);
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:4000/auth/google";
+  };
+
   return (
     <>
       <div className="flex items-center justify-center h-screen overflow-hidden">
@@ -298,11 +301,11 @@ export default function Login() {
             </div>
             <div className="flex flex-col gap-2 md:flex-row w-full justify-between mt-4 px-1">
               <div className="flex items-center">
-                <SmallCheckbox
+                {/* <SmallCheckbox
                   labelText="Ghi nhớ đăng nhập"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
-                />
+                /> */}
                 {/* <input
                   type="checkbox"
                   id="rememberMe"
@@ -349,6 +352,41 @@ export default function Login() {
             >
               Đăng nhập
             </Button>
+
+            <Button
+              onClick={handleGoogleLogin}
+              className="mt-4 w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white hover:bg-primary-lighter transition-all duration-200"
+            >
+              {/* SVG logo Google */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 48 48"
+                width="20"
+                height="20"
+              >
+                <path
+                  fill="#4285F4"
+                  d="M24 9.5c3.54 0 6.3 1.54 7.74 2.84l5.64-5.64C33.18 3.58 28.92 2 24 2 14.84 2 7.14 7.84 3.64 15.76l6.84 5.32C12.26 13.14 17.6 9.5 24 9.5z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M46.5 24.5c0-1.62-.15-3.18-.42-4.68H24v9.1h12.68c-.54 2.84-2.15 5.24-4.54 6.86l7.04 5.47c4.12-3.8 6.32-9.38 6.32-15.75z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M10.48 28.38A13.94 13.94 0 0 1 9.5 24c0-1.52.26-2.98.73-4.38l-6.84-5.32A21.94 21.94 0 0 0 2 24c0 3.54.84 6.9 2.34 9.88l6.14-5.5z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M24 46c5.94 0 10.92-1.96 14.56-5.32l-7.04-5.47c-2.02 1.36-4.6 2.16-7.52 2.16-6.4 0-11.74-3.64-14.52-8.86l-6.14 5.5C7.14 40.16 14.84 46 24 46z"
+                />
+                <path fill="none" d="M2 2h44v44H2z" />
+              </svg>
+              <span className="text-gray-700 font-medium">
+                Đăng nhập bằng Google
+              </span>
+            </Button>
+
             <div className="mt-6 text-center">
               <span className="text-sm text-gray-600">Chưa có tài khoản? </span>
               <Link
