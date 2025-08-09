@@ -1,15 +1,12 @@
 "use client";
+
 import PageWrapper from "@/app/ui/components/_common/PageWrapper";
 import Sidebar from "@/app/ui/components/_common/sidebar/Sidebar";
 import Header from "@/app/ui/components/user/Header";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export default function MemberLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function MemberLayoutContent({ children }: { children: React.ReactNode }) {
   const [isClient, setIsClient] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -23,12 +20,10 @@ export default function MemberLayout({
 
   useEffect(() => {
     if (!isClient) return;
-
     const hideLayout =
       pathname.includes("/assignment/") &&
       searchParams?.has("duration") &&
       searchParams?.has("format");
-
     setShouldHideLayout(hideLayout);
   }, [isClient, pathname, searchParams]);
 
@@ -38,7 +33,6 @@ export default function MemberLayout({
         setCollapsed(false);
       }
     }
-
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
@@ -59,7 +53,6 @@ export default function MemberLayout({
         handleClose={() => setIsMenuOpen(false)}
         collapsed={collapsed}
       />
-
       <div className="flex flex-col h-full w-full">
         <Header
           role="member"
@@ -70,5 +63,17 @@ export default function MemberLayout({
         <PageWrapper collapsed={collapsed}>{children}</PageWrapper>
       </div>
     </div>
+  );
+}
+
+export default function MemberLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MemberLayoutContent>{children}</MemberLayoutContent>
+    </Suspense>
   );
 }
