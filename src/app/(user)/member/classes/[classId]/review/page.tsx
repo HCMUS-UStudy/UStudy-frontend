@@ -3,18 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "@/app/ui/components/_common/Button";
-import { FaStar, FaInfoCircle, FaCheckCircle } from "react-icons/fa";
+import { FaStar, FaInfoCircle } from "react-icons/fa";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import ClassReviewCard from "@/app/ui/components/user/student/classes/review/ClassReviewCard";
+import ReviewSuccessHeader from "@/app/ui/components/user/student/classes/review/ReviewSuccessHeader";
+import ReviewSuccessBody from "@/app/ui/components/user/student/classes/review/ReviewSuccessBody";
+import TeacherReviewCard from "@/app/ui/components/user/student/classes/review/TeacherReviewCard";
 
 interface Teacher {
   id: string;
   name: string;
-  role: string;
-  criteria: {
-    id: string;
-    label: string;
-  }[];
 }
 
 interface CriteriaRating {
@@ -63,33 +61,125 @@ const ReviewPage = () => {
       {
         id: "1",
         name: "Nguyễn Văn A",
-        role: "Giáo viên chính",
-        criteria: [
-          { id: "knowledge", label: "Kiến thức chuyên môn" },
-          { id: "teachingMethod", label: "Phương pháp giảng dạy" },
-          { id: "enthusiasm", label: "Nhiệt tình giảng dạy" },
-          { id: "support", label: "Hỗ trợ học viên" },
-        ],
       },
       {
         id: "2",
         name: "Trần Thị B",
-        role: "Trợ giảng",
-        criteria: [
-          { id: "support", label: "Hỗ trợ học viên" },
-          { id: "responsiveness", label: "Phản hồi nhanh chóng" },
-          { id: "knowledge", label: "Kiến thức chuyên môn" },
-        ],
       },
     ],
     [],
   );
 
   const classCriteria = [
-    { id: "contentQuality", label: "Chất lượng nội dung khóa học" },
-    { id: "teachingMethod", label: "Phương pháp giảng dạy" },
-    { id: "facility", label: "Cơ sở vật chất" },
-    { id: "support", label: "Hỗ trợ từ trung tâm" },
+    {
+      title: "Chất lượng nội dung và tài liệu học",
+      items: [
+        {
+          id: "materialClarity",
+          label: "Mức độ đầy đủ, rõ ràng và cập nhật của tài liệu.",
+        },
+        {
+          id: "materialRelevance",
+          label: "Tính phù hợp với mục tiêu khóa học và nhu cầu học viên.",
+        },
+      ],
+    },
+    {
+      title: "Hiệu quả giảng dạy và hỗ trợ của giáo viên",
+      items: [
+        {
+          id: "teachingEffectiveness",
+          label: "Khả năng truyền đạt, giải thích vấn đề.",
+        },
+        {
+          id: "teacherSupport",
+          label: "Mức độ phản hồi nhanh chóng và hỗ trợ giải đáp thắc mắc.",
+        },
+      ],
+    },
+    {
+      title: "Trải nghiệm và tính năng của nền tảng học tập",
+      items: [
+        {
+          id: "platformUsability",
+          label: "Giao diện dễ dùng, thao tác thuận tiện.",
+        },
+        {
+          id: "platformStability",
+          label:
+            "Ổn định khi học online (ít giật, lag) và tích hợp tính năng hữu ích (bài tập, bài kiểm tra).",
+        },
+      ],
+    },
+    {
+      title: "Tương tác và kết quả học tập",
+      items: [
+        {
+          id: "interactionLevel",
+          label: "Mức độ tương tác giữa học viên - giáo viên.",
+        },
+        {
+          id: "selfProgress",
+          label: "Tiến bộ của bản thân sau khi tham gia lớp học.",
+        },
+      ],
+    },
+  ];
+
+  const teacherCriteria = [
+    {
+      title: "Khả năng truyền đạt và giảng dạy",
+      items: [
+        {
+          id: "teachingClarity",
+          label: "Giải thích dễ hiểu, ví dụ minh họa rõ ràng.",
+        },
+        {
+          id: "teachingAdaptability",
+          label:
+            "Điều chỉnh tốc độ và phương pháp dạy phù hợp với trình độ học viên.",
+        },
+      ],
+    },
+    {
+      title: "Trình độ chuyên môn và kiến thức",
+      items: [
+        {
+          id: "subjectKnowledge",
+          label: "Am hiểu sâu về nội dung môn học.",
+        },
+        {
+          id: "knowledgeUpdate",
+          label: "Cập nhật kiến thức mới và áp dụng vào bài giảng.",
+        },
+      ],
+    },
+    {
+      title: "Tương tác và hỗ trợ học viên",
+      items: [
+        {
+          id: "studentEngagement",
+          label: "Chủ động tạo cơ hội cho học viên đặt câu hỏi, thảo luận.",
+        },
+        {
+          id: "supportResponsiveness",
+          label: "Phản hồi nhanh và hỗ trợ tận tình khi học viên gặp khó khăn.",
+        },
+      ],
+    },
+    {
+      title: "Tác phong và thái độ giảng dạy",
+      items: [
+        {
+          id: "teacherAttitude",
+          label: "Nhiệt tình, tôn trọng và khích lệ học viên.",
+        },
+        {
+          id: "classManagement",
+          label: "Quản lý lớp học hiệu quả, tạo môi trường học tập tích cực.",
+        },
+      ],
+    },
   ];
 
   const { addToast } = useCustomToast();
@@ -143,51 +233,55 @@ const ReviewPage = () => {
     }));
   };
 
-  const validateRatings = (
-    type: "class" | "teacher" = "class",
-    suppressToast = false,
-  ) => {
-    if (type === "class") {
-      const allClassCriteriaRated = Object.values(ratings.class.criteria).every(
-        (rating) => rating > 0,
-      );
-      if (!allClassCriteriaRated) {
-        if (!suppressToast) {
-          addToast.error(
-            "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
-          );
-        }
-        return false;
-      }
-    } else if (activeTeacherId) {
-      const teacher = teachers.find((t) => t.id === activeTeacherId);
-      if (teacher) {
-        const teacherRating = ratings.teachers[teacher.id];
-        const allTeacherCriteriaRated =
-          teacherRating &&
-          Object.keys(teacherRating.criteria).length ===
-            teacher.criteria.length &&
-          Object.values(teacherRating.criteria).every((rating) => rating > 0);
+  // const validateRatings = (
+  //   type: "class" | "teacher" = "class",
+  //   suppressToast = false,
+  // ) => {
+  //   if (type === "class") {
+  //     const allClassCriteriaRated = Object.values(ratings.class.criteria).every(
+  //       (rating) => rating > 0,
+  //     );
+  //     if (!allClassCriteriaRated) {
+  //       if (!suppressToast) {
+  //         addToast.error(
+  //           "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
+  //         );
+  //       }
+  //       return false;
+  //     }
+  //   } else if (activeTeacherId) {
+  //     const teacher = teachers.find((t) => t.id === activeTeacherId);
+  //     if (teacher) {
+  //       const teacherRating = ratings.teachers[teacher.id];
+  //       const totalTeacherCriteriaCount = teacherCriteria.reduce(
+  //         (sum, group) => sum + group.items.length,
+  //         0,
+  //       );
+  //       const allTeacherCriteriaRated =
+  //         teacherRating &&
+  //         Object.keys(teacherRating.criteria).length ===
+  //           totalTeacherCriteriaCount &&
+  //         Object.values(teacherRating.criteria).every((rating) => rating > 0);
 
-        if (!allTeacherCriteriaRated) {
-          if (!suppressToast) {
-            addToast.error(
-              "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
-            );
-          }
-          return false;
-        }
-      }
-    }
-    return true;
-  };
+  //       if (!allTeacherCriteriaRated) {
+  //         if (!suppressToast) {
+  //           addToast.error(
+  //             "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
+  //           );
+  //         }
+  //         return false;
+  //       }
+  //     }
+  //   }
+  //   return true;
+  // };
 
   const handleNextStep = () => {
     if (activeTab === "class") {
-      if (!validateRatings("class")) return;
+      //if (!validateRatings("class")) return;
       setReviewStep("comment");
     } else if (activeTeacherId) {
-      if (!validateRatings("teacher")) return;
+      //if (!validateRatings("teacher")) return;
       setTeacherSteps((prev) => ({
         ...prev,
         [activeTeacherId]: "comment",
@@ -210,11 +304,17 @@ const ReviewPage = () => {
     e.preventDefault();
 
     // Final validation before submission
+    const totalTeacherCriteriaCount = teacherCriteria.reduce(
+      (sum, group) => sum + group.items.length,
+      0,
+    );
     const allTeachersRated = teachers.every((teacher) => {
       const teacherRating = ratings.teachers[teacher.id];
       return (
         teacherRating &&
-        Object.keys(teacherRating.criteria).length === teacher.criteria.length
+        Object.keys(teacherRating.criteria).length ===
+          totalTeacherCriteriaCount &&
+        Object.values(teacherRating.criteria).every((rating) => rating > 0)
       );
     });
 
@@ -346,7 +446,7 @@ const ReviewPage = () => {
         onClick={() => {
           setActiveTab("teacher");
           setActiveTeacherId(teacher.id);
-          validateRatings("teacher", true); // suppress toast khi chuyển giáo viên
+          //validateRatings("teacher", true); // suppress toast khi chuyển giáo viên
         }}
       >
         {/* Avatar chữ cái đầu */}
@@ -369,7 +469,6 @@ const ReviewPage = () => {
           >
             {teacher.name}
           </span>
-          <span className="text-xs text-gray-500">{teacher.role}</span>
         </div>
       </button>
     );
@@ -384,53 +483,8 @@ const ReviewPage = () => {
           transition={{ duration: 0.3 }}
           className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
         >
-          <div className="bg-primary p-8 text-center text-white">
-            <motion.div
-              className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-4"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-            >
-              <FaCheckCircle className="text-4xl text-white" />
-            </motion.div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-3">
-              Đánh giá thành công!
-            </h1>
-            <p className="text-white/90 max-w-md mx-auto">
-              Cảm ơn bạn đã dành thời gian đánh giá khóa học. Ý kiến của bạn rất
-              quý giá với chúng tôi.
-            </p>
-          </div>
-          <div className="p-8 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-              <svg
-                className="w-8 h-8 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
-              Đánh giá đã được gửi
-            </h2>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Chúng tôi sẽ xem xét đánh giá của bạn để không ngừng cải thiện
-              chất lượng đào tạo.
-            </p>
-            <Button
-              onClick={() => router.push(`/member/classes/${classId}`)}
-              className="px-8 py-3 bg-primary hover:from-primary-700 hover:to-primary-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Quay lại lớp học
-            </Button>
-          </div>
+          <ReviewSuccessHeader />
+          <ReviewSuccessBody classId={classId} />
         </motion.div>
       </div>
     );
@@ -465,7 +519,7 @@ const ReviewPage = () => {
                   className="flex items-center cursor-pointer group"
                   onClick={() => {
                     setActiveTab("class");
-                    validateRatings("class", true); // suppress toast khi chuyển tab
+                    //validateRatings("class", true); // suppress toast khi chuyển tab
                   }}
                 >
                   <motion.div
@@ -499,7 +553,7 @@ const ReviewPage = () => {
                   className="flex items-center cursor-pointer group"
                   onClick={() => {
                     setActiveTab(teachers[0]?.id || "class");
-                    validateRatings("teacher", true); // suppress toast khi chuyển tab
+                    //validateRatings("teacher", true); // suppress toast khi chuyển tab
                   }}
                 >
                   <motion.div
@@ -578,418 +632,47 @@ const ReviewPage = () => {
           className="flex-1"
         >
           {activeTab === "class" ? (
-            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md overflow-hidden">
-              {/* Tiêu đề */}
-              <div className="relative mb-10">
-                <div className="flex flex-col items-center text-center">
-                  <span className="bg-primary-light text-primary-darkest font-bold w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-3">
-                    1
-                  </span>
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-                    Đánh giá chung về lớp học
-                  </h2>
-                  <p className="text-gray-500 text-sm italic">
-                    Chia sẻ trải nghiệm tổng quan của bạn về khóa học
-                  </p>
-                </div>
-
-                {/* Thanh ngang */}
-                <div className="flex justify-center mt-5">
-                  <div className="w-52 h-1 bg-primary-dark rounded-full"></div>
-                </div>
-              </div>
-
-              {/* Bước đánh giá */}
-              <div
-                className={`space-y-6 mb-8 transition-all duration-300 ${
-                  reviewStep === "rating" ? "block" : "hidden"
-                }`}
-              >
-                {classCriteria.map((criteria, index) => (
-                  <div
-                    key={criteria.id}
-                    className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
-                    style={{
-                      transform: `translateY(${index * 2}px)`,
-                      opacity: 1 - index * 0.05,
-                    }}
-                  >
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-                      <div className="flex-1 w-full max-w-3xl">
-                        <div className="flex items-center gap-3 mb-1">
-                          <div className="w-8 h-8 rounded-lg bg-primary-lighter flex items-center justify-center text-primary-darkest flex-shrink-0">
-                            {index + 1}
-                          </div>
-                          <h4 className="font-medium text-gray-900">
-                            {criteria.label}
-                          </h4>
-                        </div>
-                        <p className="text-sm text-gray-500 ml-11">
-                          Chọn mức độ hài lòng của bạn
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0">
-                        {renderStars(
-                          ratings.class.criteria[criteria.id] || 0,
-                          (rating) =>
-                            handleClassCriteriaRating(criteria.id, rating),
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Nút tiếp theo ở bước rating */}
-                <div className="mt-8 flex justify-end">
-                  <Button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="px-6 py-3 bg-primary-dark text-white font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
-                  >
-                    Tiếp theo
-                    <svg
-                      className="w-4 h-4 ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5l7 7-7 7"
-                      ></path>
-                    </svg>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Bước comment */}
-              <div
-                className={`mt-12 ${
-                  reviewStep === "comment" ? "block" : "hidden"
-                }`}
-              >
-                <div className="mb-4">
-                  <label
-                    htmlFor="classComment"
-                    className="block text-base font-medium text-gray-800 mb-2 items-center"
-                  >
-                    <svg
-                      className="w-5 h-5 text-primary-darkest mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                      ></path>
-                    </svg>
-                    Nhận xét thêm về lớp học
-                    <span className="text-sm font-normal text-gray-500 ml-2">
-                      (không bắt buộc)
-                    </span>
-                  </label>
-                  <p className="text-sm text-gray-500 ml-7 mb-3">
-                    Chia sẻ thêm về trải nghiệm của bạn để chúng tôi có thể cải
-                    thiện
-                  </p>
-                </div>
-                <div className="relative">
-                  <textarea
-                    id="classComment"
-                    rows={4}
-                    className="w-full px-6 py-4 border border-gray-200 rounded-xl shadow-sm focus:ring-0 focus:ring-primary-dark focus:border-primary-dark transition-all duration-200 resize-none pl-8 outline-none"
-                    placeholder="Ví dụ: Tôi thấy khóa học rất bổ ích, giáo viên nhiệt tình..."
-                    value={ratings.class.comment}
-                    onChange={(e) => handleClassCommentChange(e.target.value)}
-                    maxLength={500}
-                  />
-                  <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-full">
-                    {ratings.class.comment.length}/500
-                  </div>
-                </div>
-
-                <div className="mt-8 flex justify-between">
-                  <Button
-                    type="button"
-                    onClick={handlePreviousStep}
-                    className="px-6 py-3 bg-gray-100 border border-gray-300 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-200 flex items-center"
-                  >
-                    <svg
-                      className="w-4 h-4 mr-2 rotate-180"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5l7 7-7 7"
-                      ></path>
-                    </svg>
-                    Quay lại
-                  </Button>
-                  <div className="ml-auto">
-                    <Button
-                      type="button"
-                      onClick={
-                        reviewStep === "rating"
-                          ? handleNextStep
-                          : () => {
-                              addToast.success(
-                                "Đánh giá thành công: Đánh giá của bạn đã được gửi thành công",
-                              );
-                            }
-                      }
-                      className="px-6 py-3 bg-primary-dark text-black font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
-                    >
-                      {reviewStep === "rating" ? "Tiếp theo" : "Gửi đánh giá"}
-                      <svg
-                        className="w-4 h-4 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        ></path>
-                      </svg>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ClassReviewCard
+              classCriteria={classCriteria}
+              ratings={ratings}
+              reviewStep={reviewStep}
+              renderStars={renderStars}
+              handleClassCriteriaRating={handleClassCriteriaRating}
+              handleClassCommentChange={handleClassCommentChange}
+              handleNextStep={handleNextStep}
+              handlePreviousStep={handlePreviousStep}
+              addToast={addToast}
+            />
           ) : (
             <div className="space-y-6 w-full">
-              {teachers.map((teacher) => (
-                <div key={teacher.id}>
-                  {activeTeacherId === teacher.id && (
-                    <>
-                      {/* Thông tin giáo viên */}
-                      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100 transition-all duration-200 hover:shadow-md">
-                        <div className="mb-8 flex flex-col items-center text-center">
-                          {/* Icon số bước */}
-                          <span className="bg-primary-light text-primary-darkest font-bold w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-3">
-                            2
-                          </span>
-
-                          {/* Tiêu đề */}
-                          <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-                            Đánh giá giáo viên
-                          </h2>
-
-                          {/* Mô tả */}
-                          <p className="text-gray-500 text-sm italic mb-5">
-                            Chia sẻ đánh giá chi tiết của bạn về giáo viên
-                          </p>
-
-                          {/* Thông tin giáo viên */}
-                          <div className="flex items-center gap-4 justify-start w-full">
-                            <div className="w-12 h-12 rounded-xl bg-primary-dark text-white flex items-center justify-center text-lg font-medium shadow-sm">
-                              {teacher.name.charAt(0)}
-                            </div>
-                            <div>
-                              <h3 className="font-medium text-gray-900 text-lg">
-                                {teacher.name}
-                              </h3>
-                              <p className="text-sm text-gray-500 flex items-center mt-0.5">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-light text-primary-darkest">
-                                  {teacher.role}
-                                </span>
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Thanh gạch ngang */}
-                          <div className="w-52 h-1 bg-primary-dark rounded-full mt-5"></div>
-                        </div>
-                      </div>
-
-                      {/* Bước đánh giá giáo viên */}
-                      <div
-                        className={`space-y-6 w-full ${
-                          teacherSteps[teacher.id] === "rating"
-                            ? "block"
-                            : "hidden"
-                        }`}
-                      >
-                        {teacher.criteria.map((criteria) => (
-                          <div
-                            key={`${teacher.id}-${criteria.id}`}
-                            className="bg-gray-50 p-4 rounded-lg transition-all duration-200 hover:shadow-sm"
-                          >
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-                              <div>
-                                <h4 className="font-medium text-gray-800">
-                                  {criteria.label}
-                                </h4>
-                                <p className="text-xs text-gray-500 mt-1">
-                                  Chọn số sao phù hợp với đánh giá của bạn
-                                </p>
-                              </div>
-                              <div className="flex-shrink-0">
-                                {renderStars(
-                                  ratings.teachers[teacher.id]?.criteria[
-                                    criteria.id
-                                  ] || 0,
-                                  (rating) =>
-                                    handleTeacherCriteriaRating(
-                                      teacher.id,
-                                      criteria.id,
-                                      rating,
-                                    ),
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-
-                        {/* Nút tiếp theo */}
-                        <div className="mt-8 flex justify-end">
-                          <Button
-                            type="button"
-                            onClick={() =>
-                              setTeacherSteps((prev) => ({
-                                ...prev,
-                                [teacher.id]: "comment",
-                              }))
-                            }
-                            className="px-6 py-3 bg-primary-dark text-white font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
-                          >
-                            Tiếp theo
-                            <svg
-                              className="w-4 h-4 ml-2"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 5l7 7-7 7"
-                              ></path>
-                            </svg>
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Bước comment giáo viên */}
-                      <div
-                        className={`mt-10 ${
-                          teacherSteps[teacher.id] === "comment"
-                            ? "block"
-                            : "hidden"
-                        }`}
-                      >
-                        <div className="mb-3">
-                          <label
-                            htmlFor={`teacher-${teacher.id}-comment`}
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                          >
-                            Nhận xét về giáo viên
-                            <span className="text-xs font-normal text-gray-500 ml-1">
-                              (không bắt buộc)
-                            </span>
-                          </label>
-                          <p className="text-xs text-gray-500">
-                            Chia sẻ thêm về cách giảng dạy và tương tác của giáo
-                            viên
-                          </p>
-                        </div>
-                        <div className="relative">
-                          <textarea
-                            id={`teacher-${teacher.id}-comment`}
-                            rows={4}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-0 focus:ring-primary-dark focus:border-primary-dark transition-all duration-200 resize-none outline-none"
-                            placeholder={`Ví dụ: Cô ${teacher.name} giảng bài rất dễ hiểu, nhiệt tình giải đáp thắc mắc...`}
-                            value={ratings.teachers[teacher.id]?.comment || ""}
-                            onChange={(e) =>
-                              handleTeacherCommentChange(
-                                teacher.id,
-                                e.target.value,
-                              )
-                            }
-                            maxLength={500}
-                          />
-                          <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-full">
-                            {ratings.teachers[teacher.id]?.comment?.length || 0}
-                            /500
-                          </div>
-                        </div>
-
-                        <div className="mt-8 flex justify-between">
-                          <Button
-                            type="button"
-                            onClick={handlePreviousStep}
-                            className="px-6 py-3 bg-gray-100 border border-gray-300 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-200 flex items-center"
-                          >
-                            <svg
-                              className="w-4 h-4 mr-2 rotate-180"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 5l7 7-7 7"
-                              ></path>
-                            </svg>
-                            Quay lại
-                          </Button>
-                          <div className="flex gap-3">
-                            {teachers[teachers.length - 1]?.id !==
-                            teacher.id ? (
-                              <Button
-                                onClick={() => {
-                                  const currentIndex = teachers.findIndex(
-                                    (t) => t.id === teacher.id,
-                                  );
-                                  if (currentIndex < teachers.length - 1) {
-                                    setActiveTeacherId(
-                                      teachers[currentIndex + 1].id,
-                                    );
-                                    setTeacherSteps((prev) => ({
-                                      ...prev,
-                                      [teachers[currentIndex + 1].id]: "rating",
-                                    }));
-                                  }
-                                }}
-                                className="px-6 py-3 bg-primary-dark border text-white font-medium rounded-lg shadow-sm hover:bg-primary transition-all duration-200"
-                              >
-                                Tiếp theo: Giáo viên tiếp theo
-                              </Button>
-                            ) : (
-                              <Button
-                                type="submit"
-                                className="px-6 py-3 bg-primary-dark text-white font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
-                                disabled={isSubmitting}
-                              >
-                                {isSubmitting ? "Đang gửi..." : "Gửi đánh giá"}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
+              {teachers.map((teacher, index) => (
+                <TeacherReviewCard
+                  key={teacher.id}
+                  teacher={teacher}
+                  isActive={activeTeacherId === teacher.id}
+                  teacherStep={teacherSteps[teacher.id]}
+                  teacherCriteria={teacherCriteria}
+                  ratings={ratings.teachers[teacher.id] || {}}
+                  renderStars={renderStars}
+                  onRate={handleTeacherCriteriaRating}
+                  onNextStep={(id, step) =>
+                    setTeacherSteps((prev) => ({ ...prev, [id]: step }))
+                  }
+                  onPreviousStep={handlePreviousStep}
+                  onCommentChange={handleTeacherCommentChange}
+                  onGoToNextTeacher={(id) => {
+                    const currentIndex = teachers.findIndex((t) => t.id === id);
+                    if (currentIndex < teachers.length - 1) {
+                      setActiveTeacherId(teachers[currentIndex + 1].id);
+                      setTeacherSteps((prev) => ({
+                        ...prev,
+                        [teachers[currentIndex + 1].id]: "rating",
+                      }));
+                    }
+                  }}
+                  isLastTeacher={index === teachers.length - 1}
+                  isSubmitting={isSubmitting}
+                />
               ))}
             </div>
           )}
