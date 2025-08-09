@@ -543,6 +543,14 @@ const QuestionList = () => {
           onClose={() => setShowModal(false)}
           gradeId={selectedGradeId}
           courseId={selectedCourseId}
+          courseName={
+            coursesData?.content.find((c) => c.id === selectedCourseId)?.name ||
+            ""
+          }
+          gradeName={
+            gradesData?.content.find((g) => g.id === selectedGradeId)?.name ||
+            ""
+          }
           returnButton={false}
         />
       )}

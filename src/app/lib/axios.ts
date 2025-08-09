@@ -3,11 +3,9 @@ import { CustomError } from "../types";
 import { handleRefreshToken } from "@/app/lib/services/auth";
 import {
   getTokensFromCookies,
-  getUserDataFromCookies,
   handleLogoutCookies,
   setTokensAndUserDataCookies,
 } from "./action";
-import { redirect } from "next/navigation";
 // import { setupCache } from "axios-cache-interceptor";
 
 const requestUrl = ["/auth/login"];
@@ -59,17 +57,9 @@ axiosInstance.interceptors.request.use(
         if (adjust > expiredTime) {
           _accessToken = await handleExpiredAccessToken(refreshToken);
           if (!_accessToken) {
-            // handleLogout();
-            const defaultRoute = (await getUserDataFromCookies())?.role
-              .defaultRoute;
-            handleLogoutCookies();
-            // window.location.href = "/login";
-            switch (defaultRoute) {
-              case "ADMIN":
-                redirect("/admin/login");
-              default:
-                redirect("/login");
-            }
+            await handleLogoutCookies();
+          } else {
+            setTokensAndUserDataCookies(_accessToken);
           }
         }
       }
