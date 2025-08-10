@@ -24,6 +24,7 @@ export default function StudentBasicInformation() {
           <Input
             className="text-[14px]"
             type="text"
+            required
             placeholder="Tên tài khoản"
             label="Tên tài khoản"
             isError={errors.username !== undefined}
@@ -37,6 +38,7 @@ export default function StudentBasicInformation() {
             type="password"
             placeholder="Mật khẩu"
             label="Mật khẩu"
+            required
             isError={errors.password !== undefined}
             errorMsg={errors.password?.message}
             {...register("password")}
@@ -48,9 +50,22 @@ export default function StudentBasicInformation() {
             type="password"
             placeholder="Nhập lại mật khẩu"
             label="Nhập lại mật khẩu"
+            required
             isError={errors.retypePassword !== undefined}
             errorMsg={errors.retypePassword?.message}
             {...register("retypePassword")}
+          />
+        </div>
+        <div>
+          <Input
+            className="text-[14px]"
+            type="text"
+            placeholder="Nhập địa chỉ email..."
+            label="Email"
+            required
+            isError={errors.email !== undefined}
+            errorMsg={errors.email?.message}
+            {...register("email")}
           />
         </div>
         <div>
@@ -62,17 +77,6 @@ export default function StudentBasicInformation() {
             isError={errors.name !== undefined}
             errorMsg={errors.name?.message}
             {...register("name")}
-          />
-        </div>
-        <div>
-          <Input
-            className="text-[14px]"
-            type="text"
-            placeholder="Nhập địa chỉ email..."
-            label="Email"
-            isError={errors.email !== undefined}
-            errorMsg={errors.email?.message}
-            {...register("email")}
           />
         </div>
       </div>

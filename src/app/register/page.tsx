@@ -17,9 +17,7 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const StudentRegisterSchema = z
   .object({
-    name: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .min(1, "Đây là trường bắt buộc"),
+    name: z.string().optional(),
     username: z
       .string({ message: "Đây là trường bắt buộc" })
       .min(1, "Đây là trường bắt buộc"),
@@ -43,18 +41,22 @@ const StudentRegisterSchema = z
         message: "Ngày sinh không hợp lệ",
       }),
     phone: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
-      .min(9, "Số điện thoại từ 9 - 12 ký tự số")
-      .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
+      .string()
+      .optional()
+      .refine(
+        (val) =>
+          !val || (/^\d+$/.test(val) && val.length >= 9 && val.length <= 12),
+        { message: "Số điện thoại phải chứa 9-12 ký tự số" },
+      ),
     parentPhone: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
-      .min(9, "Số điện thoại từ 9 - 12 ký tự số")
-      .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
-    address: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .min(1, "Đây là trường bắt buộc"),
+      .string()
+      .optional()
+      .refine(
+        (val) =>
+          !val || (/^\d+$/.test(val) && val.length >= 9 && val.length <= 12),
+        { message: "Số điện thoại phải chứa 9-12 ký tự số" },
+      ),
+    address: z.string().optional(),
     gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
   })
   .refine(

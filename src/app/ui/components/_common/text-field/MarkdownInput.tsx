@@ -1,8 +1,9 @@
 import React from "react";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
+import remarkGfm from "remark-gfm";
 
 interface MathMarkdownProps {
   content: string;
@@ -27,12 +28,16 @@ interface MathMarkdownProps {
 // $$\\int_1^3 (2x + 1) \\, dx$$`;
 
 const MarkdownInput: React.FC<MathMarkdownProps> = ({ content }) => {
-  const processed = content.replace(/\n/g, "  \n");
+  const processed = content.replace(/\n/g, "\n");
 
   return (
-    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+    <Markdown
+      className="prose prose-li:marker:text-gray-800 text-base"
+      remarkPlugins={[remarkMath, remarkGfm]}
+      rehypePlugins={[rehypeKatex]}
+    >
       {processed}
-    </ReactMarkdown>
+    </Markdown>
   );
 };
 
