@@ -24,7 +24,13 @@ const Carousel = () => {
         token: {},
       }}
     >
-      <AntdCarousel style={{}} arrows={true} infinite={true} slidesToShow={4}>
+      <AntdCarousel
+        style={{}}
+        arrows={true}
+        infinite={true}
+        slidesToShow={4}
+        autoplay
+      >
         <Element />
         <Element />
         <Element />
