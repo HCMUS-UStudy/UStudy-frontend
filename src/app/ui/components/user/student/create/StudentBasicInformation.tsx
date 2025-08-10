@@ -2,20 +2,12 @@ import React from "react";
 import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
 import { StudentRegisterInputs } from "@/app/register/page";
-import { CustomDatePicker } from "../../../_common/text-field/CustomDatePicker";
-import { CustomRadioGroup } from "../../../_common/text-field/CustomRadioGroup";
 
 export default function StudentBasicInformation() {
   const {
     register,
     formState: { errors },
-    control,
   } = useFormContext<StudentRegisterInputs>();
-
-  const genderOptions = [
-    { value: "MALE", label: "Nam" },
-    { value: "FEMALE", label: "Nữ" },
-  ];
 
   return (
     <div className="w-full">
