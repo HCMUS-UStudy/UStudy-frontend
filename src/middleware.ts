@@ -16,6 +16,12 @@ export async function middleware(request: NextRequest) {
 
   const referer = request.headers.get("referer");
 
+  // Allow Google OAuth callback without authentication
+  if (pathname === "/google/callback") {
+    console.log("object");
+    return NextResponse.next();
+  }
+
   if (!accessToken) {
     if (
       pathname === "/verify-token" &&
@@ -120,6 +126,7 @@ export async function middleware(request: NextRequest) {
     }
     if (pathname.startsWith("/member")) {
       if (defaultRoute !== "STUDENT" && defaultRoute !== "PARENT") {
+        console.log("clg");
         return NextResponse.redirect(new URL("/login", request.url));
       }
       const classPageRegex = /^\/member\/classes\/([^\/]+)$/;

@@ -66,20 +66,37 @@ export default function Schedule() {
       // console.log("Teacher data:", schedule.classSession?.clazz.teacher);
       return {
         subject:
-          schedule.classSession?.clazz.course.name || "Không có tên môn học",
-        grade: schedule.classSession?.clazz.grade.name || "Không có lớp",
+          schedule.classSession?.clazz.course.name ||
+          schedule.assignment?.clazz.course.name ||
+          "Không có tên môn học",
+
+        grade:
+          schedule.classSession?.clazz.grade.name ||
+          schedule.assignment?.clazz.grade.name ||
+          "Không có lớp",
+
         date: format(new Date(schedule.date), "yyyy-MM-dd"),
+
         time: schedule.classSession
-          ? `${format(new Date(`2000-01-01T${schedule.classSession.session.startTime}`), "HH:mm")} - ${format(
+          ? `${format(
+              new Date(`2000-01-01T${schedule.classSession.session.startTime}`),
+              "HH:mm",
+            )} - ${format(
               new Date(`2000-01-01T${schedule.classSession.session.endTime}`),
               "HH:mm",
             )}`
           : "Không có giờ học",
+
         teacher:
-          schedule.classSession?.clazz.teacher[0]?.name || "Chưa có giáo viên",
+          schedule.classSession?.clazz.teacher[0]?.name ||
+          schedule.assignment?.clazz.teacher[0]?.name ||
+          "Chưa có giáo viên",
+
         location: schedule.classSession?.room?.name || "Chưa có phòng học",
+
         status:
           new Date(schedule.date) < currentDate ? "completed" : "upcoming",
+
         detail: schedule.classSession?.session.name || "Không có mô tả",
       };
     })
@@ -218,11 +235,12 @@ export default function Schedule() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.1 * index }}
               whileHover={{ scale: 1.01 }}
-              className="flex flex-col sm:flex-row p-4 border rounded-lg bg-gray-50 hover:bg-blue-50 transition-colors duration-300 shadow-sm hover:shadow-md"
+              className="flex flex-col sm:flex-row p-4 border rounded-lg bg-gray-50 hover:bg-primary-lighter transition-colors duration-300 shadow-sm hover:shadow-md"
+              onClick={() => router.push("/member/classes")}
             >
               <div className="flex items-start flex-1 mb-3 sm:mb-0">
                 {/* Số thứ tự */}
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold mr-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-light text-primary-dark font-semibold mr-3">
                   {index + 1}
                 </div>
 
@@ -303,21 +321,21 @@ export default function Schedule() {
                     </span>
                   </div>
                 </div>
-                <div className="flex justify-end mt-4">
+                {/* <div className="flex justify-end mt-4">
                   <button
                     className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center transition-all duration-200 px-2 py-1 hover:bg-blue-100 rounded"
                     onClick={() => router.push("/member/classes")}
                   >
                     Chi tiết <FaArrowRight className="ml-1 h-2 w-2" />
                   </button>
-                </div>
+                </div> */}
               </div>
 
-              <div className="sm:hidden flex justify-end mt-2 pt-2 border-t border-gray-200 w-full">
+              {/* <div className="sm:hidden flex justify-end mt-2 pt-2 border-t border-gray-200 w-full">
                 <button className="text-xs text-blue-600 font-medium hover:text-blue-700 flex items-center transition-all duration-200 px-2 py-1 hover:bg-blue-100 rounded">
                   Chi tiết <FaArrowRight className="ml-1 h-2 w-2" />
                 </button>
-              </div>
+              </div> */}
             </motion.div>
           ))
         )}

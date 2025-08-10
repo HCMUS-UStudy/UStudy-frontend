@@ -27,7 +27,6 @@ export default function ClassReviewCard({
   handleClassCommentChange,
   handleNextStep,
   handlePreviousStep,
-  addToast,
 }: ClassReviewCardProps) {
   return (
     <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md overflow-hidden">
@@ -65,26 +64,51 @@ export default function ClassReviewCard({
 
         {/* Nút tiếp theo */}
         <div className="mt-8 flex justify-end">
-          <Button
-            type="button"
-            onClick={handleNextStep}
-            className="px-6 py-3 bg-primary-dark text-white font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
-          >
-            Tiếp theo
-            <svg
-              className="w-4 h-4 ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 5l7 7-7 7"
-              ></path>
-            </svg>
-          </Button>
+          {(() => {
+            // Lấy tổng số tiêu chí (items) cho giáo viên
+            const totalCriteriaCount = classCriteria.reduce(
+              (sum, group) => sum + group.items.length,
+              0,
+            );
+
+            // Số tiêu chí đã được đánh giá > 0
+            const ratedCount = ratings.class.criteria
+              ? Object.values(ratings.class.criteria).filter(
+                  (r: unknown): r is number => typeof r === "number" && r > 0,
+                ).length
+              : 0;
+
+            // Chỉ cho phép bấm khi đã đánh giá đủ
+            const canProceed = ratedCount === totalCriteriaCount;
+
+            return (
+              <Button
+                type="button"
+                onClick={handleNextStep}
+                disabled={!canProceed}
+                className={`px-6 py-3 font-medium rounded-lg shadow-md flex items-center transition-all duration-200 ${
+                  canProceed
+                    ? "bg-primary-dark text-white hover:bg-primary"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Tiếp theo
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 5l7 7-7 7"
+                  ></path>
+                </svg>
+              </Button>
+            );
+          })()}
         </div>
       </div>
 
@@ -156,18 +180,12 @@ export default function ClassReviewCard({
           <div className="ml-auto">
             <Button
               type="button"
-              onClick={
-                reviewStep === "rating"
-                  ? handleNextStep
-                  : () => {
-                      addToast.success(
-                        "Đánh giá thành công: Đánh giá của bạn đã được gửi thành công",
-                      );
-                    }
-              }
-              className="px-6 py-3 bg-primary-dark text-black font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
+              onClick={handleNextStep}
+              className="px-6 py-3 bg-primary-dark text-white hover:bg-primary font-medium rounded-lg shadow-md transition-all duration-200 flex items-center"
             >
-              {reviewStep === "rating" ? "Tiếp theo" : "Gửi đánh giá"}
+              {reviewStep === "rating"
+                ? "Tiếp theo: Đánh giá giáo viên"
+                : "Tiếp theo: Đánh giá giáo viên"}
               <svg
                 className="w-4 h-4 ml-2"
                 fill="none"

@@ -11,7 +11,11 @@ import {
   // BsList,
   BsDoorOpen,
 } from "react-icons/bs";
-import { MdAppRegistration, MdOutlineFileCopy } from "react-icons/md";
+import {
+  MdAppRegistration,
+  MdOutlineFileCopy,
+  MdOutlineRateReview,
+} from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
 import { RiDashboard2Line } from "react-icons/ri";
 import { GrMapLocation } from "react-icons/gr";
@@ -82,6 +86,11 @@ export const SIDENAV_ITEMS_ADMIN: SideNavItem[] = [
     title: "Quản lý lớp học",
     path: "/admin/classes",
     icon: <SiGoogleclassroom size={20} />,
+  },
+  {
+    title: "Quản lý đánh giá",
+    path: "/admin/ratings",
+    icon: <MdOutlineRateReview size={20} />,
   },
   {
     title: "Quản lý phòng",
