@@ -135,6 +135,8 @@ const AddingModal = ({
           <QuestionModal
             gradeId={classDetail.grade.id}
             courseId={classDetail.course.id}
+            courseName={classDetail.course.name}
+            gradeName={classDetail.grade.name}
             onGoBack={handleGoBack}
             onClose={setAddingModal}
           />

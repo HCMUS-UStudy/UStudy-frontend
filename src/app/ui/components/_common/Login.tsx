@@ -299,14 +299,14 @@ export default function Login() {
                 {...register("password")}
               />
             </div>
-            <div className="flex flex-col gap-2 md:flex-row w-full justify-between mt-4 px-1">
-              <div className="flex items-center">
-                {/* <SmallCheckbox
+            <div className="flex flex-col gap-2 md:flex-row w-full justify-center mt-4 px-1">
+              {/* <div className="flex items-center">
+                <SmallCheckbox
                   labelText="Ghi nhớ đăng nhập"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
-                /> */}
-                {/* <input
+                />
+                <input
                   type="checkbox"
                   id="rememberMe"
                   className="mr-1"
@@ -318,8 +318,8 @@ export default function Login() {
                   className="text-sm text-gray-600 cursor-pointer"
                 >
                   Ghi nhớ đăng nhập
-                </label> */}
-              </div>
+                </label>
+              </div> */}
               <div className="flex">
                 <button
                   type="button"
@@ -347,7 +347,7 @@ export default function Login() {
 
             <Button
               isPending={useLoginMutation.status === "pending"}
-              className="mt-6 w-full"
+              className="mt-4 w-full"
               type="submit"
             >
               Đăng nhập
