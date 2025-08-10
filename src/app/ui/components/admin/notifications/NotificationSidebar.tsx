@@ -22,75 +22,64 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   onNotificationClick,
   onCloseSidebar,
 }) => {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return (
-          <svg
-            className="w-5 h-5 text-white animate-pulse"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 8v4l3 3"
-            />
-          </svg>
-        );
-      case "CLASS":
-        return (
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z"
-            />
-          </svg>
-        );
-      default:
-        return (
-          <svg
-            className="w-5 h-5 text-white animate-pulse"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        );
-    }
-  };
-
-  const getTypeGradient = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "from-primary-dark to-primary-darker";
-      case "CLASS":
-        return "from-primary to-primary-dark";
-      default:
-        return "from-primary-light to-primary";
-    }
-  };
+  // const getTypeIcon = (type: string) => {
+  //   switch (type) {
+  //     case "SYSTEM":
+  //       return (
+  //         <svg
+  //           className="w-5 h-5 text-white animate-pulse"
+  //           fill="none"
+  //           stroke="currentColor"
+  //           strokeWidth="2"
+  //           viewBox="0 0 24 24"
+  //         >
+  //           <circle cx="12" cy="12" r="10" />
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M12 8v4l3 3"
+  //           />
+  //         </svg>
+  //       );
+  //     case "CLASS":
+  //       return (
+  //         <svg
+  //           className="w-5 h-5 text-white"
+  //           fill="none"
+  //           stroke="currentColor"
+  //           strokeWidth="2"
+  //           viewBox="0 0 24 24"
+  //         >
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7"
+  //           />
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z"
+  //           />
+  //         </svg>
+  //       );
+  //     default:
+  //       return (
+  //         <svg
+  //           className="w-5 h-5 text-white animate-pulse"
+  //           fill="none"
+  //           stroke="currentColor"
+  //           strokeWidth="2"
+  //           viewBox="0 0 24 24"
+  //         >
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+  //           />
+  //         </svg>
+  //       );
+  //   }
+  // };
 
   // const getTypeLabel = (type: string) => {
   //   switch (type) {
@@ -128,13 +117,14 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       }
       return `${Math.floor(diffInHours)} giờ trước`;
     } else if (diffInHours < 48) {
-      return "Hôm qua";
+      return `Hôm qua lúc ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
     } else {
-      return date.toLocaleDateString("vi-VN", {
+      return ` ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}
+      ${date.toLocaleDateString("vi-VN", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-      });
+      })}`;
     }
   };
 
@@ -147,19 +137,6 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       <div className="p-4">
         <div className="flex items-center justify-between mb-4 lg:hidden">
           <h2 className="text-lg font-bold text-primary-darkest flex items-center gap-2">
-            <svg
-              className="w-5 h-5 text-primary-dark"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 17h5l-5 5v-5zM4 19h6a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
             Danh sách thông báo
           </h2>
           <button
@@ -170,19 +147,6 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
           </button>
         </div>
         <h2 className="text-lg font-bold text-primary-darkest mb-4 items-center gap-2 hidden lg:flex">
-          <svg
-            className="w-5 h-5 text-primary-dark"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 17h5l-5 5v-5zM4 19h6a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
           Danh sách thông báo
         </h2>
         <div className="space-y-3">
@@ -208,11 +172,18 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
               >
                 <div className="flex items-start gap-3 p-3">
                   {/* Icon */}
-                  <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${getTypeGradient(item.receiverType)} shadow-md flex-shrink-0 group-hover:scale-110 transition-transform duration-300 ${navigating ? "animate-pulse" : ""}`}
-                  >
-                    {getTypeIcon(item.receiverType)}
-                  </div>
+                  {isUnread && !isActive ? (
+                    <span className="inline-flex items-center self-center">
+                      <div className="w-1 h-1 sm:w-2 sm:h-2 bg-primary-darkest rounded-full animate-pulse"></div>
+                      {/* Chưa đọc */}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="inline-flex items-center self-center">
+                        <div className="w-0.5 h-0.5 sm:w-1 sm:h-1"></div>
+                      </span>
+                    </>
+                  )}
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
@@ -229,12 +200,12 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                               : item.receiverType}
                       </span>
                       {/* Hide badge if this is the active notification */}
-                      {isUnread && !isActive && (
+                      {/* {isUnread && !isActive && (
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
                           <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></div>
                           Chưa đọc
                         </span>
-                      )}
+                      )} */}
                     </div>
                     <h3
                       className={`font-semibold text-primary-darkest mb-1 truncate ${

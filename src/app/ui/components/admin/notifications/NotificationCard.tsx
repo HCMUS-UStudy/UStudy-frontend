@@ -19,75 +19,64 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 }) => {
   const isUnread = !notification.read;
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return (
-          <svg
-            className="w-4 h-4 sm:w-6 sm:h-6 text-white animate-pulse"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 8v4l3 3"
-            />
-          </svg>
-        );
-      case "CLASS":
-        return (
-          <svg
-            className="w-4 h-4 sm:w-6 sm:h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z"
-            />
-          </svg>
-        );
-      default:
-        return (
-          <svg
-            className="w-4 h-4 sm:w-6 sm:h-6 text-white animate-pulse"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        );
-    }
-  };
-
-  const getTypeGradient = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "from-primary-dark to-primary-darker";
-      case "CLASS":
-        return "from-primary to-primary-dark";
-      default:
-        return "from-primary-light to-primary";
-    }
-  };
+  // const getTypeIcon = (type: string) => {
+  //   switch (type) {
+  //     case "SYSTEM":
+  //       return (
+  //         <svg
+  //           className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse"
+  //           fill="none"
+  //           stroke="currentColor"
+  //           strokeWidth="2"
+  //           viewBox="0 0 24 24"
+  //         >
+  //           <circle cx="12" cy="12" r="10" />
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M12 8v4l3 3"
+  //           />
+  //         </svg>
+  //       );
+  //     case "CLASS":
+  //       return (
+  //         <svg
+  //           className="w-3 h-3 sm:w-4 sm:h-4"
+  //           fill="none"
+  //           stroke="currentColor"
+  //           strokeWidth="2"
+  //           viewBox="0 0 24 24"
+  //         >
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7"
+  //           />
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z"
+  //           />
+  //         </svg>
+  //       );
+  //     default:
+  //       return (
+  //         <svg
+  //           className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse"
+  //           fill="none"
+  //           stroke="currentColor"
+  //           strokeWidth="2"
+  //           viewBox="0 0 24 24"
+  //         >
+  //           <path
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //             d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+  //           />
+  //         </svg>
+  //       );
+  //   }
+  // };
 
   const getTypeLabel = (type: string) => {
     switch (type) {
@@ -105,11 +94,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   const getTypeBadgeColor = (type: string) => {
     switch (type) {
       case "SYSTEM":
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
+        return "bg-primary-light text-primary-darkest";
       case "CLASS":
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
+        return "bg-primary-light text-primary-darkest";
       default:
-        return "bg-primary-lighter text-primary-darkest border-primary-light";
+        return "bg-primary-light text-primary-darkest";
     }
   };
 
@@ -125,22 +114,23 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       }
       return `${Math.floor(diffInHours)} giờ trước`;
     } else if (diffInHours < 48) {
-      return "Hôm qua";
+      return `Hôm qua lúc ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
     } else {
-      return date.toLocaleDateString("vi-VN", {
+      return ` ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}
+      ${date.toLocaleDateString("vi-VN", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-      });
+      })}`;
     }
   };
 
   return (
     <Card
-      className={`cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group ${
+      className={`cursor-pointer rounded-lg transition-all duration-300 shadow-sm hover:shadow-md hover:scale-[1.02] group ${
         isUnread
-          ? "border-l-4 border-l-red-500 bg-red-50 shadow-lg"
-          : "hover:border-primary bg-white shadow-md"
+          ? "border-l-4 border-l-primary-dark bg-primary-lighter"
+          : "hover:border-primary bg-white"
       }`}
       style={{
         animationDelay: `${index * 50}ms`,
@@ -151,29 +141,35 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       }}
       onClick={() => onClick(notification)}
     >
-      <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4 p-4">
         {/* Icon with gradient */}
-        <div
-          className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br ${getTypeGradient(notification.receiverType)} shadow-lg flex-shrink-0 group-hover:scale-110 transition-transform duration-300 self-start`}
+        {/* <div
+          className={`hidden w-8 h-8 sm:w-10 sm:h-10 rounded-2xl sm:flex items-center justify-center bg-primary-light shadow-sm flex-shrink-0 transition-transform duration-300 self-start`}
         >
           {getTypeIcon(notification.receiverType)}
-        </div>
+        </div> */}
+        {isUnread && notification.id !== currentNotificationId ? (
+          <span className="inline-flex items-center self-center">
+            <div className="w-1 h-1 sm:w-2 sm:h-2 bg-primary-darkest rounded-full animate-pulse"></div>
+            {/* Chưa đọc */}
+          </span>
+        ) : (
+          <>
+            <span className="inline-flex items-center self-center">
+              <div className="w-0.5 h-0.5 sm:w-1 sm:h-1"></div>
+            </span>
+          </>
+        )}
 
         {/* Content - Main section */}
         <div className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-2">
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <span
-                className={`text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold border ${getTypeBadgeColor(notification.receiverType)}`}
+                className={`text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold ${getTypeBadgeColor(notification.receiverType)}`}
               >
                 {getTypeLabel(notification.receiverType)}
               </span>
-              {isUnread && notification.id !== currentNotificationId && (
-                <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mr-1.5 sm:mr-2 animate-pulse"></div>
-                  Chưa đọc
-                </span>
-              )}
             </div>
           </div>
 
@@ -186,16 +182,16 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           </h3>
 
           {notification.content && (
-            <p className="text-black leading-relaxed text-sm line-clamp-2 font-medium mb-3 sm:mb-0">
+            <p className="text-black leading-relaxed text-sm line-clamp-2 font-medium mb-1 sm:mb-0">
               {notification.content}
             </p>
           )}
         </div>
 
         {/* Right side - Sender and Time */}
-        <div className="flex flex-row sm:flex-col items-start sm:items-end gap-3 sm:gap-3 flex-shrink-0 min-w-0">
+        <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 flex-shrink-0 min-w-0">
           {/* Sender info */}
-          <div className="flex items-center gap-2 p-1.5 sm:p-2 bg-primary-lighter rounded-lg">
+          <div className="flex items-center gap-2 p-1.5 sm:p-2">
             <Image
               src={`/userAvatars/${notification.sender.avatar}.png`}
               alt={notification.sender.name}
