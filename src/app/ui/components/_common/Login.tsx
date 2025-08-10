@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/app/ui/components/_common/Button";
 import { setTokensAndUserDataCookies } from "@/app/lib/action";
 import { usePathname, useRouter } from "next/navigation";
-import { login } from "@/app/lib/services/auth";
+import { login, loginByGoogle } from "@/app/lib/services/auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import Link from "next/link";
 import { setUserData } from "@/app/store/userSlice";
+import { AuthResponse } from "@/app/types";
 
 const LogInSchema = z.object({
   username: z
@@ -86,6 +87,7 @@ export default function Login() {
   // const [isLoading, setIsLoading] = useState<boolean>(false);
   const pathname = usePathname();
   const isUser = pathname === "/login";
+  const isAdmin = pathname?.startsWith("/admin/login");
   const dispatch = useDispatch();
   const [isLoadingForgot, setIsLoadingForgot] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -99,6 +101,60 @@ export default function Login() {
     setValue,
   } = useForm<LogInInputs>({ resolver: zodResolver(LogInSchema) });
 
+  // Tách riêng phần xử lý response
+  const handleLoginSuccess = (response: AuthResponse) => {
+    const defaultRoute = response.data.user.role.defaultRoute;
+    let userDataToSave = response.data.user;
+
+    if (defaultRoute === "PARENT") {
+      userDataToSave = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...(response.data.user as any),
+        children: response.data.children ?? [],
+      };
+    }
+
+    setTokensAndUserDataCookies(
+      response.data.access_token,
+      response.data.refresh_token,
+      JSON.stringify(userDataToSave),
+      JSON.stringify(response.data.screens),
+    );
+
+    dispatch(setPermissions(response.data.screens));
+    dispatch(setUserData(userDataToSave));
+
+    if (defaultRoute === "PARENT") {
+      dispatch(setChildren(response.data.children ?? []));
+      dispatch(
+        setSelectedChild(
+          response.data.children ? response.data.children[0] : null,
+        ),
+      );
+    }
+
+    addToast.success("Đăng nhập thành công");
+
+    switch (defaultRoute) {
+      case "TEACHER":
+        router.push("/teacher/classes");
+        break;
+      case "STUDENT":
+        if (response.data.user.hadClass) {
+          router.push("/member/home");
+        } else {
+          router.push("/member/class-register");
+        }
+        break;
+      case "PARENT":
+        router.push("/member/tuition");
+        break;
+      case "ADMIN":
+        router.push("/admin/dashboard");
+        break;
+    }
+  };
+
   const useLoginMutation = useMutation({
     mutationFn: (data: LogInInputs) =>
       login(data.username, data.password, isUser),
@@ -107,61 +163,7 @@ export default function Login() {
       setError("username", { message: String(customError.data || "") });
       setError("password", { message: String(customError.data || "") });
     },
-    onSuccess: (response) => {
-      const defaultRoute = response.data.user.role.defaultRoute;
-      let userDataToSave = response.data.user;
-      if (defaultRoute === "PARENT") {
-        userDataToSave = {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...(response.data.user as any),
-          children: response.data.children ?? [],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as typeof response.data.user & { children?: any[] };
-      }
-      setTokensAndUserDataCookies(
-        response.data.access_token,
-        response.data.refresh_token,
-        JSON.stringify(userDataToSave),
-        JSON.stringify(response.data.screens),
-      );
-      dispatch(setPermissions(response.data.screens));
-      dispatch(setUserData(userDataToSave));
-      if (defaultRoute === "PARENT") {
-        dispatch(setChildren(response.data.children ?? []));
-        dispatch(
-          setSelectedChild(
-            response.data.children ? response.data.children[0] : null,
-          ),
-        );
-      }
-      addToast.success("Đăng nhập thành công");
-      // toast.success("Đăng nhập thành công", {
-      //   position: "bottom-right",
-      //   autoClose: 5000,
-      //   closeOnClick: false,
-      //   pauseOnHover: false,
-      // });
-      switch (defaultRoute) {
-        case "TEACHER":
-          router.push("/teacher/classes");
-          break;
-        case "STUDENT":
-          if (response.data.user.hadClass) {
-            router.push("/member/home");
-          } else {
-            router.push("/member/class-register");
-          }
-          break;
-        case "PARENT":
-          router.push("/member/tuition");
-          break;
-        case "ADMIN":
-          router.push("/admin/dashboard");
-          break;
-        default:
-          break;
-      }
-    },
+    onSuccess: handleLoginSuccess,
   });
 
   // Thêm hàm helper để lấy cookie prefix
@@ -213,8 +215,17 @@ export default function Login() {
     useLoginMutation.mutate(data);
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:4000/auth/google";
+  const handleGoogleLogin = async () => {
+    try {
+      // Redirect to Google OAuth URL
+      const response = await loginByGoogle();
+      if (response?.data) {
+        window.location.href = response.data;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      addToast.error("Đăng nhập Google thất bại");
+    }
   };
 
   return (
@@ -353,39 +364,42 @@ export default function Login() {
               Đăng nhập
             </Button>
 
-            <Button
-              onClick={handleGoogleLogin}
-              className="mt-4 w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white hover:bg-primary-lighter transition-all duration-200"
-            >
-              {/* SVG logo Google */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 48 48"
-                width="20"
-                height="20"
+            {!isAdmin && (
+              <Button
+                onClick={handleGoogleLogin}
+                type="button"
+                className="mt-4 w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white hover:bg-primary-lighter transition-all duration-200"
               >
-                <path
-                  fill="#4285F4"
-                  d="M24 9.5c3.54 0 6.3 1.54 7.74 2.84l5.64-5.64C33.18 3.58 28.92 2 24 2 14.84 2 7.14 7.84 3.64 15.76l6.84 5.32C12.26 13.14 17.6 9.5 24 9.5z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M46.5 24.5c0-1.62-.15-3.18-.42-4.68H24v9.1h12.68c-.54 2.84-2.15 5.24-4.54 6.86l7.04 5.47c4.12-3.8 6.32-9.38 6.32-15.75z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M10.48 28.38A13.94 13.94 0 0 1 9.5 24c0-1.52.26-2.98.73-4.38l-6.84-5.32A21.94 21.94 0 0 0 2 24c0 3.54.84 6.9 2.34 9.88l6.14-5.5z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M24 46c5.94 0 10.92-1.96 14.56-5.32l-7.04-5.47c-2.02 1.36-4.6 2.16-7.52 2.16-6.4 0-11.74-3.64-14.52-8.86l-6.14 5.5C7.14 40.16 14.84 46 24 46z"
-                />
-                <path fill="none" d="M2 2h44v44H2z" />
-              </svg>
-              <span className="text-gray-700 font-medium">
-                Đăng nhập bằng Google
-              </span>
-            </Button>
+                {/* SVG logo Google */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 48 48"
+                  width="20"
+                  height="20"
+                >
+                  <path
+                    fill="#4285F4"
+                    d="M24 9.5c3.54 0 6.3 1.54 7.74 2.84l5.64-5.64C33.18 3.58 28.92 2 24 2 14.84 2 7.14 7.84 3.64 15.76l6.84 5.32C12.26 13.14 17.6 9.5 24 9.5z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M46.5 24.5c0-1.62-.15-3.18-.42-4.68H24v9.1h12.68c-.54 2.84-2.15 5.24-4.54 6.86l7.04 5.47c4.12-3.8 6.32-9.38 6.32-15.75z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M10.48 28.38A13.94 13.94 0 0 1 9.5 24c0-1.52.26-2.98.73-4.38l-6.84-5.32A21.94 21.94 0 0 0 2 24c0 3.54.84 6.9 2.34 9.88l6.14-5.5z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M24 46c5.94 0 10.92-1.96 14.56-5.32l-7.04-5.47c-2.02 1.36-4.6 2.16-7.52 2.16-6.4 0-11.74-3.64-14.52-8.86l-6.14 5.5C7.14 40.16 14.84 46 24 46z"
+                  />
+                  <path fill="none" d="M2 2h44v44H2z" />
+                </svg>
+                <span className="text-gray-700 font-medium">
+                  Đăng nhập bằng Google
+                </span>
+              </Button>
+            )}
 
             <div className="mt-6 text-center">
               <span className="text-sm text-gray-600">Chưa có tài khoản? </span>

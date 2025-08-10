@@ -136,7 +136,7 @@ export type Assignment = {
       id: string;
       name: string;
     };
-    teacher: Teacher | null;
+    teacher: UserSummary[];
   };
   startTime: string; // Format: YYYY-MM-DDTHH:mm:ss
   endTime: string; // Format: YYYY-MM-DDTHH:mm:ss

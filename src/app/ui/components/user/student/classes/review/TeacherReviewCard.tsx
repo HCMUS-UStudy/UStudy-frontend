@@ -101,27 +101,50 @@ export default function TeacherReviewCard({
           />
 
           <div className="mt-8 flex justify-end">
-            <Button
-              type="button"
-              onClick={() => onNextStep(teacher.id, "comment")}
-              className="px-6 py-3 bg-primary-dark text-white font-medium rounded-lg shadow-md hover:bg-primary transition-all duration-200 flex items-center"
-            >
-              Tiếp theo
-              <svg
-                className="w-4 h-4 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5l7 7-7 7"
-                ></path>
-              </svg>
-            </Button>
+            {(() => {
+              // Lấy tổng số tiêu chí (items) cho giáo viên
+              const totalCriteriaCount = teacherCriteria.reduce(
+                (sum, group) => sum + group.items.length,
+                0,
+              );
+
+              // Số tiêu chí đã được đánh giá > 0
+              const ratedCount = ratings.criteria
+                ? Object.values(ratings.criteria).filter((r) => r > 0).length
+                : 0;
+
+              // Chỉ cho phép bấm khi đã đánh giá đủ
+              const canProceed = ratedCount === totalCriteriaCount;
+
+              return (
+                <Button
+                  type="button"
+                  onClick={() => onNextStep(teacher.id, "comment")}
+                  disabled={!canProceed}
+                  className={`px-6 py-3 font-medium rounded-lg shadow-md flex items-center transition-all duration-200 ${
+                    canProceed
+                      ? "bg-primary-dark text-white hover:bg-primary"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                >
+                  Tiếp theo
+                  <svg
+                    className="w-4 h-4 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    ></path>
+                  </svg>
+                </Button>
+              );
+            })()}
           </div>
         </div>
       )}

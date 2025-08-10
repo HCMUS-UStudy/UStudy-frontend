@@ -25,6 +25,26 @@ export const login = async (
   }
 };
 
+export const loginByGoogle = async () => {
+  try {
+    const response = await axiosInstance.get("/auth/google/login");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserByGoogle = async (
+  userId: string,
+): Promise<AuthResponse> => {
+  try {
+    const response = await axiosInstance.get(`/auth/auth-response/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const handleRefreshToken = async (
   refreshToken: string | null,
 ): Promise<AuthResponse | null> => {
