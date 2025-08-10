@@ -24,7 +24,9 @@ const ReviewPage = () => {
   const [activeTab, setActiveTab] = useState<"class" | string>("class");
   const [activeTeacherId, setActiveTeacherId] = useState<string | null>(null);
   const router = useRouter();
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId || "";
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [reviewStep, setReviewStep] = useState<"rating" | "comment">("rating");

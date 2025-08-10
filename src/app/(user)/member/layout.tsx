@@ -21,10 +21,10 @@ function MemberLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isClient) return;
     const hideLayout =
-      pathname.includes("/assignment/") &&
+      pathname?.includes("/assignment/") &&
       searchParams?.has("duration") &&
       searchParams?.has("format");
-    setShouldHideLayout(hideLayout);
+    setShouldHideLayout(hideLayout || false);
   }, [isClient, pathname, searchParams]);
 
   useEffect(() => {

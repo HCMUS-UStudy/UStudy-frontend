@@ -360,7 +360,7 @@ const AssignmentPage = () => {
         alert(
           "Bạn đang có bài kiểm tra khác đang mở. Vui lòng hoàn thành hoặc đóng bài kiểm tra đó trước.",
         );
-        router.push(`/member/classes/${params.classId}/assignment`);
+        router.push(`/member/classes/${params?.classId}/assignment`);
         return false;
       }
 
@@ -400,7 +400,7 @@ const AssignmentPage = () => {
         sessionStorage.removeItem(ASSIGNMENT_ID_KEY);
       }
     };
-  }, [assignmentId, duration, isSubmit, params.classId, router]);
+  }, [assignmentId, duration, isSubmit, params?.classId, router]);
 
   // Prevent tab switching and show warning
   // State for violation modal
