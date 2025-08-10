@@ -525,7 +525,9 @@ const QuestionDetail = (props: { params: Promise<{ questionId: string }> }) => {
             {question.questionType === "ESSAY" && (
               <div className="mb-3">
                 <span className="font-semibold">Tiêu chí chấm điểm:</span>{" "}
-                {question.scoringCriteria || (
+                {question.scoringCriteria ? (
+                  <MarkdownInput content={question.scoringCriteria} />
+                ) : (
                   <span className="italic text-gray-400">(Không có)</span>
                 )}
               </div>

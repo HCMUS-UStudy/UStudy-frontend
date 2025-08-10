@@ -16,6 +16,8 @@ import { AnimatePresence } from "framer-motion";
 import FileUpload from "../../_common/FileUpload";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
 import MarkdownGuide from "../../_common/text-field/MarkdownGuide";
+import { RxMagicWand } from "react-icons/rx";
+import { getScoringCriteria } from "@/app/lib/services/AI";
 
 type FormValues = {
   question: string;
@@ -29,12 +31,16 @@ const QuestionModal = ({
   onClose,
   gradeId,
   courseId,
+  courseName,
+  gradeName,
   returnButton = true,
 }: {
   onGoBack: () => void;
   onClose: (value: boolean) => void;
   gradeId: string;
   courseId: string;
+  courseName: string;
+  gradeName: string;
   returnButton?: boolean;
 }) => {
   const { register, handleSubmit, control, watch, setValue } =
@@ -135,6 +141,7 @@ const QuestionModal = ({
   const [isEditing, setIsEditing] = useState(false);
   const [scoringCriteria, setScoringCriteria] = useState("");
   const [scoringCriteriaError, setScoringCriteriaError] = useState("");
+  const [isLoadingScoring, setIsLoadingScoring] = useState(false);
   const [descriptionError, setDescriptionError] = useState("");
   const [mcDescriptionError, setMcDescriptionError] = useState("");
   const [mcAnswersError, setMcAnswersError] = useState<string[]>([]);
@@ -188,6 +195,23 @@ const QuestionModal = ({
     } catch (error) {
       console.error("Failed to create question:", error);
       addToast.error("Tạo câu hỏi thất bại");
+    }
+  };
+
+  const getAPIScoringCriteria = async (
+    course: string,
+    grade: string,
+    description: string,
+  ) => {
+    setIsLoadingScoring(true);
+    try {
+      const response = await getScoringCriteria(course, grade, description);
+      setScoringCriteria(response.criteria);
+      setScoringCriteriaError("");
+    } catch {
+      addToast.error("Lấy gợi ý tiêu chí chấm điểm thất bại");
+    } finally {
+      setIsLoadingScoring(false);
     }
   };
 
@@ -372,12 +396,12 @@ const QuestionModal = ({
             </form>
           ) : (
             <div className="flex flex-col w-full">
-              <div className="mt-3">
+              <div className="mt-1">
                 <label className="font-medium flex items-center gap-1">
                   Câu hỏi <span className="text-red-500">*</span>
                 </label>
                 <TextArea
-                  className="mt-1 h-[78px] min-h-16 max-h-32"
+                  className="mt-1 h-[70px] min-h-16 max-h-32"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
@@ -385,18 +409,48 @@ const QuestionModal = ({
                   errorMsg={descriptionError}
                 />
               </div>
-              <div className="mt-3">
-                <label className="font-medium flex items-center gap-1">
-                  Tiêu chí chấm điểm <span className="text-red-500">*</span>
-                </label>
-                <TextArea
-                  className="mt-1 h-[60px] min-h-12 max-h-32"
-                  value={scoringCriteria}
-                  onChange={(e) => setScoringCriteria(e.target.value)}
-                  required
-                  isError={!!scoringCriteriaError}
-                  errorMsg={scoringCriteriaError}
-                />
+              <div className="mt-1">
+                <div className="flex justify-between items-center">
+                  <label className="font-medium flex items-center gap-1">
+                    Tiêu chí chấm điểm <span className="text-red-500">*</span>
+                  </label>
+                  <div
+                    className={`flex items-center gap-1 p-2 cursor-pointer
+                  text-primary-dark hover:text-primary-darkest text-[13px] ${isLoadingScoring ? "opacity-50 pointer-events-none" : ""}`}
+                    onClick={() => {
+                      if (!isLoadingScoring) {
+                        setIsLoadingScoring(true);
+                        getAPIScoringCriteria(
+                          courseName,
+                          gradeName,
+                          description,
+                        ).finally(() => setIsLoadingScoring(false));
+                      }
+                    }}
+                  >
+                    <RxMagicWand size={16} />
+                    <span>Gợi ý tiêu chí</span>
+                  </div>
+                </div>
+                <div className="relative">
+                  <TextArea
+                    className="mt-1 h-[80px] min-h-12 max-h-32"
+                    value={scoringCriteria}
+                    onChange={(e) => setScoringCriteria(e.target.value)}
+                    required
+                    isError={!!scoringCriteriaError}
+                    errorMsg={scoringCriteriaError}
+                    disabled={isLoadingScoring}
+                  />
+                  {isLoadingScoring && (
+                    <div className="absolute inset-0 bg-white bg-opacity-60 flex flex-col items-center justify-center z-10">
+                      <div className="loader border-2 border-primary-dark border-t-transparent rounded-full w-6 h-6 animate-spin"></div>
+                      <span className="text-sm text-primary-dark">
+                        Đang tải gợi ý...
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="text-[14px] mt-4 mb-1 text-primary-darkest">
                 Đính kèm tệp (nếu có){" "}

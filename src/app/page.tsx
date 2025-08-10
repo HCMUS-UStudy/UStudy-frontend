@@ -5,6 +5,7 @@ import Logo from "@/app/ui/components/_common/Logo";
 import Hero from "./ui/components/_common/landingPage/Hero";
 import WhyUs from "./ui/components/_common/landingPage/WhyUs";
 import LoginButton from "./ui/components/user/LoginButton";
+import Carousel from "./ui/components/_common/Carousel";
 
 export default async function Home() {
   const RenderMainFeatures: React.FC = (): React.ReactNode => {
@@ -107,6 +108,7 @@ export default async function Home() {
       </div>
       <div className="md:px-10 xl:px-24 mx-auto flex flex-col justify-center">
         <WhyUs />
+        <Carousel />
         <div className="mx-12 mt-10 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10">
           <RenderMainFeatures />
         </div>

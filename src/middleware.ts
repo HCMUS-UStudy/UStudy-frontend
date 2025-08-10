@@ -177,13 +177,15 @@ export async function middleware(request: NextRequest) {
       if (!authResponse) {
         await handleLogoutCookies();
       } else {
+        const { access_token, refresh_token, user } = authResponse.data;
+        await import("./app/lib/action").then(async (mod) => {
+          await mod.setTokensAndUserDataCookies(
+            access_token,
+            refresh_token,
+            JSON.stringify(user),
+          );
+        });
         response = NextResponse.next();
-        response.cookies.set("accessToken", authResponse.data.access_token);
-        response.cookies.set("refreshToken", authResponse.data.refresh_token);
-        response.cookies.set(
-          "userData",
-          JSON.stringify(authResponse.data.user),
-        );
         return response;
       }
     } else {
@@ -195,12 +197,20 @@ export async function middleware(request: NextRequest) {
           response.cookies.delete("accessToken");
           response.cookies.delete("refreshToken");
           response.cookies.delete("userData");
+          response.cookies.delete("userData_iv");
+          response.cookies.delete("permissions");
+          response.cookies.delete("permissions_iv");
+          response.cookies.delete("creator");
           return response;
         default:
           response = NextResponse.redirect(new URL("/login", request.url));
           response.cookies.delete("accessToken");
           response.cookies.delete("refreshToken");
           response.cookies.delete("userData");
+          response.cookies.delete("userData_iv");
+          response.cookies.delete("permissions");
+          response.cookies.delete("permissions_iv");
+          response.cookies.delete("creator");
           return response;
       }
     }
