@@ -17,9 +17,7 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const StudentRegisterSchema = z
   .object({
-    name: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .min(1, "Đây là trường bắt buộc"),
+    // name: z.string().optional(),
     username: z
       .string({ message: "Đây là trường bắt buộc" })
       .min(1, "Đây là trường bắt buộc"),
@@ -36,26 +34,30 @@ const StudentRegisterSchema = z
     email: z
       .string({ message: "Đây là trường bắt buộc" })
       .email("Email không hợp lệ"),
-    birthday: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .min(1, "Đây là trường bắt buộc")
-      .refine((data) => !isNaN(Date.parse(data)), {
-        message: "Ngày sinh không hợp lệ",
-      }),
-    phone: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
-      .min(9, "Số điện thoại từ 9 - 12 ký tự số")
-      .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
-    parentPhone: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .regex(/^\d+$/, "Số điện thoại chỉ được chứa số")
-      .min(9, "Số điện thoại từ 9 - 12 ký tự số")
-      .max(12, "Số điện thoại từ 9 - 12 ký tự số"),
-    address: z
-      .string({ message: "Đây là trường bắt buộc" })
-      .min(1, "Đây là trường bắt buộc"),
-    gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
+    // birthday: z
+    //   .string({ message: "Đây là trường bắt buộc" })
+    //   .min(1, "Đây là trường bắt buộc")
+    //   .refine((data) => !isNaN(Date.parse(data)), {
+    //     message: "Ngày sinh không hợp lệ",
+    //   }),
+    // phone: z
+    //   .string()
+    //   .optional()
+    //   .refine(
+    //     (val) =>
+    //       !val || (/^\d+$/.test(val) && val.length >= 9 && val.length <= 12),
+    //     { message: "Số điện thoại phải chứa 9-12 ký tự số" },
+    //   ),
+    // parentPhone: z
+    //   .string()
+    //   .optional()
+    //   .refine(
+    //     (val) =>
+    //       !val || (/^\d+$/.test(val) && val.length >= 9 && val.length <= 12),
+    //     { message: "Số điện thoại phải chứa 9-12 ký tự số" },
+    //   ),
+    // address: z.string().optional(),
+    // gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính" }),
   })
   .refine(
     (data) => {
@@ -72,9 +74,6 @@ export type StudentRegisterInputs = z.infer<typeof StudentRegisterSchema>;
 export default function StudentRegister() {
   const methods = useForm<StudentRegisterInputs>({
     resolver: zodResolver(StudentRegisterSchema),
-    defaultValues: {
-      gender: "MALE",
-    },
   });
   const { addToast } = useCustomToast();
   const queryClient = useQueryClient();
@@ -106,7 +105,7 @@ export default function StudentRegister() {
         <div className="flex relative items-center h-full justify-center w-full bg-primary-light">
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
-            className="relative bg-primary-lighter md:bg-foreground py-10 px-10 lg:px-16 xl:px-20 h-auto md:rounded-3xl shadow-lg z-[100] flex flex-col gap-2 w-full md:w-2/3"
+            className="relative bg-primary-lighter md:bg-foreground py-10 px-10 lg:px-16 xl:px-20 h-auto md:rounded-3xl shadow-lg z-[100] flex flex-col gap-2 w-full md:w-1/2"
           >
             <Lottie
               className="absolute -top-28 -left-20 size-56 invisible lg:visible"

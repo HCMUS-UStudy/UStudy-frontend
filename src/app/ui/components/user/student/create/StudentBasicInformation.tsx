@@ -2,28 +2,21 @@ import React from "react";
 import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
 import { StudentRegisterInputs } from "@/app/register/page";
-import { CustomDatePicker } from "../../../_common/text-field/CustomDatePicker";
-import { CustomRadioGroup } from "../../../_common/text-field/CustomRadioGroup";
 
 export default function StudentBasicInformation() {
   const {
     register,
     formState: { errors },
-    control,
   } = useFormContext<StudentRegisterInputs>();
 
-  const genderOptions = [
-    { value: "MALE", label: "Nam" },
-    { value: "FEMALE", label: "Nữ" },
-  ];
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div className="w-full">
       <div className="flex flex-col gap-3">
         <div>
           <Input
             className="text-[14px]"
             type="text"
+            required
             placeholder="Tên tài khoản"
             label="Tên tài khoản"
             isError={errors.username !== undefined}
@@ -37,6 +30,7 @@ export default function StudentBasicInformation() {
             type="password"
             placeholder="Mật khẩu"
             label="Mật khẩu"
+            required
             isError={errors.password !== undefined}
             errorMsg={errors.password?.message}
             {...register("password")}
@@ -48,6 +42,7 @@ export default function StudentBasicInformation() {
             type="password"
             placeholder="Nhập lại mật khẩu"
             label="Nhập lại mật khẩu"
+            required
             isError={errors.retypePassword !== undefined}
             errorMsg={errors.retypePassword?.message}
             {...register("retypePassword")}
@@ -57,26 +52,27 @@ export default function StudentBasicInformation() {
           <Input
             className="text-[14px]"
             type="text"
+            placeholder="Nhập địa chỉ email..."
+            label="Email"
+            required
+            isError={errors.email !== undefined}
+            errorMsg={errors.email?.message}
+            {...register("email")}
+          />
+        </div>
+        {/* <div>
+          <Input
+            className="text-[14px]"
+            type="text"
             placeholder="Họ và tên"
             label="Họ và tên"
             isError={errors.name !== undefined}
             errorMsg={errors.name?.message}
             {...register("name")}
           />
-        </div>
-        <div>
-          <Input
-            className="text-[14px]"
-            type="text"
-            placeholder="Nhập địa chỉ email..."
-            label="Email"
-            isError={errors.email !== undefined}
-            errorMsg={errors.email?.message}
-            {...register("email")}
-          />
-        </div>
+        </div> */}
       </div>
-      <div className="flex flex-col gap-3">
+      {/* <div className="flex flex-col gap-3">
         <div className="w-full">
           <CustomDatePicker
             label="Ngày sinh"
@@ -130,7 +126,7 @@ export default function StudentBasicInformation() {
           options={genderOptions}
           error={errors.gender?.message}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

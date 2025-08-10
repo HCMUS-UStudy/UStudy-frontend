@@ -99,7 +99,7 @@ const DropdownProfile = ({
         <div className="hidden md:flex flex-col justify-center items-start ml-3">
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-gray-900">
-              {userInfo?.name?.split(" ").slice(-2).join(" ")}
+              {userInfo?.name?.split(" ").slice(-2).join(" ") || "Người dùng"}
             </span>
 
             {/* {userInfo?.role && (

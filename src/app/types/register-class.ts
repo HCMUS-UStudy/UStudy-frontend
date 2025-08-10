@@ -44,7 +44,15 @@ export type ClassToRegisterItem = {
     teacher: RegisterClassTeacher[];
   };
   payment: PaymentInfo;
+  ratingOverview: RatingOverview;
   status: "WAITING" | "ACCEPTED" | null;
+};
+
+export type RatingOverview = {
+  rating: number;
+  numRatings: number;
+  course: string | null;
+  grade: string | null;
 };
 
 export type ClassToRegisterResponse =

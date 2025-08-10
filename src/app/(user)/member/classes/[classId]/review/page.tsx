@@ -4,16 +4,17 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { FaStar, FaInfoCircle } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
-import ClassReviewCard from "@/app/ui/components/user/student/classes/review/ClassReviewCard";
+import { getClassById } from "@/app/lib/services/class";
+import { CreateRatingRequest } from "@/app/types/rating";
+import TeacherReviewCard from "@/app/ui/components/user/student/classes/review/TeacherReviewCard";
 import ReviewSuccessHeader from "@/app/ui/components/user/student/classes/review/ReviewSuccessHeader";
 import ReviewSuccessBody from "@/app/ui/components/user/student/classes/review/ReviewSuccessBody";
-import TeacherReviewCard from "@/app/ui/components/user/student/classes/review/TeacherReviewCard";
-
-interface Teacher {
-  id: string;
-  name: string;
-}
+import { Loading } from "@/app/ui/components/_common/loading";
+import { UserSummary } from "@/app/types";
+import ClassReviewCard from "@/app/ui/components/user/student/classes/review/ClassReviewCard";
+import { createRating } from "@/app/lib/services/rating";
 
 interface CriteriaRating {
   [key: string]: number;
@@ -24,7 +25,9 @@ const ReviewPage = () => {
   const [activeTab, setActiveTab] = useState<"class" | string>("class");
   const [activeTeacherId, setActiveTeacherId] = useState<string | null>(null);
   const router = useRouter();
-  const { classId } = useParams<{ classId: string }>();
+  const params = useParams<{ classId: string }>();
+  const classId = params?.classId || "";
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [reviewStep, setReviewStep] = useState<"rating" | "comment">("rating");
@@ -56,19 +59,98 @@ const ReviewPage = () => {
     },
   });
 
-  const teachers = React.useMemo<Teacher[]>(
-    () => [
-      {
-        id: "1",
-        name: "Nguyễn Văn A",
-      },
-      {
-        id: "2",
-        name: "Trần Thị B",
-      },
-    ],
-    [],
+  const [hoveredStars, setHoveredStars] = useState<{ [key: string]: number }>(
+    {},
   );
+
+  const { addToast } = useCustomToast();
+
+  // Fetch class details using React Query
+  const {
+    data: classDetails,
+    isLoading,
+    error: classError,
+    refetch,
+  } = useQuery({
+    queryKey: ["ClassDetails", classId],
+    queryFn: () => getClassById(classId),
+    refetchOnWindowFocus: false,
+  });
+
+  // Handle side effects when data is loaded
+  useEffect(() => {
+    if (classDetails?.teachers?.length) {
+      const initialSteps = classDetails.teachers.reduce<
+        Record<string, "rating" | "comment">
+      >((acc: Record<string, "rating" | "comment">, teacher: UserSummary) => {
+        acc[teacher.id] = "rating";
+        return acc;
+      }, {});
+      setTeacherSteps(initialSteps);
+      setActiveTeacherId(classDetails.teachers[0]?.id || null);
+    }
+  }, [classDetails]);
+
+  const teachers = classDetails?.teachers || [];
+
+  // Initialize teacher steps and set first teacher as active
+  useEffect(() => {
+    if (teachers.length > 0) {
+      // Initialize steps for each teacher
+      const initialSteps: Record<string, "rating" | "comment"> = {};
+      teachers.forEach((teacher) => {
+        initialSteps[teacher.id] = "rating";
+      });
+      setTeacherSteps(initialSteps);
+
+      // Set first teacher as active if none is set
+      if (!activeTeacherId) {
+        setActiveTeacherId(teachers[0].id);
+      }
+    }
+  }, [teachers, activeTeacherId]);
+
+  // Handle loading and error states
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (classError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <FaInfoCircle className="mx-auto text-4xl text-gray-400 mb-4" />
+          <p className="text-gray-600">Đã xảy ra lỗi khi tải dữ liệu lớp học</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if the class has already been rated
+  if (classDetails?.rated) {
+    return (
+      <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg justify-center items-center flex flex-col gap-4">
+        <div className="flex items-center gap-2">
+          <svg
+            className="w-5 h-5 text-amber-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+          <span className="text-sm text-amber-700">
+            Bạn đã đánh giá lớp học này rồi. Cảm ơn bạn!
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   const classCriteria = [
     {
@@ -182,7 +264,18 @@ const ReviewPage = () => {
     },
   ];
 
-  const { addToast } = useCustomToast();
+  const isClassEvaluationComplete = () => {
+    // Lấy tất cả criteriaId từ classCriteria
+    const allCriteriaIds = classCriteria.flatMap((group) =>
+      group.items.map((item) => item.id),
+    );
+
+    // Kiểm tra tất cả đều > 0
+    return allCriteriaIds.every((criteriaId) => {
+      const rating = ratings.class.criteria[criteriaId] || 0;
+      return rating > 0;
+    });
+  };
 
   const handleTeacherCriteriaRating = (
     teacherId: string,
@@ -233,59 +326,75 @@ const ReviewPage = () => {
     }));
   };
 
-  // const validateRatings = (
-  //   type: "class" | "teacher" = "class",
-  //   suppressToast = false,
-  // ) => {
-  //   if (type === "class") {
-  //     const allClassCriteriaRated = Object.values(ratings.class.criteria).every(
-  //       (rating) => rating > 0,
-  //     );
-  //     if (!allClassCriteriaRated) {
-  //       if (!suppressToast) {
-  //         addToast.error(
-  //           "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
-  //         );
-  //       }
-  //       return false;
-  //     }
-  //   } else if (activeTeacherId) {
-  //     const teacher = teachers.find((t) => t.id === activeTeacherId);
-  //     if (teacher) {
-  //       const teacherRating = ratings.teachers[teacher.id];
-  //       const totalTeacherCriteriaCount = teacherCriteria.reduce(
-  //         (sum, group) => sum + group.items.length,
-  //         0,
-  //       );
-  //       const allTeacherCriteriaRated =
-  //         teacherRating &&
-  //         Object.keys(teacherRating.criteria).length ===
-  //           totalTeacherCriteriaCount &&
-  //         Object.values(teacherRating.criteria).every((rating) => rating > 0);
-
-  //       if (!allTeacherCriteriaRated) {
-  //         if (!suppressToast) {
-  //           addToast.error(
-  //             "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
-  //           );
-  //         }
-  //         return false;
-  //       }
-  //     }
-  //   }
-  //   return true;
-  // };
-
   const handleNextStep = () => {
     if (activeTab === "class") {
-      //if (!validateRatings("class")) return;
-      setReviewStep("comment");
+      if (reviewStep === "rating") {
+        // Get all criteria IDs from classCriteria
+        const allCriteriaIds = classCriteria.flatMap((group) =>
+          group.items.map((item) => item.id),
+        );
+
+        // Check if all criteria have a rating > 0
+        const allRated = allCriteriaIds.every((criteriaId) => {
+          const rating = ratings.class.criteria[criteriaId] || 0;
+          return rating > 0;
+        });
+
+        if (!allRated) {
+          addToast.error(
+            "Vui lòng đánh giá đầy đủ các tiêu chí trước khi tiếp tục",
+            {},
+          );
+          return;
+        }
+
+        // Move to comment step
+        setReviewStep("comment");
+      } else {
+        // Move to first teacher's evaluation`
+        if (teachers.length > 0) {
+          setActiveTab(teachers[0].id);
+          setActiveTeacherId(teachers[0].id);
+        }
+      }
     } else if (activeTeacherId) {
-      //if (!validateRatings("teacher")) return;
-      setTeacherSteps((prev) => ({
-        ...prev,
-        [activeTeacherId]: "comment",
-      }));
+      const teacherRating = ratings.teachers[activeTeacherId] || {
+        criteria: {},
+        comment: "",
+      };
+      const totalTeacherCriteriaCount = teacherCriteria.reduce(
+        (sum, group) => sum + group.items.length,
+        0,
+      );
+
+      if (teacherSteps[activeTeacherId] === "rating") {
+        // Validate all teacher ratings are provided before moving to comments
+        const allRated =
+          Object.keys(teacherRating.criteria).length ===
+            totalTeacherCriteriaCount &&
+          Object.values(teacherRating.criteria).every((rating) => rating > 0);
+
+        if (!allRated) {
+          return;
+        }
+        setTeacherSteps((prev) => ({
+          ...prev,
+          [activeTeacherId]: "comment",
+        }));
+      } else {
+        // Move to next teacher or to submission
+        const currentIndex = teachers.findIndex(
+          (t) => t.id === activeTeacherId,
+        );
+        if (currentIndex < teachers.length - 1) {
+          const nextTeacherId = teachers[currentIndex + 1].id;
+          setActiveTeacherId(nextTeacherId);
+          setTeacherSteps((prev) => ({
+            ...prev,
+            [nextTeacherId]: "rating",
+          }));
+        }
+      }
     }
   };
 
@@ -300,108 +409,140 @@ const ReviewPage = () => {
     }
   };
 
+  // Calculate average rating from criteria object
+  const calculateAverageRating = (criteria: Record<string, number>): number => {
+    const values = Object.values(criteria);
+    if (values.length === 0) return 0;
+    const sum = values.reduce((acc, curr) => acc + curr, 0);
+    return parseFloat((sum / values.length).toFixed(2));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Final validation before submission
+    // ---- Teacher validation ----
     const totalTeacherCriteriaCount = teacherCriteria.reduce(
       (sum, group) => sum + group.items.length,
       0,
     );
     const allTeachersRated = teachers.every((teacher) => {
       const teacherRating = ratings.teachers[teacher.id];
+      if (!teacherRating) return false;
+
+      const itemIds = teacherCriteria.flatMap((group) =>
+        group.items.map((i) => i.id),
+      );
+      const ratedItemIds = Object.keys(teacherRating.criteria).filter((id) =>
+        itemIds.includes(id),
+      );
+
       return (
-        teacherRating &&
-        Object.keys(teacherRating.criteria).length ===
-          totalTeacherCriteriaCount &&
-        Object.values(teacherRating.criteria).every((rating) => rating > 0)
+        ratedItemIds.length === totalTeacherCriteriaCount &&
+        ratedItemIds.every((id) => teacherRating.criteria[id] > 0)
       );
     });
 
-    const allClassCriteriaRated = Object.values(ratings.class.criteria).every(
-      (rating) => rating > 0,
+    // ---- Class validation ----
+    const totalClassCriteriaCount = classCriteria.reduce(
+      (sum, group) => sum + group.items.length,
+      0,
+    );
+    const classItemIds = classCriteria.flatMap((group) =>
+      group.items.map((i) => i.id),
+    );
+    const ratedClassItemIds = Object.keys(ratings.class.criteria).filter((id) =>
+      classItemIds.includes(id),
     );
 
+    const allClassCriteriaRated =
+      ratedClassItemIds.length === totalClassCriteriaCount &&
+      ratedClassItemIds.every((id) => ratings.class.criteria[id] > 0);
+
+    // ---- Check ----
     if (!allTeachersRated || !allClassCriteriaRated) {
-      addToast.error("Vui lòng đánh giá đầy đủ các tiêu chí trước khi gửi");
+      addToast.error("Vui lòng đánh giá đầy đủ các tiêu chí trước khi gửi", {});
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/classes/${classId}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          teacherRatings: Object.entries(ratings.teachers).map(
-            ([teacherId, rating]) => ({
-              teacherId,
-              rating: rating.criteria,
-              comment: rating.comment,
-            }),
-          ),
-          classRating: ratings.class.criteria,
-          classComment: ratings.class.comment,
+      const classAverageRating = calculateAverageRating(ratings.class.criteria);
+
+      const teacherRatings = Object.entries(ratings.teachers).map(
+        ([teacherId, rating]) => ({
+          teacherId,
+          rating: calculateAverageRating(rating.criteria),
+          comment: rating.comment,
         }),
-      });
+      );
 
-      if (!response.ok) {
-        throw new Error("Failed to submit review");
-      }
+      const ratingData: CreateRatingRequest = {
+        classId,
+        rating: classAverageRating,
+        comment: ratings.class.comment,
+        teacherRatings,
+      };
 
-      addToast.success("Đã gửi đánh giá thành công!");
+      await createRating(ratingData);
+
+      addToast.success("Đã gửi đánh giá thành công!", {});
       setIsSubmitted(true);
 
-      // Redirect back to class page after 1.5 seconds
+      await refetch();
+
       setTimeout(() => {
-        router.push(`/member/classes/${classId}`);
+        router.push(`/member/classes/${classId}/review`);
       }, 1500);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Error submitting review:", error);
-      addToast.error("Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại sau.");
+      addToast.error(
+        "Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại sau.",
+        {},
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Initialize teacher steps and set first teacher as active
-  useEffect(() => {
-    if (teachers.length > 0) {
-      // Initialize steps for each teacher
-      const initialSteps: Record<string, "rating" | "comment"> = {};
-      teachers.forEach((teacher) => {
-        initialSteps[teacher.id] = "rating";
-      });
-      setTeacherSteps(initialSteps);
-
-      // Set first teacher as active if none is set
-      if (!activeTeacherId) {
-        setActiveTeacherId(teachers[0].id);
-      }
-    }
-  }, [teachers]);
-
   const renderStars = (
     ratingValue: number,
     onChange?: (rating: number) => void,
+    id?: string,
   ) => {
+    const hoveredStar = id ? hoveredStars[id] || 0 : 0;
+
     const handleClick = (star: number) => {
       if (onChange) {
         onChange(star);
       }
     };
 
-    const handleMouseEnter = () => {
-      if (onChange) {
+    const handleMouseEnter = (star: number) => {
+      if (onChange && id) {
         document.body.style.cursor = "pointer";
+        setHoveredStars((prev) => ({
+          ...prev,
+          [id]: star,
+        }));
       }
     };
 
     const handleMouseLeave = () => {
       document.body.style.cursor = "default";
+      if (id) {
+        setHoveredStars((prev) => ({
+          ...prev,
+          [id]: 0,
+        }));
+      }
+    };
+
+    const isStarActive = (star: number) => {
+      if (hoveredStar > 0) {
+        return star <= hoveredStar;
+      }
+      return star <= ratingValue;
     };
 
     return (
@@ -411,12 +552,10 @@ const ReviewPage = () => {
             key={star}
             type="button"
             className={`relative w-8 h-8 flex items-center justify-center transition-all duration-200 ${
-              star <= ratingValue
-                ? "text-yellow-400 scale-110"
-                : "text-gray-200 hover:text-yellow-300"
-            }`}
+              isStarActive(star) ? "text-yellow-400 scale-110" : "text-gray-200"
+            } hover:text-yellow-300`}
             onClick={() => handleClick(star)}
-            onMouseEnter={handleMouseEnter}
+            onMouseEnter={() => handleMouseEnter(star)}
             onMouseLeave={handleMouseLeave}
           >
             <FaStar className="absolute inset-0 w-full h-full" />
@@ -432,41 +571,33 @@ const ReviewPage = () => {
     );
   };
 
-  const renderTeacherTab = (teacher: Teacher) => {
-    const isActive = activeTeacherId === teacher.id;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const renderTeacherTab = (teacher: UserSummary, index: number) => {
+    const isActive = activeTab === teacher.id;
+    const isComplete = ratings.teachers[teacher.id]?.comment?.trim() !== "";
+    const canClick = !isActive && !isComplete;
 
     return (
       <button
         key={teacher.id}
-        className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 border ${
+        className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
           isActive
-            ? "bg-primary-light border-primary-200"
-            : "bg-white border-transparent hover:bg-gray-50 hover:border-gray-200"
+            ? "bg-primary-50 border border-primary-200"
+            : isComplete
+              ? "bg-green-50 border border-green-200"
+              : "hover:bg-gray-100 border border-transparent"
         }`}
         onClick={() => {
-          setActiveTab("teacher");
+          if (!canClick) return;
+          setActiveTab(teacher.id);
           setActiveTeacherId(teacher.id);
-          //validateRatings("teacher", true); // suppress toast khi chuyển giáo viên
         }}
       >
-        {/* Avatar chữ cái đầu */}
-        <div
-          className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-sm transition-colors ${
-            isActive
-              ? "bg-primary-200 text-primary-800"
-              : "bg-gray-200 text-gray-600"
-          }`}
-        >
+        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-light text-primary-darkest font-medium">
           {teacher.name.charAt(0).toUpperCase()}
         </div>
-
-        {/* Thông tin */}
         <div className="flex flex-col text-left">
-          <span
-            className={`text-sm font-medium ${
-              isActive ? "text-primary-900" : "text-gray-800"
-            }`}
-          >
+          <span className="text-sm font-medium text-gray-800">
             {teacher.name}
           </span>
         </div>
@@ -508,18 +639,17 @@ const ReviewPage = () => {
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center">
                 <FaInfoCircle className="mr-2 text-primary-500" />
-                Các phần đánh giá
+                Tiến trình đánh giá
               </h3>
 
               {/* Tabs */}
-              <div className="space-y-4 pl-2">
+              <div className="space-y-4 pl-2 mt-6">
                 {/* Tab 1 */}
                 <motion.div
                   whileHover={{ x: 5 }}
                   className="flex items-center cursor-pointer group"
                   onClick={() => {
                     setActiveTab("class");
-                    //validateRatings("class", true); // suppress toast khi chuyển tab
                   }}
                 >
                   <motion.div
@@ -550,10 +680,19 @@ const ReviewPage = () => {
                 {/* Tab 2 */}
                 <motion.div
                   whileHover={{ x: 5 }}
-                  className="flex items-center cursor-pointer group"
+                  className={`flex items-center group ${
+                    isClassEvaluationComplete()
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed opacity-50"
+                  }`}
                   onClick={() => {
+                    if (!isClassEvaluationComplete()) {
+                      addToast.error(
+                        "Vui lòng hoàn thành đánh giá lớp học trước",
+                      );
+                      return;
+                    }
                     setActiveTab(teachers[0]?.id || "class");
-                    //validateRatings("teacher", true); // suppress toast khi chuyển tab
                   }}
                 >
                   <motion.div
@@ -614,7 +753,7 @@ const ReviewPage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.05 * index }}
                     >
-                      {renderTeacherTab(teacher)}
+                      {renderTeacherTab(teacher, index)}
                     </motion.div>
                   ))}
                 </div>

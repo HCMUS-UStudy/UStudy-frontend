@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import RegisterClassesLoading from "../../../_common/loading/RegisterClassesLoading";
 import EmptyListOrTable from "../../../_common/EmptyListOrTable";
 import { ClassToRegisterItem, ClassToRegisterResponse } from "@/app/types";
 import { SiGoogleclassroom } from "react-icons/si";
 import { Button } from "../../../_common/Button";
-import { CheckCircle, ChevronRight } from "lucide-react";
+import { CheckCircle, ChevronRight, Star, StarHalf } from "lucide-react";
 import { IoWarning } from "react-icons/io5";
+import CourseRatingModal from "../class-register/CourseRatingModal";
 
 export interface Course {
   name?: string;
@@ -28,6 +29,8 @@ export interface ClassListProps {
   renderAction?: (classItem: ClassToRegisterItem) => React.ReactNode;
   onPaymentClick?: (classItem: ClassToRegisterItem) => void;
   paymentPendingId: string | null;
+  courseId?: string;
+  gradeId?: string;
 }
 
 const RegisterClassesGrid: React.FC<ClassListProps> = ({
@@ -36,34 +39,45 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
   renderAction,
   onPaymentClick,
   paymentPendingId,
+  courseId,
+  gradeId,
 }) => {
-  // const handlePaymentMutation = useMutation({
-  //   mutationFn: (paymentId: string) => submitOrderPayment(paymentId),
-  //   onSuccess: (response) => {
-  //     console.log(response);
-  //     toast.success(response, {
-  //       position: "bottom-right",
-  //       autoClose: 3000,
-  //       pauseOnHover: false,
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error.message, {
-  //       position: "bottom-right",
-  //       autoClose: 3000,
-  //       pauseOnHover: false,
-  //     });
-  //   },
-  // });
-  // const handlePayment = () => {
-  //   handlePaymentMutation.mutate(selectedClass: ClassToReg);
-  // };
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<{
+    id: string;
+    name: string;
+    courseId: string;
+    gradeId: string;
+  } | null>(null);
+
+  const handleViewRatings = (classItem: ClassToRegisterItem) => {
+    const selectedCourseId = classItem.classDto.course?.id || courseId || "";
+    const selectedGradeId = classItem.classDto.grade?.id || gradeId || "";
+
+    if (!selectedCourseId || !selectedGradeId) {
+      console.error("Missing courseId or gradeId");
+      return;
+    }
+
+    setSelectedClass({
+      id: classItem.classDto.id,
+      name: classItem.classDto.name,
+      courseId: selectedCourseId,
+      gradeId: selectedGradeId,
+    });
+    setIsRatingModalOpen(true);
+  };
+
   if (status === "pending") {
     return <RegisterClassesLoading />;
   }
 
-  if (classes?.totalElements && classes.totalElements > 0) {
-    return (
+  if (!classes?.totalElements || classes.content.length === 0) {
+    return <EmptyListOrTable message="Hiện đang không có lớp học" />;
+  }
+
+  return (
+    <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {classes.content.map((classItem) => (
           <div
@@ -76,24 +90,75 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
                   {classItem.classDto.grade.name.split(" ")[1] ?? "?"}
                 </p>
               </div>
-              {/* <div className="w-12 fill-primary-dark">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="m24,6.928v13.072h-11.5v3h5v1H6.5v-1h5v-3H0V4.5c0-1.379,1.122-2.5,2.5-2.5h12.98c-.253.295-.54.631-.856,1H2.5c-.827,0-1.5.673-1.5,1.5v14.5h22v-10.993l1-1.079Zm-12.749,3.094C19.058.891,19.093.855,19.11.838c1.118-1.115,2.936-1.113,4.052.002,1.114,1.117,1.114,2.936,0,4.052l-8.185,8.828c-.116,1.826-1.623,3.281-3.478,3.281h-5.59l.097-.582c.043-.257,1.086-6.16,5.244-6.396Zm2.749,3.478c0-1.379-1.122-2.5-2.5-2.5-2.834,0-4.018,3.569-4.378,5h4.378c1.378,0,2.5-1.121,2.5-2.5Zm.814-1.073l2.066-2.229c-.332-1.186-1.371-2.057-2.606-2.172-.641.749-1.261,1.475-1.817,2.125,1.117.321,1.998,1.176,2.357,2.277Zm.208-5.276c1.162.313,2.125,1.134,2.617,2.229l4.803-5.18c.737-.741.737-1.925.012-2.653-.724-.725-1.908-.727-2.637,0-.069.08-2.435,2.846-4.795,5.606Z" />
-                </svg>
-              </div> */}
+
               <SiGoogleclassroom className="size-8 lg:size-12 text-primary-dark" />
               <h1 className="font-bold text-base lg:text-xl">
                 {classItem.classDto.name} -{" "}
                 {classItem.classDto.course?.name ?? "Không tên"} -{" "}
                 {classItem.classDto.grade?.name ?? ""}
               </h1>
-              <p className="text-sm text-zinc-500 leading-6 truncate">
-                Lớp {classItem.classDto.course?.name}.{" "}
-                {classItem.classDto.description}
-              </p>
-              {/* <p className="text-sm text-zinc-500 leading-6">
-                {classItem.description}
-              </p> */}
+              {classItem.classDto.description ? (
+                <p className="text-sm text-zinc-500 leading-6 truncate">
+                  Lớp {classItem.classDto.course?.name} -{" "}
+                  {classItem.classDto.description}
+                </p>
+              ) : (
+                <p className="text-sm text-zinc-500 leading-6 truncate">
+                  Lớp {classItem.classDto.course?.name}
+                </p>
+              )}
+
+              <div className="flex items-center gap-2 justify-between">
+                {classItem.ratingOverview.rating &&
+                classItem.ratingOverview.rating > 0 ? (
+                  <>
+                    <div className="flex items-center gap-1 mt-1">
+                      {Array.from({ length: 5 }).map((_, idx) => {
+                        const rating = classItem.ratingOverview.rating ?? 0;
+                        if (idx + 1 <= Math.floor(rating)) {
+                          return (
+                            <Star
+                              key={idx}
+                              className="size-4 fill-yellow-400 text-yellow-400"
+                            />
+                          );
+                        }
+                        if (idx < rating && rating % 1 >= 0.5) {
+                          return (
+                            <StarHalf
+                              key={idx}
+                              className="size-4 fill-yellow-400 text-yellow-400"
+                            />
+                          );
+                        }
+                        return (
+                          <Star key={idx} className="size-4 text-gray-300" />
+                        );
+                      })}
+                      <span className="text-sm text-gray-500 ml-1">
+                        ({classItem.ratingOverview.numRatings})
+                      </span>
+                    </div>
+
+                    <Button
+                      variant="outlined"
+                      className="mt-2 w-fit text-xs px-3 py-1 border-primary-dark text-primary-dark hover:bg-primary-light"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewRatings(classItem);
+                      }}
+                    >
+                      Xem đánh giá
+                    </Button>
+                  </>
+                ) : (
+                  <span className="text-sm text-gray-400 italic mt-1">
+                    Chưa có đánh giá
+                  </span>
+                )}
+              </div>
+
+              {/* Hiển thị đánh giá sao */}
             </div>
             {!classItem.payment ? (
               renderAction && renderAction(classItem)
@@ -138,10 +203,17 @@ const RegisterClassesGrid: React.FC<ClassListProps> = ({
           </div>
         ))}
       </div>
-    );
-  }
-
-  return <EmptyListOrTable message="Hiện đang không có lớp học" />;
+      {selectedClass && (
+        <CourseRatingModal
+          isOpen={isRatingModalOpen}
+          onClose={() => setIsRatingModalOpen(false)}
+          courseId={selectedClass.courseId}
+          gradeId={selectedClass.gradeId}
+          className={selectedClass.name}
+        />
+      )}
+    </>
+  );
 };
 
 export default RegisterClassesGrid;
