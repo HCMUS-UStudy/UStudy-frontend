@@ -95,13 +95,14 @@ export const studentRegister = async (
     const response = await axiosInstance.post("/register/create", {
       username: data.username,
       password: data.password,
-      name: data.name,
+      confirmPassword: data.retypePassword,
+      // name: data.name,
       email: data.email,
-      birthday: data.birthday,
-      phone: data.phone,
-      parentPhone: data.parentPhone,
-      address: data.address,
-      gender: data.gender,
+      // birthday: data.birthday,
+      // phone: data.phone,
+      // parentPhone: data.parentPhone,
+      // address: data.address,
+      // gender: data.gender,
     });
     return response.data;
   } catch (error) {

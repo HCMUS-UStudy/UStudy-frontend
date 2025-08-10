@@ -9,6 +9,7 @@ import { getQnAListByAssignmentId } from "@/app/lib/services/question";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import SubmissionList from "@/app/ui/components/user/teacher/Assignment/SubmissionList";
 import GradingModal from "@/app/ui/components/user/teacher/Assignment/GradingModal";
+import MarkdownInput from "@/app/ui/components/_common/text-field/MarkdownInput";
 
 const formatDateTime = (dateString: string) => {
   const date = new Date(dateString);
@@ -244,7 +245,7 @@ const AssignmentPage = () => {
                           <div className="flex gap-2">
                             Tiêu chí chấm điểm:{" "}
                             <span className="text-primary-darkest">
-                              {q.scoringCriteria}
+                              <MarkdownInput content={q.scoringCriteria} />
                             </span>
                           </div>
                         )}

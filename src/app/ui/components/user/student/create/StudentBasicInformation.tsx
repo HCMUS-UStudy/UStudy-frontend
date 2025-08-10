@@ -2,23 +2,15 @@ import React from "react";
 import { Input } from "../../../_common/text-field/Input";
 import { useFormContext } from "react-hook-form";
 import { StudentRegisterInputs } from "@/app/register/page";
-import { CustomDatePicker } from "../../../_common/text-field/CustomDatePicker";
-import { CustomRadioGroup } from "../../../_common/text-field/CustomRadioGroup";
 
 export default function StudentBasicInformation() {
   const {
     register,
     formState: { errors },
-    control,
   } = useFormContext<StudentRegisterInputs>();
 
-  const genderOptions = [
-    { value: "MALE", label: "Nam" },
-    { value: "FEMALE", label: "Nữ" },
-  ];
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div className="w-full">
       <div className="flex flex-col gap-3">
         <div>
           <Input
@@ -68,7 +60,7 @@ export default function StudentBasicInformation() {
             {...register("email")}
           />
         </div>
-        <div>
+        {/* <div>
           <Input
             className="text-[14px]"
             type="text"
@@ -78,9 +70,9 @@ export default function StudentBasicInformation() {
             errorMsg={errors.name?.message}
             {...register("name")}
           />
-        </div>
+        </div> */}
       </div>
-      <div className="flex flex-col gap-3">
+      {/* <div className="flex flex-col gap-3">
         <div className="w-full">
           <CustomDatePicker
             label="Ngày sinh"
@@ -134,7 +126,7 @@ export default function StudentBasicInformation() {
           options={genderOptions}
           error={errors.gender?.message}
         />
-      </div>
+      </div> */}
     </div>
   );
 }
