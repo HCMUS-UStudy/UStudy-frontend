@@ -18,6 +18,8 @@ export type ClassDetail = BaseClassInfo & {
   fee: number;
   status: "OPEN" | "PROGRESS" | "COMPLETED";
   classSessions: classSessions[];
+  teachers: UserSummary[];
+  rated: boolean;
 };
 
 export type ClassTeacher = BaseClassInfo & {
