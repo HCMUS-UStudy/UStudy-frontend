@@ -32,6 +32,7 @@ const NotificationModal = ({
 }) => {
   const [title, setTittle] = useState<string | undefined>("");
   const [content, setContent] = useState<string | undefined>("");
+  const [sendMail, setSendMail] = useState<boolean>(false);
   const { addToast } = useCustomToast();
 
   const handleSubmit = async () => {
@@ -46,6 +47,7 @@ const NotificationModal = ({
             title: title,
             content: content,
             receiverType: "CLASS",
+            sendMail: sendMail,
           };
       if (notification) {
         await updateNotification(notification.id, body);
@@ -67,6 +69,7 @@ const NotificationModal = ({
     }
     setTittle("");
     setContent("");
+    setSendMail(false);
     onClose(false);
   };
 
@@ -122,7 +125,19 @@ const NotificationModal = ({
           />
         </div>
 
-        <div className="flex justify-end mt-4 border-t pt-3">
+        <div className="flex justify-between items-center mt-4 border-t pt-3">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="sendMail"
+              checked={sendMail}
+              onChange={(e) => setSendMail(e.target.checked)}
+              className="w-4 h-4 accent-primary-light hover:accent-primary"
+            />
+            <label htmlFor="sendMail" className="font-medium cursor-pointer">
+              Gửi email cho học viên
+            </label>
+          </div>
           <Button className="px-4 py-2 rounded-lg" onClick={handleSubmit}>
             Lưu
           </Button>
