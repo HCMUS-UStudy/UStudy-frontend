@@ -68,8 +68,9 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     refetchOnWindowFocus: false,
   });
 
-  const hadClass = useMemo(() => {
-    return userData?.hadClass || false;
+  const isVerified = useMemo(() => {
+    console.log(userData);
+    return userData?.isVerified || false;
   }, [userData]);
 
   const { data: classes, status } = useQuery({
@@ -238,7 +239,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
             <Button
               onClick={() => {
                 if (selectedClass) {
-                  if (hadClass) {
+                  if (isVerified) {
                     registerClassMutation.mutate(selectedClass.classDto.id);
                     setOnConfirm(false);
                   } else {
@@ -247,7 +248,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
                   }
                 }
               }}
-              isPending={registerClassMutation.isPending}
+              isPending={registerClassMutation.status === "pending"}
             >
               Xác nhận
             </Button>
