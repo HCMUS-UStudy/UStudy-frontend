@@ -112,16 +112,14 @@ const Notification = () => {
     <div className="flex flex-col px-3">
       <div className="flex items-center justify-between my-4 mx-1">
         <div
-          className="gap-1 cursor-pointer hover:bg-primary-lighter
-        flex items-center border border-control-border w-fit rounded-xl px-3 py-2 transition-all"
+          className="gap-1 cursor-pointer text-primary-darker hover:text-primary-darkest
+        flex items-center w-fit transition-all"
           onClick={() => {
             setIsOpen(true);
           }}
         >
           <IoIosAdd className="hidden sm:flex text-[19px]" />
-          <span className="text-[13px] sm:text-[15px] text-gray-700">
-            Thêm thông báo
-          </span>
+          <span className="text-[13px] sm:text-[15px]">Thêm thông báo</span>
         </div>
 
         <div className="flex items-center px-2 w-fit text-[14px] sm:text-[15px] gap-3">

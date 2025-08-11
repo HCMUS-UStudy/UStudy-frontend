@@ -11,9 +11,11 @@ const SingleNotification = () => {
   const [notification, setNotification] = useState<NotificationItem | null>(
     null,
   );
-  const params = useParams<{ notificationId: string; classId: string }>();
-  const notificationId = params?.notificationId || "";
-  const classId = params?.classId || "";
+  const params = useParams();
+  const notificationId = params?.notificationId ?? "";
+  const classId = params?.classId ?? "";
+  // const { notificationId } = useParams<{ notificationId: string }>();
+  // const { classId } = useParams<{ classId: string }>();
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -49,7 +51,7 @@ const SingleNotification = () => {
               <div className="flex gap-1 text-gray-500">
                 đăng bởi
                 <div className="text-primary-darker">
-                  {notification?.sender.name}
+                  {notification?.sender?.name || "Unknown"}
                 </div>
               </div>
               {"-"}
