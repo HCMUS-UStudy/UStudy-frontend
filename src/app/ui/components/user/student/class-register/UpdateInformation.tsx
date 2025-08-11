@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { updateUserInfo } from "@/app/lib/services";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
+import { getUserDataFromCookies, setUserDataCookies } from "@/app/lib/action";
 
 const updateInfoSchema = z.object({
   name: z
@@ -82,12 +83,21 @@ function UpdateInformation({ isOpen, onClose, openClassRegisterModal }: Props) {
     },
     onSuccess: () => {
       addToast.success("Cập nhật thông tin thành công");
+      toggleIsVerified();
       onClose();
       openClassRegisterModal();
     },
   });
   const onSubmit = (data: UpdateInfo) => {
     return handleUpdateInfoMutation.mutate(data);
+  };
+
+  const toggleIsVerified = async () => {
+    try {
+      const userData = await getUserDataFromCookies();
+      const updatedData = { ...userData, isVerified: true };
+      await setUserDataCookies(JSON.stringify(updatedData));
+    } catch {}
   };
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>

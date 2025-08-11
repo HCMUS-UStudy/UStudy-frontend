@@ -17,6 +17,7 @@ const initialState: UserData = {
     updatedAt: "",
   },
   branches: [],
+  isVerified: false,
   hadClass: false,
 };
 
