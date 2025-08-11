@@ -18,17 +18,11 @@ import { RxCross1 } from "react-icons/rx";
 import { getUserDataFromCookies } from "@/app/lib/action";
 import Loading from "@/app/ui/components/_common/loading/Loading";
 import { useCustomToast } from "@/app/lib/hooks/useToast";
-import { Button } from "@/app/ui/components/_common/Button";
-import EmptyListOrTable from "@/app/ui/components/_common/EmptyListOrTable";
 
 const Notification = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  // const params = useParams<{ classId: string }>();
-  // const classId = params?.classId as string;
-
   const params = useParams<{ classId: string }>();
-  const classId = params?.classId as string;
+  const classId = params?.classId ?? "";
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);
@@ -37,6 +31,7 @@ const Notification = () => {
   const [updatingNotification, setUpdatingNotification] =
     useState<NotificationItem | null>(null);
   const [deleteItem, setShowDeleteModal] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const { addToast } = useCustomToast();
@@ -107,7 +102,7 @@ const Notification = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center mt-5">
+      <div className="flex justify-center mt-5">
         <Loading />
       </div>
     );
@@ -116,21 +111,17 @@ const Notification = () => {
   return (
     <div className="flex flex-col px-3">
       <div className="flex items-center justify-between my-4 mx-1">
-        <Button onClick={() => setIsOpen(true)}>
-          <IoIosAdd className="hidden sm:flex text-[19px]" /> Thêm thông báo
-        </Button>
-        {/* <div
-          className="gap-1 cursor-pointer hover:bg-primary-lighter
-        flex items-center border border-gray-300 w-fit rounded-xl p-2"
+        <div
+          className="gap-1 cursor-pointer text-primary-darker hover:text-primary-darkest
+        flex items-center w-fit transition-all"
           onClick={() => {
             setIsOpen(true);
           }}
         >
           <IoIosAdd className="hidden sm:flex text-[19px]" />
-          <span className="text-[13px] sm:text-[15px] text-gray-700">
-            Thêm thông báo
-          </span>
-        </div> */}
+          <span className="text-[13px] sm:text-[15px]">Thêm thông báo</span>
+        </div>
+
         <div className="flex items-center px-2 w-fit text-[14px] sm:text-[15px] gap-3">
           {selectedIds.length > 0 && (
             <div className="flex items-center gap-4">
@@ -192,12 +183,14 @@ const Notification = () => {
             )}
         </div>
       </div>
-      {notifications.length > 0 ? (
+      {notifications.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">Không có thông báo</div>
+      ) : (
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b bg-primary-dark text-white">
               <th className="pl-4 py-2 rounded-tl-lg"></th>
-              <th className="text-left text-[14px] sm:text-[16px] text-nowrap px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
+              <th className="text-left text-[14px] sm:text-[16px] px-3 py-2 w-4/9 lg:w-2/3 xl:w-3/4">
                 Tiêu đề
               </th>
               <th className="rounded-tr-lg text-left text-[14px] sm:text-[16px] px-3 py-2">
@@ -209,7 +202,7 @@ const Notification = () => {
             {notifications.map((notification) => (
               <tr
                 key={notification.id}
-                className={`cursor-pointer border border-primary-light ${
+                className={`cursor-pointer border border-primary-light transition-all ${
                   popupId === notification.id
                     ? !notification.read
                       ? "bg-primary-lighter"
@@ -223,7 +216,7 @@ const Notification = () => {
                     notification.read = true;
                   }
                   router.push(
-                    `/admin/classes/${classId}/notifications/${notification.id}`,
+                    `/teacher/classes/${classId}/notifications/${notification.id}`,
                   );
                 }}
               >
@@ -293,7 +286,7 @@ const Notification = () => {
                       <div className="relative ml-auto">
                         <div
                           className="flex items-center text-gray-600 text-[17px]
-                          sm:text-[19px] cursor-pointer hover:bg-gray-300 rounded-full"
+                        sm:text-[19px] cursor-pointer hover:bg-gray-300 rounded-full transition-all"
                         >
                           <Tooltip text="Tùy chọn">
                             <IoMdMore
@@ -311,7 +304,7 @@ const Notification = () => {
                         {popupId === notification.id && (
                           <div
                             className="absolute right-0 mt-1 w-28 bg-white border border-gray-300
-                            rounded-lg shadow-lg z-10 overflow-auto"
+                        rounded-lg shadow-lg z-10 overflow-auto"
                             onClick={(e) => e.stopPropagation()}
                             ref={dropdownRef}
                           >
@@ -344,10 +337,6 @@ const Notification = () => {
             ))}
           </tbody>
         </table>
-      ) : (
-        <>
-          <EmptyListOrTable />
-        </>
       )}
       {isOpen && (
         <NotificationModal
@@ -364,7 +353,7 @@ const Notification = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-md sm:text-lg font-bold mb-4">Xác nhận xóa</h2>
             <p className="text-[14px] sm:text-[16px]">
-              Bạn có chắc chắn muốn xóa tài liệu này không?
+              Bạn có chắc chắn muốn xóa không?
             </p>
             <div className="flex justify-end gap-4 mt-6 text-[13px] sm:text-[15px]">
               <button

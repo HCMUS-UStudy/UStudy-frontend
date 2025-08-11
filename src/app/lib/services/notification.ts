@@ -50,6 +50,7 @@ export const createNotification = async (body: {
   content?: string;
   type?: string;
   receiverType?: string;
+  sendMail?: boolean;
 }) => {
   const response = await axiosInstance.post(
     "/notification/create-notification",
