@@ -16,7 +16,7 @@ import { AuthResponse } from "@/app/types";
 export default function GoogleCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const userId = searchParams.get("userId");
+  const userId = searchParams?.get("userId");
   const dispatch = useDispatch();
   const { addToast } = useCustomToast();
 

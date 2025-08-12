@@ -27,7 +27,7 @@ const Notification = () => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(10);
 
   const params = useParams();
   const currentNotificationId = params?.notificationId as string | undefined;
@@ -135,7 +135,7 @@ const Notification = () => {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loading />
           <p className="mt-4 text-primary-darkest font-medium">
@@ -148,7 +148,7 @@ const Notification = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loading />
           <p className="mt-4 text-primary-darkest font-medium">
@@ -160,24 +160,26 @@ const Notification = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-lighter via-primary-light to-primary">
+    <div className="min-h-screen">
       {/* Header */}
-      <NotificationHeader onRefresh={fetchData} />
+      <NotificationHeader
+        onRefresh={fetchData}
+        totalCount={filteredNotifications.length}
+        unreadCount={filteredNotifications.filter((n) => !n.read).length}
+      />
 
       {/* Search and Filter */}
       <NotificationSearchFilter
         searchTerm={searchTerm}
-        filterType={filterType}
         filterStatus={filterStatus}
-        totalCount={filteredNotifications.length}
-        unreadCount={filteredNotifications.filter((n) => !n.read).length}
+        filterType={filterType}
         onSearchChange={setSearchTerm}
         onFilterTypeChange={setFilterType}
         onFilterStatusChange={setFilterStatus}
       />
 
       {/* Content */}
-      <div className="px-4 sm:px-6 pb-6 sm:pb-8">
+      <div className="px-4 sm:px-6">
         {filteredNotifications.length === 0 ? (
           <NotificationEmptyState
             searchTerm={searchTerm}

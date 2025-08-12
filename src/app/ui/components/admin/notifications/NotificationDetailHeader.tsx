@@ -14,7 +14,7 @@ const NotificationDetailHeader: React.FC<NotificationDetailHeaderProps> = ({
   onToggleSidebar,
 }) => {
   return (
-    <div className="bg-white border-b border-primary-light px-4 lg:px-6 py-4 shadow-sm">
+    <div className="bg-white border-b border-primary-light pb-2">
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}

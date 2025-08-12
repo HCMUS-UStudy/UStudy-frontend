@@ -56,30 +56,27 @@ export default async function Home() {
 
     return (
       <>
-        {contents.map((c, i) => {
-          return (
-            <div
-              key={i}
-              className="group relative overflow-hidden rounded-2xl bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${c.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
-              ></div>
-              <div className="relative z-10">
-                <div className="mb-4 flex items-center justify-center">
-                  <span className="text-4xl">{c.icon}</span>
-                </div>
-                <h3 className="mb-4 text-center text-xl font-bold text-gray-800 transition-colors duration-300 group-hover:text-primary-darkest">
-                  {c.FeatureName}
-                </h3>
-                <p className="text-center text-sm text-gray-600 md:text-base">
-                  {c.Description}
-                </p>
+        {contents.map((item, index) => (
+          <div
+            key={index}
+            className="group relative cursor-pointer overflow-hidden bg-white rounded-2xl px-6 pt-12 pb-10 shadow-2xl ring-1 ring-gray-900/5 transition-all duration-1000 transform hover:scale-105 hover:shadow-3xl"
+          >
+            <span
+              className={`absolute top-0 left-0 z-0 h-32 w-32 rounded-full bg-gradient-to-r ${item.color} opacity-75 transition-all duration-1000 transform group-hover:scale-[20]`}
+            ></span>
+            <div className="relative z-10 mx-auto max-w-md">
+              <span
+                className={`grid h-24 w-24 place-items-center rounded-full bg-gradient-to-r ${item.color} text-3xl transition-all duration-1000 group-hover:scale-110`}
+              >
+                {item.icon}
+              </span>
+              <div className="space-y-4 pt-6 text-base leading-7 text-gray-700 transition-all duration-500 group-hover:text-white">
+                <h3 className="text-xl font-bold">{item.FeatureName}</h3>
+                <p>{item.Description}</p>
               </div>
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-primary-darkest to-primary-darker transition-all duration-300 group-hover:w-full"></div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </>
     );
   };
@@ -106,9 +103,15 @@ export default async function Home() {
         </div>
         <Hero />
       </div>
-      <div className="md:px-10 xl:px-24 mx-auto flex flex-col justify-center">
+      <div className="md:px-10 xl:px-24 mx-auto flex flex-col gap-5 justify-center">
         <WhyUs />
         <Carousel />
+        <div className="text-[38px] text-center mt-20 font-normal text-primary-darkest tracking-wide relative inline-block">
+          <span className="relative z-10 ">
+            <span className="text-highlight-text font-bold">UStudy</span> mang
+            đến những gì?
+          </span>
+        </div>
         <div className="mx-12 mt-10 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10">
           <RenderMainFeatures />
         </div>

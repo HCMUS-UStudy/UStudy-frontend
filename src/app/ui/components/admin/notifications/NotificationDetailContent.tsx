@@ -10,76 +10,6 @@ interface NotificationDetailContentProps {
 const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
   notification,
 }) => {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return (
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 8v4l3 3"
-            />
-          </svg>
-        );
-      case "CLASS":
-        return (
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z"
-            />
-          </svg>
-        );
-      default:
-        return (
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        );
-    }
-  };
-
-  const getTypeGradient = (type: string) => {
-    switch (type) {
-      case "SYSTEM":
-        return "from-primary-dark to-primary-darker";
-      case "CLASS":
-        return "from-primary to-primary-dark";
-      default:
-        return "from-primary-light to-primary";
-    }
-  };
-
   // const getTypeLabel = (type: string) => {
   //   switch (type) {
   //     case "SYSTEM":
@@ -116,13 +46,14 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
       }
       return `${Math.floor(diffInHours)} giờ trước`;
     } else if (diffInHours < 48) {
-      return "Hôm qua";
+      return `Hôm qua lúc ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
     } else {
-      return date.toLocaleDateString("vi-VN", {
+      return ` ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}
+      ${date.toLocaleDateString("vi-VN", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-      });
+      })}`;
     }
   };
 
@@ -132,18 +63,11 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
         <div className="absolute inset-0 bg-primary-lighter rounded-xl"></div>
         <div className="relative p-4">
           <div className="flex items-center gap-4 mb-4">
-            {/* Icon bên trái */}
-            <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br ${getTypeGradient(notification.receiverType)} shadow-lg group-hover:scale-105 transition-transform duration-300`}
-            >
-              {getTypeIcon(notification.receiverType)}
-            </div>
-
             {/* Phần nội dung */}
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                 {/* Tiêu đề */}
-                <h1 className="text-xl lg:text-2xl font-bold text-primary-darkest leading-tight">
+                <h1 className="text-xl lg:text-2xl font-bold text-primary-darkest leading-tight ml-2 mt-2">
                   {notification.title}
                 </h1>
 
@@ -176,7 +100,6 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
                   height={40}
                   className="rounded-full w-10 h-10 shadow-md object-cover ring-2 ring-white"
                 />
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div>
                 <div className="font-semibold text-primary-darkest text-base">
@@ -192,22 +115,6 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
                   {formatDate(notification.sendDate)}
                 </div>
               </div>
-              <div className="p-2 bg-primary-lighter rounded-lg">
-                <svg
-                  className="w-4 h-4 text-primary-dark"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 8v4l3 3"
-                  />
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
-              </div>
             </div>
           </div>
         </div>
@@ -215,12 +122,12 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
 
       {/* Content Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-3">
+        {/* <div className="flex items-center gap-2 mb-3">
           <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary-dark rounded-full"></div>
           <h2 className="text-lg font-bold text-primary-darkest">
             Nội dung thông báo
           </h2>
-        </div>
+        </div> */}
 
         <div className="bg-white rounded-xl shadow-md border border-primary-light/40 overflow-hidden">
           <div className="bg-gradient-to-r from-primary-lighter to-primary-light/40 px-4 py-3 border-b border-primary-light/30">
@@ -238,8 +145,8 @@ const NotificationDetailContent: React.FC<NotificationDetailContentProps> = ({
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <span className="font-semibold text-primary-darkest text-sm">
-                Chi tiết
+              <span className="font-semibold text-primary-darkest">
+                Nội dung thông báo
               </span>
             </div>
           </div>

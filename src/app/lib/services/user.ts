@@ -2,6 +2,7 @@ import {
   AccountData,
   AccountItem,
   BasePaginationResponse,
+  BaseResponse,
   DeleteAccountResponse,
   UpdateProfilePayload,
   UserProfile,
@@ -9,6 +10,7 @@ import {
 } from "@/app/types";
 import axiosInstance from "@/app/lib/axios";
 import { getUserDataFromCookies, setUserDataCookies } from "../action";
+import { UpdateInfo } from "@/app/ui/components/user/student/class-register/UpdateInformation";
 
 export const createNewAccount = async (
   data: Pick<
@@ -176,6 +178,25 @@ export const getListAvailableAdmins = async (
     const response = await axiosInstance.get(
       `/user/list-available-admins/${branchId}`,
     );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserInfo = async (
+  data: UpdateInfo,
+): Promise<BaseResponse> => {
+  try {
+    const payload = {
+      name: data.name,
+      birthday: data.birthday,
+      phone: data.phone,
+      gender: data.gender,
+      address: data.address,
+      ...(data.parentPhone && { parentPhone: data.parentPhone }),
+    };
+    const response = await axiosInstance.put("/user/update-info", payload);
     return response.data.data;
   } catch (error) {
     throw error;

@@ -36,6 +36,7 @@ export type UserData = {
     name: string;
     updatedAt: string;
   };
+  isVerified: boolean;
   branches: Branch[];
   hadClass: boolean;
 };

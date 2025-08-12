@@ -205,7 +205,7 @@ const SchedulePage = () => {
 
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
     if (view === "month") {
-      const d = date.toISOString().slice(0, 10);
+      const d = date.toLocaleDateString("sv-SE"); // "YYYY-MM-DD" format, local time
       if (dateMap[d]) {
         return <div className="w-2 h-2 bg-sky-600 rounded-full mx-auto mt-2" />;
       }
@@ -215,17 +215,12 @@ const SchedulePage = () => {
 
   const handleChange = (val: Date) => {
     setSelectedDate(val);
-    const d = val.toISOString().slice(0, 10);
+    const d = val.toLocaleDateString("sv-SE");
     setSelectedSessions(dateMap[d] || []);
   };
 
   useEffect(() => {
-    const d = selectedDate.toISOString().slice(0, 10);
-    setSelectedSessions(dateMap[d] || []);
-  }, [selectedDate, dateMap]);
-
-  useEffect(() => {
-    const d = selectedDate.toISOString().slice(0, 10);
+    const d = selectedDate.toLocaleDateString("sv-SE");
     setSelectedSessions(dateMap[d] || []);
   }, [selectedDate, dateMap]);
 
@@ -275,7 +270,7 @@ const SchedulePage = () => {
             })}
           </div>
         ) : (
-          <div className="text-gray-500 mt-8">
+          <div className="text-gray-500 mt-8 w-[100px] md:w-[150px] lg:w-[200px]">
             Chọn ngày có buổi học để xem chi tiết
           </div>
         )}

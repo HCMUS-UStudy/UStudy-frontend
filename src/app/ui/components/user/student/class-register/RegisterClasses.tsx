@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Pagination from "@/app/ui/components/_common/Pagination";
 import { getListClassToRegister } from "@/app/lib/services/class";
 import { useSearchParams } from "next/navigation";
@@ -27,6 +27,7 @@ import {
   setUserDataCookies,
 } from "@/app/lib/action";
 import { getPermissions } from "@/app/lib/services";
+import UpdateInformation from "./UpdateInformation";
 
 interface ClassRegisterProps {
   searchQuery: string;
@@ -49,6 +50,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
   // );
   const [paymentPendingId, setPaymentPendingId] = useState<string | null>(null);
   const [onConfirm, setOnConfirm] = useState<boolean>(false);
+  const [onUpdate, setOnUpdate] = useState<boolean>(false);
   const [selectedClass, setSelectedClass] = useState<ClassToRegisterItem>();
 
   useEffect(() => {
@@ -59,6 +61,17 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
     useState<RegisterClassResponse>();
   const queryClient = useQueryClient();
   const { addToast } = useCustomToast();
+
+  const { data: userData } = useQuery({
+    queryKey: ["UserData"],
+    queryFn: () => getUserDataFromCookies(),
+    refetchOnWindowFocus: false,
+  });
+
+  const isVerified = useMemo(() => {
+    console.log(userData);
+    return userData?.isVerified || false;
+  }, [userData]);
 
   const { data: classes, status } = useQuery({
     queryKey: [
@@ -182,6 +195,7 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
         }}
         selectedClass={registrationSuccess}
       />
+
       <Dialog isOpen={onConfirm} onClose={() => setOnConfirm(false)}>
         <DialogHeader>Xác nhận đăng ký lớp học</DialogHeader>
         <DialogContent>
@@ -225,17 +239,27 @@ const RegisterClasses: React.FC<ClassRegisterProps> = ({ searchQuery }) => {
             <Button
               onClick={() => {
                 if (selectedClass) {
-                  registerClassMutation.mutate(selectedClass.classDto.id);
-                  setOnConfirm(false);
+                  if (isVerified) {
+                    registerClassMutation.mutate(selectedClass.classDto.id);
+                    setOnConfirm(false);
+                  } else {
+                    setOnConfirm(false);
+                    setOnUpdate(true);
+                  }
                 }
               }}
-              isPending={registerClassMutation.isPending}
+              isPending={registerClassMutation.status === "pending"}
             >
               Xác nhận
             </Button>
           </div>
         </DialogFooter>
       </Dialog>
+      <UpdateInformation
+        isOpen={onUpdate}
+        onClose={() => setOnUpdate(false)}
+        openClassRegisterModal={() => setOnConfirm(true)}
+      />
     </div>
   );
 };
