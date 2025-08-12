@@ -21,6 +21,17 @@ const avatars = [
   "duck.png",
   "panda.png",
   "puffer-fish.png",
+  "female_middle_age.png",
+  "male_middle_age.png",
+  "rabbit.png",
+  "sea-lion.png",
+  "student_female_kid_asian.png",
+  "student_female_teenage_asian.png",
+  "student_male_kid_asian.png",
+  "student_male_teenage_asian.png",
+  "teacher_female_asian.png",
+  "teacher_female.png",
+  "teacher_male_asian.png",
 ];
 
 const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
@@ -55,7 +66,7 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
       : fallbackAvatar;
 
   return (
-    <Dialog isOpen={isOpen} onClose={() => onClose()}>
+    <Dialog isOpen={isOpen} onClose={() => onClose()} className="w-1/2">
       <DialogHeader>Thay đổi ảnh đại diện</DialogHeader>
       <DialogContent>
         <div className="flex items-center justify-center gap-5 mb-6">
@@ -77,8 +88,10 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
               <Image
                 src={`/userAvatars/${avatar}.png`}
                 alt="Ảnh mới"
+                loading="lazy"
+                placeholder="empty"
                 fill
-                className="object-cover"
+                className="object-cover rounded-full"
               />
             ) : (
               <Image
@@ -108,7 +121,8 @@ const EditAvatarModal: React.FC<EditAvatarModalProps> = ({
                   src={`/userAvatars/${item}`}
                   width={50}
                   height={50}
-                  alt="avatar"
+                  alt={item}
+                  className="object-cover rounded-full"
                 />
               </div>
             ))}
