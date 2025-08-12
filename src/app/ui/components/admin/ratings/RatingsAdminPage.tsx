@@ -12,6 +12,7 @@ import {
 } from "@/app/ui/components/_common/Table";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Pagination from "@/app/ui/components/_common/Pagination";
 
 interface RatingsAdminPageProps {
   searchQuery?: string;
@@ -71,14 +72,19 @@ export default function RatingsAdminPage({
 }: RatingsAdminPageProps) {
   const [data, setData] = useState<CourseGradeRatingOverview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await getListCourseGradeRatings(0, 10);
+        const page = currentPage - 1; // Backend uses 0-based pagination
+        const res = await getListCourseGradeRatings(page, itemsPerPage);
         let content = res?.data?.content || [];
+        const totalElements = res?.data?.totalElements || 0;
 
         // if (content.length === 0) {
         //   content = mockCourseGradeRatings; // fallback mock data
@@ -93,7 +99,9 @@ export default function RatingsAdminPage({
               item.grade.name.toLowerCase().includes(searchQuery.toLowerCase()),
           );
         }
+
         setData(content);
+        setTotalPages(Math.ceil(totalElements / itemsPerPage) || 1);
       } catch (error) {
         console.error(error);
       } finally {
@@ -101,37 +109,52 @@ export default function RatingsAdminPage({
       }
     };
     fetchData();
-  }, [searchQuery]);
+  }, [searchQuery, currentPage]);
 
   return (
-    <Table>
-      <TableHeader
-        columns={["Môn học", "Khối", "Đánh giá TB", "Số lượt đánh giá"]}
-        classNameTH={["", "", "text-center", "text-center"]}
-      />
-      <TableBody isLoading={loading}>
-        {data.map((item, idx) => (
-          <TableRow
-            key={idx}
-            className="cursor-pointer"
-            onClick={() =>
-              router.push(
-                `/admin/ratings/courseGrade/${item.course.id}/${item.grade.id}`,
-              )
-            }
-          >
-            <TableCell>{item.course.name}</TableCell>
-            <TableCell>{item.grade.name}</TableCell>
-            <TableCell className="text-center">
-              <div className="inline-flex items-center justify-center gap-1">
-                <span>{item.rating.toFixed(1)}</span>
-                <span className="flex pb-1">{renderStars(item.rating)}</span>
-              </div>
-            </TableCell>
-            <TableCell className="text-center">{item.numRatings}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Table>
+        <TableHeader
+          columns={["Môn học", "Khối", "Đánh giá TB", "Số lượt đánh giá"]}
+          classNameTH={["", "", "text-center", "text-center"]}
+        />
+        <TableBody isLoading={loading}>
+          {data.map((item, idx) => (
+            <TableRow
+              key={idx}
+              className="cursor-pointer"
+              onClick={() =>
+                router.push(
+                  `/admin/ratings/courseGrade/${item.course.id}/${item.grade.id}`,
+                )
+              }
+            >
+              <TableCell>{item.course.name}</TableCell>
+              <TableCell>{item.grade.name}</TableCell>
+              <TableCell className="text-center">
+                <div className="inline-flex items-center justify-center gap-1">
+                  <span>{item.rating.toFixed(1)}</span>
+                  <span className="flex pb-1">{renderStars(item.rating)}</span>
+                </div>
+              </TableCell>
+              <TableCell className="text-center">{item.numRatings}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className="mt-4 flex justify-end">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        />
+      </div>
+    </>
   );
 }
