@@ -11,6 +11,7 @@ import {
 } from "@/app/ui/components/_common/Table";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import Pagination from "@/app/ui/components/_common/Pagination";
 // Giả sử backend có hàm lấy detail đánh giá của giáo viên (tương tự courseGrade)
 import { getTeacherRatingsDetails } from "@/app/lib/services/rating";
 import { TeacherRatingDetail } from "@/app/types/rating";
@@ -92,25 +93,33 @@ export default function TeacherRatingsDetailPage({ params }: PageProps) {
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState<TeacherRatingDetail[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     async function fetchDetails() {
       setLoading(true);
       try {
-        const res = await getTeacherRatingsDetails(teacherId, 0, 20);
-        // eslint-disable-next-line prefer-const
-        let content = res?.data?.content || [];
-        //if (content.length === 0) content = mockTeacherDetails; // fallback mock
+        const page = currentPage - 1; // Backend uses 0-based pagination
+        const res = await getTeacherRatingsDetails(
+          teacherId,
+          page,
+          itemsPerPage,
+        );
+        const content = res?.data?.content || [];
+        const totalElements = res?.data?.totalElements || 0;
+
         setData(content);
+        setTotalPages(Math.ceil(totalElements / itemsPerPage) || 1);
       } catch (error) {
         console.error(error);
-        //setData(mockTeacherDetails); // fallback mock
       } finally {
         setLoading(false);
       }
     }
     fetchDetails();
-  }, [teacherId]);
+  }, [teacherId, currentPage]);
 
   const filteredData = data.filter(
     (item) =>
@@ -187,6 +196,21 @@ export default function TeacherRatingsDetailPage({ params }: PageProps) {
           )}
         </TableBody>
       </Table>
+
+      {/* Pagination */}
+      <div className="mt-4 flex justify-end">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        />
+      </div>
     </div>
   );
 }
