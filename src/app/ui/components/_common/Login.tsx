@@ -310,7 +310,7 @@ export default function Login() {
                 {...register("password")}
               />
             </div>
-            <div className="flex flex-col gap-2 md:flex-row w-full justify-center mt-4 px-1">
+            <div className="flex flex-col gap-2 md:flex-row w-full justify-end mt-4 px-1">
               {/* <div className="flex items-center">
                 <SmallCheckbox
                   labelText="Ghi nhớ đăng nhập"
@@ -331,7 +331,7 @@ export default function Login() {
                   Ghi nhớ đăng nhập
                 </label>
               </div> */}
-              <div className="flex">
+              <div className="flex justify-end">
                 <button
                   type="button"
                   className="text-sm text-gray-600 hover:underline focus:outline-none flex items-center"

@@ -14,6 +14,7 @@ import Image from "next/image";
 import { FaRegStar, FaStar } from "react-icons/fa6";
 import { FaStarHalfAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Pagination from "@/app/ui/components/_common/Pagination";
 
 interface RatingsTeacherPageProps {
   searchQuery?: string;
@@ -84,33 +85,19 @@ export default function RatingsTeacherPage({
 }: RatingsTeacherPageProps) {
   const [data, setData] = useState<TeacherRatingOverview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // const res = await getListTeacherRatings(0, 10);
-        // let content = res.data.content;
-
-        // if (searchQuery) {
-        //   content = content.filter(
-        //     (item) =>
-        //       item.teacher.name
-        //         .toLowerCase()
-        //         .includes(searchQuery.toLowerCase()) ||
-        //       item.teacher.email
-        //         .toLowerCase()
-        //         .includes(searchQuery.toLowerCase()),
-        //   );
-        // }
-        // setData(content);
-        const res = await getListTeacherRatings(0, 10);
+        const page = currentPage - 1; // Backend uses 0-based pagination
+        const res = await getListTeacherRatings(page, itemsPerPage);
         let content = res?.data?.content || [];
-
-        // if (content.length === 0) {
-        //   content = mockTeacherRatings; // fallback mock data
-        // }
+        const totalElements = res?.data?.totalElements || 0;
 
         if (searchQuery) {
           content = content.filter(
@@ -123,7 +110,9 @@ export default function RatingsTeacherPage({
                 .includes(searchQuery.toLowerCase()),
           );
         }
+
         setData(content);
+        setTotalPages(Math.ceil(totalElements / itemsPerPage) || 1);
       } catch (error) {
         console.error(error);
       } finally {
@@ -131,52 +120,72 @@ export default function RatingsTeacherPage({
       }
     };
     fetchData();
-  }, [searchQuery]);
+  }, [searchQuery, currentPage]);
 
   return (
-    <Table>
-      <TableHeader
-        columns={["Tên giáo viên", "Email", "Đánh giá TB", "Số lượt đánh giá"]}
-        classNameTH={["", "", "text-center", "text-center"]}
-      />
-      <TableBody isLoading={loading}>
-        {data.map((item, idx) => (
-          <TableRow
-            key={idx}
-            className="cursor-pointer"
-            onClick={() =>
-              router.push(`/admin/ratings/teacher/${item.teacher.id}`)
-            }
-          >
-            <TableCell>
-              <div className="flex items-center gap-2">
-                {item.teacher.avatar ? (
-                  <Image
-                    src={item.teacher.avatar}
-                    alt={item.teacher.name}
-                    width={32}
-                    height={32}
-                    className="rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary-darkest font-semibold">
-                    {item.teacher.name?.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                {item.teacher.name}
-              </div>
-            </TableCell>
-            <TableCell>{item.teacher.email}</TableCell>
-            <TableCell className="text-center">
-              <div className="inline-flex items-center justify-center gap-1">
-                <span>{item.rating.toFixed(1)}</span>
-                <span className="flex pb-1">{renderStars(item.rating)}</span>
-              </div>
-            </TableCell>
-            <TableCell className="text-center">{item.numRatings}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Table>
+        <TableHeader
+          columns={[
+            "Tên giáo viên",
+            "Email",
+            "Đánh giá TB",
+            "Số lượt đánh giá",
+          ]}
+          classNameTH={["", "", "text-center", "text-center"]}
+        />
+        <TableBody isLoading={loading}>
+          {data.map((item, idx) => (
+            <TableRow
+              key={idx}
+              className="cursor-pointer"
+              onClick={() =>
+                router.push(`/admin/ratings/teacher/${item.teacher.id}`)
+              }
+            >
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  {item.teacher.avatar ? (
+                    <Image
+                      src={item.teacher.avatar}
+                      alt={item.teacher.name}
+                      width={32}
+                      height={32}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary-darkest font-semibold">
+                      {item.teacher.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  {item.teacher.name}
+                </div>
+              </TableCell>
+              <TableCell>{item.teacher.email}</TableCell>
+              <TableCell className="text-center">
+                <div className="inline-flex items-center justify-center gap-1">
+                  <span>{item.rating.toFixed(1)}</span>
+                  <span className="flex pb-1">{renderStars(item.rating)}</span>
+                </div>
+              </TableCell>
+              <TableCell className="text-center">{item.numRatings}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className="mt-4 flex justify-end">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageClick={(page) => setCurrentPage(page)}
+          handlePreviousPage={() =>
+            setCurrentPage((prev) => Math.max(prev - 1, 1))
+          }
+          handleNextPage={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        />
+      </div>
+    </>
   );
 }
