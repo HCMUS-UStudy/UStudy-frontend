@@ -16,15 +16,8 @@ interface EditAvatarModalProps {
 }
 
 const avatars = [
-  "bear.png",
-  "cat.png",
-  "duck.png",
-  "panda.png",
-  "puffer-fish.png",
   "female_middle_age.png",
   "male_middle_age.png",
-  "rabbit.png",
-  "sea-lion.png",
   "student_female_kid_asian.png",
   "student_female_teenage_asian.png",
   "student_male_kid_asian.png",
